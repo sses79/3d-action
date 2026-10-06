@@ -165,6 +165,17 @@ Still wrong in v2, and not fixable by options or corrections:
 
 What this says about generality: the pipeline carried over to a new performer, camera and movement without retuning for the parts the detector saw. Its ceiling here is the 2D detector on blurred, low-frame-rate footage. A source recorded at 30 fps or more, or the original video file instead of a screen recording, is the most direct fix.
 
+## Clip 3 from the original video file (6 October 2026)
+
+The user supplied the original 720p, 30 fps file; the triple kick is its second combo. Window 38.85–41.70 s, same options and phases, run ef369e51, saved as `video-triple-kick-v3`.
+
+- Detection is cleaner than from the screen recording: no merged-leg repairs, five leg swaps repaired (nine before), eleven weak frames around the two turns.
+- Kicks 2 and 3 are recognisable on a dense sheet: chamber, extension to about horizontal, lowering. Kick 3 extends slightly early and lower than the video.
+- **Kick 1 is still missing.** The earlier conclusion that the screen recording's frame rate was to blame was wrong, or at least incomplete: in the original the kicking leg is still a motion-blurred white streak against a white wall, and the detector draws both legs straight down for five frames (0.48–0.68 s) at confidence above 0.9. Running `yolo26s` and `yolo26n` at 1280 px input instead of 640 px misses it as well.
+- The first turn still goes to back-facing (about 170°) and returns the same way; the second completes 360°.
+
+So the limit on this clip is the 2D pose detector on blurred footage, not the capture. Options not yet tried: a larger or blur-tolerant pose model (needs a download), or a second estimate of the kicking leg from image evidence other than keypoints.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

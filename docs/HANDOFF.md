@@ -408,3 +408,8 @@ Added `skills/video-to-action/SKILL.md`, `inspect_video`, `compare_video_action`
 ## 2026-10-06 — clip 3 (triple spinning kick)
 
 User supplied `~/Desktop/Screen Recording 2026-10-06 at 15.03.36.mov`. Followed the `video-to-action` skill (run 120af2fd). Added leg-swap repair and a confident-miss rule to `lift.py` (`swappedLegObservations` in the summary) and wrapped comparison sheets into blocks. Saved `video-triple-kick` (v1) and `video-triple-kick-v2` (selected). v2 has kicks 2 and 3 right; kick 1 is missing and the first turn reverses, both detector limits on 18 fps blurred footage; see `docs/RECONSTRUCT_MOTION.md`. Other clips' repairs are unchanged by the new rules. 87 Node tests pass. Service running on 5174.
+
+
+## 2026-10-06 — clip 3 from the original video
+
+User supplied the original 720p 30 fps file (`~/Downloads/YTDown.com_YouTube_Media_XL9dbg6xQrM_..._720p.mp4`) and said the triple kick is its second combo. Run ef369e51, window 38.85–41.70 s, saved `video-triple-kick-v3` (selected). Kicks 2 and 3 are recognisable; kick 1 is still missing because the footage itself blurs the leg and both cached detectors miss it at 640 and 1280 px. This corrects the earlier claim that frame rate was the cause. No code changed in this step. Service running on 5174.
