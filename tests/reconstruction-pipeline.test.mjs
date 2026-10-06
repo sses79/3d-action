@@ -17,6 +17,7 @@ test('repeat requests reuse every stage and changed options rerun only downstrea
  assert.deepEqual([summary.observations.missingSubjectFrames,summary.observations.lowConfidenceBodyFrames,summary.estimate.bridgedFrames],[1,1,1]);assert.equal(summary.fitting.straightKneePrior,false);assert.deepEqual(summary.estimate.repairedLegObservations,[{side:'right',clipTime:.5}]);
  [calls,summary]=await ran(f,f.request);assert.equal(calls,'');assert.equal(summary.cachedStages,4);assert.ok(existsSync(summary.artifacts.action));
  assert.equal((await ran(f,{...f.request,phases:[{name:'A',end:1},{name:'B',end:2,kind:'fast'}]}))[0],'retarget');
+ assert.equal((await ran(f,{...f.request,airborne:true}))[0],'retarget');
  assert.equal((await ran(f,{...f.request,fit:'fitted'}))[0],'fit,retarget');
  assert.equal((await ran(f,{...f.request,straightKneePrior:true}))[0],'fit,retarget');
  [calls,summary]=await ran(f,{...f.request,fit:'none'});assert.equal(calls,'retarget');assert.deepEqual(summary.fitting,{mode:'none'});assert.equal(summary.stages.length,3);

@@ -378,3 +378,8 @@ User reported the knees passing through each other from about 0.53 to 0.74 s and
 ## 2026-10-06 — left-leg wobble in the ready hold
 
 User reported a left-leg wobble at 1.98–2.00 s. Cause: the planted-knee floor in `fit.py` was gated by 2D straightness and toggled for single frames near its threshold. It now follows the observed 2D angle below 160° with no gate; see `docs/RECONSTRUCT_MOTION.md`. Saved `video-side-kick-v5` r1 (left knee jerk at 1.97 s 5.4 → 0.8 cm/frame² on the rig) and selected it at 1.97 s. 85 Node tests pass. Service running on 5174.
+
+
+## 2026-10-06 — second clip: flying side kick
+
+User supplied `~/Desktop/Screen Recording 2026-10-06 at 12.06.46.mov` and said only one take of the repeated jump kick is needed. Used 33.85–36.0 s. Added `airborne` to `reconstruct_motion` (ankle-height-based root lift in `retarget.ts`, `lowestAnkleImageY` emitted by `lift.py`); see `docs/RECONSTRUCT_MOTION.md`. Saved `video-flying-side-kick` r1 with five phases and selected it. Depth direction of the kicking leg is unresolved. 86 Node tests pass. Service running on 5174. The new video and frames derived from it are not in the repository.

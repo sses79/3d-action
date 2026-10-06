@@ -26,7 +26,7 @@ npm run build:editor     # editor/app.js
 npm run build:authoring  # authoring/core.js (required after editing core.ts or runtime/)
 npm run start:authoring  # service on 127.0.0.1:5174
 python3 serve_demo.py --host 127.0.0.1 --port 5173   # public demo server
-node --test tests/*.test.mjs   # 85 tests, ~17 s, uses temp state dirs
+node --test tests/*.test.mjs   # 86 tests, ~17 s, uses temp state dirs
 npm run test:vision && python3 tests/server.py && node tests/physics.mjs && node tests/fallback.mjs
 npx tsc --noEmit -p editor/tsconfig.json
 node authoring/cli.mjs tools   # operation schemas (service must be running)

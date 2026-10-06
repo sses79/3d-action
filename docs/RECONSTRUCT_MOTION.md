@@ -18,6 +18,7 @@ node authoring/cli.mjs call reconstruct_motion --args authoring/examples/reconst
 | `detector` | `yolo26s` | `yolo26s` or `yolo26n` 2D pose model |
 | `fit` | `stable` | `stable`, `fitted` or `none` (lift only) |
 | `straightKneePrior` | `false` | Side-view assumption: a confidently straight 2D knee is treated as straight in 3D. Leave off for other camera angles |
+| `airborne` | `false` | Let the character leave the floor, using the lowest ankle's height in the image. For jumps filmed with a level camera at roughly constant distance |
 | `phases` | one phase | `[{name, end, kind?}]`, ends in clip seconds; the last must equal the window length |
 | `actionId`, `name` | `video-reconstruction-draft` | Identity of the baked draft |
 | `commit`, `expectedRevision` | `false` | Save the draft in Studio (revision 0 for a new action) and add a motion-quality check |
@@ -88,6 +89,14 @@ Result, saved as `video-side-kick-v4`: minimum leg-to-leg distance on the rig is
 In `video-side-kick-v4` the left knee twitched at about 1.97 s while the pose should be still. The observations there are steady (knee x 0.284, 0.285, 0.288), but the fitted knee jumped 0.286 → 0.273 → 0.288 and its angle 148° → 155° → 147°. The planted-knee floor was weighted by how straight the knee looks in 2D, with a ramp between 154° and 172°. In the final wide stance the knee sits right at that threshold, so the floor switched on for single frames.
 
 The floor is now always active on a planted leg and follows the observed 2D angle when that is below 160°, so there is no switch. Result, saved as `video-side-kick-v5`: the left knee holds 152–155° through the hold and eases to 160°; on the rig its frame-to-frame jerk at 1.97 s drops from 5.4 to 0.8 cm per frame², and the maximum over the ready hold from 5.4 to 1.6. Leg clearance (11.3 cm) and the kick are unchanged. The fitted knee now sits about 0.014 normalized units inside the observed position throughout the hold, a steady offset rather than a wobble. Projection error is 0.0076.
+
+## Second clip: flying side kick (6 October 2026)
+
+Source: a 42 s screen recording with several repeats of the same jump kick, slow-motion replays and an inset of another performer. One real-time take was used, 33.85–36.0 s (2.15 s): run-in, plant and chamber, takeoff, kick. The take ends in the air; there is no landing in the recording. Detection was clean: one person, 3 weak frames at 0.80–0.92 s, no merged-leg repairs, four reach extensions.
+
+The clip needed one new capability. Retargeting pinned the lowest foot to the floor in every frame, so a jump was impossible. With `airborne: true` the root is raised by how far the lowest ankle sits above the lowest line it reaches in the clip, fading in between 20 and 40 cm so that rising onto the toes does not count as leaving the floor. A first attempt based on pelvis height lifted the character from 0.67 s while the foot was still planted; the ankle-based rule takes off at about 1.3 s, matching the video, and peaks at 1.14 m of foot clearance (the image gives about 1.1 m).
+
+Saved as `video-flying-side-kick`. Compared with the video on a 12-frame sheet, the run-in, chamber, takeoff, tucked leg and arms follow the performer. Open points: the kicking leg appears about a third shorter in the image than a standing leg, which the fit reads as roughly 45° away from the camera; one view cannot say whether that is real, exaggerated, or toward the camera instead. Purple effects are composited over the legs around takeoff. Heights assume a level camera and constant subject distance, and root travel is still image-X only.
 
 ## Limits
 
