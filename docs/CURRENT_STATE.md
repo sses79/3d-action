@@ -81,7 +81,7 @@ Back up the index, its `.blobs/` folder and the three sidecar files together, pl
 
 ## API surface
 
-There are 39 shared operations in `authoring/core.ts`; discover schemas with `get_capabilities` or `node authoring/cli.mjs tools`.
+There are 41 shared operations in `authoring/core.ts`; discover schemas with `get_capabilities` or `node authoring/cli.mjs tools`.
 
 | Group | Operations |
 | --- | --- |
@@ -89,7 +89,7 @@ There are 39 shared operations in `authoring/core.ts`; discover schemas with `ge
 | Movement library | `sync_movement_library`, `adapt_movement`, `list_movements`, `get_movement`, `register_movement`, `build_movement`, `archive_entry`, `revise_kick` |
 | Composition | `compose_action`, `build_action_spec`, `revise_action_recipe` |
 | Selection / measurement | `inspect_movement_library`, `profile_movement_library`, `find_movement_connections`, `review_movement_profile`, `find_common_motion`, `inspect_motion_quality` |
-| Video reconstruction | `reconstruct_motion`, `link_video_source` ([details](RECONSTRUCT_MOTION.md)) |
+| Video reconstruction | `reconstruct_motion`, `link_video_source`, `inspect_video`, `compare_video_action` ([details](RECONSTRUCT_MOTION.md)) |
 | Review storage | `get_contract_reviews`, `review_movement_contacts`, `review_connection_policy` |
 | Run tracking | `begin_action_run`, `append_action_run_event`, `finish_action_run`, `list_action_runs`, `get_action_run` |
 

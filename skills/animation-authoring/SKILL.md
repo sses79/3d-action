@@ -59,4 +59,4 @@ New typed builds map supported source intervals into receipts with source-only r
 
 ## Video reference
 
-`reconstruct_motion` estimates a draft action from a 0.5–8 second window of a local video; repeats and fit/phase changes reuse cached stages. Read [RECONSTRUCT_MOTION.md](/Users/tim/Yun/codex-3d/docs/RECONSTRUCT_MOTION.md) before using it. Enable `straightKneePrior` only for a side view. Treat the result as an unreviewed estimate: check the returned weak-observation times and quality windows against the video, and do not register it as a movement without review.
+For a video of a person, use the `video-to-action` skill. `reconstruct_motion` estimates a draft action from a 0.5–8 second window of a local video; repeats and fit/phase changes reuse cached stages. Read [RECONSTRUCT_MOTION.md](/Users/tim/Yun/codex-3d/docs/RECONSTRUCT_MOTION.md) before using it. Enable `straightKneePrior` only for a side view. Treat the result as an unreviewed estimate: check the returned weak-observation times and quality windows against the video, and do not register it as a movement without review.

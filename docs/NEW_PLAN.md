@@ -30,7 +30,9 @@ One CLI reconstruct operation orchestrates deterministic stages; MCP calls the s
 
 Deliverable: repeat the same clip without redundant inference and produce a compact summary for the LLM.
 
-## Phase5 — LLM interpretation and revision
+## Phase5 — LLM interpretation and revision (first version delivered)
+
+Delivered 6 October 2026: `skills/video-to-action/SKILL.md`, `inspect_video`, `compare_video_action` and bounded `corrections` on `reconstruct_motion`; see [RECONSTRUCT_MOTION.md](RECONSTRUCT_MOTION.md). Trialled on a second take of the flying-kick recording with tools only. Still to prove on a new performer, camera angle and movement type.
 
 Skills let the LLM select person/window, label intent/phases, choose supported sources or reconstructed motion, and request bounded corrections. The tools perform numerical reconstruction/baking. Review only affected windows after a bounded change, followed by full-motion travel/recovery checks.
 

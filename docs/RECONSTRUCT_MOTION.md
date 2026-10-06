@@ -19,6 +19,7 @@ node authoring/cli.mjs call reconstruct_motion --args authoring/examples/reconst
 | `fit` | `stable` | `stable`, `fitted` or `none` (lift only) |
 | `straightKneePrior` | `false` | Side-view assumption: a confidently straight 2D knee is treated as straight in 3D. Leave off for other camera angles |
 | `airborne` | `false` | Let the character leave the floor, using the lowest ankle's height in the image. For jumps filmed with a level camera at roughly constant distance |
+| `corrections` | none | Up to 8 bounded corrections: `smooth` (strength 1–5) or `hold` on one body part in one clip-time window |
 | `phases` | one phase | `[{name, end, kind?}]`, ends in clip seconds; the last must equal the window length |
 | `actionId`, `name` | `video-reconstruction-draft` | Identity of the baked draft |
 | `commit`, `expectedRevision` | `false` | Save the draft in Studio (revision 0 for a new action) and add a motion-quality check |
@@ -131,6 +132,22 @@ In `video-flying-side-kick-v2` the upper body turned to the left after the leg s
 - **Head.** The head bone was not driven at all, so it faced wherever the chest did. The lifted head joints cannot fix that: the head-top input is extrapolated through the nose, so a turned face reads as a head lying on its side (66–68° from vertical at the kick). `lift.py` now emits `faceDirection` from the nose relative to the visible ear(s), and retargeting keeps the head upright between trunk and vertical and turns it that way, at most 80° from the trunk and only when the face points are confident. In both clips the face reads as a left profile throughout, toward the kick.
 
 Costs: projection error rises (flying kick 0.0078 → 0.0110, karate 0.0075 → 0.0089) because the trunk no longer bends its depth to fit the image. Kick-leg angles, leg clearance (10.3 cm minimum on the karate clip) and the steady ready hold are unchanged. Saved as `video-flying-side-kick-v3` and `video-side-kick-v7`; earlier versions untouched. The head rule assumes the rest pose faces straight ahead and uses a fixed nose-to-ear size (8.5% of body height); it has only been seen on profile views.
+
+## Phase 5: skill, review sheets and bounded corrections (6 October 2026)
+
+The LLM-facing workflow is `skills/video-to-action/SKILL.md`: look at the video, choose the window and options, label phases, reconstruct, compare with the source, correct within bounds, report. Three additions support it.
+
+- **`inspect_video`** writes a labelled contact sheet of a video or a window of it, so the window and phase times are read off frames instead of guessed.
+- **`compare_video_action`** writes a sheet with video frames above the character from the front and side at the same clip times, for an action with a linked source. The capture camera for these sheets now stands further back so a jump stays in frame.
+- **`corrections`** on `reconstruct_motion` run as their own cached stage between fit and retarget. `smooth` averages a body part's joint positions inside a window with the window's end frames fixed; `hold` keeps the part in its pose from the window start and eases back over the last three frames. Parts: `left-leg`, `right-leg`, `legs`, `left-arm`, `right-arm`, `arms`, `head`.
+
+Trial, following the skill with tools only, on a different take of the flying-kick recording (22.75–26.05 s, includes the landing):
+
+- The first attempt was wrong because the contact sheet's timestamps were off by up to about 0.25 s: the recording has a variable frame rate and the sheet sought by time. Sheets now match frames to their real timestamps, as the reconstruction does. The mistimed action was archived.
+- The second attempt, `video-flying-kick-landing-v2`, matches the video on a 12-frame pass over the whole action and a 12-frame pass over kick and landing: run-in, chamber, takeoff, level kick, descent, one-leg landing, recovery. 24 s uncached. Peak lift 1.15 m. Three velocity windows are flagged at phase boundaries (0.78, 1.88, 2.98 s).
+- A `smooth` correction on the kick leg over 2.0–2.7 s reran in 0.08 s and changed only the right thigh and shin tracks, only between 2.03 and 2.67 s (`-v3`).
+
+No joint angle was edited by hand. What the trial does not show: a different performer, camera angle or movement type; whether `hold` is useful in practice (only unit-tested); and the user's own judgement of the motion in playback.
 
 ## Limits
 

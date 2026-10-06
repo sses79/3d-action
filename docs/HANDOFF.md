@@ -398,3 +398,8 @@ User asked for the flying kick leg to be horizontal like the clip and for a bett
 ## 2026-10-06 — trunk yaw and head direction
 
 User reported the upper body turning left after 1.74 s in the flying kick, where the clip holds a side-on trunk with the head facing the kick. Fit now holds trunk depth to the smoothed lift and uses a stronger depth prior; `lift.py` emits `faceDirection`; `retarget.ts` drives the Head bone from it. Details in `docs/RECONSTRUCT_MOTION.md`. Saved `video-flying-side-kick-v3` r1 and `video-side-kick-v7` r1, both auto-linked to their videos. 86 Node tests pass. Service running on 5174.
+
+
+## 2026-10-06 — Phase 5 first version
+
+Added `skills/video-to-action/SKILL.md`, `inspect_video`, `compare_video_action` (41 operations), `authoring/reconstruction/sheets.py`, and bounded `corrections` (a cached `correct` stage in `pipeline.mjs`). The capture camera for follow-root renders stands back 8 m at 1.4 m height so jumps stay in frame. Trial run 85993fdf on take 22.75–26.05 s of the flying-kick recording: see `docs/RECONSTRUCT_MOTION.md`. Found and fixed variable-frame-rate timestamp errors in the contact sheet. Saved `video-flying-kick-landing-v2` (selected) and `-v3` (correction demo); archived the mistimed `video-flying-kick-landing`. Review sheets are written to `.authoring/review-sheets/` (untracked). `compare_video_action` depends on Playwright from the Codex runtime folder and local Chrome, as `capture-draft.mjs` already did. 87 Node tests pass. Service running on 5174.

@@ -4,8 +4,8 @@ Three browser demos; active work is **Animation Studio** (LLM-driven movement li
 
 ## Read first
 
-- `docs/CURRENT_STATE.md` — current architecture, data ownership, the 37 service operations, limits.
-- `docs/NEW_PLAN.md` — active plan (video → reusable 3D actions). Phases 1–4 delivered (`reconstruct_motion`, see `docs/RECONSTRUCT_MOTION.md`); Phase 5 (skills for LLM interpretation and bounded revision) is next.
+- `docs/CURRENT_STATE.md` — current architecture, data ownership, the service operations, limits.
+- `docs/NEW_PLAN.md` — active plan (video → reusable 3D actions). Phases 1–5 delivered (`reconstruct_motion`, review sheets, bounded corrections and the `video-to-action` skill; see `docs/RECONSTRUCT_MOTION.md`). Next: prove it on new clips, then Phase 6 (register an accepted video-derived movement).
 - `docs/HANDOFF.md` — append-only session log (long, dense). Read the last few sections, not the whole file. Add a dated section after substantial work.
 - Other `docs/` plans and studies are historical unless `CURRENT_STATE.md` points at them.
 
@@ -26,7 +26,7 @@ npm run build:editor     # editor/app.js
 npm run build:authoring  # authoring/core.js (required after editing core.ts or runtime/)
 npm run start:authoring  # service on 127.0.0.1:5174
 python3 serve_demo.py --host 127.0.0.1 --port 5173   # public demo server
-node --test tests/*.test.mjs   # 86 tests, ~17 s, uses temp state dirs
+node --test tests/*.test.mjs   # 87 tests, ~17 s, uses temp state dirs
 npm run test:vision && python3 tests/server.py && node tests/physics.mjs && node tests/fallback.mjs
 npx tsc --noEmit -p editor/tsconfig.json
 node authoring/cli.mjs tools   # operation schemas (service must be running)
