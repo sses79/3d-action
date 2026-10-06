@@ -123,6 +123,15 @@ Result, `video-flying-side-kick-v2`: depth tilt at the kick 13–17° (was 42–
 
 The same change moves the karate side kick: elevation 30.2° → 33.6° and tilt toward the camera 28° → 13°, with snap timing, leg clearance (11.3 cm) and the steady ready hold unchanged. Saved separately as `video-side-kick-v6`; v5 is untouched.
 
+## Trunk turning after the kick, and head direction (6 October 2026)
+
+In `video-flying-side-kick-v2` the upper body turned to the left after the leg straightened at about 1.74 s, while in the clip it holds its side-on position with the head facing the kick.
+
+- **Trunk.** Which way the trunk faces is set almost entirely by the depth of the hips and shoulders, which the image barely constrains. The lift held shoulder yaw at about +21° after 1.7 s; the fit swung it from +25° to −5°, and hip yaw differed from the lift by up to 53° frame to frame. The karate clip had the same fault (up to 22° and 33°). `fit.py` now keeps trunk joints (pelvis, hips, spine, neck, head points, shoulders) at the lift's depth, smoothed over about a fifth of a second, and the general depth prior is raised from 0.12 to 0.5. Shoulder yaw now stays within 8° of the lift (flying kick) and 1° (karate), and holds +20° to the end of the flying kick.
+- **Head.** The head bone was not driven at all, so it faced wherever the chest did. The lifted head joints cannot fix that: the head-top input is extrapolated through the nose, so a turned face reads as a head lying on its side (66–68° from vertical at the kick). `lift.py` now emits `faceDirection` from the nose relative to the visible ear(s), and retargeting keeps the head upright between trunk and vertical and turns it that way, at most 80° from the trunk and only when the face points are confident. In both clips the face reads as a left profile throughout, toward the kick.
+
+Costs: projection error rises (flying kick 0.0078 → 0.0110, karate 0.0075 → 0.0089) because the trunk no longer bends its depth to fit the image. Kick-leg angles, leg clearance (10.3 cm minimum on the karate clip) and the steady ready hold are unchanged. Saved as `video-flying-side-kick-v3` and `video-side-kick-v7`; earlier versions untouched. The head rule assumes the rest pose faces straight ahead and uses a fixed nose-to-ear size (8.5% of body height); it has only been seen on profile views.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

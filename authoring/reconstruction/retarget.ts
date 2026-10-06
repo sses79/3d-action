@@ -6,7 +6,7 @@ export function bodyFrame(left:T.Vector3,right:T.Vector3,up:T.Vector3){const x=l
 // the shoulders instead would remove any sideways lean whenever the shoulders stay level.
 export function torsoFrame(left:T.Vector3,right:T.Vector3,up:T.Vector3){const y=up.clone().normalize(),across=left.clone().sub(right),x=across.addScaledVector(y,-across.dot(y)).normalize();if(y.lengthSq()<.9||x.lengthSq()<.9)throw Error('Degenerate torso frame');const z=new T.Vector3().crossVectors(x,y).normalize();return new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(x,y,z));}
 export function localForDirection(parentWorld:T.Quaternion,restWorld:T.Quaternion,restDirection:T.Vector3,direction:T.Vector3){if(direction.lengthSq()<1e-10)throw Error('Degenerate limb direction');const world=new T.Quaternion().setFromUnitVectors(restDirection.clone().normalize(),direction.clone().normalize()).multiply(restWorld);return parentWorld.clone().invert().multiply(world).normalize();}
-export function retarget(model:T.Object3D,positions:number[][][],times:number[],imagePelvis:number[][],pixelScale:number,id='video-side-kick-draft',options?:{name:string,airborne?:boolean,lowestAnkleImageY?:number[],phases?:{name:string,end:number,kind?:'move'|'fast'|'hold'}[]}){
+export function retarget(model:T.Object3D,positions:number[][][],times:number[],imagePelvis:number[][],pixelScale:number,id='video-side-kick-draft',options?:{name:string,airborne?:boolean,lowestAnkleImageY?:number[],faceDirection?:number[][],phases?:{name:string,end:number,kind?:'move'|'fast'|'hold'}[]}){
  if(positions.length!==times.length||times.length<2||times.length>256||positions.some(f=>f.length!==17||f.some(p=>p.length!==3||p.some(x=>!Number.isFinite(x)))))throw Error('Invalid estimated motion');
  if(imagePelvis.length!==times.length||imagePelvis.some(p=>p.length!==2||p.some(x=>!Number.isFinite(x)))||!Number.isFinite(pixelScale)||pixelScale<=0)throw Error('Invalid image trajectory');
  const start=times[0],total=times.at(-1)!-start;if(total<=0||times.some((t,i)=>!Number.isFinite(t)||i>0&&t<=times[i-1]))throw Error('Invalid times');
@@ -25,6 +25,12 @@ export function retarget(model:T.Object3D,positions:number[][][],times:number[],
   for(let j=0;j<rest.length;j++){
    const r=rest[j],b=r.b,parent=b.parent!.getWorldQuaternion(new T.Quaternion());let q=r.q.clone();
    if(b.name==='pelvis'||['spine_01','spine_02','spine_03'].includes(b.name))q=parent.clone().invert().multiply((b.name==='pelvis'?hipFrame.clone().multiply(restFrame.clone().invert()):torso.clone().multiply(restTorso.clone().invert())).multiply(r.world)).normalize();
+   else if(options?.faceDirection&&b.name==='Head'&&options.faceDirection[i][2]>=.5){
+    // Head: kept upright between the trunk and vertical, and turned to where the face points in the image (nose against the
+    // visible ear). Turned at most 80 degrees from the trunk so a bad face estimate cannot twist the neck.
+    const [fx,fy]=options.faceDirection[i],sideways=Math.max(-1,Math.min(1,fx)),down=Math.max(-.6,Math.min(.6,fy-.25)),up=p[8].clone().sub(p[0]).normalize().add(new T.Vector3(0,1,0)).normalize(),face=new T.Vector3(sideways,-down,Math.sqrt(Math.max(0,1-sideways*sideways-down*down))),forward=face.addScaledVector(up,-face.dot(up));
+    if(forward.lengthSq()>1e-6){forward.normalize();const target=new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(new T.Vector3().crossVectors(up,forward).normalize(),up,forward)),turn=torso.angleTo(target),head=turn>1.4?torso.clone().slerp(target,1.4/turn):target;q=parent.clone().invert().multiply(head.multiply(restTorso.clone().invert()).multiply(r.world)).normalize();}
+   }
    else if(limbMap[b.name]){const [a,c]=limbMap[b.name];q=localForDirection(parent,r.world,r.direction!,p[c].clone().sub(p[a]));}
    b.quaternion.copy(q);b.updateWorldMatrix(false,true);
    const prior=tracks![j].keys.at(-1)?.value;if(prior&&q.dot(new T.Quaternion().fromArray(prior))<0)q.set(-q.x,-q.y,-q.z,-q.w);tracks![j].keys.push({time:times[i]-start,value:q.toArray()});

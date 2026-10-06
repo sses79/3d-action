@@ -34,6 +34,13 @@ for h,k,f in [(1,2,3),(4,5,6)]:
  # becomes a large depth tilt, so there the length term is relaxed and the leg keeps the depth of the starting estimate.
  if knee_weight:
   for edge in ((h,k),(k,f)):slack[edges.index(edge)]=1-.98*(torch.clamp((-cos-.80)/.10,0,1)*raised)
+# Which way the trunk faces is set almost entirely by the depth of the hips and shoulders, which the image barely constrains.
+# Left free, the fit turned the trunk by up to 50 degrees from the lift, frame to frame; trunk depth now stays with the lift.
+trunk=[0,1,4,7,8,9,10,11,14]
+trunk_z=prior[:,trunk,2].copy()
+# Two passes of a five-sample filter (about a fifth of a second), edges held, so lift jitter does not reach the limbs.
+for _ in range(2):trunk_z=np.stack([np.convolve(np.pad(trunk_z[:,j],2,mode='edge'),np.array([1,4,6,4,1],np.float32)/16,mode='valid') for j in range(len(trunk))],1)
+trunk_target=torch.tensor(trunk_z.astype(np.float32))
 unit=lambda v:torch.nn.functional.normalize(v,dim=-1)
 # Legs are solid: points along one leg must stay at least their combined radii from points along the other. Where the legs
 # overlap in the image this can only be met in depth, and the starting estimate decides which leg is in front.
@@ -42,7 +49,7 @@ def leg_points(v,h,k,f):return [(v[:,h]+(v[:,k]-v[:,h])*u,r*hip_width) for u,r i
 def leg_gap(v):return torch.stack([torch.relu(ra+rb-torch.linalg.vector_norm(a-b+1e-9,dim=-1)) for a,ra in leg_points(v,1,2,3) for b,rb in leg_points(v,4,5,6)])
 x=torch.tensor(prior,requires_grad=True);optim=torch.optim.Adam([x],lr=.025);a=time.perf_counter()
 for step in range(400):
- optim.zero_grad();projection=((x[:,:,:2]-target_t).square().sum(-1)*conf).mean();bone=torch.stack([((torch.linalg.vector_norm(x[:,b]-x[:,a],dim=-1)-lengths[i]).square()*slack[i]).mean() for i,(a,b) in enumerate(edges)]).mean();depth=(x[:,:,2]-prior_t[:,:,2]).square().mean();acc=(x[2:]-2*x[1:-1]+x[:-2]).square().mean();root=x[:,0].square().mean();collinear=torch.stack([((unit(x[:,h]-x[:,k])+unit(x[:,f]-x[:,k])).square().sum(-1)*raised*weight+4*torch.relu((unit(x[:,h]-x[:,k])*unit(x[:,f]-x[:,k])).sum(-1)-floor).square()*(1-raised)*seen).mean() for h,k,f,weight,raised,seen,floor in straight]).mean();depth_acc=(x[2:,:,2]-2*x[1:-1,:,2]+x[:-2,:,2]).square().mean();overlap=leg_gap(x).square().mean();loss=(6*depth_acc if args.stable else 0)+400*overlap+knee_weight*collinear+12*projection+8*bone+.12*depth+(.8 if args.stable else .015)*acc+30*root;loss.backward();optim.step()
+ optim.zero_grad();projection=((x[:,:,:2]-target_t).square().sum(-1)*conf).mean();bone=torch.stack([((torch.linalg.vector_norm(x[:,b]-x[:,a],dim=-1)-lengths[i]).square()*slack[i]).mean() for i,(a,b) in enumerate(edges)]).mean();depth=(x[:,:,2]-prior_t[:,:,2]).square().mean();trunk_depth=(x[:,trunk,2]-trunk_target).square().mean();acc=(x[2:]-2*x[1:-1]+x[:-2]).square().mean();root=x[:,0].square().mean();collinear=torch.stack([((unit(x[:,h]-x[:,k])+unit(x[:,f]-x[:,k])).square().sum(-1)*raised*weight+4*torch.relu((unit(x[:,h]-x[:,k])*unit(x[:,f]-x[:,k])).sum(-1)-floor).square()*(1-raised)*seen).mean() for h,k,f,weight,raised,seen,floor in straight]).mean();depth_acc=(x[2:,:,2]-2*x[1:-1,:,2]+x[:-2,:,2]).square().mean();overlap=leg_gap(x).square().mean();loss=(6*depth_acc if args.stable else 0)+400*overlap+knee_weight*collinear+12*projection+8*bone+.5*depth+20*trunk_depth+(.8 if args.stable else .015)*acc+30*root;loss.backward();optim.step()
 elapsed=time.perf_counter()-a;fitted=x.detach().numpy();fitted-=fitted[:,0:1]
 def angles(v):
  a=v[:,1]-v[:,2];b=v[:,3]-v[:,2];return np.degrees(np.arccos(np.clip((a*b).sum(-1)/np.linalg.norm(a,axis=-1)/np.linalg.norm(b,axis=-1),-1,1)))
