@@ -1,0 +1,248 @@
+{
+  "source": "/Users/tim/Desktop/Screen Recording 2026-10-05 at 17.23.25.mov",
+  "sha256": "bbbf1cc6327952be2c75a8b75256e83f0865e8933840bffc0407f4420e0de6c2",
+  "decodedFrames": 744,
+  "timestamps": "ffprobe best_effort_timestamp_time matched by decoded frame index",
+  "frames": [
+    {
+      "frameIndex": 87,
+      "time": 3.5,
+      "file": "frames/frame-0087.jpg"
+    },
+    {
+      "frameIndex": 101,
+      "time": 3.75,
+      "file": "frames/frame-0101.jpg"
+    },
+    {
+      "frameIndex": 111,
+      "time": 3.983333,
+      "file": "frames/frame-0111.jpg"
+    },
+    {
+      "frameIndex": 119,
+      "time": 4.25,
+      "file": "frames/frame-0119.jpg"
+    },
+    {
+      "frameIndex": 126,
+      "time": 4.483333,
+      "file": "frames/frame-0126.jpg"
+    },
+    {
+      "frameIndex": 134,
+      "time": 4.75,
+      "file": "frames/frame-0134.jpg"
+    },
+    {
+      "frameIndex": 141,
+      "time": 4.983333,
+      "file": "frames/frame-0141.jpg"
+    },
+    {
+      "frameIndex": 149,
+      "time": 5.25,
+      "file": "frames/frame-0149.jpg"
+    },
+    {
+      "frameIndex": 156,
+      "time": 5.483333,
+      "file": "frames/frame-0156.jpg"
+    },
+    {
+      "frameIndex": 164,
+      "time": 5.75,
+      "file": "frames/frame-0164.jpg"
+    },
+    {
+      "frameIndex": 171,
+      "time": 5.983333,
+      "file": "frames/frame-0171.jpg"
+    },
+    {
+      "frameIndex": 179,
+      "time": 6.25,
+      "file": "frames/frame-0179.jpg"
+    },
+    {
+      "frameIndex": 186,
+      "time": 6.483333,
+      "file": "frames/frame-0186.jpg"
+    },
+    {
+      "frameIndex": 194,
+      "time": 6.75,
+      "file": "frames/frame-0194.jpg"
+    },
+    {
+      "frameIndex": 201,
+      "time": 6.983333,
+      "file": "frames/frame-0201.jpg"
+    },
+    {
+      "frameIndex": 209,
+      "time": 7.25,
+      "file": "frames/frame-0209.jpg"
+    },
+    {
+      "frameIndex": 216,
+      "time": 7.483333,
+      "file": "frames/frame-0216.jpg"
+    },
+    {
+      "frameIndex": 224,
+      "time": 7.75,
+      "file": "frames/frame-0224.jpg"
+    },
+    {
+      "frameIndex": 231,
+      "time": 7.983333,
+      "file": "frames/frame-0231.jpg"
+    },
+    {
+      "frameIndex": 239,
+      "time": 8.25,
+      "file": "frames/frame-0239.jpg"
+    },
+    {
+      "frameIndex": 246,
+      "time": 8.483333,
+      "file": "frames/frame-0246.jpg"
+    },
+    {
+      "frameIndex": 254,
+      "time": 8.75,
+      "file": "frames/frame-0254.jpg"
+    },
+    {
+      "frameIndex": 261,
+      "time": 8.983333,
+      "file": "frames/frame-0261.jpg"
+    },
+    {
+      "frameIndex": 269,
+      "time": 9.25,
+      "file": "frames/frame-0269.jpg"
+    },
+    {
+      "frameIndex": 276,
+      "time": 9.483333,
+      "file": "frames/frame-0276.jpg"
+    },
+    {
+      "frameIndex": 306,
+      "time": 10.483333,
+      "file": "frames/frame-0306.jpg"
+    },
+    {
+      "frameIndex": 314,
+      "time": 10.75,
+      "file": "frames/frame-0314.jpg"
+    },
+    {
+      "frameIndex": 321,
+      "time": 10.983333,
+      "file": "frames/frame-0321.jpg"
+    },
+    {
+      "frameIndex": 329,
+      "time": 11.25,
+      "file": "frames/frame-0329.jpg"
+    },
+    {
+      "frameIndex": 336,
+      "time": 11.483333,
+      "file": "frames/frame-0336.jpg"
+    },
+    {
+      "frameIndex": 344,
+      "time": 11.75,
+      "file": "frames/frame-0344.jpg"
+    },
+    {
+      "frameIndex": 351,
+      "time": 11.983333,
+      "file": "frames/frame-0351.jpg"
+    },
+    {
+      "frameIndex": 359,
+      "time": 12.25,
+      "file": "frames/frame-0359.jpg"
+    },
+    {
+      "frameIndex": 364,
+      "time": 12.483333,
+      "file": "frames/frame-0364.jpg"
+    },
+    {
+      "frameIndex": 372,
+      "time": 12.75,
+      "file": "frames/frame-0372.jpg"
+    },
+    {
+      "frameIndex": 379,
+      "time": 12.983333,
+      "file": "frames/frame-0379.jpg"
+    },
+    {
+      "frameIndex": 387,
+      "time": 13.25,
+      "file": "frames/frame-0387.jpg"
+    },
+    {
+      "frameIndex": 393,
+      "time": 13.483333,
+      "file": "frames/frame-0393.jpg"
+    },
+    {
+      "frameIndex": 401,
+      "time": 13.75,
+      "file": "frames/frame-0401.jpg"
+    },
+    {
+      "frameIndex": 408,
+      "time": 13.983333,
+      "file": "frames/frame-0408.jpg"
+    },
+    {
+      "frameIndex": 416,
+      "time": 14.25,
+      "file": "frames/frame-0416.jpg"
+    },
+    {
+      "frameIndex": 423,
+      "time": 14.483333,
+      "file": "frames/frame-0423.jpg"
+    },
+    {
+      "frameIndex": 431,
+      "time": 14.75,
+      "file": "frames/frame-0431.jpg"
+    },
+    {
+      "frameIndex": 438,
+      "time": 14.983333,
+      "file": "frames/frame-0438.jpg"
+    },
+    {
+      "frameIndex": 446,
+      "time": 15.25,
+      "file": "frames/frame-0446.jpg"
+    },
+    {
+      "frameIndex": 453,
+      "time": 15.483333,
+      "file": "frames/frame-0453.jpg"
+    },
+    {
+      "frameIndex": 461,
+      "time": 15.75,
+      "file": "frames/frame-0461.jpg"
+    },
+    {
+      "frameIndex": 468,
+      "time": 15.983333,
+      "file": "frames/frame-0468.jpg"
+    }
+  ]
+}

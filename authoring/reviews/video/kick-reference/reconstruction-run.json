@@ -1,0 +1,90 @@
+{
+  "id": "4b6cc564-ca47-431f-b966-19e2eb054607",
+  "prompt": "Benchmark 3D estimation and retargeting on the trimmed side kick, aiming for a recognizable first draft. Create docs/NEW_PLAN.md with phased milestones.",
+  "actionId": "video-side-kick-draft",
+  "status": "completed",
+  "startedAt": "2026-10-05T17:20:27.361Z",
+  "finishedAt": "2026-10-05T17:48:07.178Z",
+  "elapsedMs": 1659817,
+  "actionRevision": 1,
+  "eventCount": 6,
+  "toolCalls": 3,
+  "toolElapsedMs": 3952.97,
+  "events": [
+    {
+      "index": 1,
+      "timestamp": "2026-10-05T17:20:27.362Z",
+      "relativeMs": 1,
+      "source": "llm",
+      "name": "prompt",
+      "phase": "prompt",
+      "status": "completed",
+      "note": "Benchmark 3D estimation and retargeting on the trimmed side kick, aiming for a recognizable first draft. Create docs/NEW_PLAN.md with phased milestones."
+    },
+    {
+      "index": 2,
+      "timestamp": "2026-10-05T17:43:46.450Z",
+      "relativeMs": 1399089,
+      "source": "llm",
+      "name": "visual-review",
+      "phase": "visual-review",
+      "status": "completed",
+      "note": "Three detector trials retained. MotionBERT Lite small-input draft rendered at 9 times from front and side. Step/chamber/return visible but lateral extension fails: predicted right-knee angle at 12.85s ~62 degrees. No naturalness/contact approval."
+    },
+    {
+      "index": 3,
+      "timestamp": "2026-10-05T17:43:46.478Z",
+      "relativeMs": 1399117,
+      "source": "mcp",
+      "transport": "cli",
+      "name": "create_action",
+      "phase": "tool",
+      "status": "completed",
+      "startedAt": "2026-10-05T17:43:46.478Z",
+      "target": "video-side-kick-draft",
+      "finishedAt": "2026-10-05T17:43:50.325Z",
+      "elapsedMs": 3847.31,
+      "revision": 1
+    },
+    {
+      "index": 4,
+      "timestamp": "2026-10-05T17:43:50.397Z",
+      "relativeMs": 1403036,
+      "source": "mcp",
+      "transport": "cli",
+      "name": "inspect_motion_quality",
+      "phase": "tool",
+      "status": "failed",
+      "startedAt": "2026-10-05T17:43:50.397Z",
+      "target": "video-side-kick-draft",
+      "finishedAt": "2026-10-05T17:43:50.403Z",
+      "elapsedMs": 6.16,
+      "error": "Invalid tool arguments"
+    },
+    {
+      "index": 5,
+      "timestamp": "2026-10-05T17:45:04.392Z",
+      "relativeMs": 1477031,
+      "source": "mcp",
+      "transport": "cli",
+      "name": "inspect_motion_quality",
+      "phase": "tool",
+      "status": "completed",
+      "startedAt": "2026-10-05T17:45:04.392Z",
+      "target": "video-side-kick-draft",
+      "finishedAt": "2026-10-05T17:45:04.491Z",
+      "elapsedMs": 99.5,
+      "revision": 1
+    },
+    {
+      "index": 6,
+      "timestamp": "2026-10-05T17:48:07.176Z",
+      "relativeMs": 1659815,
+      "source": "llm",
+      "name": "finish",
+      "phase": "finish",
+      "status": "completed",
+      "note": "Benchmark measurements, three detector trials, 3D IR, retargeted draft and evidence saved. Quality target failed: lateral extension remains bent. Three adapter tests pass; no approved movement registered. NEW_PLAN and benchmark report document remaining quality gate."
+    }
+  ]
+}

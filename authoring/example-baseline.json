@@ -1,0 +1,193 @@
+{
+  "action": {
+    "version": 2,
+    "rig": "quaternius-ual1",
+    "id": "llm-hammer-study",
+    "name": "LLM Hammer Study",
+    "phases": [
+      {
+        "id": "ready",
+        "name": "Ready",
+        "intent": "Start from the character’s own guard",
+        "duration": 0.16,
+        "kind": "neutral",
+        "clip": "Idle_Loop",
+        "from": 0,
+        "to": 0.05
+      },
+      {
+        "id": "coil",
+        "name": "Coil",
+        "intent": "Hold the anticipation",
+        "duration": 0.55,
+        "kind": "hold",
+        "clip": "Jump_Start",
+        "from": 0,
+        "to": 0.45
+      },
+      {
+        "id": "launch",
+        "name": "Launch",
+        "intent": "Release in a handful of frames",
+        "duration": 0.1,
+        "kind": "fast",
+        "clip": "Jump_Start",
+        "from": 0.45,
+        "to": 0.8
+      },
+      {
+        "id": "rise",
+        "name": "Rise",
+        "intent": "Ease out of the burst",
+        "duration": 0.28,
+        "kind": "move",
+        "clip": "Jump_Start",
+        "from": 0.8,
+        "to": 1
+      },
+      {
+        "id": "hang",
+        "name": "Hang",
+        "intent": "Hang at the apex",
+        "duration": 0.34,
+        "kind": "hold",
+        "clip": "Jump_Loop",
+        "from": 0.2,
+        "to": 0.28
+      },
+      {
+        "id": "hammer",
+        "name": "Hammer",
+        "intent": "Drive the arms down in a fast arc",
+        "duration": 0.13,
+        "kind": "fast",
+        "clip": "Jump_Loop",
+        "from": 0.28,
+        "to": 0.55
+      },
+      {
+        "id": "impact",
+        "name": "Impact",
+        "intent": "Compress on contact; the ground answers",
+        "duration": 0.09,
+        "kind": "fast",
+        "clip": "Jump_Land",
+        "from": 0,
+        "to": 0.3
+      },
+      {
+        "id": "follow",
+        "name": "Follow",
+        "intent": "Momentum keeps going",
+        "duration": 0.36,
+        "kind": "move",
+        "clip": "Jump_Land",
+        "from": 0.3,
+        "to": 0.5
+      },
+      {
+        "id": "settle",
+        "name": "Settle",
+        "intent": "Land in a pose and hold it",
+        "duration": 0.48,
+        "kind": "hold",
+        "clip": "Jump_Land",
+        "from": 0.5,
+        "to": 0.52
+      },
+      {
+        "id": "recover",
+        "name": "Recover",
+        "intent": "Overlap on the way out",
+        "duration": 0.45,
+        "kind": "move",
+        "clip": "Jump_Land",
+        "from": 0.52,
+        "to": 1
+      },
+      {
+        "id": "guard",
+        "name": "Guard",
+        "intent": "Return to the ready stance",
+        "duration": 0.3,
+        "kind": "neutral",
+        "clip": "Idle_Loop",
+        "from": 0,
+        "to": 0.12
+      }
+    ],
+    "tracks": [
+      {
+        "target": "$root",
+        "property": "position",
+        "mode": "absolute",
+        "interpolation": "smooth",
+        "keys": [
+          {
+            "time": 0,
+            "value": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "time": 0.71,
+            "value": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "time": 0.81,
+            "value": [
+              0,
+              0.4,
+              0.15
+            ]
+          },
+          {
+            "time": 1.09,
+            "value": [
+              0,
+              1.5,
+              0.4
+            ]
+          },
+          {
+            "time": 1.43,
+            "value": [
+              0,
+              1.5,
+              0.65
+            ]
+          },
+          {
+            "time": 1.56,
+            "value": [
+              0,
+              0,
+              0.9
+            ]
+          },
+          {
+            "time": 3.24,
+            "value": [
+              0,
+              0,
+              0.9
+            ]
+          }
+        ]
+      }
+    ],
+    "cues": [
+      {
+        "type": "impact",
+        "time": 1.56,
+        "strength": 1.1
+      }
+    ]
+  }
+}

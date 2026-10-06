@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#eeeae2"><title>SECOND / Watch Lab</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><a class="wordmark" href="./">SECOND<span> / </span>WATCH LAB</a><span class="edition">OBJECT STUDY — 002</span><a class="previous" href="/">Citrus Jelly ↗</a></header>
+<main>
+<section class="intro"><div class="eyebrow">A LITTLE TIME, WELL SPENT.</div><h1>Old soul.<br> Live seconds.</h1><p>A familiar steel silhouette.<br> A face made yours.</p><div class="intro-bottom"><span class="dot"></span><span id="renderer">Preparing the studio</span></div></section>
+<section class="stage" aria-label="Interactive 3D wristwatch"><canvas id="scene" aria-label="Drag to rotate the watch. Tap its side buttons to use it."></canvas><div id="loading" role="status">Setting the time…</div><div class="view-tools"><button id="face-view" class="selected">Face</button><button id="full-view">Full watch</button><button id="turn-view" aria-pressed="false">Auto rotate</button></div><div class="stage-caption"><span>DRAG TO ROTATE · SCROLL TO ZOOM</span><span id="model-state">CC0 ORIGINAL / CUSTOM FACE</span></div></section>
+<aside>
+<div class="panel-heading"><span class="eyebrow">YOUR TIMEPIECE</span><span class="tag">LIVE</span></div>
+<h2>Make every<br> second yours.</h2>
+<label class="field-label" for="brand">Name on the face</label><div class="input-wrap"><input id="brand" value="SECOND" maxlength="14" autocomplete="off" spellcheck="false"><span>↵</span></div>
+<label class="field-label" for="inscription">Face inscription</label><div class="input-wrap"><input id="inscription" value="MAKE EVERY SECOND YOURS" maxlength="32" autocomplete="off" spellcheck="false"></div>
+<div class="field-label">Finish</div><div class="finishes"><button data-finish="steel" class="selected"><i class="steel"></i>Steel</button><button data-finish="gold"><i class="gold"></i>Gold</button><button data-finish="dark"><i class="dark"></i>Graphite</button></div>
+<div class="divider"></div><div class="readout"><span id="mode-label">LOCAL TIME</span><output id="time-output">--:--:--</output><span id="date-output">—</span></div>
+<div class="watch-buttons"><button data-action="light"><span>01</span>Light</button><button data-action="mode"><span>02</span>Mode</button><button data-action="adjust"><span>03</span>Adjust</button></div>
+<p id="hint" class="hint" aria-live="polite">Tap a button on the watch or use these controls.</p>
+<div class="secondary-controls"><button id="done" hidden>Done · save time</button><button id="sync">Sync to device</button><button id="format" aria-pressed="true">24-hour</button><button id="reset-timer" hidden>Reset stopwatch</button></div>
+<div class="panel-foot"><span>TIME · STOPWATCH · BACKLIGHT</span><span>↗</span></div>
+</aside>
+</main>
+<footer><span>BUILT TO BE EXPLORED.</span><span>Model by <a href="https://polyhaven.com/a/digital_wrist_watch" target="_blank" rel="noreferrer">Adrian C / Poly Haven</a> · CC0</span></footer>
+<script type="module" src="app.js"></script></body></html>

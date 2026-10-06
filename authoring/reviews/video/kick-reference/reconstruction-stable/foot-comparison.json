@@ -1,0 +1,34 @@
+{
+  "video-side-kick-fitted": {
+    "hypothesis": "Left foot planted during chamber/kick, not confirmed source contact",
+    "measured": {
+      "foot": "left",
+      "start": 1.05,
+      "end": 1.7,
+      "origin": "caller-contact-intent",
+      "status": "intent-not-confirmed",
+      "maxHorizontalDriftMeters": 0.27031545243359956,
+      "pathMeters": 1.6945290440283856,
+      "maxSpeedMetersPerSecond": 7.474172322446022,
+      "minHeightMeters": -0.017831837125758282,
+      "maxHeightMeters": 0.03500365284061094,
+      "sampleCount": 42
+    }
+  },
+  "video-side-kick-stable": {
+    "hypothesis": "Left foot planted during chamber/kick, not confirmed source contact",
+    "measured": {
+      "foot": "left",
+      "start": 1.05,
+      "end": 1.7,
+      "origin": "caller-contact-intent",
+      "status": "intent-not-confirmed",
+      "maxHorizontalDriftMeters": 0.34456374218766034,
+      "pathMeters": 0.9164575793536283,
+      "maxSpeedMetersPerSecond": 2.8002872706084574,
+      "minHeightMeters": 0.03382741039119315,
+      "maxHeightMeters": 0.03499999855333272,
+      "sampleCount": 42
+    }
+  }
+}

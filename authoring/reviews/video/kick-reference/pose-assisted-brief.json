@@ -1,0 +1,82 @@
+{
+  "status": "pose-assisted reviewed brief; frozen visual-only predecessor retained",
+  "sourceInterval": [
+    11.45,
+    13.75
+  ],
+  "action": "Single lateral snap kick, compact chamber, outward extension, recoil and return to wide ready stance",
+  "camera": "Fixed oblique/front gym view, mirrors behind performer; screen recording",
+  "mirrored": "unknown",
+  "limb": "YOLO labels raised leg right, consistent with visual expectation if unmirrored; not independent proof of anatomical side",
+  "phases": [
+    {
+      "name": "Ready",
+      "window": [
+        11.45,
+        11.7
+      ],
+      "observation": "Wide raised-hand stance"
+    },
+    {
+      "name": "Gather",
+      "window": [
+        11.7,
+        12.5
+      ],
+      "observation": "Gather/cross-step toward screen-left; stance narrows and body translates"
+    },
+    {
+      "name": "Chamber",
+      "window": [
+        12.5,
+        12.78
+      ],
+      "observation": "Kicking knee rises while remaining flexed; opposite leg stays down"
+    },
+    {
+      "name": "Lateral snap",
+      "window": [
+        12.78,
+        12.92
+      ],
+      "observation": "Lower leg extends laterally/up, clearest around12.85\u201312.883; torso leans away"
+    },
+    {
+      "name": "Recoil",
+      "window": [
+        12.92,
+        13.15
+      ],
+      "observation": "Knee re-flexes before lowering; detector angle artifact at13.017 rejected"
+    },
+    {
+      "name": "Return",
+      "window": [
+        13.15,
+        13.4
+      ],
+      "observation": "Foot descends, stance widens, torso returns upright"
+    },
+    {
+      "name": "Ready hold",
+      "window": [
+        13.4,
+        13.75
+      ],
+      "observation": "Wide stance and raised hands retained"
+    }
+  ],
+  "support": "Apparent single-foot support during chamber/extension/recoil; load, heel/toe pivot and pressure unknown",
+  "travel": "Gathering step and lateral reset visible; exact root path/meters unknown",
+  "unknowns": [
+    "Mirroring",
+    "Exact anatomical kicking side",
+    "Anatomical 3D knee/hip angles",
+    "Foot edge/toe orientation",
+    "True ground reaction/contact pressure",
+    "Original playback-speed alteration"
+  ],
+  "libraryGap": "Current coordinated move-kick is a right forward kick with arms-down stance, not this lateral snap kick or wide raised-hand stance. No side-kick source confirmed.",
+  "timingScope": "Refined event windows from dense original timestamps and overlays; gain cannot be attributed to YOLO alone because sampling density also changed",
+  "poseEvidence": "pose-report.json and pose-summary.json"
+}

@@ -1,0 +1,607 @@
+{
+  "schemaVersion": 1,
+  "movements": [
+    {
+      "id": "move-guard",
+      "clip": "Kick guard",
+      "duration": 0.5,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "kick",
+        "purpose": "Upright arms-down hold used as kick entry/exit; despite its name, this is not a defensive guard",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Mesh2Motion Kick_Breach · adapted CC0",
+        "notes": "Starting stance of the kick; suitable for kick entry/exit.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    },
+    {
+      "id": "move-kick",
+      "clip": "Forward kick",
+      "duration": 1.8333333730697634,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "kick",
+        "purpose": "Coordinated forward kick with chamber, extension and recovery to upright arms-down stance",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Mesh2Motion Kick_Breach · adapted CC0",
+        "notes": "Right-leg forward kick with left-ball contact correction.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    },
+    {
+      "id": "move-punch",
+      "clip": "Right cross",
+      "duration": 1,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "unarmed-melee",
+        "purpose": "Right cross from raised-arm guard with retraction to guard",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "44e9e822a7a8c4e2562fdc2d457b0146a6c47b7e10795822dd8a61c9dccd05c7",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Punch_Cross · CC0",
+        "notes": "Reviewed source: left toe approximately stationary through the cross, rear foot pivots/repositions. Phase labels split the original clip without changing its joint motion.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 2
+      }
+    },
+    {
+      "id": "move-walk",
+      "clip": "Walk cycle",
+      "duration": 1.3333333333333333,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "locomotion",
+        "purpose": "Walk cycle in place; controller supplies directional travel",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "135b90dad343a70a7e0052dbc7069429fe403c4e19173b592846d747588f8b06",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 · CC0",
+        "notes": "Complete source cycle, not yet a verified single step.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 3
+      }
+    },
+    {
+      "id": "move-step-forward",
+      "clip": "Advancing left step",
+      "duration": 0.6666666666666666,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "locomotion",
+        "purpose": "Advancing walk segment with 0.53 m forward root travel; internal velocity seam needs review",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "f45dcfed8d47dd6f07982b9295348e3e328deb07d0d5e2f8d41eab4296201835",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Walk_Loop · CC0 · cycle 0.6–1.0 then 0.0–0.1",
+        "notes": "Left advancing step. Root travels approximately 0.53 m; right toe horizontal drift is compensated during stride, left foot lands at the end. No collision/controller movement.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    },
+    {
+      "id": "move-hook-quick",
+      "clip": "Quick hook",
+      "duration": 0.324637682541557,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "unarmed-melee",
+        "purpose": "Shortened fast hook that ends in low follow-through; requires separate recovery",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "ab69374fba83adeb7ed6d21a1a937fe2cccbd54886f03dd22d3f5d61c231e6ea",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL2 Standard · Melee_Hook · CC0",
+        "notes": "Fixed-rig adaptation retaining target bone lengths. Original Melee_Hook; 62.1 Hz baked sampling. Props, collisions, root/controller integration and foot contacts are not automatically supplied. Adapted range 0.1–0.9, speed 1.15×; source move-ual2-melee-hook r1",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    },
+    {
+      "id": "move-escape-slide-start",
+      "clip": "Escape slide start",
+      "duration": 0.555555542310079,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "escape-slide",
+        "purpose": "Enter a low seated slide from running stride with forward root travel",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "caefb8356541ce6da1dac81f1022a79f888a625f3072999a0642661cdee4b4ad",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL2 Standard · Slide_Start · CC0",
+        "notes": "Fixed-rig adaptation retaining target bone lengths. Original Slide_Start; 60.0 Hz baked sampling. Props, collisions, root/controller integration and foot contacts are not automatically supplied. Adapted range 0–1, speed 1.5×; source move-ual2-slide-start r1 Escape travel authored along +Z; no joint rotations changed.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 2
+      }
+    },
+    {
+      "id": "move-escape-slide-loop",
+      "clip": "Escape slide loop",
+      "duration": 0.5,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "escape-slide",
+        "purpose": "Short slide sustain with forward root travel; body/hand support unverified",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "1b9d15d650ef3ee35b5019f3d465fdf8dbc6c1a1d1c7fdcf1fed5f22ddddcaf7",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL2 Standard · Slide_Loop · CC0",
+        "notes": "Fixed-rig adaptation retaining target bone lengths. Original Slide_Loop; 60.0 Hz baked sampling. Props, collisions, root/controller integration and foot contacts are not automatically supplied. Adapted range 0–0.35, speed 1.4×; source move-ual2-slide-loop r1 Escape travel authored along +Z; no joint rotations changed.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 2
+      }
+    },
+    {
+      "id": "move-escape-slide-exit",
+      "clip": "Escape slide exit",
+      "duration": 0.5882352941176471,
+      "roles": [
+        "recovery"
+      ],
+      "semantics": {
+        "family": "escape-slide",
+        "purpose": "Rise from slide into running stride with forward root travel; not standing finish",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "e2e9c04ec6723c433aa8ffb8dad6148344222af8e07f05c0863b2fa48d2a5838",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL2 Standard · Slide_Exit · CC0",
+        "notes": "Fixed-rig adaptation retaining target bone lengths. Original Slide_Exit; 60.0 Hz baked sampling. Props, collisions, root/controller integration and foot contacts are not automatically supplied. Adapted range 0–1, speed 0.85×; source move-ual2-slide-exit r1 Escape travel authored along +Z; no joint rotations changed.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 2
+      }
+    },
+    {
+      "id": "move-escape-slide-standing",
+      "clip": "Slide standing finish",
+      "duration": 0.35,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "escape-slide",
+        "purpose": "Stationary upright arms-down finish at retained world position",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "1b9aac3e632b9cdb1ef52507e219c1f8edf6e5ec0514852f94fd0b0cd28628c4",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Idle_Loop · CC0",
+        "notes": "Neutral standing source pose at +Z 1.9 m. Transition from UAL2 running exit; foot contacts require visual review.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 2
+      }
+    },
+    {
+      "id": "move-counter-ready",
+      "clip": "Counter ready",
+      "duration": 0.16,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "block-counter",
+        "purpose": "Stationary upright arms-down entry hold",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "212eeb816b048e755ee996871f2659fbcfce8b9423cd64f995a82f755a80fa13",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Idle_Loop · CC0",
+        "notes": "Neutral source stance; prepare to raise defensive guard.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    },
+    {
+      "id": "move-counter-guard",
+      "clip": "Defensive high guard",
+      "duration": 0.28,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "block-counter",
+        "purpose": "Hold raised-arm defensive stance; this segment holds rather than raises the arms",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "d1908790ac84ac34da9a5f9acd544ff39f969d4c77e079f127e79633d128a8c6",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Punch_Cross · CC0",
+        "notes": "Source boxing guard held near face. Defensive visual pose, not collision or hit blocking logic. Contact requires review.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    },
+    {
+      "id": "move-counter-right-cross",
+      "clip": "Quick right counter",
+      "duration": 0.6559999999999999,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "block-counter",
+        "purpose": "Quick right cross followed by retraction toward guard",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "48f475b3211f0c953e5bfd84b4df79a4942d847f13d3eba51e86a305a0888493",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Punch_Cross · CC0",
+        "notes": "Reviewed source: left toe approximately stationary through the cross, rear foot pivots/repositions. Phase labels split the original clip without changing its joint motion. Adapted range 0.18–1, speed 1.25×; source move-punch r2",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    },
+    {
+      "id": "move-counter-finish",
+      "clip": "Counter recovered guard",
+      "duration": 0.25,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "block-counter",
+        "purpose": "Hold recovered raised-arm guard",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "2e963d1980f14b763ccce626d6d128e56730fb0e7cbf1a8490b65a6696ccc222",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Punch_Cross · CC0",
+        "notes": "Source boxing guard held near face. Defensive visual pose, not collision or hit blocking logic. Contact requires review.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    },
+    {
+      "id": "move-knockback-standing",
+      "clip": "Heavy hit · backward stagger",
+      "duration": 0.65,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "standing-hit-recovery",
+        "purpose": "Lean back from chest hit while root retreats 0.50 m; stays upright",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "1711c57a987f9731d500a0d95bb3686e5b7d71b97cae7e17f0056eae3a5f5603",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Hit_Chest · CC0",
+        "notes": "Coordinated chest-hit source, slowed to read as a heavy standing reaction. Backward root travel tapers to a stop; no joint-angle patches.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    },
+    {
+      "id": "move-knockback-step",
+      "clip": "Knockback · Catch step",
+      "duration": 0.65,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "standing-hit-recovery",
+        "purpose": "Walk-based catch step with backward root travel; step is adapted, not physically solved",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "a0d8a09955a0bf297fbdbd3343e373a94e63d6fbf20e651decd6621cde9138c7",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Walk_Loop · CC0",
+        "notes": "Second half-cycle played backward; starts on the right support foot and catches on the left. Coordinated source joints retained.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 2
+      }
+    },
+    {
+      "id": "move-knockback-guard",
+      "clip": "Knockback · Guard",
+      "duration": 0.4,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "standing-hit-recovery",
+        "purpose": "Hold raised-arm guard at retained world position",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "173ce434d03535c2296e9090fb5ab3d0a36527bfe8f59b7e4226b2cdcaaf4dda",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Punch_Cross · CC0",
+        "notes": "Held source stance at the intended root destination.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    },
+    {
+      "id": "move-knockback-ready",
+      "clip": "Knockback · Ready",
+      "duration": 0.14,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "standing-hit-recovery",
+        "purpose": "Stationary upright arms-down entry hold",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "8113137a44731756af91b6fdec103685d28c2c84b6eb7fbd13fb32fae5a4d51d",
+      "provenance": {
+        "library": "studio-local",
+        "sourceDescription": "Quaternius UAL1 Idle_Loop · CC0",
+        "notes": "Held source stance at the intended root destination.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "kick-entry",
+      "from": "move-guard",
+      "to": "move-kick",
+      "fromHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+      "toHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0,
+        "rotationRmsDegrees": 8.817736302301881e-7,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "kick-return",
+      "from": "move-kick",
+      "to": "move-guard",
+      "fromHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+      "toHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 1.0574611769349396e-8,
+        "rotationRmsDegrees": 0.0000010799477313527664,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "quick-hook-recovery",
+      "from": "move-hook-quick",
+      "to": "move-ual2-melee-hook-rec",
+      "fromHash": "ab69374fba83adeb7ed6d21a1a937fe2cccbd54886f03dd22d3f5d61c231e6ea",
+      "toHash": "81ba1d22197638c00409e4eeb4fc373f1e545777c21a8a69039e9ee773e347bb",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.0558946911199062,
+        "rotationRmsDegrees": 9.733763574370423,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "escape-start-to-loop",
+      "from": "move-escape-slide-start",
+      "to": "move-escape-slide-loop",
+      "fromHash": "caefb8356541ce6da1dac81f1022a79f888a625f3072999a0642661cdee4b4ad",
+      "toHash": "1b9d15d650ef3ee35b5019f3d465fdf8dbc6c1a1d1c7fdcf1fed5f22ddddcaf7",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.002268925083024619,
+        "rotationRmsDegrees": 2.6564350712655638,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "escape-loop-to-exit",
+      "from": "move-escape-slide-loop",
+      "to": "move-escape-slide-exit",
+      "fromHash": "1b9d15d650ef3ee35b5019f3d465fdf8dbc6c1a1d1c7fdcf1fed5f22ddddcaf7",
+      "toHash": "e2e9c04ec6723c433aa8ffb8dad6148344222af8e07f05c0863b2fa48d2a5838",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.049542642082557174,
+        "rotationRmsDegrees": 8.675653073706998,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "escape-exit-to-standing",
+      "from": "move-escape-slide-exit",
+      "to": "move-escape-slide-standing",
+      "fromHash": "e2e9c04ec6723c433aa8ffb8dad6148344222af8e07f05c0863b2fa48d2a5838",
+      "toHash": "1b9aac3e632b9cdb1ef52507e219c1f8edf6e5ec0514852f94fd0b0cd28628c4",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.3514632469442628,
+        "rotationRmsDegrees": 36.021649578661645,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "counter-ready-to-guard",
+      "from": "move-counter-ready",
+      "to": "move-counter-guard",
+      "fromHash": "212eeb816b048e755ee996871f2659fbcfce8b9423cd64f995a82f755a80fa13",
+      "toHash": "d1908790ac84ac34da9a5f9acd544ff39f969d4c77e079f127e79633d128a8c6",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.25213176582320385,
+        "rotationRmsDegrees": 44.18696769796737,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "counter-guard-to-cross",
+      "from": "move-counter-guard",
+      "to": "move-counter-right-cross",
+      "fromHash": "d1908790ac84ac34da9a5f9acd544ff39f969d4c77e079f127e79633d128a8c6",
+      "toHash": "48f475b3211f0c953e5bfd84b4df79a4942d847f13d3eba51e86a305a0888493",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0,
+        "rotationRmsDegrees": 0.006008854177325418,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "counter-cross-to-finish",
+      "from": "move-counter-right-cross",
+      "to": "move-counter-finish",
+      "fromHash": "48f475b3211f0c953e5bfd84b4df79a4942d847f13d3eba51e86a305a0888493",
+      "toHash": "2e963d1980f14b763ccce626d6d128e56730fb0e7cbf1a8490b65a6696ccc222",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0,
+        "rotationRmsDegrees": 0.014095129812261322,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "standing-hit-entry",
+      "from": "move-knockback-ready",
+      "to": "move-knockback-standing",
+      "fromHash": "8113137a44731756af91b6fdec103685d28c2c84b6eb7fbd13fb32fae5a4d51d",
+      "toHash": "1711c57a987f9731d500a0d95bb3686e5b7d71b97cae7e17f0056eae3a5f5603",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.0935787379415878,
+        "rotationRmsDegrees": 6.911105766796814,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "standing-hit-to-step",
+      "from": "move-knockback-standing",
+      "to": "move-knockback-step",
+      "fromHash": "1711c57a987f9731d500a0d95bb3686e5b7d71b97cae7e17f0056eae3a5f5603",
+      "toHash": "a0d8a09955a0bf297fbdbd3343e373a94e63d6fbf20e651decd6621cde9138c7",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.17084172598563677,
+        "rotationRmsDegrees": 21.23413091596614,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "standing-step-to-guard",
+      "from": "move-knockback-step",
+      "to": "move-knockback-guard",
+      "fromHash": "a0d8a09955a0bf297fbdbd3343e373a94e63d6fbf20e651decd6621cde9138c7",
+      "toHash": "173ce434d03535c2296e9090fb5ab3d0a36527bfe8f59b7e4226b2cdcaaf4dda",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.2918355693787395,
+        "rotationRmsDegrees": 44.9932623162747,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    }
+  ]
+}

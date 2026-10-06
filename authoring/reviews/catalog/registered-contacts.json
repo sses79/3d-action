@@ -1,0 +1,2171 @@
+[
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-a-tpose",
+    "sourceRevision": 1,
+    "motionHash": "88b0663055f3f5e7e09ed15246a62e4a15ca55045fdffad02d372bc894e41d73",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0,
+          "pathMeters": 0,
+          "maxSpeedMetersPerSecond": 0,
+          "minHeightMeters": 0.01537697381788787,
+          "maxHeightMeters": 0.01537697381788787,
+          "sampleCount": 151
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0,
+          "pathMeters": 0,
+          "maxSpeedMetersPerSecond": 0,
+          "minHeightMeters": 0.01537707959824737,
+          "maxHeightMeters": 0.01537707959824737,
+          "sampleCount": 151
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.003Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.003Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-a-tpose-contacts.png",
+      "authoring/reviews/catalog/move-ual2-a-tpose.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-chest-open",
+    "sourceRevision": 1,
+    "motionHash": "0df69bdfb67d5eb874337ec7d285942fd4914a3d5a475103c43822f377afbd7f",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 1.3666666666666667,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00007440752671096249,
+          "pathMeters": 0.0011239487809621659,
+          "maxSpeedMetersPerSecond": 0.0033586174976084535,
+          "minHeightMeters": 0.014719701926118336,
+          "maxHeightMeters": 0.014807395946126164,
+          "sampleCount": 83
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 1.3666666666666667,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00012713784589947922,
+          "pathMeters": 0.0015780216728869287,
+          "maxSpeedMetersPerSecond": 0.004256793892004448,
+          "minHeightMeters": 0.0152476796016279,
+          "maxHeightMeters": 0.015375804258936837,
+          "sampleCount": 83
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.088Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.088Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-chest-open-contacts.png",
+      "authoring/reviews/catalog/move-ual2-chest-open.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-consume",
+    "sourceRevision": 1,
+    "motionHash": "cd3d70842a569c2b01e44cf89a1db6d670efab6509958f331e2b9749f71ed945",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 1.3333333730697632,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00009569784287416006,
+          "pathMeters": 0.0009953490217580385,
+          "maxSpeedMetersPerSecond": 0.004001293883572215,
+          "minHeightMeters": 0.014764766758471076,
+          "maxHeightMeters": 0.014818209659620094,
+          "sampleCount": 82
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 1.3333333730697632,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000026274513670232044,
+          "pathMeters": 0.0002859878101131609,
+          "maxSpeedMetersPerSecond": 0.0012879757044604286,
+          "minHeightMeters": 0.01535155626060633,
+          "maxHeightMeters": 0.015375429752777503,
+          "sampleCount": 82
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.167Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.167Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-consume-contacts.png",
+      "authoring/reviews/catalog/move-ual2-consume.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-farm-harvest",
+    "sourceRevision": 1,
+    "motionHash": "d406e34513d3fb91d19482eec08ac33601195e84c7675a664f08bc2884f15d80",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0005818643141081727,
+          "pathMeters": 0.014071404596033194,
+          "maxSpeedMetersPerSecond": 0.035029294513976086,
+          "minHeightMeters": 0.014627556110888174,
+          "maxHeightMeters": 0.014818101737660891,
+          "sampleCount": 151
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0006522454343089907,
+          "pathMeters": 0.026893698466138694,
+          "maxSpeedMetersPerSecond": 0.0397121494100573,
+          "minHeightMeters": 0.015092264458278049,
+          "maxHeightMeters": 0.015443944663982481,
+          "sampleCount": 151
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.238Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.238Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-farm-harvest-contacts.png",
+      "authoring/reviews/catalog/move-ual2-farm-harvest.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-farm-plantseed",
+    "sourceRevision": 1,
+    "motionHash": "2bc84e8bd633dfff87c074a0f7c8fcfaa55e0b3c25707435132e12f5acfdaa95",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 0.38333333333333336,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0011785771437810798,
+          "pathMeters": 0.008792645182191836,
+          "maxSpeedMetersPerSecond": 0.07101605665598648,
+          "minHeightMeters": 0.01438039055345243,
+          "maxHeightMeters": 0.01481592882998349,
+          "sampleCount": 24
+        }
+      },
+      {
+        "foot": "left",
+        "start": 0.6166666666666667,
+        "end": 1.9833333333333334,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0012622179137036721,
+          "pathMeters": 0.006449160404776319,
+          "maxSpeedMetersPerSecond": 0.0973789188762762,
+          "minHeightMeters": 0.014623867478055594,
+          "maxHeightMeters": 0.014806614117436737,
+          "sampleCount": 83
+        }
+      },
+      {
+        "foot": "left",
+        "start": 2.15,
+        "end": 2.7666666507720947,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0020748372866390115,
+          "pathMeters": 0.00670553176935044,
+          "maxSpeedMetersPerSecond": 0.13004295895523435,
+          "minHeightMeters": 0.014111519420299909,
+          "maxHeightMeters": 0.014818296729649405,
+          "sampleCount": 38
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 0.18333333333333332,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0009104021943145339,
+          "pathMeters": 0.008329646217728151,
+          "maxSpeedMetersPerSecond": 0.06705964371343899,
+          "minHeightMeters": 0.01470016797744797,
+          "maxHeightMeters": 0.015375544411802083,
+          "sampleCount": 12
+        }
+      },
+      {
+        "foot": "right",
+        "start": 2.283333333333333,
+        "end": 2.7666666507720947,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.001506685800916291,
+          "pathMeters": 0.0019885927834395875,
+          "maxSpeedMetersPerSecond": 0.10876965708386409,
+          "minHeightMeters": 0.014352523698191302,
+          "maxHeightMeters": 0.015375526224357769,
+          "sampleCount": 30
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.308Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.308Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-farm-plantseed-contacts.png",
+      "authoring/reviews/catalog/move-ual2-farm-plantseed.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-farm-watering",
+    "sourceRevision": 1,
+    "motionHash": "c8b295c1e7cea9b011a336ed5a7b76c679fdd4d82a14d208256db1a382a26dec",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 3.799999952316284,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000007054367902363464,
+          "pathMeters": 0.0006445983080396687,
+          "maxSpeedMetersPerSecond": 0.0008175437438181209,
+          "minHeightMeters": 0.01479513613205774,
+          "maxHeightMeters": 0.014818263856323483,
+          "sampleCount": 229
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 3.799999952316284,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000007162165045055825,
+          "pathMeters": 0.0004996278401285609,
+          "maxSpeedMetersPerSecond": 0.0007498594278898775,
+          "minHeightMeters": 0.01535392190101742,
+          "maxHeightMeters": 0.015375429752778946,
+          "sampleCount": 229
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.560Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.560Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-farm-watering-contacts.png",
+      "authoring/reviews/catalog/move-ual2-farm-watering.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-idle-foldarms-loop",
+    "sourceRevision": 1,
+    "motionHash": "7c74e4edaefdb30749649b25b8b3abd2378e0dcfded3cef8bf8029f773f6a560",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 0.75,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00048521197803789756,
+          "pathMeters": 0.004472272252346502,
+          "maxSpeedMetersPerSecond": 0.14632349903149436,
+          "minHeightMeters": 0.014803422139661362,
+          "maxHeightMeters": 0.01918662521095943,
+          "sampleCount": 46
+        }
+      },
+      {
+        "foot": "left",
+        "start": 1.2166666666666666,
+        "end": 1.3166666666666667,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0010786405467434442,
+          "pathMeters": 0.008860874202360577,
+          "maxSpeedMetersPerSecond": 0.14805064533765583,
+          "minHeightMeters": 0.036572498402926215,
+          "maxHeightMeters": 0.04086957990471192,
+          "sampleCount": 7
+        }
+      },
+      {
+        "foot": "left",
+        "start": 1.4166666666666667,
+        "end": 1.5166666666666666,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00048440952655640307,
+          "pathMeters": 0.008809998837724936,
+          "maxSpeedMetersPerSecond": 0.14635227060708603,
+          "minHeightMeters": 0.014803072027252243,
+          "maxHeightMeters": 0.019182698752863048,
+          "sampleCount": 7
+        }
+      },
+      {
+        "foot": "left",
+        "start": 1.8166666666666667,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00013991070229546295,
+          "pathMeters": 0.0014477215602840187,
+          "maxSpeedMetersPerSecond": 0.08240487472209419,
+          "minHeightMeters": 0.014800860620804407,
+          "maxHeightMeters": 0.016178846721638884,
+          "sampleCount": 42
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0000050816309818919945,
+          "pathMeters": 0.0003534478390292482,
+          "maxSpeedMetersPerSecond": 0.0005491991824669815,
+          "minHeightMeters": 0.015358298192116843,
+          "maxHeightMeters": 0.015375487373662386,
+          "sampleCount": 151
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.619Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.619Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-idle-foldarms-loop-contacts.png",
+      "authoring/reviews/catalog/move-ual2-idle-foldarms-loop.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-idle-lantern-loop",
+    "sourceRevision": 1,
+    "motionHash": "5855198abea48eb545c7d872d9d0b23b273b224fdb20df1f5357e1c30a0d2a83",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000002384533725126758,
+          "pathMeters": 0.0002947894725524688,
+          "maxSpeedMetersPerSecond": 0.0006043811121212008,
+          "minHeightMeters": 0.01480167036155762,
+          "maxHeightMeters": 0.01481800275478995,
+          "sampleCount": 151
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000005117158777653056,
+          "pathMeters": 0.00035834115602931477,
+          "maxSpeedMetersPerSecond": 0.0005343669158019068,
+          "minHeightMeters": 0.015358274481864886,
+          "maxHeightMeters": 0.015375624014334746,
+          "sampleCount": 151
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.679Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.679Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-idle-lantern-loop-contacts.png",
+      "authoring/reviews/catalog/move-ual2-idle-lantern-loop.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-idle-no-loop",
+    "sourceRevision": 1,
+    "motionHash": "d172c193b95f4768e108e57ed9b6fa1b87f0f0d38c0fa7b4dd1f0f3e052d7baa",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00000248560955701053,
+          "pathMeters": 0.0002928623338390059,
+          "maxSpeedMetersPerSecond": 0.0006021444102344377,
+          "minHeightMeters": 0.014800860620804407,
+          "maxHeightMeters": 0.01481827494625046,
+          "sampleCount": 151
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0000050816309818919945,
+          "pathMeters": 0.0003534478390292482,
+          "maxSpeedMetersPerSecond": 0.0005491991824669815,
+          "minHeightMeters": 0.015358298192116843,
+          "maxHeightMeters": 0.015375487373662386,
+          "sampleCount": 151
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.738Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.738Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-idle-no-loop-contacts.png",
+      "authoring/reviews/catalog/move-ual2-idle-no-loop.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-idle-rail-call",
+    "sourceRevision": 1,
+    "motionHash": "532c71ad432dea935325499b0a73f0de7200f5e1f4a5a630cdbc00459adab563",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0000024292876954554824,
+          "pathMeters": 0.00009615501725800862,
+          "maxSpeedMetersPerSecond": 0.00044659887137009477,
+          "minHeightMeters": 0.01480293442546246,
+          "maxHeightMeters": 0.014819167340267128,
+          "sampleCount": 151
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0000016242214987816438,
+          "pathMeters": 0.0000837590044417243,
+          "maxSpeedMetersPerSecond": 0.00010008104540861065,
+          "minHeightMeters": 0.01536263132622831,
+          "maxHeightMeters": 0.015372769193819177,
+          "sampleCount": 151
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.821Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.821Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-idle-rail-call-contacts.png",
+      "authoring/reviews/catalog/move-ual2-idle-rail-call.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-idle-rail-loop",
+    "sourceRevision": 1,
+    "motionHash": "409d367f808868f4ccb536ddfa19901ec59181a4e0e59c86fc1a8c6a620f3004",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0000015517865597992291,
+          "pathMeters": 0.00006235527777072083,
+          "maxSpeedMetersPerSecond": 0.0004254534650746351,
+          "minHeightMeters": 0.014804789861800588,
+          "maxHeightMeters": 0.014818707531565764,
+          "sampleCount": 151
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0000019270883371304317,
+          "pathMeters": 0.00010398603298203701,
+          "maxSpeedMetersPerSecond": 0.00011442862302574156,
+          "minHeightMeters": 0.01536114908037002,
+          "maxHeightMeters": 0.015372717259847235,
+          "sampleCount": 151
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.879Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.879Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-idle-rail-loop-contacts.png",
+      "authoring/reviews/catalog/move-ual2-idle-rail-loop.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-idle-shield-break",
+    "sourceRevision": 1,
+    "motionHash": "fcb1af7a14e0703c60e1334889f108b696f98c78766547132631db0f0f965f46",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 1.0666667222976685,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0009054508473694274,
+          "pathMeters": 0.00438564534414984,
+          "maxSpeedMetersPerSecond": 0.05943062856814264,
+          "minHeightMeters": 0.01432440640914126,
+          "maxHeightMeters": 0.015495488894737772,
+          "sampleCount": 66
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0.06666666666666667,
+        "end": 1.0666667222976685,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0005075770437193489,
+          "pathMeters": 0.002375850800977462,
+          "maxSpeedMetersPerSecond": 0.05314193319792158,
+          "minHeightMeters": 0.014538314725775686,
+          "maxHeightMeters": 0.015375429752777503,
+          "sampleCount": 62
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.914Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.914Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-idle-shield-break-contacts.png",
+      "authoring/reviews/catalog/move-ual2-idle-shield-break.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-idle-shield-loop",
+    "sourceRevision": 1,
+    "motionHash": "ba1d3354ad54fa35c595d1bb1bb7bb98695a44e90a5bcb6950b73fc8fe14dd66",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00000248560955701053,
+          "pathMeters": 0.0002928623338390059,
+          "maxSpeedMetersPerSecond": 0.0006021444102344377,
+          "minHeightMeters": 0.014800860620804407,
+          "maxHeightMeters": 0.01481827494625046,
+          "sampleCount": 151
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0000050816309818919945,
+          "pathMeters": 0.0003534478390292482,
+          "maxSpeedMetersPerSecond": 0.0005491991824669815,
+          "minHeightMeters": 0.015358298192116843,
+          "maxHeightMeters": 0.015375487373662386,
+          "sampleCount": 151
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:27.979Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:27.979Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-idle-shield-loop-contacts.png",
+      "authoring/reviews/catalog/move-ual2-idle-shield-loop.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-idle-talkingphone-loop",
+    "sourceRevision": 1,
+    "motionHash": "c5230855b978f61724aa05dbd0d211e0280e613b8b36ab222ed37e2fd549a5af",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 2.933333396911621,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000003725218668526087,
+          "pathMeters": 0.00013874455814261145,
+          "maxSpeedMetersPerSecond": 0.00046727060544849835,
+          "minHeightMeters": 0.014801148839300587,
+          "maxHeightMeters": 0.01481800828648637,
+          "sampleCount": 178
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 2.933333396911621,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000002542916943113658,
+          "pathMeters": 0.00023535933631543352,
+          "maxSpeedMetersPerSecond": 0.00038156744803638856,
+          "minHeightMeters": 0.015358911910090811,
+          "maxHeightMeters": 0.015373376450764795,
+          "sampleCount": 178
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.044Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.044Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-idle-talkingphone-loop-contacts.png",
+      "authoring/reviews/catalog/move-ual2-idle-talkingphone-loop.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-laytoidle",
+    "sourceRevision": 1,
+    "motionHash": "c0c0484f6d52c56c1b788263c3656957d7e3e4a303f8e91ec0dcc2e7af2155a1",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0.8166666666666667,
+        "end": 1.0833333333333333,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.016905469757989136,
+          "pathMeters": 0.02282013926637254,
+          "maxSpeedMetersPerSecond": 0.14998046161441092,
+          "minHeightMeters": -0.018974446407332687,
+          "maxHeightMeters": -0.009122670521777551,
+          "sampleCount": 17
+        }
+      },
+      {
+        "foot": "left",
+        "start": 1.3,
+        "end": 1.5333333015441895,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.015459301355700169,
+          "pathMeters": 0.01918969168331578,
+          "maxSpeedMetersPerSecond": 0.13959105966119298,
+          "minHeightMeters": 0.006033056419382288,
+          "maxHeightMeters": 0.014807395946168533,
+          "sampleCount": 15
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0.45,
+        "end": 0.9166666666666666,
+        "decision": "uncertain",
+        "notes": "Foot pivot is near floor, but sampled seated/rotating stance does not clearly establish load-bearing support. Preserve uncertainty; no anchor.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.01256478800327203,
+          "pathMeters": 0.020436781349543263,
+          "maxSpeedMetersPerSecond": 0.14558505335892657,
+          "minHeightMeters": 0.0006888084434029246,
+          "maxHeightMeters": 0.012794284202893427,
+          "sampleCount": 29
+        }
+      },
+      {
+        "foot": "right",
+        "start": 1.35,
+        "end": 1.5333333015441895,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00015326294414264366,
+          "pathMeters": 0.005237565474547973,
+          "maxSpeedMetersPerSecond": 0.03636955418346098,
+          "minHeightMeters": 0.014768238973954115,
+          "maxHeightMeters": 0.015375429752777503,
+          "sampleCount": 12
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.088Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.088Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-laytoidle-contacts.png",
+      "authoring/reviews/catalog/move-ual2-laytoidle.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-melee-hook-rec",
+    "sourceRevision": 1,
+    "motionHash": "81ba1d22197638c00409e4eeb4fc373f1e545777c21a8a69039e9ee773e347bb",
+    "intervals": [
+      {
+        "foot": "right",
+        "start": 0.23333333333333334,
+        "end": 0.6000000238418579,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.01823422986284781,
+          "pathMeters": 0.03198227871857267,
+          "maxSpeedMetersPerSecond": 0.12352364587960689,
+          "minHeightMeters": 0.015370811336538073,
+          "maxHeightMeters": 0.037006046515837526,
+          "sampleCount": 24
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.115Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.115Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-melee-hook-rec-contacts.png",
+      "authoring/reviews/catalog/move-ual2-melee-hook-rec.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-ninjajump-land",
+    "sourceRevision": 1,
+    "motionHash": "46daac174af2edb09070d37325d71f352b3c95e1e54445068097ecfd951fc4c5",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0.11666666666666667,
+        "end": 1.2666666507720947,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0016411309663270026,
+          "pathMeters": 0.017098702982658164,
+          "maxSpeedMetersPerSecond": 0.07835540573052538,
+          "minHeightMeters": 0.014809558122690608,
+          "maxHeightMeters": 0.018115682298497193,
+          "sampleCount": 70
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0.11666666666666667,
+        "end": 1.2666666507720947,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0013085820346325143,
+          "pathMeters": 0.012168181882098197,
+          "maxSpeedMetersPerSecond": 0.09089613825048125,
+          "minHeightMeters": 0.014507397604755182,
+          "maxHeightMeters": 0.01556572544247374,
+          "sampleCount": 70
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.152Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.152Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-ninjajump-land-contacts.png",
+      "authoring/reviews/catalog/move-ual2-ninjajump-land.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-overhandthrow",
+    "sourceRevision": 1,
+    "motionHash": "c0a8fb35b5002008407c4486445d5829ebf96382262fc8f5ce4daaf12b8cf904",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0.38333333333333336,
+        "end": 1.0833333333333333,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.006403209333244356,
+          "pathMeters": 0.012874780331520442,
+          "maxSpeedMetersPerSecond": 0.12126350450826924,
+          "minHeightMeters": 0.013115469185187176,
+          "maxHeightMeters": 0.0147987335240954,
+          "sampleCount": 43
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 0.2833333333333333,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0016485727337065656,
+          "pathMeters": 0.0073420875896965075,
+          "maxSpeedMetersPerSecond": 0.06797709323998774,
+          "minHeightMeters": 0.014640951838913882,
+          "maxHeightMeters": 0.015375417265415095,
+          "sampleCount": 18
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0.36666666666666664,
+        "end": 1.3333333730697632,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00344936211954548,
+          "pathMeters": 0.012629414984829676,
+          "maxSpeedMetersPerSecond": 0.11842523937476696,
+          "minHeightMeters": 0.012412326545232388,
+          "maxHeightMeters": 0.015375429752777503,
+          "sampleCount": 60
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.196Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.196Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-overhandthrow-contacts.png",
+      "authoring/reviews/catalog/move-ual2-overhandthrow.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-shield-dash",
+    "sourceRevision": 1,
+    "motionHash": "2a1bcee90ba1e04b0123a740e1d87ecb695e0d0e7e4b69ce41b3ce9de9f61c24",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0.3,
+        "end": 0.4666666666666667,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0008647081587989161,
+          "pathMeters": 0.001635711132859268,
+          "maxSpeedMetersPerSecond": 0.0391803953834359,
+          "minHeightMeters": 0.0029342144048816604,
+          "maxHeightMeters": 0.004075138418170102,
+          "sampleCount": 11
+        }
+      },
+      {
+        "foot": "left",
+        "start": 0.75,
+        "end": 1.100000023841858,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0006050460519148068,
+          "pathMeters": 0.0009089446135446982,
+          "maxSpeedMetersPerSecond": 0.010988654628268375,
+          "minHeightMeters": 0.01447628827880032,
+          "maxHeightMeters": 0.01480728929800118,
+          "sampleCount": 23
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0.2833333333333333,
+        "end": 0.7166666666666667,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0016085102558176178,
+          "pathMeters": 0.007887774189280257,
+          "maxSpeedMetersPerSecond": 0.039455376712128405,
+          "minHeightMeters": 0.013529268942457165,
+          "maxHeightMeters": 0.015334101854874979,
+          "sampleCount": 27
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.230Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.230Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-shield-dash-contacts.png",
+      "authoring/reviews/catalog/move-ual2-shield-dash.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-shield-oneshot",
+    "sourceRevision": 1,
+    "motionHash": "68e4844f485fb0f6c50ae8aadb8cfb704815302dcf60c15dbe42053f860e7a2d",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 0.8333333134651184,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0001401921331637001,
+          "pathMeters": 0.00241397374972622,
+          "maxSpeedMetersPerSecond": 0.01496809487962171,
+          "minHeightMeters": 0.014568695950982119,
+          "maxHeightMeters": 0.014818293245419084,
+          "sampleCount": 51
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 0.8333333134651184,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000128084985851934,
+          "pathMeters": 0.0030759534664354725,
+          "maxSpeedMetersPerSecond": 0.015330614411850085,
+          "minHeightMeters": 0.015139699084970412,
+          "maxHeightMeters": 0.015375429752777503,
+          "sampleCount": 51
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.260Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.260Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-shield-oneshot-contacts.png",
+      "authoring/reviews/catalog/move-ual2-shield-oneshot.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-sword-block",
+    "sourceRevision": 1,
+    "motionHash": "189fdb9bd7958006e0d8d87bfa8a7afc01eb2ee7117ffd88d69bd44b07ff79b4",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0.11666666666666667,
+        "end": 1.2333333492279053,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0002974828602636374,
+          "pathMeters": 0.0015033456077872198,
+          "maxSpeedMetersPerSecond": 0.011240611520745562,
+          "minHeightMeters": 0.014349547439916052,
+          "maxHeightMeters": 0.014815792518577134,
+          "sampleCount": 69
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0.11666666666666667,
+        "end": 1.2333333492279053,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00038996216829676427,
+          "pathMeters": 0.0023436427869408367,
+          "maxSpeedMetersPerSecond": 0.017414968093076008,
+          "minHeightMeters": 0.014605321528707721,
+          "maxHeightMeters": 0.015365803290717503,
+          "sampleCount": 69
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.301Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.301Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-sword-block-contacts.png",
+      "authoring/reviews/catalog/move-ual2-sword-block.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-sword-dash",
+    "sourceRevision": 1,
+    "motionHash": "4c386be54f4c126a810ddc9b08c571cf61c3513947541c9f1576a41b299ebd70",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0.4,
+        "end": 1.0166666666666666,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.013987051187880137,
+          "pathMeters": 0.015530765009017034,
+          "maxSpeedMetersPerSecond": 0.13224034624156303,
+          "minHeightMeters": 0.014992442003937873,
+          "maxHeightMeters": 0.0184265412162824,
+          "sampleCount": 38
+        }
+      },
+      {
+        "foot": "left",
+        "start": 1.3666666666666667,
+        "end": 1.5666667222976685,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000049492477122310485,
+          "pathMeters": 0.0011057464522238345,
+          "maxSpeedMetersPerSecond": 0.012316876799481031,
+          "minHeightMeters": 0.014521945450875984,
+          "maxHeightMeters": 0.014807333147527968,
+          "sampleCount": 14
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0.38333333333333336,
+        "end": 1.1333333333333333,
+        "decision": "uncertain",
+        "notes": "Foot pivot is near floor, but sampled seated/rotating stance does not clearly establish load-bearing support. Preserve uncertainty; no anchor.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.010071646986279372,
+          "pathMeters": 0.010256835829078985,
+          "maxSpeedMetersPerSecond": 0.1370900686645034,
+          "minHeightMeters": 0.015238332940456303,
+          "maxHeightMeters": 0.015352373253710153,
+          "sampleCount": 46
+        }
+      },
+      {
+        "foot": "right",
+        "start": 1.45,
+        "end": 1.5666667222976685,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00003166265863124684,
+          "pathMeters": 0.00014213948572846727,
+          "maxSpeedMetersPerSecond": 0.0053317094963946,
+          "minHeightMeters": 0.015267796687888538,
+          "maxHeightMeters": 0.015375324517971925,
+          "sampleCount": 9
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.344Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.344Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-sword-dash-contacts.png",
+      "authoring/reviews/catalog/move-ual2-sword-dash.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-sword-heavy-combo",
+    "sourceRevision": 1,
+    "motionHash": "4872590589707e70fbfd1d446435357b9f628e084955e2140b3424a90d957f11",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 2.7,
+        "end": 3.216666666666667,
+        "decision": "uncertain",
+        "notes": "Foot pivot is near floor, but sampled seated/rotating stance does not clearly establish load-bearing support. Preserve uncertainty; no anchor.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0037260504961938263,
+          "pathMeters": 0.0047320156743254835,
+          "maxSpeedMetersPerSecond": 0.015191129290912875,
+          "minHeightMeters": 0.035816570998030164,
+          "maxHeightMeters": 0.03612640960858672,
+          "sampleCount": 32
+        }
+      },
+      {
+        "foot": "left",
+        "start": 3.9166666666666665,
+        "end": 4.333333492279053,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.01572720558337831,
+          "pathMeters": 0.015739984043392573,
+          "maxSpeedMetersPerSecond": 0.1016130799614612,
+          "minHeightMeters": 0.014771117272569245,
+          "maxHeightMeters": 0.014817997072831657,
+          "sampleCount": 27
+        }
+      },
+      {
+        "foot": "right",
+        "start": 2.7,
+        "end": 3.25,
+        "decision": "uncertain",
+        "notes": "Foot pivot is near floor, but sampled seated/rotating stance does not clearly establish load-bearing support. Preserve uncertainty; no anchor.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0007588673004789303,
+          "pathMeters": 0.0028572012598298002,
+          "maxSpeedMetersPerSecond": 0.02597319415758282,
+          "minHeightMeters": 0.03131752993783608,
+          "maxHeightMeters": 0.03154353472760288,
+          "sampleCount": 34
+        }
+      },
+      {
+        "foot": "right",
+        "start": 3.9166666666666665,
+        "end": 4.333333492279053,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.01580209038533794,
+          "pathMeters": 0.015804972147983407,
+          "maxSpeedMetersPerSecond": 0.10372226927277074,
+          "minHeightMeters": 0.015351343296397868,
+          "maxHeightMeters": 0.015377916257270696,
+          "sampleCount": 27
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.472Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.472Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-sword-heavy-combo-contacts.png",
+      "authoring/reviews/catalog/move-ual2-sword-heavy-combo.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-treechopping-loop",
+    "sourceRevision": 1,
+    "motionHash": "b61017e469e3220ea026c38d224ec9c74b75ce8a387c1ea7147c1029b73b9b20",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0.11666666666666667,
+        "end": 0.9666666388511658,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0018982461095778703,
+          "pathMeters": 0.009095630691342402,
+          "maxSpeedMetersPerSecond": 0.12245822834694614,
+          "minHeightMeters": 0.014015714746701186,
+          "maxHeightMeters": 0.014806660959487433,
+          "sampleCount": 52
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 0.9666666388511658,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.001841503247692941,
+          "pathMeters": 0.014684925602126853,
+          "maxSpeedMetersPerSecond": 0.11943023194776663,
+          "minHeightMeters": 0.01460377701134688,
+          "maxHeightMeters": 0.015361909454186598,
+          "sampleCount": 59
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.504Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.504Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-treechopping-loop-contacts.png",
+      "authoring/reviews/catalog/move-ual2-treechopping-loop.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-yes",
+    "sourceRevision": 1,
+    "motionHash": "bb24118a3d24692525957841d114c3fefcfa7b816459fb5c5984cdc65231eafb",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00044438656313698855,
+          "pathMeters": 0.007012806884373525,
+          "maxSpeedMetersPerSecond": 0.051218966041544425,
+          "minHeightMeters": 0.01440281170379834,
+          "maxHeightMeters": 0.016856810456229027,
+          "sampleCount": 151
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 2.5,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0031388170693201277,
+          "pathMeters": 0.025105460384715478,
+          "maxSpeedMetersPerSecond": 0.12030266897841922,
+          "minHeightMeters": 0.015024743283128639,
+          "maxHeightMeters": 0.02640527741564494,
+          "sampleCount": 151
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.564Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.564Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-yes-contacts.png",
+      "authoring/reviews/catalog/move-ual2-yes.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-zombie-idle-loop",
+    "sourceRevision": 1,
+    "motionHash": "077dd7b301382d5feed829484e06a316414d66c5b9292e78053a128c0828a8fc",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0,
+        "end": 1.3333333730697632,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000008111136679048405,
+          "pathMeters": 0.00024344187636215966,
+          "maxSpeedMetersPerSecond": 0.000774851554728489,
+          "minHeightMeters": 0.014781325864103578,
+          "maxHeightMeters": 0.014804749867448036,
+          "sampleCount": 82
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 1.3333333730697632,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.000015067521153329518,
+          "pathMeters": 0.0002126650677628928,
+          "maxSpeedMetersPerSecond": 0.000716217565399699,
+          "minHeightMeters": 0.015330938525226961,
+          "maxHeightMeters": 0.015365190938160606,
+          "sampleCount": 82
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.602Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.602Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-zombie-idle-loop-contacts.png",
+      "authoring/reviews/catalog/move-ual2-zombie-idle-loop.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  },
+  {
+    "schemaVersion": 1,
+    "movementId": "move-ual2-zombie-scratch",
+    "sourceRevision": 1,
+    "motionHash": "93853420948b98350b4d2867ca8c652b87685597b9f217286c46df46af944275",
+    "intervals": [
+      {
+        "foot": "left",
+        "start": 0.21666666666666667,
+        "end": 0.48333333333333334,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.00026568919738745886,
+          "pathMeters": 0.0021640840098466,
+          "maxSpeedMetersPerSecond": 0.020225693973512836,
+          "minHeightMeters": 0.01945511096703595,
+          "maxHeightMeters": 0.019665251669673076,
+          "sampleCount": 17
+        }
+      },
+      {
+        "foot": "left",
+        "start": 0.65,
+        "end": 1.35,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0011628748689317663,
+          "pathMeters": 0.013031842976754826,
+          "maxSpeedMetersPerSecond": 0.0990505497060512,
+          "minHeightMeters": 0.018956572972898267,
+          "maxHeightMeters": 0.019671515300191816,
+          "sampleCount": 43
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0,
+        "end": 0.48333333333333334,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0006874861032735674,
+          "pathMeters": 0.009496992958965564,
+          "maxSpeedMetersPerSecond": 0.0424127188874102,
+          "minHeightMeters": 0.015222281092294232,
+          "maxHeightMeters": 0.015485821547251949,
+          "sampleCount": 30
+        }
+      },
+      {
+        "foot": "right",
+        "start": 0.65,
+        "end": 1.7999999523162842,
+        "decision": "supported",
+        "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+        "measurements": {
+          "maxHorizontalDriftMeters": 0.0009039096583019364,
+          "pathMeters": 0.011783475203946611,
+          "maxSpeedMetersPerSecond": 0.05106978308433266,
+          "minHeightMeters": 0.015262364388273941,
+          "maxHeightMeters": 0.015425171495108067,
+          "sampleCount": 70
+        }
+      }
+    ],
+    "reviewedAt": "2026-10-05T09:00:28.649Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T09:00:28.649Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+    "artifacts": [
+      "authoring/reviews/catalog/sheets/move-ual2-zombie-scratch-contacts.png",
+      "authoring/reviews/catalog/move-ual2-zombie-scratch.json",
+      "authoring/reviews/catalog/frames-0/frames.json",
+      "authoring/reviews/catalog/frames-1/frames.json",
+      "authoring/reviews/catalog/frames-2/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "uncoveredIntervals": "unknown",
+    "reviewRevision": 1
+  }
+]

@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "human-video-reference"
+    },
+    "sourceSHA256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "window": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "video": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "duration": {
+          "type": "number"
+        },
+        "timeOrigin": {
+          "const": "trim-start"
+        }
+      },
+      "required": [
+        "file",
+        "sha256",
+        "duration",
+        "timeOrigin"
+      ],
+      "additionalProperties": false
+    },
+    "person": {
+      "type": "object",
+      "properties": {
+        "selection": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mirroring": {
+          "enum": [
+            "unknown",
+            "mirrored",
+            "unmirrored"
+          ]
+        },
+        "anatomicalLabels": {
+          "const": "estimated"
+        }
+      },
+      "required": [
+        "selection",
+        "mirroring",
+        "anatomicalLabels"
+      ],
+      "additionalProperties": false
+    },
+    "observations": {
+      "type": "object",
+      "properties": {
+        "skeleton": {
+          "const": "COCO17"
+        },
+        "coordinates": {
+          "const": "source-pixels-xy-confidence"
+        },
+        "detectorSHA256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "frames": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sourceTime": {
+                "type": "number"
+              },
+              "keypoints": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "minItems": 17,
+                "maxItems": 17
+              }
+            },
+            "required": [
+              "sourceTime",
+              "keypoints"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 2,
+          "maxItems": 10000
+        }
+      },
+      "required": [
+        "skeleton",
+        "coordinates",
+        "detectorSHA256",
+        "frames"
+      ],
+      "additionalProperties": false
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "start": {
+            "type": "number"
+          },
+          "end": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "start",
+          "end"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 10000
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "maxItems": 10000
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "kind",
+    "sourceSHA256",
+    "window",
+    "video",
+    "person",
+    "observations",
+    "phases",
+    "unknowns"
+  ],
+  "additionalProperties": false
+}

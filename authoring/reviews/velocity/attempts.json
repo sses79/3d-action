@@ -1,0 +1,63 @@
+[
+  {
+    "id": "standing-step-to-guard",
+    "duration": 0.2,
+    "flags": [],
+    "seams": [
+      {
+        "time": 0.65,
+        "index": 1,
+        "before": "m0-step",
+        "after": "join-1",
+        "kind": "join-start",
+        "window": {
+          "start": 0.6333333333333333,
+          "end": 0.6666666666666666
+        },
+        "rootVelocityBefore": [
+          0,
+          0,
+          -0.6923076923076877
+        ],
+        "rootVelocityAfter": [
+          0,
+          0,
+          -0.6634615384615384
+        ],
+        "rootVelocityJumpMetersPerSecond": 0.028846153846149303,
+        "bodyVelocityJumpMetersPerSecond": 0.10201685225996733,
+        "jointVelocityJumpRmsMetersPerSecond": 0.4468560512757045,
+        "angularVelocityJumpRmsDegreesPerSecond": 55.96137348987185,
+        "peakJoint": "foot_r",
+        "peakAngularJoint": "lowerarm_r"
+      },
+      {
+        "time": 0.8500000000000001,
+        "index": 2,
+        "before": "join-1",
+        "after": "m1-guard",
+        "kind": "join-end",
+        "window": {
+          "start": 0.8333333333333334,
+          "end": 0.8666666666666667
+        },
+        "rootVelocityBefore": [
+          0,
+          0,
+          -0.028846153846147186
+        ],
+        "rootVelocityAfter": [
+          0,
+          0,
+          0
+        ],
+        "rootVelocityJumpMetersPerSecond": 0.028846153846147186,
+        "bodyVelocityJumpMetersPerSecond": 0.06728747504825976,
+        "jointVelocityJumpRmsMetersPerSecond": 0.3523968245336195,
+        "angularVelocityJumpRmsDegreesPerSecond": 53.82694622154328,
+        "peakJoint": "hand_r",
+        "peakAngularJoint": "lowerarm_r"
+      }
+    ]
+  }
+]

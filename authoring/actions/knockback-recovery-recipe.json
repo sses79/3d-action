@@ -1,0 +1,33 @@
+{
+  "actionId": "knockback-recovery",
+  "name": "Knockback Recovery",
+  "expectedRevision": 2,
+  "steps": [
+    {
+      "movementId": "move-knockback-ready",
+      "revision": 1,
+      "speed": 1,
+      "transition": 0
+    },
+    {
+      "movementId": "move-knockback-standing",
+      "revision": 1,
+      "speed": 1,
+      "transition": 0.04
+    },
+    {
+      "movementId": "move-knockback-step",
+      "revision": 2,
+      "speed": 1,
+      "transition": 0.1,
+      "contact": "right"
+    },
+    {
+      "movementId": "move-knockback-guard",
+      "revision": 1,
+      "speed": 1,
+      "transition": 0.28,
+      "contact": "left"
+    }
+  ]
+}

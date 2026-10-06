@@ -1,0 +1,14 @@
+{
+  "reconstruction-fitted": {
+    "depthSecondDifferenceRMS": 0.05147379256815537,
+    "positionSecondDifferenceRMS": 0.039029667201195536,
+    "imageRootSecondDifferenceRMSPixels": 12.011522939934057,
+    "kneePeakDegrees": 179.9440460205078
+  },
+  "reconstruction-stable": {
+    "depthSecondDifferenceRMS": 0.005168716396799588,
+    "positionSecondDifferenceRMS": 0.02132299132661805,
+    "imageRootSecondDifferenceRMSPixels": 2.156527830829379,
+    "kneePeakDegrees": 179.94064331054688
+  }
+}

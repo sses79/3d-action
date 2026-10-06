@@ -1,0 +1,243 @@
+{
+  "at": "2026-10-04T18:06:24.216Z",
+  "prompt": "Continue the Regular Sword attack chain and finish its authored recovery.",
+  "runId": "f8b96ec7-996f-448d-875d-2e91abecdff9",
+  "results": [
+    {
+      "id": "sword-source-study",
+      "validationClientMs": 1.88,
+      "buildClientMs": 2661.5,
+      "actionId": "sword-source-study",
+      "revision": 1,
+      "duration": 3,
+      "phases": [
+        {
+          "id": "m0-motion-0",
+          "name": "Sword Regular Combo",
+          "duration": 3
+        }
+      ],
+      "recipe": {
+        "steps": [
+          {
+            "movementId": "move-ual2-sword-regular-combo",
+            "revision": 1,
+            "speed": 1,
+            "transition": 0
+          }
+        ],
+        "warnings": [
+          "UAL2 · Sword Regular Combo: support/contact unverified",
+          "UAL2 · Sword Regular Combo: source travel retained; inspect root continuity"
+        ],
+        "compiler": "pose-blend-v1"
+      },
+      "valid": true,
+      "committed": true,
+      "diagnostics": [
+        {
+          "code": "motion/unverified",
+          "severity": "warning",
+          "subject": "/steps",
+          "message": "Compilation does not verify equipment, contact or physical balance",
+          "evidence": null,
+          "supportedFixes": [
+            "Inspect this motion in Studio"
+          ]
+        }
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "specHash": "2439701c33b5f27749609c8f3099bf8c5c26b49826592fed5eadf765eea5b53d",
+        "compiler": "pose-blend-v1",
+        "sources": [
+          {
+            "id": "move-ual2-sword-regular-combo",
+            "revision": 1,
+            "motionHash": "ccf002d937d7a5a04eaa22d7f9ddfcfcfd98c09a156bce8522f5cede9f49e2f9"
+          }
+        ],
+        "duration": 3,
+        "inspection": [
+          {
+            "step": 0,
+            "joinStart": 0,
+            "start": 0,
+            "end": 3
+          }
+        ],
+        "visualReview": "pending",
+        "physicalValidation": "not-performed",
+        "compiledAt": "2026-10-04T18:06:20.117Z"
+      },
+      "elapsedMs": 2657
+    },
+    {
+      "id": "sword-joined-study",
+      "validationClientMs": 54.33,
+      "buildClientMs": 1378.59,
+      "actionId": "sword-joined-study",
+      "revision": 1,
+      "duration": 3.2066666984558108,
+      "phases": [
+        {
+          "id": "m0-motion-0",
+          "name": "Sword Regular A",
+          "duration": 0.4333333373069763
+        },
+        {
+          "id": "join-1",
+          "name": "Join → UAL2 · Sword Regular B",
+          "duration": 0.12
+        },
+        {
+          "id": "m1-motion-0",
+          "name": "Sword Regular B",
+          "duration": 0.5333333611488342
+        },
+        {
+          "id": "join-2",
+          "name": "Join → UAL2 · Sword Regular C",
+          "duration": 0.12
+        },
+        {
+          "id": "m2-motion-0",
+          "name": "Sword Regular C",
+          "duration": 2
+        }
+      ],
+      "recipe": {
+        "steps": [
+          {
+            "movementId": "move-ual2-sword-regular-a",
+            "revision": 1,
+            "speed": 1,
+            "transition": 0
+          },
+          {
+            "movementId": "move-ual2-sword-regular-b",
+            "revision": 1,
+            "speed": 1,
+            "transition": 0.12
+          },
+          {
+            "movementId": "move-ual2-sword-regular-c",
+            "revision": 1,
+            "speed": 1,
+            "transition": 0.12
+          }
+        ],
+        "warnings": [
+          "UAL2 · Sword Regular A: support/contact unverified",
+          "UAL2 · Sword Regular A: source travel retained; inspect root continuity",
+          "UAL2 · Sword Regular B: connection endpoints have not both been visually reviewed",
+          "UAL2 · Sword Regular B: support/contact unverified",
+          "UAL2 · Sword Regular B: source travel retained; inspect root continuity",
+          "UAL2 · Sword Regular C: connection endpoints have not both been visually reviewed",
+          "UAL2 · Sword Regular C: support/contact unverified",
+          "UAL2 · Sword Regular C: source travel retained; inspect root continuity"
+        ],
+        "compiler": "pose-blend-v1"
+      },
+      "valid": true,
+      "committed": true,
+      "diagnostics": [
+        {
+          "code": "connection/unreviewed",
+          "severity": "warning",
+          "subject": "/steps/1/connection",
+          "message": "Candidate connection requires visual inspection",
+          "evidence": {
+            "purpose": "continue",
+            "endpointEvidence": {
+              "representation": "adapted rig revision 1 endpoints",
+              "positionRmsMeters": 0.0511,
+              "rotationRmsDegrees": 5.77,
+              "visualReview": "pending",
+              "trajectoryValidation": "not-performed"
+            }
+          },
+          "supportedFixes": [
+            "Inspect this motion in Studio"
+          ]
+        },
+        {
+          "code": "connection/unreviewed",
+          "severity": "warning",
+          "subject": "/steps/2/connection",
+          "message": "Candidate connection requires visual inspection",
+          "evidence": {
+            "purpose": "continue",
+            "endpointEvidence": {
+              "representation": "adapted rig revision 1 endpoints",
+              "positionRmsMeters": 0.0496,
+              "rotationRmsDegrees": 5.72,
+              "visualReview": "pending",
+              "trajectoryValidation": "not-performed"
+            }
+          },
+          "supportedFixes": [
+            "Inspect this motion in Studio"
+          ]
+        },
+        {
+          "code": "motion/unverified",
+          "severity": "warning",
+          "subject": "/steps",
+          "message": "Compilation does not verify equipment, contact or physical balance",
+          "evidence": null,
+          "supportedFixes": [
+            "Inspect this motion in Studio"
+          ]
+        }
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "specHash": "1c429c904c99f5c603f588a533c9583beb74b5c9d343b216620ff599821f98a7",
+        "compiler": "pose-blend-v1",
+        "sources": [
+          {
+            "id": "move-ual2-sword-regular-a",
+            "revision": 1,
+            "motionHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad"
+          },
+          {
+            "id": "move-ual2-sword-regular-b",
+            "revision": 1,
+            "motionHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad"
+          },
+          {
+            "id": "move-ual2-sword-regular-c",
+            "revision": 1,
+            "motionHash": "40facb0220ac0f2c99188cb5aa1be89489ee9414b3bb35f3c7e2034eb60faad2"
+          }
+        ],
+        "duration": 3.2066666984558108,
+        "inspection": [
+          {
+            "step": 0,
+            "joinStart": 0,
+            "start": 0,
+            "end": 0.4333333373069763
+          },
+          {
+            "step": 1,
+            "joinStart": 0.4333333373069763,
+            "start": 0.5533333373069763,
+            "end": 1.0866666984558107
+          },
+          {
+            "step": 2,
+            "joinStart": 1.0866666984558107,
+            "start": 1.2066666984558108,
+            "end": 3.2066666984558108
+          }
+        ],
+        "visualReview": "pending",
+        "physicalValidation": "not-performed",
+        "compiledAt": "2026-10-04T18:06:22.839Z"
+      },
+      "elapsedMs": 1371
+    }
+  ]
+}

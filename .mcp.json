@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "animation-studio": {
+      "command": "/Users/tim/.nvm/versions/node/v26.7.0/bin/node",
+      "args": ["/Users/tim/Yun/codex-3d/authoring/mcp.mjs"]
+    }
+  }
+}

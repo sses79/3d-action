@@ -1,0 +1,9 @@
+{
+  "algorithm": "orthographic-landmark-fit-with-depth-prior",
+  "fitSeconds": 0.42606374993920326,
+  "kneePeakDegrees": 79.58258056640625,
+  "projectionRMS": 0.0017813083250075579,
+  "segmentLengthRMS": 0.00211643916554749,
+  "outcome": "image match alone retains folded depth; captures retained in frames-unconstrained",
+  "source": "recorded first trial tool result"
+}

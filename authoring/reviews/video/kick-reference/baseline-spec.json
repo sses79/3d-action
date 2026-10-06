@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "rig": "quaternius-ual1",
+  "id": "video-forward-kick-baseline",
+  "name": "Video source-fit baseline · forward kick only",
+  "intent": "Diagnostic existing forward kick baseline, not recreation of the reference lateral snap kick. Direction, raised-hand stance and gathering travel differ.",
+  "steps": [
+    {
+      "movementId": "move-kick",
+      "revision": 1,
+      "speed": 1
+    }
+  ]
+}

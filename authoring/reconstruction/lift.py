@@ -1,0 +1,36 @@
+"""Bounded MotionBERT-Lite pilot. Estimated 3D joints, not rotation/contact truth."""
+import argparse,time,json,sys,hashlib,subprocess
+from pathlib import Path
+started=time.perf_counter();parser=argparse.ArgumentParser();parser.add_argument('--pose',default='authoring/reviews/video/kick-reference/pose-report.json');parser.add_argument('--out',default='authoring/reviews/video/kick-reference/reconstruction');args=parser.parse_args()
+import numpy as np,torch
+imports=time.perf_counter()-started;torch.set_num_threads(2);torch.set_num_interop_threads(1)
+vendor=Path('.authoring/vendor/MotionBERT');sys.path.insert(0,str(vendor.resolve()));from lib.model.DSTformer import DSTformer
+out=Path(args.out);out.mkdir(parents=True,exist_ok=True);report=json.loads(Path(args.pose).read_text());rows=report['frames'];times=np.array([r['time'] for r in rows]);raw=np.array([r['keypoints'] for r in rows],dtype=np.float32)
+assert raw.shape[1:]==(17,3) and len(raw)>2 and np.all(np.diff(times)>0)
+# Regular 30Hz sequence required by the temporal model; interpolation is explicit, not new evidence.
+uniform=np.linspace(report['interval'][0],report['interval'][1],70);coco=np.array([[np.interp(uniform,times,raw[:,j,k]) for k in range(3)] for j in range(17)]).transpose(2,0,1).astype(np.float32)
+h=np.zeros((len(coco),17,3),np.float32);h[:,0]=(coco[:,11]+coco[:,12])/2
+for dst,src in [(1,12),(2,14),(3,16),(4,11),(5,13),(6,15),(11,5),(12,7),(13,9),(14,6),(15,8),(16,10)]:h[:,dst]=coco[:,src]
+h[:,8]=(coco[:,5]+coco[:,6])/2;h[:,7]=(h[:,0]+h[:,8])/2;h[:,9]=coco[:,0];h[:,10,:2]=1.5*coco[:,0,:2]-.5*h[:,8,:2]
+# Synthesized joints use conservative confidence, retained as a heuristic.
+for j in [0,7,8]:h[:,j,2]=np.minimum(coco[:,11,2],coco[:,12,2])*.7
+h[:,10,2]=coco[:,0,2]*.3
+valid=h[h[...,2]>.1][:,:2];lo=valid.min(0);hi=valid.max(0);scale=float(max(hi-lo));center=(lo+hi)/2;h[...,:2]=(h[...,:2]-center)/scale*2
+raw_input=h.copy();prepared=h.copy()
+# Short median filter removes isolated estimates without overwriting raw evidence.
+for i in range(len(h)):prepared[i,:,:2]=np.median(h[max(0,i-1):min(len(h),i+2),:,:2],axis=0)
+prep=time.perf_counter()-started-imports;a=time.perf_counter();model=DSTformer(dim_feat=256,dim_rep=512,depth=5,num_heads=8,att_fuse=True);path=Path('.authoring/reconstruction-models/motionbert-lite.bin');ck=torch.load(path,map_location='cpu',weights_only=True);state={k.removeprefix('module.'):v for k,v in ck['model_pos'].items()};model.load_state_dict(state,strict=True);model.eval();load=time.perf_counter()-a
+left=[4,5,6,11,12,13];right=[1,2,3,14,15,16]
+def predict(v):
+ x=torch.from_numpy(v[None]);flip=x.clone();flip[...,0]*=-1;flip[:,:,left+right]=flip[:,:,right+left]
+ with torch.inference_mode():
+  y=model(x);yf=model(flip);yf[...,0]*=-1;yf[:,:,left+right]=yf[:,:,right+left];return ((y+yf)/2)[0].numpy()
+a=time.perf_counter();draft=predict(prepared);first=time.perf_counter()-a;runs=[]
+for _ in range(3):
+ a=time.perf_counter();draft=predict(prepared);runs.append(time.perf_counter()-a)
+a=time.perf_counter();raw3d=predict(raw_input);raw_infer=time.perf_counter()-a
+# Camera-space x right, y down, depth is learned. Keep root-relative estimates separate from image root.
+root=draft[:,0:1].copy();relative=draft-root
+names=['pelvis','right_hip','right_knee','right_ankle','left_hip','left_knee','left_ankle','spine','neck','nose','head','left_shoulder','left_elbow','left_wrist','right_shoulder','right_elbow','right_wrist']
+result={'schemaVersion':1,'status':'estimated-draft-unreviewed','backend':'MotionBERT-Lite H36M global pose','modelSHA256':hashlib.sha256(path.read_bytes()).hexdigest(),'sourceCodeCommit':subprocess.check_output(['git','-C',str(vendor),'rev-parse','HEAD'],text=True).strip(),'checkpointURL':'https://huggingface.co/walterzhu/MotionBERT/resolve/main/checkpoint/pose3d/FT_MB_lite_MB_ft_h36m_global_lite/best_epoch.bin','sourceSHA256':report['sourceSHA256'],'sourcePose':args.pose,'frameRate':30,'recordingInterval':report['interval'],'times':uniform.tolist(),'jointNames':names,'coordinates':'learned camera-space normalized x-right/y-down/z-depth; relative scale, not metric','rootRelativePositions':relative.tolist(),'rawModelPositions':draft.tolist(),'raw2DModelPositions':raw3d.tolist(),'preparedInput':prepared.tolist(),'synthesizedJoints':['pelvis midpoint','neck shoulder midpoint','spine midpoint','head extrapolated from nose/neck'],'rootTravel':'Not reconstructed in world space; image pelvis movement retained for explicit screen-space trajectory approximation','imagePelvis':((coco[:,11,:2]+coco[:,12,:2])/2).tolist(),'inputNormalization':{'centerPixels':center.tolist(),'scalePixels':scale,'resampling':'linear interpolation on uniform30Hz grid, endpoint clamp; not new observed frames','filter':'3-sample median xy; confidence retained'},'timingsSeconds':{'imports':imports,'preparation':prep,'modelLoad':load,'firstInference':first,'warmInferences':runs,'rawInputInference':raw_infer,'processWall':time.perf_counter()-started},'limits':['No3D ground truth','COCO-to-H36M includes estimated axial joints','Single-view depth/twist/foot contact uncertain','No mirrored-side resolution','World root/metric scale absent']}
+(out/'motion-ir.json').write_text(json.dumps(result));np.save(out/'positions.npy',relative);print(json.dumps({'shape':list(relative.shape),'timings':result['timingsSeconds'],'finite':bool(np.isfinite(relative).all())}))

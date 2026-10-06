@@ -1,0 +1,4223 @@
+{
+  "semanticAuthoring": {
+    "schemaVersion": 1,
+    "conventions": {
+      "version": 1,
+      "rig": "quaternius-ual1",
+      "time": "seconds",
+      "distance": "normalized meters",
+      "rotation": "local quaternion xyzw",
+      "facing": "model +Z; anatomical facing unknown",
+      "support": "Revision/hash-pinned LLM visual contact intervals; uncovered times and physical support unknown"
+    },
+    "actionSpecSchema": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "rig": {
+          "const": "quaternius-ual1"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[-a-z0-9]{1,48}$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "intent": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "properties": {
+              "movementId": {
+                "type": "string",
+                "pattern": "^[-a-z0-9]{1,48}$"
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "speed": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 1.5
+              },
+              "connection": {
+                "type": "object",
+                "properties": {
+                  "contractId": {
+                    "type": "string",
+                    "pattern": "^[-a-z0-9]{1,48}$"
+                  },
+                  "duration": {
+                    "type": "number",
+                    "minimum": 0.016,
+                    "maximum": 1
+                  },
+                  "blend": {
+                    "enum": [
+                      "pose",
+                      "velocity"
+                    ]
+                  },
+                  "travel": {
+                    "enum": [
+                      "source",
+                      "continue"
+                    ]
+                  }
+                },
+                "required": [
+                  "contractId",
+                  "duration"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "movementId",
+              "revision",
+              "speed"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "rig",
+        "id",
+        "name",
+        "intent",
+        "steps"
+      ],
+      "additionalProperties": false,
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Animation Studio semantic action specification v1"
+    },
+    "tools": [
+      "inspect_movement_library",
+      "build_action_spec",
+      "find_common_motion",
+      "inspect_motion_quality",
+      "review_movement_contacts",
+      "review_connection_policy",
+      "get_contract_reviews"
+    ],
+    "limitations": "Whole movement windows only; positive pose blends; candidate contracts; no verified contact or arbitrary retargeting"
+  },
+  "manifest": {
+    "rig": "quaternius-ual1",
+    "bones": [
+      {
+        "name": "Head",
+        "parent": "neck_01",
+        "restTranslation": [
+          0,
+          0.08258678019046783,
+          -1.3969838619232178e-9
+        ],
+        "restRotation": [
+          -0.07867422699928284,
+          0,
+          0,
+          0.9969003796577454
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "neck_01",
+        "parent": "spine_03",
+        "restTranslation": [
+          0,
+          0.1728907823562622,
+          -1.862645149230957e-9
+        ],
+        "restRotation": [
+          0.11098591238260269,
+          0,
+          0,
+          0.9938219785690308
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "index_04_leaf_l",
+        "parent": "index_03_l",
+        "restTranslation": [
+          4.697540134657174e-9,
+          0.030100105330348015,
+          1.0693611329770647e-8
+        ],
+        "restRotation": [
+          4.1180931362579326e-16,
+          1,
+          1.4787951179418804e-17,
+          0.0000036517765238386346
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "index_03_l",
+        "parent": "index_02_l",
+        "restTranslation": [
+          9.722498361952603e-10,
+          0.034800052642822266,
+          1.0693611329770647e-8
+        ],
+        "restRotation": [
+          7.348758588704803e-18,
+          1.1368683772161603e-13,
+          -1.327914859583146e-16,
+          1
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          1
+        ]
+      },
+      {
+        "name": "index_02_l",
+        "parent": "index_01_l",
+        "restTranslation": [
+          -5.128198976578346e-10,
+          0.04070001840591431,
+          1.136087224296034e-8
+        ],
+        "restRotation": [
+          -4.4818607104670644e-14,
+          -9.671452971815597e-9,
+          -2.7004171121447484e-10,
+          1
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "index_01_l",
+        "parent": "hand_l",
+        "restTranslation": [
+          0.001999831758439541,
+          0.1198999211192131,
+          0.030899997800588608
+        ],
+        "restRotation": [
+          -4.854115687180638e-8,
+          0.7071095705032349,
+          -4.854154056488369e-8,
+          0.707103967666626
+        ],
+        "restScale": [
+          0.9999999403953552,
+          0.9999997615814209,
+          1
+        ]
+      },
+      {
+        "name": "middle_04_leaf_l",
+        "parent": "middle_03_l",
+        "restTranslation": [
+          -5.866240826435387e-9,
+          0.034437183290719986,
+          2.5992932251028833e-8
+        ],
+        "restRotation": [
+          9.313227522511625e-9,
+          1,
+          -5.5467012344376405e-15,
+          0.0000036517760690912837
+        ],
+        "restScale": [
+          1,
+          0.9999997019767761,
+          1
+        ]
+      },
+      {
+        "name": "middle_03_l",
+        "parent": "middle_02_l",
+        "restTranslation": [
+          -2.7830537874251604e-10,
+          0.03393314778804779,
+          1.605138209015422e-7
+        ],
+        "restRotation": [
+          8.156294306616019e-9,
+          -3.566927135600917e-12,
+          -0.0011296597076579928,
+          0.9999993443489075
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "middle_02_l",
+        "parent": "middle_01_l",
+        "restTranslation": [
+          3.637978807091713e-10,
+          0.042347248643636703,
+          2.018612121901242e-8
+        ],
+        "restRotation": [
+          -1.1900032070855104e-8,
+          -9.910034570737025e-9,
+          0.0015135601861402392,
+          0.9999988675117493
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "middle_01_l",
+        "parent": "hand_l",
+        "restTranslation": [
+          -0.00040022601024247706,
+          0.12159990519285202,
+          0.0052000004798173904
+        ],
+        "restRotation": [
+          -0.01670246012508869,
+          0.7069122791290283,
+          -0.016702570021152496,
+          0.7069067358970642
+        ],
+        "restScale": [
+          0.9999999403953552,
+          0.9999998807907104,
+          1
+        ]
+      },
+      {
+        "name": "pinky_04_leaf_l",
+        "parent": "pinky_03_l",
+        "restTranslation": [
+          -3.5834091249853373e-9,
+          0.028164202347397804,
+          1.1433525060056127e-7
+        ],
+        "restRotation": [
+          2.421439049271612e-8,
+          1,
+          1.6284096602614886e-14,
+          0.00000365177675121231
+        ],
+        "restScale": [
+          0.9999999403953552,
+          0.9999999403953552,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "pinky_03_l",
+        "parent": "pinky_02_l",
+        "restTranslation": [
+          -3.58431861968711e-9,
+          0.027665333822369576,
+          2.2544884359376738e-7
+        ],
+        "restRotation": [
+          -4.400461328657457e-9,
+          4.186874371508997e-12,
+          0.000609522860031575,
+          0.9999998211860657
+        ],
+        "restScale": [
+          0.9999999403953552,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "pinky_02_l",
+        "parent": "pinky_01_l",
+        "restTranslation": [
+          3.346940502524376e-9,
+          0.04029057174921036,
+          -1.4873648979119025e-9
+        ],
+        "restRotation": [
+          5.882122788847255e-9,
+          -1.0178268894378562e-8,
+          -0.0008342716027982533,
+          0.9999996423721313
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "pinky_01_l",
+        "parent": "hand_l",
+        "restTranslation": [
+          0.0015997173031792045,
+          0.107699915766716,
+          -0.040800001472234726
+        ],
+        "restRotation": [
+          -0.023706039413809776,
+          0.7067120671272278,
+          -0.02370619960129261,
+          0.7067065238952637
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "ring_04_leaf_l",
+        "parent": "ring_03_l",
+        "restTranslation": [
+          1.2751115718856454e-9,
+          0.03182259574532509,
+          -1.1624800322351803e-7
+        ],
+        "restRotation": [
+          1.862645149230957e-9,
+          1,
+          5.017902800631517e-14,
+          0.00000365177675121231
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "ring_03_l",
+        "parent": "ring_02_l",
+        "restTranslation": [
+          -6.176378519739956e-9,
+          0.030919553712010384,
+          -1.0190598231929471e-7
+        ],
+        "restRotation": [
+          7.704945126363327e-9,
+          -2.098988951398928e-12,
+          -0.0010670634219422936,
+          0.9999994039535522
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          1
+        ]
+      },
+      {
+        "name": "ring_02_l",
+        "parent": "ring_01_l",
+        "restTranslation": [
+          -7.830749382264912e-10,
+          0.039324983954429626,
+          -1.0246476733755117e-7
+        ],
+        "restRotation": [
+          -8.660336892063469e-10,
+          -9.627518338106711e-9,
+          0.000012190081179141998,
+          1
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "ring_01_l",
+        "parent": "hand_l",
+        "restTranslation": [
+          -0.00010019120236393064,
+          0.11909990012645721,
+          -0.017100004479289055
+        ],
+        "restRotation": [
+          -0.012588735669851303,
+          0.7069975137710571,
+          -0.012588820420205593,
+          0.706991970539093
+        ],
+        "restScale": [
+          0.9999999403953552,
+          0.9999997615814209,
+          1
+        ]
+      },
+      {
+        "name": "thumb_04_leaf_l",
+        "parent": "thumb_03_l",
+        "restTranslation": [
+          -2.0787410903722048e-7,
+          0.0408623106777668,
+          -1.862645149230957e-8
+        ],
+        "restRotation": [
+          2.3757428024850924e-8,
+          0.5061779022216797,
+          2.723667478221614e-7,
+          0.8624290823936462
+        ],
+        "restScale": [
+          1.0000001192092896,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "thumb_03_l",
+        "parent": "thumb_02_l",
+        "restTranslation": [
+          -1.2301234164624475e-7,
+          0.049077946692705154,
+          -2.514570951461792e-8
+        ],
+        "restRotation": [
+          0.0002478846290614456,
+          0.00008091918425634503,
+          -0.0005353352753445506,
+          0.9999998211860657
+        ],
+        "restScale": [
+          0.9999998807907104,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "thumb_02_l",
+        "parent": "thumb_01_l",
+        "restTranslation": [
+          5.90443960390985e-9,
+          0.0430297926068306,
+          4.284083843231201e-8
+        ],
+        "restRotation": [
+          -0.000135714202770032,
+          -0.0000741071708034724,
+          0.000047934565372997895,
+          1
+        ],
+        "restScale": [
+          1,
+          0.9999998807907104,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "thumb_01_l",
+        "parent": "hand_l",
+        "restTranslation": [
+          0.02279982902109623,
+          0.02729993499815464,
+          0.03359999507665634
+        ],
+        "restRotation": [
+          0.2474130243062973,
+          0.9457945227622986,
+          0.20344115793704987,
+          0.05358405411243439
+        ],
+        "restScale": [
+          1,
+          1.0000001192092896,
+          1
+        ]
+      },
+      {
+        "name": "hand_l",
+        "parent": "lowerarm_l",
+        "restTranslation": [
+          1.2729826082136242e-8,
+          0.27264055609703064,
+          -1.8102070953318616e-9
+        ],
+        "restRotation": [
+          -0.008619682863354683,
+          -4.1722387322806753e-7,
+          2.1919726034269615e-9,
+          0.9999628663063049
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "lowerarm_l",
+        "parent": "upperarm_l",
+        "restTranslation": [
+          2.1565142560575623e-8,
+          0.2744402587413788,
+          -1.2878444977104664e-9
+        ],
+        "restRotation": [
+          0.01718229055404663,
+          -0.00002035305260505993,
+          3.6708831885334803e-7,
+          0.9998524188995361
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "upperarm_l",
+        "parent": "clavicle_l",
+        "restTranslation": [
+          -0.03007233701646328,
+          0.21858175098896027,
+          -0.01696845516562462
+        ],
+        "restRotation": [
+          0.18026958405971527,
+          0.6838500499725342,
+          -0.17983640730381012,
+          0.6837477087974548
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "clavicle_l",
+        "parent": "spine_03",
+        "restTranslation": [
+          0.018799999728798866,
+          0.1405535787343979,
+          0.08089503645896912
+        ],
+        "restRotation": [
+          -0.6040205955505371,
+          -0.34510302543640137,
+          -0.35671767592430115,
+          0.6235507726669312
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "index_04_leaf_r",
+        "parent": "index_03_r",
+        "restTranslation": [
+          -9.713403414934874e-10,
+          0.030099960044026375,
+          1.1624820217548404e-8
+        ],
+        "restRotation": [
+          1.7660197551910774e-16,
+          -1,
+          2.368324237555521e-16,
+          0.0000036517765238386346
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "index_03_r",
+        "parent": "index_02_r",
+        "restTranslation": [
+          -4.6966306399554014e-9,
+          0.03480002284049988,
+          -1.0758446933323285e-7
+        ],
+        "restRotation": [
+          -1.1838301877415552e-16,
+          -1.1368683772161603e-13,
+          -4.1818744524883854e-16,
+          1
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "index_02_r",
+        "parent": "index_01_r",
+        "restTranslation": [
+          -5.3552526857458815e-9,
+          0.04070010781288147,
+          -1.0784840043243094e-7
+        ],
+        "restRotation": [
+          -5.2394442679858794e-14,
+          -3.824084160441998e-9,
+          2.7004842806377383e-10,
+          1
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "index_01_r",
+        "parent": "hand_r",
+        "restTranslation": [
+          -0.0019998278003185987,
+          0.11989995837211609,
+          0.030899999663233757
+        ],
+        "restRotation": [
+          -4.8541142660951664e-8,
+          -0.7071096301078796,
+          4.854153345945633e-8,
+          0.7071039080619812
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          1
+        ]
+      },
+      {
+        "name": "middle_04_leaf_r",
+        "parent": "middle_03_r",
+        "restTranslation": [
+          4.00359567720443e-9,
+          0.03443721681833267,
+          2.6527175123192137e-8
+        ],
+        "restRotation": [
+          9.313225746154785e-9,
+          -1,
+          -4.341538183106307e-14,
+          0.000003651776296464959
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "middle_03_r",
+        "parent": "middle_02_r",
+        "restTranslation": [
+          2.141860022675246e-9,
+          0.03393318131566048,
+          4.189584501546051e-8
+        ],
+        "restRotation": [
+          8.186298749990328e-9,
+          2.2575290595239217e-11,
+          0.0011296587763354182,
+          0.9999993443489075
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          1
+        ]
+      },
+      {
+        "name": "middle_02_r",
+        "parent": "middle_01_r",
+        "restTranslation": [
+          6.311893230304122e-10,
+          0.04234728217124939,
+          -9.737595974002033e-8
+        ],
+        "restRotation": [
+          -1.100992630398423e-8,
+          -3.3837239676870468e-9,
+          -0.0015135611174628139,
+          0.9999988675117493
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "middle_01_r",
+        "parent": "hand_r",
+        "restTranslation": [
+          0.00040023319888859987,
+          0.12159993499517441,
+          0.00520000234246254
+        ],
+        "restRotation": [
+          -0.01670246012508869,
+          -0.7069123387336731,
+          0.016702566295862198,
+          0.7069066762924194
+        ],
+        "restScale": [
+          0.9999999403953552,
+          0.9999998807907104,
+          1
+        ]
+      },
+      {
+        "name": "pinky_04_leaf_r",
+        "parent": "pinky_03_r",
+        "restTranslation": [
+          3.5824996302835643e-9,
+          0.028164170682430267,
+          -1.2279903671696957e-7
+        ],
+        "restRotation": [
+          2.60770320892334e-8,
+          -1,
+          -3.1884908667338674e-14,
+          0.0000036517765238386346
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "pinky_03_r",
+        "parent": "pinky_02_r",
+        "restTranslation": [
+          3.58431861968711e-9,
+          0.027665363624691963,
+          -1.1715911796272849e-8
+        ],
+        "restRotation": [
+          -4.416420118502629e-9,
+          -1.6191496060580235e-11,
+          -0.0006095209391787648,
+          0.9999998211860657
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "pinky_02_r",
+        "parent": "pinky_01_r",
+        "restTranslation": [
+          8.576535037718713e-10,
+          0.04029053822159767,
+          -1.963655904546613e-9
+        ],
+        "restRotation": [
+          5.623980836588771e-9,
+          -2.9140143631423143e-9,
+          0.0008342642686329782,
+          0.9999996423721313
+        ],
+        "restScale": [
+          0.9999999403953552,
+          0.9999998211860657,
+          1
+        ]
+      },
+      {
+        "name": "pinky_01_r",
+        "parent": "hand_r",
+        "restTranslation": [
+          -0.0015997047303244472,
+          0.10769994556903839,
+          -0.040800001472234726
+        ],
+        "restRotation": [
+          -0.023706039413809776,
+          -0.7067121267318726,
+          0.02370619773864746,
+          0.7067064642906189
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "ring_04_leaf_r",
+        "parent": "ring_03_r",
+        "restTranslation": [
+          -1.2760210665874183e-9,
+          0.031822629272937775,
+          4.2641943309718044e-9
+        ],
+        "restRotation": [
+          3.725290742551124e-9,
+          -1,
+          -6.052667895150524e-15,
+          0.000003651776296464959
+        ],
+        "restScale": [
+          1,
+          0.9999997019767761,
+          1
+        ]
+      },
+      {
+        "name": "ring_03_r",
+        "parent": "ring_02_r",
+        "restTranslation": [
+          2.4510882212780416e-9,
+          0.03091958537697792,
+          -1.0054915833279665e-7
+        ],
+        "restRotation": [
+          7.732828599671393e-9,
+          2.1304747896411236e-11,
+          0.0010670634219422936,
+          0.9999994039535522
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          1
+        ]
+      },
+      {
+        "name": "ring_02_r",
+        "parent": "ring_01_r",
+        "restTranslation": [
+          -2.5420376914553344e-9,
+          0.03932501748204231,
+          -2.1878902600747097e-7
+        ],
+        "restRotation": [
+          7.371431243186066e-10,
+          -3.438689111234794e-9,
+          -0.000012191012501716614,
+          1
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "ring_01_r",
+        "parent": "hand_r",
+        "restTranslation": [
+          0.00010020103945862502,
+          0.1190999373793602,
+          -0.017100002616643906
+        ],
+        "restRotation": [
+          -0.012588738463819027,
+          -0.7069975137710571,
+          0.01258881762623787,
+          0.706991970539093
+        ],
+        "restScale": [
+          0.9999999403953552,
+          0.9999997615814209,
+          1
+        ]
+      },
+      {
+        "name": "thumb_04_leaf_r",
+        "parent": "thumb_03_r",
+        "restTranslation": [
+          -6.444497557822615e-8,
+          0.040862299501895905,
+          1.4901161193847656e-8
+        ],
+        "restRotation": [
+          1.9437893072904444e-8,
+          -0.5061777830123901,
+          -2.737419038112421e-7,
+          0.862429141998291
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "thumb_03_r",
+        "parent": "thumb_02_r",
+        "restTranslation": [
+          -5.5804321164032444e-8,
+          0.04907788336277008,
+          5.587935447692871e-9
+        ],
+        "restRotation": [
+          0.0002478510432410985,
+          -0.00008099935803329572,
+          0.0005353167653083801,
+          0.9999998807907104
+        ],
+        "restScale": [
+          0.9999998807907104,
+          0.9999999403953552,
+          1
+        ]
+      },
+      {
+        "name": "thumb_02_r",
+        "parent": "thumb_01_r",
+        "restTranslation": [
+          -7.172275218181312e-9,
+          0.04302985966205597,
+          -1.6763806343078613e-8
+        ],
+        "restRotation": [
+          -0.00013566949928645045,
+          0.0000740157556720078,
+          -0.000047864316002232954,
+          1
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "thumb_01_r",
+        "parent": "hand_r",
+        "restTranslation": [
+          -0.022799823433160782,
+          0.027299968525767326,
+          0.03359999507665634
+        ],
+        "restRotation": [
+          0.2474130541086197,
+          -0.9457944631576538,
+          -0.2034410983324051,
+          0.053584057837724686
+        ],
+        "restScale": [
+          1,
+          1.0000001192092896,
+          1
+        ]
+      },
+      {
+        "name": "hand_r",
+        "parent": "lowerarm_r",
+        "restTranslation": [
+          -2.204334137445585e-8,
+          0.2726404666900635,
+          1.72497038875008e-9
+        ],
+        "restRotation": [
+          -0.008619682863354683,
+          5.364287289921776e-7,
+          -2.1920292248012174e-9,
+          0.9999628663063049
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "lowerarm_r",
+        "parent": "upperarm_r",
+        "restTranslation": [
+          -1.4812334825364815e-7,
+          0.2744402289390564,
+          -7.94170773588121e-9
+        ],
+        "restRotation": [
+          0.017182305455207825,
+          0.00002035305260505993,
+          -3.691950496431673e-7,
+          0.9998524188995361
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "upperarm_r",
+        "parent": "clavicle_r",
+        "restTranslation": [
+          0.03007233701646328,
+          0.21858175098896027,
+          -0.01696845516562462
+        ],
+        "restRotation": [
+          0.18026958405971527,
+          -0.6838500499725342,
+          0.17983640730381012,
+          0.6837477087974548
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "clavicle_r",
+        "parent": "spine_03",
+        "restTranslation": [
+          -0.018799999728798866,
+          0.1405535787343979,
+          0.08089503645896912
+        ],
+        "restRotation": [
+          -0.6040205955505371,
+          0.34510302543640137,
+          0.35671767592430115,
+          0.6235507726669312
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "spine_03",
+        "parent": "spine_02",
+        "restTranslation": [
+          0,
+          0.14127187430858612,
+          5.587935447692871e-9
+        ],
+        "restRotation": [
+          -0.0002685915678739548,
+          0,
+          0,
+          1
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          1
+        ]
+      },
+      {
+        "name": "spine_02",
+        "parent": "spine_01",
+        "restTranslation": [
+          0,
+          0.12403485178947449,
+          3.4924596548080444e-10
+        ],
+        "restRotation": [
+          -0.07727984338998795,
+          0,
+          0,
+          0.9970094561576843
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          1
+        ]
+      },
+      {
+        "name": "spine_01",
+        "parent": "pelvis",
+        "restTranslation": [
+          0,
+          0.1381763368844986,
+          -1.210719347000122e-8
+        ],
+        "restRotation": [
+          -0.06470262259244919,
+          0,
+          0,
+          0.9979045987129211
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          1
+        ]
+      },
+      {
+        "name": "ball_leaf_l",
+        "parent": "ball_l",
+        "restTranslation": [
+          6.8294805366519995e-9,
+          0.07890003174543381,
+          -5.368017141904602e-11
+        ],
+        "restRotation": [
+          -1.4901159417490817e-8,
+          -2.043089253334074e-8,
+          -3.0444404944326845e-16,
+          1
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "ball_l",
+        "parent": "foot_l",
+        "restTranslation": [
+          3.919922164641321e-9,
+          0.1733010858297348,
+          -8.578354027122259e-9
+        ],
+        "restRotation": [
+          0.0001371279067825526,
+          -0.9643067717552185,
+          0.26478710770606995,
+          0.0004994344199076295
+        ],
+        "restScale": [
+          1,
+          1.0000003576278687,
+          0.9999998211860657
+        ]
+      },
+      {
+        "name": "foot_l",
+        "parent": "calf_l",
+        "restTranslation": [
+          -7.219114195322618e-9,
+          0.4294798970222473,
+          2.408341970294714e-9
+        ],
+        "restRotation": [
+          -0.5290717482566833,
+          -0.0003280931559856981,
+          0.00034345293533988297,
+          0.8485770225524902
+        ],
+        "restScale": [
+          1,
+          1,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "calf_l",
+        "parent": "thigh_l",
+        "restTranslation": [
+          7.450580596923828e-9,
+          0.4003097712993622,
+          -2.3283064365386963e-10
+        ],
+        "restRotation": [
+          0.03658590838313103,
+          -0.0001311732194153592,
+          -0.000004802307103091152,
+          0.9993305206298828
+        ],
+        "restScale": [
+          0.9999999403953552,
+          0.9999998807907104,
+          0.9999998807907104
+        ]
+      },
+      {
+        "name": "thigh_l",
+        "parent": "pelvis",
+        "restTranslation": [
+          0.08900000154972076,
+          0.027770841494202614,
+          0.04602379724383354
+        ],
+        "restRotation": [
+          0.992484450340271,
+          0,
+          0,
+          0.12237062305212021
+        ],
+        "restScale": [
+          1,
+          1,
+          0.9999998211860657
+        ]
+      },
+      {
+        "name": "ball_leaf_r",
+        "parent": "ball_r",
+        "restTranslation": [
+          -8.071681101284867e-9,
+          0.07890003174543381,
+          -2.2050139492080234e-10
+        ],
+        "restRotation": [
+          -1.4901159417490817e-8,
+          -2.043089253334074e-8,
+          -3.0444404944326845e-16,
+          1
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "ball_r",
+        "parent": "foot_r",
+        "restTranslation": [
+          -3.5306584322825074e-9,
+          0.1733010858297348,
+          -8.185452315956354e-9
+        ],
+        "restRotation": [
+          0.0001371279067825526,
+          -0.9643067717552185,
+          0.26478710770606995,
+          0.0004994344199076295
+        ],
+        "restScale": [
+          1,
+          1.0000003576278687,
+          0.9999998211860657
+        ]
+      },
+      {
+        "name": "foot_r",
+        "parent": "calf_r",
+        "restTranslation": [
+          7.682046998525038e-9,
+          0.42947983741760254,
+          1.3169483281672e-9
+        ],
+        "restRotation": [
+          -0.5290717482566833,
+          -0.0003280931559856981,
+          0.00034345293533988297,
+          0.8485770225524902
+        ],
+        "restScale": [
+          1,
+          1,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "calf_r",
+        "parent": "thigh_r",
+        "restTranslation": [
+          -7.450580596923828e-9,
+          0.4003097712993622,
+          -2.3283064365386963e-10
+        ],
+        "restRotation": [
+          0.03658590838313103,
+          -0.0001311732194153592,
+          -0.000004802307103091152,
+          0.9993305206298828
+        ],
+        "restScale": [
+          0.9999999403953552,
+          0.9999998807907104,
+          0.9999998807907104
+        ]
+      },
+      {
+        "name": "thigh_r",
+        "parent": "pelvis",
+        "restTranslation": [
+          -0.08900000154972076,
+          0.027770841494202614,
+          0.04602379724383354
+        ],
+        "restRotation": [
+          0.992484450340271,
+          0,
+          0,
+          0.12237062305212021
+        ],
+        "restScale": [
+          1,
+          1,
+          0.9999998211860657
+        ]
+      },
+      {
+        "name": "pelvis",
+        "parent": "root",
+        "restTranslation": [
+          0,
+          0.05010002851486206,
+          0.916700005531311
+        ],
+        "restRotation": [
+          0.7904685139656067,
+          0,
+          0,
+          0.6125027537345886
+        ],
+        "restScale": [
+          1,
+          0.9999999403953552,
+          0.9999999403953552
+        ]
+      },
+      {
+        "name": "root",
+        "parent": "Armature",
+        "restTranslation": [
+          0,
+          0,
+          0
+        ],
+        "restRotation": [
+          -0.7071067690849304,
+          0,
+          0,
+          0.7071067690849304
+        ],
+        "restScale": [
+          1,
+          1,
+          1
+        ]
+      }
+    ],
+    "clips": [
+      "A_TPose",
+      "Crouch_Fwd_Loop",
+      "Crouch_Idle_Loop",
+      "Dance_Loop",
+      "Death01",
+      "Driving_Loop",
+      "Fixing_Kneeling",
+      "Hit_Chest",
+      "Hit_Head",
+      "Idle_Loop",
+      "Idle_Talking_Loop",
+      "Idle_Torch_Loop",
+      "Interact",
+      "Jog_Fwd_Loop",
+      "Jump_Land",
+      "Jump_Loop",
+      "Jump_Start",
+      "PickUp_Table",
+      "Pistol_Aim_Down",
+      "Pistol_Aim_Neutral",
+      "Pistol_Aim_Up",
+      "Pistol_Idle_Loop",
+      "Pistol_Reload",
+      "Pistol_Shoot",
+      "Punch_Cross",
+      "Punch_Jab",
+      "Push_Loop",
+      "Roll",
+      "Sitting_Enter",
+      "Sitting_Exit",
+      "Sitting_Idle_Loop",
+      "Sitting_Talking_Loop",
+      "Spell_Simple_Enter",
+      "Spell_Simple_Exit",
+      "Spell_Simple_Idle_Loop",
+      "Spell_Simple_Shoot",
+      "Sprint_Loop",
+      "Swim_Fwd_Loop",
+      "Swim_Idle_Loop",
+      "Sword_Attack",
+      "Sword_Idle",
+      "Walk_Formal_Loop",
+      "Walk_Loop"
+    ],
+    "units": {
+      "time": "seconds",
+      "rootPosition": "normalized runtime meters, Y up",
+      "jointPosition": "GLB asset units in parent local space",
+      "rotation": "local quaternion [x,y,z,w]",
+      "scale": "dimensionless"
+    },
+    "trackModes": {
+      "absolute": "replace sampled local property",
+      "offset": "rotation: sampled quaternion multiplied by offset; position: add offset; scale: multiply"
+    },
+    "interpolation": [
+      "linear",
+      "smooth",
+      "step"
+    ],
+    "limitations": [
+      "one known rig",
+      "no IK solver or retargeting",
+      "no physics or collisions",
+      "impact ring/debris only; no custom shaders/audio",
+      "no mesh/material/topology editing"
+    ],
+    "clipDurations": {
+      "A_TPose": 2.5,
+      "Crouch_Fwd_Loop": 2,
+      "Crouch_Idle_Loop": 2.933333333333333,
+      "Dance_Loop": 1,
+      "Death01": 2.4,
+      "Driving_Loop": 1.6666666666666667,
+      "Fixing_Kneeling": 5.2,
+      "Hit_Chest": 0.3333333333333333,
+      "Hit_Head": 0.43333333333333335,
+      "Idle_Loop": 2.5,
+      "Idle_Talking_Loop": 2.933333333333333,
+      "Idle_Torch_Loop": 1.2666666666666666,
+      "Interact": 2,
+      "Jog_Fwd_Loop": 0.9333333333333333,
+      "Jump_Land": 1.2666666666666666,
+      "Jump_Loop": 2.5,
+      "Jump_Start": 1.3333333333333333,
+      "PickUp_Table": 0.8333333333333334,
+      "Pistol_Aim_Down": 0.16666666666666666,
+      "Pistol_Aim_Neutral": 0.16666666666666666,
+      "Pistol_Aim_Up": 0.16666666666666666,
+      "Pistol_Idle_Loop": 1.6666666666666667,
+      "Pistol_Reload": 1.6666666666666667,
+      "Pistol_Shoot": 0.6333333333333333,
+      "Punch_Cross": 1,
+      "Punch_Jab": 0.8666666666666667,
+      "Push_Loop": 2.6666666666666665,
+      "Roll": 1.4666666666666666,
+      "Sitting_Enter": 1.3,
+      "Sitting_Exit": 1.0333333333333334,
+      "Sitting_Idle_Loop": 1.6666666666666667,
+      "Sitting_Talking_Loop": 2.933333333333333,
+      "Spell_Simple_Enter": 0.5333333333333333,
+      "Spell_Simple_Exit": 0.43333333333333335,
+      "Spell_Simple_Idle_Loop": 2.1,
+      "Spell_Simple_Shoot": 0.5,
+      "Sprint_Loop": 0.6666666666666666,
+      "Swim_Fwd_Loop": 1.3333333333333333,
+      "Swim_Idle_Loop": 3.3333333333333335,
+      "Sword_Attack": 1.5333333333333334,
+      "Sword_Idle": 1.6666666666666667,
+      "Walk_Formal_Loop": 1.3333333333333333,
+      "Walk_Loop": 1.3333333333333333
+    },
+    "asset": {
+      "joints": 65,
+      "triangles": 13744,
+      "license": "CC0-1.0",
+      "source": "https://quaternius.itch.io/universal-animation-library",
+      "runtimeHeightMeters": 1.85
+    }
+  },
+  "projectSequence": 411,
+  "movementProfiles": {
+    "jointOrder": [
+      "pelvis",
+      "spine_03",
+      "Head",
+      "upperarm_l",
+      "lowerarm_l",
+      "hand_l",
+      "upperarm_r",
+      "lowerarm_r",
+      "hand_r",
+      "thigh_l",
+      "calf_l",
+      "foot_l",
+      "thigh_r",
+      "calf_r",
+      "foot_r"
+    ],
+    "units": "World distances in normalized meters; local joint quaternions; positions relative to model root",
+    "forward": "Model +Z axis transformed by model root rotation; not an inferred anatomical facing",
+    "supportHints": "Ball joint within 0.05 m of floor and speed <=0.15 m/s over up to 0.05 s; none means no stationary foot detected, not absence of hand/body contact",
+    "matching": "Endpoint heuristic, not complete motion validation. Profiles and reviews invalidate on movement revision. Refresh after import."
+  },
+  "sourceLibraries": [
+    {
+      "id": "ual2-standard",
+      "clips": 43,
+      "license": "CC0-1.0",
+      "sourceHash": "8cee20ab1bc55130092447e810e26df22dd2803eccc54f52137a7d54d7ab88a8"
+    }
+  ],
+  "movementLibrary": {
+    "tools": [
+      "profile_movement_library",
+      "find_movement_connections",
+      "review_movement_profile",
+      "sync_movement_library",
+      "adapt_movement",
+      "list_movements",
+      "get_movement",
+      "build_movement",
+      "register_movement",
+      "compose_action",
+      "revise_action_recipe",
+      "archive_entry"
+    ],
+    "composition": "Revision-pinned recipe, explicit connection phases, baked tracks, maximum 4 seconds; smooth pose blending with optional single-foot whole-body anchoring; no IK or balance solver"
+  },
+  "kickStudy": {
+    "controls": {
+      "heightDeg": {
+        "min": -8,
+        "max": 8,
+        "default": 0
+      },
+      "releaseSpeed": {
+        "min": 0.75,
+        "max": 1.25,
+        "default": 1
+      }
+    },
+    "source": "Mesh2Motion Kick_Breach (CC0)",
+    "tool": "revise_kick",
+    "limitations": "Bounded forward kick only; no general IK, collision or automatic balance solver"
+  },
+  "actionSchema": {
+    "type": "object",
+    "properties": {
+      "version": {
+        "const": 2
+      },
+      "rig": {
+        "const": "quaternius-ual1"
+      },
+      "id": {
+        "type": "string",
+        "pattern": "^[-a-z0-9]{1,48}$"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "phases": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 32,
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[-a-z0-9]{1,48}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "intent": {
+              "type": "string"
+            },
+            "duration": {
+              "type": "number",
+              "minimum": 0.016,
+              "maximum": 10
+            },
+            "kind": {
+              "enum": [
+                "hold",
+                "fast",
+                "move",
+                "neutral"
+              ]
+            },
+            "clip": {
+              "enum": [
+                "A_TPose",
+                "Crouch_Fwd_Loop",
+                "Crouch_Idle_Loop",
+                "Dance_Loop",
+                "Death01",
+                "Driving_Loop",
+                "Fixing_Kneeling",
+                "Hit_Chest",
+                "Hit_Head",
+                "Idle_Loop",
+                "Idle_Talking_Loop",
+                "Idle_Torch_Loop",
+                "Interact",
+                "Jog_Fwd_Loop",
+                "Jump_Land",
+                "Jump_Loop",
+                "Jump_Start",
+                "PickUp_Table",
+                "Pistol_Aim_Down",
+                "Pistol_Aim_Neutral",
+                "Pistol_Aim_Up",
+                "Pistol_Idle_Loop",
+                "Pistol_Reload",
+                "Pistol_Shoot",
+                "Punch_Cross",
+                "Punch_Jab",
+                "Push_Loop",
+                "Roll",
+                "Sitting_Enter",
+                "Sitting_Exit",
+                "Sitting_Idle_Loop",
+                "Sitting_Talking_Loop",
+                "Spell_Simple_Enter",
+                "Spell_Simple_Exit",
+                "Spell_Simple_Idle_Loop",
+                "Spell_Simple_Shoot",
+                "Sprint_Loop",
+                "Swim_Fwd_Loop",
+                "Swim_Idle_Loop",
+                "Sword_Attack",
+                "Sword_Idle",
+                "Walk_Formal_Loop",
+                "Walk_Loop"
+              ]
+            },
+            "from": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "to": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "intent",
+            "duration",
+            "clip",
+            "from",
+            "to"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "tracks": {
+        "type": "array",
+        "maxItems": 198,
+        "items": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "enum": [
+                "$root",
+                "Head",
+                "neck_01",
+                "index_04_leaf_l",
+                "index_03_l",
+                "index_02_l",
+                "index_01_l",
+                "middle_04_leaf_l",
+                "middle_03_l",
+                "middle_02_l",
+                "middle_01_l",
+                "pinky_04_leaf_l",
+                "pinky_03_l",
+                "pinky_02_l",
+                "pinky_01_l",
+                "ring_04_leaf_l",
+                "ring_03_l",
+                "ring_02_l",
+                "ring_01_l",
+                "thumb_04_leaf_l",
+                "thumb_03_l",
+                "thumb_02_l",
+                "thumb_01_l",
+                "hand_l",
+                "lowerarm_l",
+                "upperarm_l",
+                "clavicle_l",
+                "index_04_leaf_r",
+                "index_03_r",
+                "index_02_r",
+                "index_01_r",
+                "middle_04_leaf_r",
+                "middle_03_r",
+                "middle_02_r",
+                "middle_01_r",
+                "pinky_04_leaf_r",
+                "pinky_03_r",
+                "pinky_02_r",
+                "pinky_01_r",
+                "ring_04_leaf_r",
+                "ring_03_r",
+                "ring_02_r",
+                "ring_01_r",
+                "thumb_04_leaf_r",
+                "thumb_03_r",
+                "thumb_02_r",
+                "thumb_01_r",
+                "hand_r",
+                "lowerarm_r",
+                "upperarm_r",
+                "clavicle_r",
+                "spine_03",
+                "spine_02",
+                "spine_01",
+                "ball_leaf_l",
+                "ball_l",
+                "foot_l",
+                "calf_l",
+                "thigh_l",
+                "ball_leaf_r",
+                "ball_r",
+                "foot_r",
+                "calf_r",
+                "thigh_r",
+                "pelvis",
+                "root"
+              ]
+            },
+            "property": {
+              "enum": [
+                "rotation",
+                "position",
+                "scale"
+              ]
+            },
+            "mode": {
+              "enum": [
+                "absolute",
+                "offset"
+              ]
+            },
+            "interpolation": {
+              "enum": [
+                "linear",
+                "smooth",
+                "step"
+              ]
+            },
+            "keys": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 256,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "time": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 30
+                  },
+                  "value": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 4
+                  }
+                },
+                "required": [
+                  "time",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "target",
+            "property",
+            "mode",
+            "interpolation",
+            "keys"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "cues": {
+        "type": "array",
+        "maxItems": 16,
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "impact"
+            },
+            "time": {
+              "type": "number"
+            },
+            "strength": {
+              "type": "number",
+              "minimum": 0.1,
+              "maximum": 3
+            }
+          },
+          "required": [
+            "type",
+            "time",
+            "strength"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "version",
+      "rig",
+      "id",
+      "name",
+      "phases",
+      "tracks"
+    ],
+    "additionalProperties": false
+  },
+  "tools": [
+    {
+      "name": "get_contract_reviews",
+      "description": "Read stored contact/seam reviews and retained history, including stale revision/hash pins. No writes; current manifests hide stale evidence.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "movementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "contractId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "review_movement_contacts",
+      "description": "Record bounded source intervals after visual review. Service remeasures contact intent and pins revision/hash; supported decisions require configured height/speed/drift bounds. Uncovered time stays unknown, no automatic anchoring.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "movementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "expectedReviewRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "intervals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "foot": {
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                },
+                "start": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "end": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "decision": {
+                  "enum": [
+                    "supported",
+                    "uncertain",
+                    "rejected"
+                  ]
+                },
+                "notes": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000
+                }
+              },
+              "required": [
+                "foot",
+                "start",
+                "end",
+                "decision",
+                "notes"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 16
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "Front",
+                "Side",
+                "Orbit",
+                "Top"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "minItems": 0,
+            "maxItems": 8
+          }
+        },
+        "required": [
+          "movementId",
+          "sourceRevision",
+          "expectedReviewRevision",
+          "intervals",
+          "views",
+          "notes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "review_connection_policy",
+      "description": "Record visual seam review for one curated source pair on an existing compiled recipe. Pins both sources and exact speed/blend/no-anchor configuration. Supported requires no configured flags; needs-review and rejected remain explicit. Does not modify motion.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "contractId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "fromRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "toRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "actionRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "step": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 7
+          },
+          "expectedReviewRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "decision": {
+            "enum": [
+              "supported",
+              "needs-review",
+              "rejected"
+            ]
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "Front",
+                "Side",
+                "Orbit",
+                "Top"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "minItems": 0,
+            "maxItems": 8
+          }
+        },
+        "required": [
+          "contractId",
+          "fromRevision",
+          "toRevision",
+          "actionId",
+          "actionRevision",
+          "step",
+          "expectedReviewRevision",
+          "decision",
+          "views",
+          "notes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "inspect_motion_quality",
+      "description": "Read-only revision-pinned 60Hz rig inspection for movements or actions: rest bone/scale changes, candidate foot contacts, declared contact drift, root/pelvis travel and finite-difference seam velocities. Returns configured review flags and timestamps, never naturalness approval.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 30
+          },
+          "end": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 30
+          },
+          "contacts": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "object",
+              "properties": {
+                "foot": {
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                },
+                "start": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 30
+                },
+                "end": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 30
+                }
+              },
+              "required": [
+                "foot",
+                "start",
+                "end"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "thresholds": {
+            "type": "object",
+            "properties": {
+              "floorY": {
+                "type": "number"
+              },
+              "footHeightTolerance": {
+                "type": "number"
+              },
+              "footSpeedTolerance": {
+                "type": "number"
+              },
+              "minContactDuration": {
+                "type": "number"
+              },
+              "contactDriftTolerance": {
+                "type": "number"
+              },
+              "boneLengthRelativeTolerance": {
+                "type": "number"
+              },
+              "scaleRelativeTolerance": {
+                "type": "number"
+              },
+              "rootVelocityJumpTolerance": {
+                "type": "number"
+              },
+              "jointVelocityJumpTolerance": {
+                "type": "number"
+              },
+              "angularVelocityJumpTolerance": {
+                "type": "number"
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "actionId",
+          "sourceRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_common_motion",
+      "description": "Read-only bounded search for shared motion windows between two revision-pinned movements on the current rig. Returns timestamps, normalized extraction ranges, pose errors and separate root travel. Excludes stationary holds by default; fixed-speed comparison, no provenance/contact guarantee.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "movementA": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "revisionA": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "movementB": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "revisionB": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "bodyPart": {
+            "enum": [
+              "full",
+              "upper",
+              "lower"
+            ]
+          },
+          "minDuration": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 10
+          },
+          "positionTolerance": {
+            "type": "number",
+            "minimum": 0.001,
+            "maximum": 0.25
+          },
+          "rotationTolerance": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 45
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "includeHolds": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "movementA",
+          "revisionA",
+          "movementB",
+          "revisionB"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "inspect_movement_library",
+      "description": "Read compact semantic manifests, source hashes, candidate continuation/recovery contracts, profiles and one-step draft specs. Unknown contacts stay unknown. No writes.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "build_action_spec",
+      "description": "Validate a typed semantic spec and revision/hash-pinned connections. commit false checks without writing; commit true compiles and saves once with a receipt. Reports structured diagnostics; physical/visual validation remains separate.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "spec": {
+            "type": "object",
+            "properties": {
+              "schemaVersion": {
+                "const": 1
+              },
+              "rig": {
+                "const": "quaternius-ual1"
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^[-a-z0-9]{1,48}$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "intent": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "steps": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 8,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "movementId": {
+                      "type": "string",
+                      "pattern": "^[-a-z0-9]{1,48}$"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "speed": {
+                      "type": "number",
+                      "minimum": 0.5,
+                      "maximum": 1.5
+                    },
+                    "connection": {
+                      "type": "object",
+                      "properties": {
+                        "contractId": {
+                          "type": "string",
+                          "pattern": "^[-a-z0-9]{1,48}$"
+                        },
+                        "duration": {
+                          "type": "number",
+                          "minimum": 0.016,
+                          "maximum": 1
+                        },
+                        "blend": {
+                          "enum": [
+                            "pose",
+                            "velocity"
+                          ]
+                        },
+                        "travel": {
+                          "enum": [
+                            "source",
+                            "continue"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "contractId",
+                        "duration"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "movementId",
+                    "revision",
+                    "speed"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "schemaVersion",
+              "rig",
+              "id",
+              "name",
+              "intent",
+              "steps"
+            ],
+            "additionalProperties": false,
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Animation Studio semantic action specification v1"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "commit": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "spec",
+          "expectedRevision",
+          "commit"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "begin_action_run",
+      "description": "Start a timestamped prompt-to-action run. One active run at a time; subsequent MCP operations are automatically timed, including errors. Call at the beginning of a prompt.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "append_action_run_event",
+      "description": "Record an LLM decision, planning step or browser inspection at the current server UTC timestamp. Does not backdate events.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "string"
+          },
+          "phase": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "runId",
+          "phase",
+          "note"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "finish_action_run",
+      "description": "Close a tracked run as completed, failed or cancelled with a final note and optional existing action ID.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "completed",
+              "failed",
+              "cancelled"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          }
+        },
+        "required": [
+          "runId",
+          "status",
+          "note"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_action_runs",
+      "description": "List prompt-to-action run summaries, newest first. Optional action filter. Logs persist independently from motion data.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_action_run",
+      "description": "Fetch a run with every UTC timestamp, relative time, MCP service duration, result status and LLM notes.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "runId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "revise_action_recipe",
+      "description": "Revise timings in an existing revision-pinned recipe, recompile, preserve the previous action as reference, and seek preview to the changed section in one operation. Duration sets total playback time for one movement; speed remains bounded 0.5–1.5. Source movements are unchanged.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "changes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "properties": {
+                "step": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 7
+                },
+                "speed": {
+                  "type": "number",
+                  "minimum": 0.5,
+                  "maximum": 1.5
+                },
+                "duration": {
+                  "type": "number",
+                  "minimum": 0.016,
+                  "maximum": 4
+                },
+                "transition": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "step"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "playing": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "actionId",
+          "expectedRevision",
+          "changes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "profile_movement_library",
+      "description": "Measure current movement entry/exit poses, endpoint support hints and root/body travel on the actual rig. Saves revision-bound profiles without changing motions or movement revisions. Hints are not verified contacts.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "expectedSequence": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "expectedSequence"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_movement_connections",
+      "description": "Rank current profiled movement entries against a source exit. Heuristic pose/contact/travel evidence for LLM selection; not a physical guarantee.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "movementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "movementId",
+          "sourceRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "review_movement_profile",
+      "description": "Record endpoint support after visual inspection, with notes. Does not alter motion; profiles invalidate when the movement revision changes.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "movementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "entrySupport": {
+            "enum": [
+              "both",
+              "left",
+              "right",
+              "none",
+              "unknown"
+            ]
+          },
+          "exitSupport": {
+            "enum": [
+              "both",
+              "left",
+              "right",
+              "none",
+              "unknown"
+            ]
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "movementId",
+          "sourceRevision",
+          "entrySupport",
+          "exitSupport",
+          "notes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sync_movement_library",
+      "description": "Add missing adapted UAL2 Standard movements from the installed fixed source package. Never overwrites existing, edited or archived entries. Requires current project sequence.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "library": {
+            "const": "ual2-standard"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "library",
+          "expectedSequence"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "adapt_movement",
+      "description": "Trim and retime a library movement into a new record or revision, including all tracks, source segments and cues. No arbitrary joint generation. Source and destination revision checks.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sourceMovementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "movementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "from": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "to": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "speed": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 1.5
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "sourceMovementId",
+          "sourceRevision",
+          "movementId",
+          "name",
+          "from",
+          "to",
+          "speed",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_movements",
+      "description": "List library movements with revisions, source and contact metadata. Includes archived entries when requested.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "includeArchived": {
+            "type": "boolean"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_movement",
+      "description": "Read a base movement, metadata and revision before building or composing.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "movementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          }
+        },
+        "required": [
+          "movementId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "register_movement",
+      "description": "Store or revise a verified Action v2 as a base movement. Use revision 0 for new records; movement IDs start with move-.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "const": 2
+              },
+              "rig": {
+                "const": "quaternius-ual1"
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^[-a-z0-9]{1,48}$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "phases": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 32,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[-a-z0-9]{1,48}$"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "intent": {
+                      "type": "string"
+                    },
+                    "duration": {
+                      "type": "number",
+                      "minimum": 0.016,
+                      "maximum": 10
+                    },
+                    "kind": {
+                      "enum": [
+                        "hold",
+                        "fast",
+                        "move",
+                        "neutral"
+                      ]
+                    },
+                    "clip": {
+                      "enum": [
+                        "A_TPose",
+                        "Crouch_Fwd_Loop",
+                        "Crouch_Idle_Loop",
+                        "Dance_Loop",
+                        "Death01",
+                        "Driving_Loop",
+                        "Fixing_Kneeling",
+                        "Hit_Chest",
+                        "Hit_Head",
+                        "Idle_Loop",
+                        "Idle_Talking_Loop",
+                        "Idle_Torch_Loop",
+                        "Interact",
+                        "Jog_Fwd_Loop",
+                        "Jump_Land",
+                        "Jump_Loop",
+                        "Jump_Start",
+                        "PickUp_Table",
+                        "Pistol_Aim_Down",
+                        "Pistol_Aim_Neutral",
+                        "Pistol_Aim_Up",
+                        "Pistol_Idle_Loop",
+                        "Pistol_Reload",
+                        "Pistol_Shoot",
+                        "Punch_Cross",
+                        "Punch_Jab",
+                        "Push_Loop",
+                        "Roll",
+                        "Sitting_Enter",
+                        "Sitting_Exit",
+                        "Sitting_Idle_Loop",
+                        "Sitting_Talking_Loop",
+                        "Spell_Simple_Enter",
+                        "Spell_Simple_Exit",
+                        "Spell_Simple_Idle_Loop",
+                        "Spell_Simple_Shoot",
+                        "Sprint_Loop",
+                        "Swim_Fwd_Loop",
+                        "Swim_Idle_Loop",
+                        "Sword_Attack",
+                        "Sword_Idle",
+                        "Walk_Formal_Loop",
+                        "Walk_Loop"
+                      ]
+                    },
+                    "from": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "to": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "intent",
+                    "duration",
+                    "clip",
+                    "from",
+                    "to"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "tracks": {
+                "type": "array",
+                "maxItems": 198,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "target": {
+                      "enum": [
+                        "$root",
+                        "Head",
+                        "neck_01",
+                        "index_04_leaf_l",
+                        "index_03_l",
+                        "index_02_l",
+                        "index_01_l",
+                        "middle_04_leaf_l",
+                        "middle_03_l",
+                        "middle_02_l",
+                        "middle_01_l",
+                        "pinky_04_leaf_l",
+                        "pinky_03_l",
+                        "pinky_02_l",
+                        "pinky_01_l",
+                        "ring_04_leaf_l",
+                        "ring_03_l",
+                        "ring_02_l",
+                        "ring_01_l",
+                        "thumb_04_leaf_l",
+                        "thumb_03_l",
+                        "thumb_02_l",
+                        "thumb_01_l",
+                        "hand_l",
+                        "lowerarm_l",
+                        "upperarm_l",
+                        "clavicle_l",
+                        "index_04_leaf_r",
+                        "index_03_r",
+                        "index_02_r",
+                        "index_01_r",
+                        "middle_04_leaf_r",
+                        "middle_03_r",
+                        "middle_02_r",
+                        "middle_01_r",
+                        "pinky_04_leaf_r",
+                        "pinky_03_r",
+                        "pinky_02_r",
+                        "pinky_01_r",
+                        "ring_04_leaf_r",
+                        "ring_03_r",
+                        "ring_02_r",
+                        "ring_01_r",
+                        "thumb_04_leaf_r",
+                        "thumb_03_r",
+                        "thumb_02_r",
+                        "thumb_01_r",
+                        "hand_r",
+                        "lowerarm_r",
+                        "upperarm_r",
+                        "clavicle_r",
+                        "spine_03",
+                        "spine_02",
+                        "spine_01",
+                        "ball_leaf_l",
+                        "ball_l",
+                        "foot_l",
+                        "calf_l",
+                        "thigh_l",
+                        "ball_leaf_r",
+                        "ball_r",
+                        "foot_r",
+                        "calf_r",
+                        "thigh_r",
+                        "pelvis",
+                        "root"
+                      ]
+                    },
+                    "property": {
+                      "enum": [
+                        "rotation",
+                        "position",
+                        "scale"
+                      ]
+                    },
+                    "mode": {
+                      "enum": [
+                        "absolute",
+                        "offset"
+                      ]
+                    },
+                    "interpolation": {
+                      "enum": [
+                        "linear",
+                        "smooth",
+                        "step"
+                      ]
+                    },
+                    "keys": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 256,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "time": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 30
+                          },
+                          "value": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 3,
+                            "maxItems": 4
+                          }
+                        },
+                        "required": [
+                          "time",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "target",
+                    "property",
+                    "mode",
+                    "interpolation",
+                    "keys"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "cues": {
+                "type": "array",
+                "maxItems": 16,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "impact"
+                    },
+                    "time": {
+                      "type": "number"
+                    },
+                    "strength": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 3
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "time",
+                    "strength"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "version",
+              "rig",
+              "id",
+              "name",
+              "phases",
+              "tracks"
+            ],
+            "additionalProperties": false
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "support": {
+                "enum": [
+                  "both",
+                  "left",
+                  "right",
+                  "unknown"
+                ]
+              },
+              "travel": {
+                "enum": [
+                  "in-place",
+                  "source"
+                ]
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "required": [
+              "source",
+              "support",
+              "travel",
+              "notes"
+            ],
+            "additionalProperties": false
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "action",
+          "metadata",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "build_movement",
+      "description": "Build a base movement from a discovered source clip segment, or an existing action. This tool does not import arbitrary models or generate motion.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "movementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "clip": {
+            "enum": [
+              "A_TPose",
+              "Crouch_Fwd_Loop",
+              "Crouch_Idle_Loop",
+              "Dance_Loop",
+              "Death01",
+              "Driving_Loop",
+              "Fixing_Kneeling",
+              "Hit_Chest",
+              "Hit_Head",
+              "Idle_Loop",
+              "Idle_Talking_Loop",
+              "Idle_Torch_Loop",
+              "Interact",
+              "Jog_Fwd_Loop",
+              "Jump_Land",
+              "Jump_Loop",
+              "Jump_Start",
+              "PickUp_Table",
+              "Pistol_Aim_Down",
+              "Pistol_Aim_Neutral",
+              "Pistol_Aim_Up",
+              "Pistol_Idle_Loop",
+              "Pistol_Reload",
+              "Pistol_Shoot",
+              "Punch_Cross",
+              "Punch_Jab",
+              "Push_Loop",
+              "Roll",
+              "Sitting_Enter",
+              "Sitting_Exit",
+              "Sitting_Idle_Loop",
+              "Sitting_Talking_Loop",
+              "Spell_Simple_Enter",
+              "Spell_Simple_Exit",
+              "Spell_Simple_Idle_Loop",
+              "Spell_Simple_Shoot",
+              "Sprint_Loop",
+              "Swim_Fwd_Loop",
+              "Swim_Idle_Loop",
+              "Sword_Attack",
+              "Sword_Idle",
+              "Walk_Formal_Loop",
+              "Walk_Loop"
+            ]
+          },
+          "sourceActionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "from": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "to": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "duration": {
+            "type": "number",
+            "minimum": 0.08,
+            "maximum": 4
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "support": {
+                "enum": [
+                  "both",
+                  "left",
+                  "right",
+                  "unknown"
+                ]
+              },
+              "travel": {
+                "enum": [
+                  "in-place",
+                  "source"
+                ]
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "required": [
+              "source",
+              "support",
+              "travel",
+              "notes"
+            ],
+            "additionalProperties": false
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "movementId",
+          "name",
+          "metadata",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compose_action",
+      "description": "Create or revise a baked action from revision-pinned library movements with explicit pose-blend connection phases. Returns contact warnings; not an IK or balance solver.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "steps": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "properties": {
+                "movementId": {
+                  "type": "string",
+                  "pattern": "^[-a-z0-9]{1,48}$"
+                },
+                "revision": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "speed": {
+                  "type": "number",
+                  "minimum": 0.5,
+                  "maximum": 1.5
+                },
+                "transition": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "contact": {
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                },
+                "blend": {
+                  "enum": [
+                    "pose",
+                    "velocity"
+                  ]
+                },
+                "travel": {
+                  "enum": [
+                    "source",
+                    "continue"
+                  ]
+                }
+              },
+              "required": [
+                "movementId",
+                "revision",
+                "speed",
+                "transition"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "actionId",
+          "name",
+          "steps",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "archive_entry",
+      "description": "Archive or restore a library movement or action without deleting its data. Revision-checked and reversible.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entryId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "entryId",
+          "archived",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "revise_kick",
+      "description": "Create or revise the authored kick study from immutable CC0 baseline. Bounded height correction preserves knee shape; release speed retimes all channels together. Reference stays the baseline.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "heightDeg": {
+            "type": "number",
+            "minimum": -8,
+            "maximum": 8
+          },
+          "releaseSpeed": {
+            "type": "number",
+            "minimum": 0.75,
+            "maximum": 1.25
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "heightDeg",
+          "releaseSpeed",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_capabilities",
+      "description": "Discover all implemented rig, source clips, track schema, platform tools and limits. Read before authoring.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_actions",
+      "description": "List persisted actions and revisions, including compact saved recipes for timing revisions.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_action",
+      "description": "Read full action/reference and revision history. Fetch before a revision.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          }
+        },
+        "required": [
+          "actionId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_action",
+      "description": "Create a new version-2 action and select it for live preview. Cannot overwrite existing IDs.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "const": 2
+              },
+              "rig": {
+                "const": "quaternius-ual1"
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^[-a-z0-9]{1,48}$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "phases": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 32,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[-a-z0-9]{1,48}$"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "intent": {
+                      "type": "string"
+                    },
+                    "duration": {
+                      "type": "number",
+                      "minimum": 0.016,
+                      "maximum": 10
+                    },
+                    "kind": {
+                      "enum": [
+                        "hold",
+                        "fast",
+                        "move",
+                        "neutral"
+                      ]
+                    },
+                    "clip": {
+                      "enum": [
+                        "A_TPose",
+                        "Crouch_Fwd_Loop",
+                        "Crouch_Idle_Loop",
+                        "Dance_Loop",
+                        "Death01",
+                        "Driving_Loop",
+                        "Fixing_Kneeling",
+                        "Hit_Chest",
+                        "Hit_Head",
+                        "Idle_Loop",
+                        "Idle_Talking_Loop",
+                        "Idle_Torch_Loop",
+                        "Interact",
+                        "Jog_Fwd_Loop",
+                        "Jump_Land",
+                        "Jump_Loop",
+                        "Jump_Start",
+                        "PickUp_Table",
+                        "Pistol_Aim_Down",
+                        "Pistol_Aim_Neutral",
+                        "Pistol_Aim_Up",
+                        "Pistol_Idle_Loop",
+                        "Pistol_Reload",
+                        "Pistol_Shoot",
+                        "Punch_Cross",
+                        "Punch_Jab",
+                        "Push_Loop",
+                        "Roll",
+                        "Sitting_Enter",
+                        "Sitting_Exit",
+                        "Sitting_Idle_Loop",
+                        "Sitting_Talking_Loop",
+                        "Spell_Simple_Enter",
+                        "Spell_Simple_Exit",
+                        "Spell_Simple_Idle_Loop",
+                        "Spell_Simple_Shoot",
+                        "Sprint_Loop",
+                        "Swim_Fwd_Loop",
+                        "Swim_Idle_Loop",
+                        "Sword_Attack",
+                        "Sword_Idle",
+                        "Walk_Formal_Loop",
+                        "Walk_Loop"
+                      ]
+                    },
+                    "from": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "to": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "intent",
+                    "duration",
+                    "clip",
+                    "from",
+                    "to"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "tracks": {
+                "type": "array",
+                "maxItems": 198,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "target": {
+                      "enum": [
+                        "$root",
+                        "Head",
+                        "neck_01",
+                        "index_04_leaf_l",
+                        "index_03_l",
+                        "index_02_l",
+                        "index_01_l",
+                        "middle_04_leaf_l",
+                        "middle_03_l",
+                        "middle_02_l",
+                        "middle_01_l",
+                        "pinky_04_leaf_l",
+                        "pinky_03_l",
+                        "pinky_02_l",
+                        "pinky_01_l",
+                        "ring_04_leaf_l",
+                        "ring_03_l",
+                        "ring_02_l",
+                        "ring_01_l",
+                        "thumb_04_leaf_l",
+                        "thumb_03_l",
+                        "thumb_02_l",
+                        "thumb_01_l",
+                        "hand_l",
+                        "lowerarm_l",
+                        "upperarm_l",
+                        "clavicle_l",
+                        "index_04_leaf_r",
+                        "index_03_r",
+                        "index_02_r",
+                        "index_01_r",
+                        "middle_04_leaf_r",
+                        "middle_03_r",
+                        "middle_02_r",
+                        "middle_01_r",
+                        "pinky_04_leaf_r",
+                        "pinky_03_r",
+                        "pinky_02_r",
+                        "pinky_01_r",
+                        "ring_04_leaf_r",
+                        "ring_03_r",
+                        "ring_02_r",
+                        "ring_01_r",
+                        "thumb_04_leaf_r",
+                        "thumb_03_r",
+                        "thumb_02_r",
+                        "thumb_01_r",
+                        "hand_r",
+                        "lowerarm_r",
+                        "upperarm_r",
+                        "clavicle_r",
+                        "spine_03",
+                        "spine_02",
+                        "spine_01",
+                        "ball_leaf_l",
+                        "ball_l",
+                        "foot_l",
+                        "calf_l",
+                        "thigh_l",
+                        "ball_leaf_r",
+                        "ball_r",
+                        "foot_r",
+                        "calf_r",
+                        "thigh_r",
+                        "pelvis",
+                        "root"
+                      ]
+                    },
+                    "property": {
+                      "enum": [
+                        "rotation",
+                        "position",
+                        "scale"
+                      ]
+                    },
+                    "mode": {
+                      "enum": [
+                        "absolute",
+                        "offset"
+                      ]
+                    },
+                    "interpolation": {
+                      "enum": [
+                        "linear",
+                        "smooth",
+                        "step"
+                      ]
+                    },
+                    "keys": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 256,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "time": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 30
+                          },
+                          "value": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 3,
+                            "maxItems": 4
+                          }
+                        },
+                        "required": [
+                          "time",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "target",
+                    "property",
+                    "mode",
+                    "interpolation",
+                    "keys"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "cues": {
+                "type": "array",
+                "maxItems": 16,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "impact"
+                    },
+                    "time": {
+                      "type": "number"
+                    },
+                    "strength": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 3
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "time",
+                    "strength"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "version",
+              "rig",
+              "id",
+              "name",
+              "phases",
+              "tracks"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "revise_action",
+      "description": "Replace an action with fully authored data against expectedRevision. Previous action becomes comparison reference; undo history is retained. Accepts legacy version-1 data from get_action as well.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "object"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "action",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate_action",
+      "description": "Validate complete authored data without changing the project.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "const": 2
+              },
+              "rig": {
+                "const": "quaternius-ual1"
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^[-a-z0-9]{1,48}$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "phases": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 32,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[-a-z0-9]{1,48}$"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "intent": {
+                      "type": "string"
+                    },
+                    "duration": {
+                      "type": "number",
+                      "minimum": 0.016,
+                      "maximum": 10
+                    },
+                    "kind": {
+                      "enum": [
+                        "hold",
+                        "fast",
+                        "move",
+                        "neutral"
+                      ]
+                    },
+                    "clip": {
+                      "enum": [
+                        "A_TPose",
+                        "Crouch_Fwd_Loop",
+                        "Crouch_Idle_Loop",
+                        "Dance_Loop",
+                        "Death01",
+                        "Driving_Loop",
+                        "Fixing_Kneeling",
+                        "Hit_Chest",
+                        "Hit_Head",
+                        "Idle_Loop",
+                        "Idle_Talking_Loop",
+                        "Idle_Torch_Loop",
+                        "Interact",
+                        "Jog_Fwd_Loop",
+                        "Jump_Land",
+                        "Jump_Loop",
+                        "Jump_Start",
+                        "PickUp_Table",
+                        "Pistol_Aim_Down",
+                        "Pistol_Aim_Neutral",
+                        "Pistol_Aim_Up",
+                        "Pistol_Idle_Loop",
+                        "Pistol_Reload",
+                        "Pistol_Shoot",
+                        "Punch_Cross",
+                        "Punch_Jab",
+                        "Push_Loop",
+                        "Roll",
+                        "Sitting_Enter",
+                        "Sitting_Exit",
+                        "Sitting_Idle_Loop",
+                        "Sitting_Talking_Loop",
+                        "Spell_Simple_Enter",
+                        "Spell_Simple_Exit",
+                        "Spell_Simple_Idle_Loop",
+                        "Spell_Simple_Shoot",
+                        "Sprint_Loop",
+                        "Swim_Fwd_Loop",
+                        "Swim_Idle_Loop",
+                        "Sword_Attack",
+                        "Sword_Idle",
+                        "Walk_Formal_Loop",
+                        "Walk_Loop"
+                      ]
+                    },
+                    "from": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "to": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "intent",
+                    "duration",
+                    "clip",
+                    "from",
+                    "to"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "tracks": {
+                "type": "array",
+                "maxItems": 198,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "target": {
+                      "enum": [
+                        "$root",
+                        "Head",
+                        "neck_01",
+                        "index_04_leaf_l",
+                        "index_03_l",
+                        "index_02_l",
+                        "index_01_l",
+                        "middle_04_leaf_l",
+                        "middle_03_l",
+                        "middle_02_l",
+                        "middle_01_l",
+                        "pinky_04_leaf_l",
+                        "pinky_03_l",
+                        "pinky_02_l",
+                        "pinky_01_l",
+                        "ring_04_leaf_l",
+                        "ring_03_l",
+                        "ring_02_l",
+                        "ring_01_l",
+                        "thumb_04_leaf_l",
+                        "thumb_03_l",
+                        "thumb_02_l",
+                        "thumb_01_l",
+                        "hand_l",
+                        "lowerarm_l",
+                        "upperarm_l",
+                        "clavicle_l",
+                        "index_04_leaf_r",
+                        "index_03_r",
+                        "index_02_r",
+                        "index_01_r",
+                        "middle_04_leaf_r",
+                        "middle_03_r",
+                        "middle_02_r",
+                        "middle_01_r",
+                        "pinky_04_leaf_r",
+                        "pinky_03_r",
+                        "pinky_02_r",
+                        "pinky_01_r",
+                        "ring_04_leaf_r",
+                        "ring_03_r",
+                        "ring_02_r",
+                        "ring_01_r",
+                        "thumb_04_leaf_r",
+                        "thumb_03_r",
+                        "thumb_02_r",
+                        "thumb_01_r",
+                        "hand_r",
+                        "lowerarm_r",
+                        "upperarm_r",
+                        "clavicle_r",
+                        "spine_03",
+                        "spine_02",
+                        "spine_01",
+                        "ball_leaf_l",
+                        "ball_l",
+                        "foot_l",
+                        "calf_l",
+                        "thigh_l",
+                        "ball_leaf_r",
+                        "ball_r",
+                        "foot_r",
+                        "calf_r",
+                        "thigh_r",
+                        "pelvis",
+                        "root"
+                      ]
+                    },
+                    "property": {
+                      "enum": [
+                        "rotation",
+                        "position",
+                        "scale"
+                      ]
+                    },
+                    "mode": {
+                      "enum": [
+                        "absolute",
+                        "offset"
+                      ]
+                    },
+                    "interpolation": {
+                      "enum": [
+                        "linear",
+                        "smooth",
+                        "step"
+                      ]
+                    },
+                    "keys": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 256,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "time": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 30
+                          },
+                          "value": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 3,
+                            "maxItems": 4
+                          }
+                        },
+                        "required": [
+                          "time",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "target",
+                    "property",
+                    "mode",
+                    "interpolation",
+                    "keys"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "cues": {
+                "type": "array",
+                "maxItems": 16,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "impact"
+                    },
+                    "time": {
+                      "type": "number"
+                    },
+                    "strength": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 3
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "time",
+                    "strength"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "version",
+              "rig",
+              "id",
+              "name",
+              "phases",
+              "tracks"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_preview",
+      "description": "Control action selection, camera, playhead, playback, speed, loop, comparison, grid and impact visibility. Returns viewer URL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "time": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 30
+          },
+          "playing": {
+            "type": "boolean"
+          },
+          "speed": {
+            "type": "number",
+            "minimum": 0.05,
+            "maximum": 2
+          },
+          "loop": {
+            "type": "boolean"
+          },
+          "view": {
+            "enum": [
+              "current",
+              "reference",
+              "both"
+            ]
+          },
+          "camera": {
+            "enum": [
+              "Orbit",
+              "Front",
+              "Side",
+              "Top"
+            ]
+          },
+          "grid": {
+            "type": "boolean"
+          },
+          "effects": {
+            "type": "boolean"
+          },
+          "idle": {
+            "type": "boolean"
+          },
+          "metric": {
+            "enum": [
+              "pose",
+              "height"
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_diagnostics",
+      "description": "Measure root height and seven-joint RMS pose speed on the actual rig. Optionally return local/world joint transforms at a timestamp.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "time": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "actionId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "capture_reference",
+      "description": "Copy the current action into its comparison reference.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "actionId",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "restore_revision",
+      "description": "Restore an earlier action revision as a new revision without deleting history.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "actionId",
+          "revision",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_project",
+      "description": "Return portable project JSON, including current/reference pairs; asset remains a separate dependency.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "import_project",
+      "description": "Import an Animation Studio project after validating all action/reference pairs. Existing actions become revisions; no arbitrary file paths.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "project": {
+            "type": "object"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "project",
+          "expectedSequence"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "viewerUrl": "http://127.0.0.1:5174/editor/",
+  "notes": [
+    "Version 2 can author all discovered joint channels and new phase sequences.",
+    "Version 1 Jump/Burst remain compatible.",
+    "Rotations use shortest-path quaternion slerp. Offset is post-multiplied on the sampled clip pose.",
+    "Root tracks use normalized runtime meters. Choose in-place source clips to avoid double movement.",
+    "All writes persist automatically; revision history is retained up to 100 per action."
+  ]
+}

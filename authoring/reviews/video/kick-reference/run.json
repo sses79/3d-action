@@ -1,0 +1,13 @@
+{
+  "id": "fbaa2585-32fd-46fa-974c-7625b2a3f6ae",
+  "prompt": "Try the supplied human movement video: cut a useful segment, extract key frames, compare visual-only and YOLO26-assisted descriptions, and assess contract-valid prompt-to-action mapping.",
+  "actionId": null,
+  "status": "completed",
+  "startedAt": "2026-10-05T16:27:06.399Z",
+  "finishedAt": "2026-10-05T16:38:53.396Z",
+  "elapsedMs": 706997,
+  "actionRevision": null,
+  "eventCount": 10,
+  "toolCalls": 6,
+  "toolElapsedMs": 178.11999999999998
+}

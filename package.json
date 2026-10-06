@@ -1,0 +1,41 @@
+{
+  "name": "watch-lab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild watch/main.js --bundle --minify --format=esm --outfile=watch/app.js",
+    "test": "node --test tests/watch.test.mjs",
+    "build:editor": "esbuild editor/main.tsx --bundle --minify --format=esm --outfile=editor/app.js",
+    "test:editor": "node --test tests/editor.test.mjs",
+    "build:authoring": "esbuild authoring/core.ts --bundle --platform=node --format=esm --packages=external --outfile=authoring/core.js",
+    "start:authoring": "node authoring/server.mjs",
+    "mcp:authoring": "node authoring/mcp.mjs",
+    "test:authoring": "node --test tests/authoring.test.mjs",
+    "studio": "node authoring/cli.mjs",
+    "test:common-motion": "node --test tests/common-motion.test.mjs",
+    "test:contracts": "node --test tests/contracts.test.mjs",
+    "test:cli": "node --test tests/cli.test.mjs",
+    "vision:capture": "node authoring/vision/capture.mjs",
+    "vision:check": ".authoring/vision-venv/bin/python authoring/vision/check_pose.py",
+    "test:vision": "python3 -m unittest discover -s authoring/vision -p \"test_*.py\"",
+    "test:motion-quality": "node --test tests/motion-quality.test.mjs",
+    "test:contract-reviews": "node --test tests/contract-reviews.test.mjs",
+    "build:retarget": "esbuild authoring/reconstruction/retarget-cli.ts --bundle --platform=node --format=esm --packages=external --outfile=.authoring/reconstruction-retarget.mjs",
+    "reconstruction:retarget": "node .authoring/reconstruction-retarget.mjs",
+    "test:reconstruction": "node --test tests/reconstruction.test.mjs",
+    "reconstruction:bundle": "node authoring/reconstruction/bundle.mjs",
+    "test:reconstruction-bundle": "node --test tests/reconstruction-bundle.test.mjs"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.186.0",
+    "esbuild": "0.28.2",
+    "typescript": "^7.0.2"
+  }
+}

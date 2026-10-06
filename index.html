@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f0e8">
+<title>Citrus Jelly — A material study</title>
+<style>
+:root{color-scheme:light;--paper:#f4f0e8;--ink:#33372a;--muted:#818373;--line:#d8d7cb;--accent:#c45c26}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;overflow:hidden}button,input{font:inherit}button{color:inherit;cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:5px}button:disabled{opacity:.4;cursor:default}
+#scene{position:fixed;inset:0;width:100%;height:100%;touch-action:none;outline:none}header{position:fixed;top:30px;left:40px;right:40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:21px;pointer-events:none}.brand{font-size:12px;letter-spacing:2.5px;font-weight:600}.brand span{color:var(--muted);font-weight:400;margin-left:20px;letter-spacing:1.4px}.status{font-size:10px;letter-spacing:1.5px;display:flex;align-items:center;gap:9px}.dot{width:6px;height:6px;border-radius:50%;background:#a6a58e}.dot.live{background:#788347}
+.intro{position:fixed;top:119px;left:48px;pointer-events:none}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--muted)}h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;font-size:clamp(72px,8.6vw,130px);line-height:.86;letter-spacing:-7px;margin:29px 0 25px}h1 span{display:block;color:var(--accent);padding-left:3px}.description{font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.65;color:#737866;margin:0}.edition{margin-top:30px;display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:1.5px;color:var(--muted)}.edition:before{content:'';width:30px;height:1px;background:#999b87}
+.panel{position:fixed;right:42px;top:50%;transform:translateY(-36%);width:208px;background:rgba(244,240,232,.91);padding:12px 0 0}.panel-title{font-size:10px;letter-spacing:2px;margin:0 0 20px;color:var(--muted)}.presets{display:flex;gap:9px;margin-bottom:27px}.preset{border:1px solid transparent;border-radius:50%;height:34px;width:34px;position:relative;background:transparent;padding:5px}.preset:before{content:'';display:block;width:22px;height:22px;border-radius:50%;background:var(--swatch)}.preset[aria-pressed=true]{border-color:#9b9e86}.preset[aria-pressed=true]:after{content:'';position:absolute;right:-1px;bottom:0;width:7px;height:7px;background:var(--ink);border:2px solid var(--paper);border-radius:50%}.preset-name{font-family:Georgia,serif;font-style:italic;font-size:15px;align-self:center;margin-left:4px;color:#727762}
+.slider-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:10px}.slider-label output{font-variant-numeric:tabular-nums;color:var(--muted)}.slider{display:block;width:100%;height:3px;appearance:none;background:#d8d7c9;accent-color:var(--ink);margin:0 0 25px;cursor:pointer}.slider::-webkit-slider-thumb{appearance:none;width:11px;height:11px;background:#62694f;border-radius:50%;border:2px solid var(--paper);outline:1px solid #62694f}.slider::-moz-range-thumb{width:8px;height:8px;background:#62694f;border:2px solid var(--paper);border-radius:50%}.actions{display:flex;gap:8px;margin:6px 0 20px}.action{font-size:11px;background:transparent;border:1px solid #c9ccba;padding:10px 13px;border-radius:3px}.action:hover{background:#e8e7db}.action.primary{background:#555e44;color:var(--paper);border-color:#555e44;flex:1}.action.primary:hover{background:#414b34}.check{display:flex;align-items:center;font-size:11px;gap:9px;margin:12px 0;color:#747a66}.check input{accent-color:#5c654b;width:12px;height:12px;margin:0}.panel-bottom{border-top:1px solid var(--line);padding-top:14px;margin-top:20px;display:flex;justify-content:space-between;align-items:center}.text-button{border:0;background:transparent;padding:5px 0;font-size:10px;letter-spacing:.6px}.text-button:hover{color:var(--accent)}#pause{min-width:52px;text-align:left}#fullscreen{font-size:16px;padding:2px 6px}
+footer{position:fixed;left:42px;right:42px;bottom:26px;border-top:1px solid var(--line);padding-top:19px;display:flex;align-items:center;justify-content:space-between;gap:25px}.hint{font-family:Georgia,serif;font-style:italic;font-size:16px;color:#727863;display:flex;gap:15px;align-items:center}.hint svg{width:22px;height:25px;stroke:#818773;fill:none;stroke-width:1.3}.metrics{display:flex;gap:35px}.metric{display:flex;flex-direction:column;gap:6px}.metric label{font-size:8px;letter-spacing:1.5px;color:var(--muted)}.metric output{font-size:12px;font-variant-numeric:tabular-nums}.metric small{font-size:9px;color:var(--muted);margin-left:3px}details{position:relative;font-size:10px;width:208px}summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}summary:after{content:'+';font-size:17px;font-weight:300}details[open] summary:after{content:'−'}.explanation{position:absolute;bottom:36px;right:0;width:300px;padding:20px;background:var(--paper);border:1px solid var(--line);font-size:11px;line-height:1.75;color:#737963;box-shadow:0 6px 35px #4b4c3610}.explanation p{margin:0 0 10px}.explanation p:last-child{margin:0}
+.object-label{position:fixed;left:50%;bottom:143px;transform:translateX(-50%);text-align:center;pointer-events:none}.object-label .name{font-size:9px;letter-spacing:2.5px;color:#878c76}.object-label .sub{font-size:8px;letter-spacing:1px;color:#a0a38e;margin-top:9px}.toast{position:fixed;left:50%;top:88px;transform:translateX(-50%);padding:9px 15px;background:var(--ink);color:var(--paper);font-size:11px;border-radius:3px;opacity:0;transition:opacity .2s;pointer-events:none}.toast.visible{opacity:1}#fallback{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:var(--paper);padding:30px;z-index:5}#fallback article{max-width:460px}#fallback h2{font-family:Georgia,serif;font-size:38px;font-weight:400;font-style:italic}#fallback p{font-size:14px;line-height:1.7;color:#737963}#fallback pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;color:#737963}
+@media(min-width:1700px){.intro{left:70px;top:155px}.panel{right:70px;width:240px}}
+@media(max-width:900px){header{left:24px;right:24px;top:23px}.brand span{display:none}.intro{left:27px;top:104px}h1{font-size:87px;letter-spacing:-5px}.description{font-size:15px}.edition{display:none}.panel{right:25px;width:173px;transform:translateY(-29%)}footer{left:25px;right:25px;bottom:20px}.metrics{gap:20px}.hint{font-size:14px}details{width:173px}.object-label{bottom:132px;left:47%}}
+@media(max-width:900px){header{top:20px;left:20px;right:20px;padding-bottom:16px}.brand{font-size:10px;letter-spacing:2px}.status{font-size:8px;letter-spacing:1px}.intro{top:84px;left:23px}.eyebrow{font-size:8px}h1{font-size:67px;letter-spacing:-4px;margin:18px 0 13px}.description{font-size:12px;line-height:1.5}.panel{top:auto;bottom:84px;left:20px;right:20px;width:auto;transform:none;display:grid;grid-template-columns:1fr 1fr;gap:0 24px;background:rgba(244,240,232,.96);border-top:1px solid var(--line);padding-top:14px}.panel-title{grid-column:1;font-size:8px;margin:0 0 10px}.presets{grid-column:1;margin-bottom:0;gap:5px}.preset{height:28px;width:28px;padding:4px}.preset:before{height:18px;width:18px}.preset-name{font-size:13px}.tuning{grid-column:2;grid-row:1 / span 2}.slider-label{font-size:10px;margin-bottom:8px}.slider{margin-bottom:19px}.actions{grid-column:1;grid-row:3;margin:15px 0 0}.action{font-size:10px;padding:8px 10px}.options{grid-column:2;grid-row:3;display:flex;gap:13px;align-items:center}.check{font-size:9px;margin:0;gap:5px}.panel-bottom{grid-column:1 / span 2;padding-top:8px;margin-top:11px}.object-label{display:none}footer{left:20px;right:20px;bottom:15px;padding-top:12px;align-items:flex-end;gap:10px}.hint{position:fixed;left:23px;top:300px;font-size:12px;gap:8px}.hint svg{width:16px;height:20px}.metrics{gap:20px}.metric label{font-size:7px;letter-spacing:1px}.metric output{font-size:10px}.metric small{font-size:8px}details{width:128px;font-size:9px}.explanation{width:min(300px,calc(100vw - 40px));bottom:31px}.toast{top:73px;font-size:10px;max-width:85vw;text-align:center}}
+@media(max-width:900px) and (max-height:740px){.intro{top:80px}h1{font-size:55px}.description{display:none}.hint{top:212px}.panel{bottom:71px}.metric label{font-size:6px}.slider{margin-bottom:15px}}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<canvas id="scene" aria-label="Interactive three-dimensional citrus jelly. Drag the slice to stretch it. Drag empty space to rotate the view." tabindex="0"></canvas>
+<header><div class="brand">CITRUS <span>A MATERIAL STUDY</span></div><div class="status"><span class="dot" id="status-dot"></span><span id="status-text">INITIALIZING</span></div></header>
+<section class="intro"><div class="eyebrow">INTERACTIVE EXPERIMENT / NO. 001</div><h1>Citrus<span>Jelly.</span></h1><p class="description">A little sunshine.<br>A little wobble.<br>Something to play with.</p><div class="edition">PROCEDURAL &amp; PERFECTLY SQUISHABLE</div></section>
+<aside class="panel" aria-label="Simulation controls"><p class="panel-title">THE SPECIMEN</p><div class="presets" role="group" aria-label="Citrus variety"><button class="preset" style="--swatch:#da782a" data-preset="0" aria-label="Orange" aria-pressed="true" title="Orange"></button><button class="preset" style="--swatch:#c7b64a" data-preset="1" aria-label="Lemon" aria-pressed="false" title="Lemon"></button><button class="preset" style="--swatch:#aa4b40" data-preset="2" aria-label="Ruby" aria-pressed="false" title="Ruby"></button><span class="preset-name" id="preset-name">Orange</span></div>
+<div class="tuning"><label class="slider-label" for="firmness">Firmness <output id="firmness-value">45%</output></label><input class="slider" id="firmness" type="range" min="0" max="100" value="45"><label class="slider-label" for="damping">Internal damping <output id="damping-value">35%</output></label><input class="slider" id="damping" type="range" min="0" max="100" value="35"></div>
+<div class="actions"><button class="action primary" id="nudge">Give it a nudge ↗</button><button class="action" id="reset">Reset</button></div><div class="options"><label class="check"><input type="checkbox" id="slow">¼ speed</label><label class="check"><input type="checkbox" id="mesh">Show mesh</label></div>
+<div class="panel-bottom"><button class="text-button" id="pause" aria-pressed="false">Ⅱ &nbsp; Pause</button><span class="eyebrow" style="font-size:8px">MADE OF LIGHT</span><button class="text-button" id="fullscreen" aria-label="Enter fullscreen" title="Fullscreen">⛶</button></div></aside>
+<div class="object-label"><div class="name" id="object-name">CITRUS SINENSIS</div><div class="sub">SOFT BODY / VOLUMETRIC STUDY</div></div>
+<footer><div class="hint"><svg viewBox="0 0 24 28" aria-hidden="true"><path d="M8 14V5a2 2 0 0 1 4 0v8-5a2 2 0 0 1 4 0v5-3a2 2 0 0 1 4 0v7c0 5-3 8-7 8h-1c-3 0-4-2-6-5l-3-5a2 2 0 0 1 3-2l2 3"/><path d="M5 2 3 4M17 2l2 2"/></svg><span>Pull the flesh. Let go.</span></div><div class="metrics" aria-label="Live simulation readings"><div class="metric"><label>MASS</label><output>420<small>g</small></output></div><div class="metric"><label>REST VOLUME</label><output id="volume">100.0<small>%</small></output></div><div class="metric"><label>KINETIC ENERGY</label><output id="energy">0.000<small>J</small></output></div></div><details><summary>Inside the experiment</summary><div class="explanation"><p>Built from a tetrahedral lattice. Distance and volume constraints keep the flesh elastic; the rind is a little firmer. Physics runs on the CPU at a fixed timestep using XPBD.</p><p>Native WebGPU and WGSL render the slice. Screen-space refraction, approximate thickness absorption, procedural membranes, and soft shadows create the jelly material. No downloaded models or images.</p><p>Readings come from the simulation, using a nominal mass of 420 g and 1 scene unit = 10 cm. This is an illustrative material experiment, not a calibrated physical measurement.</p><p>Drag empty space to orbit. Use the mouse wheel to zoom. Keyboard: N to nudge, R to reset, Space to pause.</p></div></details></footer>
+<div class="toast" id="toast" role="status"></div><div id="fallback" role="alert"><article><div class="eyebrow">CITRUS / A MATERIAL STUDY</div><h2>A little more GPU, please.</h2><p id="fallback-message">This experiment needs a browser and device with WebGPU support. Open it in a supported browser over HTTPS or localhost.</p><button class="action" onclick="location.reload()">Try again</button><pre id="fallback-detail"></pre></article></div>
+<script type="module">
+// Native WebGPU. All geometry, optics, and the volumetric solver are self-contained.
+const $=id=>document.getElementById(id), canvas=$('scene');
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const V={add:(a,b)=>a.map((v,i)=>v+b[i]),sub:(a,b)=>a.map((v,i)=>v-b[i]),scale:(a,s)=>a.map(v=>v*s),dot:(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0),cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],unit:a=>{const l=Math.hypot(...a)||1;return a.map(v=>v/l)}};
+function multiply(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++)for(let k=0;k<4;k++)o[c*4+r]+=a[k*4+r]*b[c*4+k];return o}
+function lookAt(eye,target,up=[0,1,0]){const z=V.unit(V.sub(eye,target)),x=V.unit(V.cross(up,z)),y=V.cross(z,x);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-V.dot(x,eye),-V.dot(y,eye),-V.dot(z,eye),1])}
+function perspective(fov,aspect,near,far){const f=1/Math.tan(fov/2);return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,far/(near-far),-1,0,0,near*far/(near-far),0])}
+function ortho(l,r,b,t,n,f){return new Float32Array([2/(r-l),0,0,0,0,2/(t-b),0,0,0,0,1/(n-f),0,-(r+l)/(r-l),-(t+b)/(t-b),n/(n-f),1])}
+function invert(a){const out=new Float32Array(16),m=Array.from({length:4},(_,r)=>Array.from({length:8},(_,c)=>c<4?a[c*4+r]:+(c-4===r)));for(let i=0;i<4;i++){let p=i;for(let j=i+1;j<4;j++)if(Math.abs(m[j][i])>Math.abs(m[p][i]))p=j;[m[p],m[i]]=[m[i],m[p]];const d=m[i][i];if(Math.abs(d)<1e-10)return null;for(let k=0;k<8;k++)m[i][k]/=d;for(let j=0;j<4;j++)if(j!==i){const s=m[j][i];for(let k=0;k<8;k++)m[j][k]-=s*m[i][k]}}for(let r=0;r<4;r++)for(let c=0;c<4;c++)out[c*4+r]=m[r][c+4];return out}
+function transform(m,p,w=1){const o=[0,0,0,0];for(let r=0;r<4;r++)o[r]=m[r]*p[0]+m[4+r]*p[1]+m[8+r]*p[2]+m[12+r]*w;return o.slice(0,3).map(v=>v/o[3])}
+
+const R=1.62, CENTER_Y=1.72, A=32, L=6, Z=4, THICK=.50;
+const rest=[],tetList=[],rings=[];
+function node(x,y,z){rest.push(x,y,z);return rest.length/3-1}
+for(let z=0;z<=Z;z++){
+ const q=z/Z*2-1,layer=[],scale=1-.045*q*q;
+ layer.push([node(0,CENTER_Y,q*THICK/2)]);
+ for(let r=1;r<=L;r++){const ring=[];for(let a=0;a<=A;a++){const theta=a/A*Math.PI,rr=R*r/L*scale;const round=1-.18*Math.pow(r/L,8);ring.push(node(rr*Math.cos(theta),CENTER_Y-rr*Math.sin(theta),q*THICK/2*round))}layer.push(ring)}rings.push(layer);
+}
+function volumeAt(p,a,b,c,d){const ai=a*3,bi=b*3,ci=c*3,di=d*3;const x=p[bi]-p[ai],y=p[bi+1]-p[ai+1],z=p[bi+2]-p[ai+2],u=p[ci]-p[ai],v=p[ci+1]-p[ai+1],w=p[ci+2]-p[ai+2],i=p[di]-p[ai],j=p[di+1]-p[ai+1],k=p[di+2]-p[ai+2];return (x*(v*k-w*j)+y*(w*i-u*k)+z*(u*j-v*i))/6}
+function tet(a,b,c,d){if(volumeAt(rest,a,b,c,d)<0)[b,c]=[c,b];tetList.push([a,b,c,d])}
+for(let z=0;z<Z;z++)for(let a=0;a<A;a++){
+ const c=rings[z][0][0],d=rings[z+1][0][0],p=rings[z][1][a],q=rings[z][1][a+1],u=rings[z+1][1][a],v=rings[z+1][1][a+1];
+ tet(c,p,q,v);tet(c,p,u,v);tet(c,d,u,v);
+ for(let r=1;r<L;r++){
+  const h=[rings[z][r][a],rings[z][r+1][a],rings[z][r+1][a+1],rings[z][r][a+1],rings[z+1][r][a],rings[z+1][r+1][a],rings[z+1][r+1][a+1],rings[z+1][r][a+1]];
+  for(const ids of [[0,1,2,6],[0,2,3,6],[0,3,7,6],[0,7,4,6],[0,4,5,6],[0,5,1,6]])tet(...ids.map(i=>h[i]));
+ }
+}
+const edgeMap=new Map,faces=new Map;
+for(const t of tetList){for(let i=0;i<4;i++)for(let j=i+1;j<4;j++){const a=Math.min(t[i],t[j]),b=Math.max(t[i],t[j]);edgeMap.set(a+','+b,[a,b])}for(const ids of [[1,2,3],[0,3,2],[0,1,3],[0,2,1]]){const f=ids.map(i=>t[i]),key=[...f].sort((a,b)=>a-b).join(',');if(faces.has(key))faces.delete(key);else faces.set(key,f)}}
+const surface=Array.from(faces.values()).flat(),indices=new Uint32Array(surface),edges=Array.from(edgeMap.values()),lineIndices=new Uint32Array(edges.flat());
+const count=rest.length/3,p=new Float32Array(rest),initial=new Float32Array(rest),vel=new Float32Array(rest.length),prev=new Float32Array(rest.length),normals=new Float32Array(rest.length),packed=new Float32Array(count*10),weights=new Float32Array(count),edgeRest=new Float32Array(edges.length),edgeFactor=new Float32Array(edges.length),edgeLambda=new Float32Array(edges.length),tetRest=new Float32Array(tetList.length),tetLambda=new Float32Array(tetList.length);
+let restVolume=0;
+for(let t=0;t<tetList.length;t++){const vol=volumeAt(initial,...tetList[t]);tetRest[t]=vol;restVolume+=vol;for(const i of tetList[t])weights[i]+=vol/4}
+const nodeMass=Float32Array.from(weights,w=>w/restVolume*.42);for(let i=0;i<count;i++)weights[i]=1/Math.max(.1,weights[i]/(restVolume/count));
+for(let e=0;e<edges.length;e++){const [a,b]=edges[e];edgeFactor[e]=Math.max(Math.hypot(initial[a*3],CENTER_Y-initial[a*3+1]),Math.hypot(initial[b*3],CENTER_Y-initial[b*3+1]))>R*.89?.24:1;edgeRest[e]=Math.hypot(initial[a*3]-initial[b*3],initial[a*3+1]-initial[b*3+1],initial[a*3+2]-initial[b*3+2])}
+let paused=matchMedia('(prefers-reduced-motion: reduce)').matches,slow=false,showMesh=false,firmness=.45,damping=.35,preset=0,drag=null,orbit=null,accumulator=0,simTime=0,totalVolume=restVolume,kinetic=0;
+const STEP=1/120, ITERATIONS=5,grad=new Float64Array(12);
+function solveVolume(t,h){
+ const ids=tetList[t],a=ids[0]*3,b=ids[1]*3,c=ids[2]*3,d=ids[3]*3;
+ const ux=p[c]-p[a],uy=p[c+1]-p[a+1],uz=p[c+2]-p[a+2],vx=p[d]-p[a],vy=p[d+1]-p[a+1],vz=p[d+2]-p[a+2],wx=p[b]-p[a],wy=p[b+1]-p[a+1],wz=p[b+2]-p[a+2];
+ grad[3]=(uy*vz-uz*vy)/6;grad[4]=(uz*vx-ux*vz)/6;grad[5]=(ux*vy-uy*vx)/6;
+ grad[6]=(vy*wz-vz*wy)/6;grad[7]=(vz*wx-vx*wz)/6;grad[8]=(vx*wy-vy*wx)/6;
+ grad[9]=(wy*uz-wz*uy)/6;grad[10]=(wz*ux-wx*uz)/6;grad[11]=(wx*uy-wy*ux)/6;
+ for(let k=0;k<3;k++)grad[k]=-grad[3+k]-grad[6+k]-grad[9+k];
+ const volume=(wx*grad[3]+wy*grad[4]+wz*grad[5]),alpha=2e-9/(h*h);let den=alpha;
+ for(let j=0;j<4;j++)den+=weights[ids[j]]*(grad[j*3]**2+grad[j*3+1]**2+grad[j*3+2]**2);
+ const dl=(-(volume-tetRest[t])-alpha*tetLambda[t])/den;tetLambda[t]+=dl;
+ for(let j=0;j<4;j++){const id=ids[j],w=weights[id];for(let k=0;k<3;k++)p[id*3+k]+=w*grad[j*3+k]*dl}
+}
+const restCenter=[0,0,0];for(let i=0;i<count;i++)for(let j=0;j<3;j++)restCenter[j]+=initial[i*3+j]/count;
+let rotation=[1,0,0,0,1,0,0,0,1],shapeGoals=new Float32Array(rest.length),recoveries=0;
+function fitShape(){
+ const center=[0,0,0],cov=new Float64Array(9);for(let i=0;i<count;i++)for(let j=0;j<3;j++)center[j]+=p[i*3+j]/count;
+ for(let i=0;i<count;i++)for(let row=0;row<3;row++)for(let col=0;col<3;col++)cov[row*3+col]+=(p[i*3+row]-center[row])*(initial[i*3+col]-restCenter[col]);
+ let m=Array.from(cov),scale=Math.hypot(...m)/Math.sqrt(3);m=m.map(v=>v/scale);
+ for(let it=0;it<8;it++){
+  const [a,b,c,d,e,f,g,h,i]=m,det=a*(e*i-f*h)-b*(d*i-f*g)+c*(d*h-e*g);if(Math.abs(det)<1e-9)break;
+  const invT=[e*i-f*h,f*g-d*i,d*h-e*g,c*h-b*i,a*i-c*g,b*g-a*h,b*f-c*e,c*d-a*f,a*e-b*d].map(v=>v/det);
+  m=m.map((v,j)=>(v+invT[j])*.5);
+ }
+ const determinant=m[0]*(m[4]*m[8]-m[5]*m[7])-m[1]*(m[3]*m[8]-m[5]*m[6])+m[2]*(m[3]*m[7]-m[4]*m[6]);
+ if(determinant>.9&&determinant<1.1)rotation=m;
+ for(let i=0;i<count;i++)for(let j=0;j<3;j++){let v=center[j];for(let k=0;k<3;k++)v+=rotation[j*3+k]*(initial[i*3+k]-restCenter[k]);shapeGoals[i*3+j]=v;}
+}
+function step(h){
+ prev.set(p);edgeLambda.fill(0);tetLambda.fill(0);
+ if(drag?.desired){const delta=V.sub(drag.desired,drag.target),distance=Math.hypot(...delta);drag.target=V.add(drag.target,V.scale(delta,Math.min(1,4.5*h/(distance||1))));}
+ const air=Math.exp(-(.35+damping*2.8)*h);
+ for(let i=0;i<count;i++){const k=i*3;vel[k+1]-=9.81*h;for(let j=0;j<3;j++){vel[k+j]*=air;p[k+j]+=vel[k+j]*h}}
+ const compliance=3e-7*Math.pow(120,1-firmness),alpha=compliance/(h*h);
+ fitShape();
+ for(let it=0;it<ITERATIONS;it++){
+  for(let e=0;e<edges.length;e++){
+   const [a,b]=edges[e],ai=a*3,bi=b*3;let x=p[ai]-p[bi],y=p[ai+1]-p[bi+1],z=p[ai+2]-p[bi+2];const len=Math.hypot(x,y,z);if(len<1e-8)continue;x/=len;y/=len;z/=len;
+   const al=alpha*edgeFactor[e],dl=(-(len-edgeRest[e])-al*edgeLambda[e])/(weights[a]+weights[b]+al);edgeLambda[e]+=dl;
+   p[ai]+=weights[a]*x*dl;p[ai+1]+=weights[a]*y*dl;p[ai+2]+=weights[a]*z*dl;p[bi]-=weights[b]*x*dl;p[bi+1]-=weights[b]*y*dl;p[bi+2]-=weights[b]*z*dl;
+  }
+  for(let k=0;k<p.length;k++)p[k]+=(shapeGoals[k]-p[k])*(.0015+firmness*.002);
+  for(let t=0;t<tetList.length;t++)solveVolume(t,h);
+  if(drag)for(const [i,w,offset] of drag.nodes){const k=i*3,goal=V.add(drag.target,offset);for(let j=0;j<3;j++)p[k+j]+=(goal[j]-p[k+j])*w*.18}
+  for(let i=0;i<count;i++){const k=i*3;if(p[k+1]<.065){p[k+1]=.065;p[k]+=(prev[k]-p[k])*.15;p[k+2]+=(prev[k+2]-p[k+2])*.15}}
+ }
+ // Internal damping removes relative motion while preserving overall momentum.
+ let av=[0,0,0];for(let i=0;i<count;i++)for(let j=0;j<3;j++){vel[i*3+j]=(p[i*3+j]-prev[i*3+j])/h;av[j]+=vel[i*3+j]/count}
+ const internal=1-Math.exp(-(1+damping*18)*h);kinetic=0;
+ for(let i=0;i<count;i++)for(let j=0;j<3;j++){const k=i*3+j;vel[k]+=(av[j]-vel[k])*internal;vel[k]=clamp(vel[k],-12,12);kinetic+=.5*nodeMass[i]*(vel[k]*.1)**2}
+ totalVolume=0;let valid=true;for(let t=0;t<tetList.length;t++){const v=volumeAt(p,...tetList[t]);totalVolume+=v;if(v< -tetRest[t]*.1)valid=false}
+ for(let k=0;k<p.length;k++)if(!Number.isFinite(p[k])||Math.abs(p[k])>20){valid=false;break}
+ if(!valid){p.set(prev);fitShape();for(let k=0;k<p.length;k++)p[k]+=(shapeGoals[k]-p[k])*.14;for(let i=0;i<count;i++)p[i*3+1]=Math.max(.065,p[i*3+1]);vel.fill(0);drag=null;recoveries++;totalVolume=tetList.reduce((v,t)=>v+volumeAt(p,...t),0);kinetic=0;toast('Stretch limit reached — easing back into shape.')}
+ simTime+=h;
+}
+function updateMesh(){normals.fill(0);for(let f=0;f<surface.length;f+=3){const a=surface[f]*3,b=surface[f+1]*3,c=surface[f+2]*3,ux=p[b]-p[a],uy=p[b+1]-p[a+1],uz=p[b+2]-p[a+2],vx=p[c]-p[a],vy=p[c+1]-p[a+1],vz=p[c+2]-p[a+2],nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;for(const k of [a,b,c]){normals[k]+=nx;normals[k+1]+=ny;normals[k+2]+=nz}}
+ for(let i=0;i<count;i++){const k=i*3,q=i*10,len=Math.hypot(normals[k],normals[k+1],normals[k+2])||1;for(let j=0;j<3;j++){packed[q+j]=p[k+j];packed[q+3+j]=normals[k+j]/len;packed[q+6+j]=initial[k+j]}packed[q+9]=0}
+}
+function toast(message){$('toast').textContent=message;$('toast').classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('visible'),2400)}
+function syncPause(){const b=$('pause');b.textContent=paused?'▶  Resume':'Ⅱ  Pause';b.setAttribute('aria-pressed',String(paused));$('status-text').textContent=paused?'WEBGPU · PAUSED':'WEBGPU · LIVE'}
+function nudge(){if(paused){paused=false;syncPause()}for(let i=0;i<count;i++){const k=i*3,w=.35+.65*(initial[k+1]/CENTER_Y);vel[k]+=1.3*w;vel[k+1]+=2.1*w;vel[k+2]-=.9*w}toast('A little wobble, coming right up.')}
+function reset(){p.set(initial);prev.set(initial);vel.fill(0);drag=null;accumulator=0;totalVolume=restVolume;kinetic=0;camera.yaw=.31;camera.pitch=.58;camera.zoom=1;camera.target=[...restCenter];toast('Freshly sliced.')}
+$('firmness').oninput=e=>{firmness=+e.target.value/100;$('firmness-value').textContent=e.target.value+'%'};
+$('damping').oninput=e=>{damping=+e.target.value/100;$('damping-value').textContent=e.target.value+'%'};
+$('slow').onchange=e=>slow=e.target.checked;$('mesh').onchange=e=>showMesh=e.target.checked;$('nudge').onclick=nudge;$('reset').onclick=reset;$('pause').onclick=()=>{paused=!paused;accumulator=0;syncPause()};
+document.querySelectorAll('.preset').forEach(b=>b.onclick=()=>{preset=+b.dataset.preset;document.querySelectorAll('.preset').forEach(el=>el.setAttribute('aria-pressed',String(el===b)));$('preset-name').textContent=['Orange','Lemon','Ruby'][preset];$('object-name').textContent=['CITRUS SINENSIS','CITRUS LIMON','CITRUS PARADISI'][preset]});
+$('fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{toast('Fullscreen is unavailable in this browser.')}};
+document.addEventListener('fullscreenchange',()=>{$('fullscreen').setAttribute('aria-label',document.fullscreenElement?'Exit fullscreen':'Enter fullscreen');$('fullscreen').title=document.fullscreenElement?'Exit fullscreen':'Fullscreen'});
+document.addEventListener('keydown',e=>{if(e.target.matches('input,button,summary'))return;if(e.code==='Space'){e.preventDefault();$('pause').click()}if(e.key.toLowerCase()==='n')nudge();if(e.key.toLowerCase()==='r')reset()});
+
+const shader=`
+struct Uniforms { vp:mat4x4f, lightVP:mat4x4f, eye:vec4f, params:vec4f, screen:vec4f }
+@group(0) @binding(0) var<uniform> u:Uniforms;
+@group(0) @binding(1) var shadowTex:texture_depth_2d;
+@group(0) @binding(2) var shadowSampler:sampler_comparison;
+@group(0) @binding(3) var backdrop:texture_2d<f32>;
+@group(0) @binding(4) var linearSampler:sampler;
+struct In { @location(0) p:vec3f, @location(1) n:vec3f, @location(2) rest:vec3f, @location(3) kind:f32 }
+struct Out { @builtin(position) clip:vec4f, @location(0) p:vec3f, @location(1) n:vec3f, @location(2) rest:vec3f, @location(3) light:vec4f, @location(4) kind:f32 }
+@vertex fn vs(v:In)->Out {var o:Out;o.clip=u.vp*vec4f(v.p,1);o.p=v.p;o.n=v.n;o.rest=v.rest;o.light=u.lightVP*vec4f(v.p,1);o.kind=v.kind;return o;}
+@vertex fn shadowVS(v:In)->@builtin(position) vec4f {return u.lightVP*vec4f(v.p,1);}
+fn hash(p:vec3f)->f32 {return fract(sin(dot(p,vec3f(127.1,311.7,74.7)))*43758.5453);}
+fn shadow(v:Out)->f32 {let q=v.light.xyz/v.light.w;let uv=vec2f(q.x*.5+.5,.5-q.y*.5);if(any(uv<vec2f(0))||any(uv>vec2f(1))||q.z<0.||q.z>1.){return 1.;}var s=0.;for(var y=-2;y<=2;y++){for(var x=-2;x<=2;x++){s+=textureSampleCompareLevel(shadowTex,shadowSampler,uv+vec2f(f32(x),f32(y))/512.,q.z-.0016);}}return s/25.;}
+@fragment fn floorFS(v:Out)->@location(0) vec4f {let s=shadow(v);let paper=vec3f(.956,.942,.910);let contact=exp(-pow(length((v.p.xz-u.params.zw)/vec2f(1.15,.36)),2.)*1.8)*.10*exp(-u.screen.z*4.);let col=paper*(.78+.22*s)-contact;return vec4f(col,1);}
+@fragment fn jellyFS(v:Out,@builtin(front_facing) front:bool)->@location(0) vec4f {
+ var n=normalize(v.n);if(!front){n=-n;}let view=normalize(u.eye.xyz-v.p);let light=normalize(vec3f(-3.5,6.,4.)-v.p);let halfV=normalize(light+view);
+ let radius=length(vec2f(v.rest.x,1.72-v.rest.y));let theta=atan2(1.72-v.rest.y,v.rest.x);let rings=smoothstep(1.44,1.48,radius);let rind=smoothstep(1.535,1.57,radius);
+ let segment=abs(sin(theta*8.));let membrane=1.-smoothstep(.025,.105,segment);let edgeFacing=1.-smoothstep(.08,.25,abs(n.z));
+ var flesh=vec3f(.93,.29,.027);var skin=vec3f(.84,.245,.024);var absorption=vec3f(.15,1.22,3.2);
+ if(u.params.x>.5&&u.params.x<1.5){flesh=vec3f(.82,.70,.055);skin=vec3f(.67,.52,.038);absorption=vec3f(.26,.38,3.1);}
+ if(u.params.x>1.5){flesh=vec3f(.68,.09,.055);skin=vec3f(.85,.39,.065);absorption=vec3f(.25,2.5,2.1);}
+ let cell=vec3f(v.rest.xy*35.,v.rest.z*55.);let grain=hash(floor(cell));let grainMix=.94+.06*grain;
+ flesh*=grainMix;flesh=mix(flesh,vec3f(.99,.74,.39),membrane*.77*(1.-rings));
+ let pith=vec3f(.96,.86,.64);var albedo=mix(flesh,pith,rings);albedo=mix(albedo,skin,rind);albedo=mix(albedo,skin,edgeFacing*.35*rind);
+ let pores=hash(floor(v.rest*105.));let diffuse=max(dot(n,light),0.);let wrap=clamp((dot(n,light)+.55)/1.55,0.,1.);let shadowAmount=shadow(v);
+ let fresnel=.035+.965*pow(1.-max(dot(n,view),0.),5.);let thickness=.44+.18*abs(dot(n,view));let offset=n.xy*vec2f(1.,-1.)*.026*thickness;
+ let uv=v.clip.xy/u.screen.xy;let behind=textureSample(backdrop,linearSampler,clamp(uv+offset,vec2f(.001),vec2f(.999))).rgb;
+ let transmitted=behind*exp(-absorption*thickness*1.8);let internal=flesh*(.36+.54*wrap)*mix(.7,1.,shadowAmount);
+ var col=mix(transmitted,internal,.48);col=mix(col,albedo*(.48+.52*diffuse*shadowAmount),rings*.87);
+ let softSpec=pow(max(dot(n,halfV),0.),55.)*.7;let sharpSpec=pow(max(dot(n,halfV),0.),260.)*.7;let rim=pow(1.-abs(dot(n,view)),3.);
+ col+=vec3f(1.,.92,.76)*(softSpec+sharpSpec)*shadowAmount*(.7+.3*fresnel);col+=vec3f(.97,.79,.49)*rim*.14;
+ let pulp=sin(theta*8.+sin(radius*68.)*.12)*sin(radius*95.);col+=vec3f(.16,.095,.02)*max(pulp,0.)*.1*(1.-rings);
+ let bubbleCell=floor(v.rest*24.);let bubblePos=fract(v.rest*24.)-.5;let bubble=1.-smoothstep(.065,.12,length(bubblePos));col+=bubble*step(.985,hash(bubbleCell))*vec3f(.3,.26,.15)*(1.-rings);
+ let sacs=fract(vec2f(radius*29.,theta*max(radius,.2)*22.))-.5;let sac=1.-smoothstep(.22,.5,length(sacs*vec2f(.8,1.4)));let sacRim=smoothstep(.3,.42,length(sacs*vec2f(.8,1.4)))*(1.-smoothstep(.42,.5,length(sacs*vec2f(.8,1.4))));col+=vec3f(.11,.064,.012)*(sac*.35+sacRim*.55)*(1.-rings)*(1.-membrane);col*=1.-rind*.06*pores;return vec4f(pow(clamp(col,vec3f(0),vec3f(1)),vec3f(.67)),1);
+}
+@fragment fn lineFS()->@location(0) vec4f {return vec4f(.27,.20,.075,.34);}
+@vertex fn copyVS(@builtin(vertex_index) id:u32)->@builtin(position) vec4f {let x=f32((id<<1u)&2u);let y=f32(id&2u);return vec4f(x*2.-1.,y*2.-1.,0.,1.);}
+@fragment fn copyFS(@builtin(position) pos:vec4f)->@location(0) vec4f {return textureSample(backdrop,linearSampler,pos.xy/u.screen.xy);}
+`;
+let device,context,pipeline,floorPipeline,shadowPipeline,linePipeline,copyPipeline,bindGroup,floorBindGroup,shadowBindGroup,vertexBuffer,indexBuffer,lineBuffer,floorBuffer,uniformBuffer,depthTex,backTex,shadowTex,backSampler,shadowSampler,format;
+const uniforms=new Float32Array(44),camera={yaw:.31,pitch:.58,zoom:1,eye:[0,0,0],vp:null,inverse:null,target:[...restCenter]},lightVP=multiply(ortho(-4,4,-4,4,.1,16),lookAt([-3.5,6,4],[0,.8,0]));
+let width=0,height=0,frameCount=0,lastError=null,ready=false;
+const layout={arrayStride:40,attributes:[{shaderLocation:0,offset:0,format:'float32x3'},{shaderLocation:1,offset:12,format:'float32x3'},{shaderLocation:2,offset:24,format:'float32x3'},{shaderLocation:3,offset:36,format:'float32'}]};
+function gpuBuffer(data,usage){const b=device.createBuffer({size:(data.byteLength+3)&~3,usage:usage|GPUBufferUsage.COPY_DST});device.queue.writeBuffer(b,0,data);return b}
+function resize(){const dpr=Math.min(devicePixelRatio,2),w=Math.max(1,Math.round(innerWidth*dpr)),h=Math.max(1,Math.round(innerHeight*dpr));if(w===width&&h===height)return;width=w;height=h;canvas.width=w;canvas.height=h;depthTex?.destroy();backTex?.destroy();depthTex=device.createTexture({size:[w,h],format:'depth24plus',usage:GPUTextureUsage.RENDER_ATTACHMENT});backTex=device.createTexture({size:[w,h],format,usage:GPUTextureUsage.RENDER_ATTACHMENT|GPUTextureUsage.TEXTURE_BINDING});
+ const entries=[{binding:0,resource:{buffer:uniformBuffer}},{binding:1,resource:shadowTex.createView()},{binding:2,resource:shadowSampler},{binding:3,resource:backTex.createView()},{binding:4,resource:backSampler}];bindGroup=device.createBindGroup({layout:pipeline.getBindGroupLayout(0),entries});
+ // A separate inert texture prevents sampling the texture currently used as a render attachment.
+ floorBindGroup=device.createBindGroup({layout:pipeline.getBindGroupLayout(0),entries:entries.map(e=>e.binding===3?{binding:3,resource:dummyTex.createView()}:e)});
+ shadowBindGroup=device.createBindGroup({layout:pipeline.getBindGroupLayout(0),entries:entries.map(e=>e.binding===1?{binding:1,resource:dummyDepthTex.createView()}:e.binding===3?{binding:3,resource:dummyTex.createView()}:e)});
+}
+let dummyTex,dummyDepthTex;
+async function init(){if(!window.isSecureContext)throw Error('This network address uses HTTP. WebGPU requires HTTPS with a trusted certificate. Use the HTTPS preview, or use localhost on the computer running the demo.');if(!navigator.gpu)throw Error('WebGPU is not available in this browser. On iPhone, try Safari on iOS 26 or later. The page must use HTTPS with a trusted certificate.');const adapter=await navigator.gpu.requestAdapter();if(!adapter)throw Error('No WebGPU adapter was available on this device.');device=await adapter.requestDevice();device.addEventListener('uncapturederror',e=>{lastError=e.error.message;console.error(e.error.message);fail('The GPU reported a rendering error.',e.error.message)});device.lost.then(info=>fail('The GPU connection was lost. Reload to restart.',info.message));context=canvas.getContext('webgpu');format=navigator.gpu.getPreferredCanvasFormat();context.configure({device,format,alphaMode:'opaque'});
+ const module=device.createShaderModule({code:shader});const compilation=await module.getCompilationInfo();const errors=compilation.messages.filter(m=>m.type==='error');if(errors.length)throw Error(errors.map(m=>`Shader line ${m.lineNum}: ${m.message}`).join('\n'));
+ const bgl=device.createBindGroupLayout({entries:[{binding:0,visibility:GPUShaderStage.VERTEX|GPUShaderStage.FRAGMENT,buffer:{type:'uniform'}},{binding:1,visibility:GPUShaderStage.FRAGMENT,texture:{sampleType:'depth'}},{binding:2,visibility:GPUShaderStage.FRAGMENT,sampler:{type:'comparison'}},{binding:3,visibility:GPUShaderStage.FRAGMENT,texture:{sampleType:'float'}},{binding:4,visibility:GPUShaderStage.FRAGMENT,sampler:{type:'filtering'}}]});const pl=device.createPipelineLayout({bindGroupLayouts:[bgl]});
+ const common={layout:pl,vertex:{module,entryPoint:'vs',buffers:[layout]},primitive:{topology:'triangle-list',cullMode:'none'},depthStencil:{format:'depth24plus',depthWriteEnabled:true,depthCompare:'less'}};
+ pipeline=await device.createRenderPipelineAsync({...common,fragment:{module,entryPoint:'jellyFS',targets:[{format}]}});floorPipeline=await device.createRenderPipelineAsync({...common,fragment:{module,entryPoint:'floorFS',targets:[{format}]}});
+ shadowPipeline=await device.createRenderPipelineAsync({layout:pl,vertex:{module,entryPoint:'shadowVS',buffers:[layout]},primitive:{topology:'triangle-list',cullMode:'none'},depthStencil:{format:'depth32float',depthWriteEnabled:true,depthCompare:'less',depthBias:2,depthBiasSlopeScale:2}});
+ linePipeline=await device.createRenderPipelineAsync({...common,primitive:{topology:'line-list'},depthStencil:{format:'depth24plus',depthWriteEnabled:false,depthCompare:'less-equal'},fragment:{module,entryPoint:'lineFS',targets:[{format,blend:{color:{srcFactor:'src-alpha',dstFactor:'one-minus-src-alpha',operation:'add'},alpha:{srcFactor:'one',dstFactor:'one-minus-src-alpha',operation:'add'}}}]}});
+ copyPipeline=await device.createRenderPipelineAsync({layout:pl,vertex:{module,entryPoint:'copyVS'},fragment:{module,entryPoint:'copyFS',targets:[{format}]},primitive:{topology:'triangle-list'},depthStencil:{format:'depth24plus',depthWriteEnabled:false,depthCompare:'always'}});
+ updateMesh();vertexBuffer=gpuBuffer(packed,GPUBufferUsage.VERTEX);indexBuffer=gpuBuffer(indices,GPUBufferUsage.INDEX);lineBuffer=gpuBuffer(lineIndices,GPUBufferUsage.INDEX);
+ const floor=[];for(const xyz of [[-30,0,-30],[-30,0,30],[30,0,-30],[30,0,-30],[-30,0,30],[30,0,30]])floor.push(...xyz,0,1,0,0,0,0,1);floorBuffer=gpuBuffer(new Float32Array(floor),GPUBufferUsage.VERTEX);uniformBuffer=device.createBuffer({size:176,usage:GPUBufferUsage.UNIFORM|GPUBufferUsage.COPY_DST});shadowTex=device.createTexture({size:[1024,1024],format:'depth32float',usage:GPUTextureUsage.RENDER_ATTACHMENT|GPUTextureUsage.TEXTURE_BINDING});dummyTex=device.createTexture({size:[1,1],format,usage:GPUTextureUsage.TEXTURE_BINDING|GPUTextureUsage.COPY_DST});device.queue.writeTexture({texture:dummyTex},new Uint8Array([244,240,232,255]),{bytesPerRow:4},[1,1]);dummyDepthTex=device.createTexture({size:[1,1],format:'depth32float',usage:GPUTextureUsage.TEXTURE_BINDING});shadowSampler=device.createSampler({compare:'less-equal',magFilter:'linear',minFilter:'linear'});backSampler=device.createSampler({magFilter:'linear',minFilter:'linear'});resize();ready=true;$('status-dot').classList.add('live');syncPause();requestAnimationFrame(frame);
+}
+function updateCamera(){const mobile=innerWidth<=900,aspect=width/height;if(!drag){const center=[0,0,0];for(let i=0;i<count;i++)for(let j=0;j<3;j++)center[j]+=p[i*3+j]/count;for(let j=0;j<3;j++)camera.target[j]+=(center[j]-camera.target[j])*.075;}const distance=(mobile?Math.max(9.6,3.2/(aspect*Math.tan(.30))*.62):7.1)/camera.zoom;camera.eye=V.add(camera.target,[Math.sin(camera.yaw)*Math.cos(camera.pitch)*distance,Math.sin(camera.pitch)*distance,Math.cos(camera.yaw)*Math.cos(camera.pitch)*distance]);const proj=perspective(.60,aspect,.1,60);
+ // Shift the specimen away from the editorial title and the controls.
+ proj[8]=mobile?0:-.10;proj[9]=mobile?((Math.max(innerHeight<=740?230:310,innerHeight*.36)+document.querySelector('.panel').getBoundingClientRect().top)/2/innerHeight*2-1):.02;camera.vp=multiply(proj,lookAt(camera.eye,camera.target));camera.inverse=invert(camera.vp);uniforms.set(camera.vp,0);uniforms.set(lightVP,16);uniforms.set([...camera.eye,simTime],32);uniforms.set([preset,showMesh?1:0,camera.target[0],camera.target[2]],36);let minY=Infinity;for(let i=0;i<count;i++)minY=Math.min(minY,p[i*3+1]);uniforms.set([width,height,minY,0],40);
+}
+let last=0,lastRead=0;
+function frame(now){if(!ready)return;resize();const dt=last?Math.min((now-last)/1000,.05):0;last=now;if(!paused&&!document.hidden){accumulator+=dt*(slow?.25:1);let n=0;while(accumulator>=STEP&&n<6){step(STEP);accumulator-=STEP;n++}if(n===6)accumulator=Math.min(accumulator,STEP)}else accumulator=0;updateMesh();updateCamera();device.queue.writeBuffer(vertexBuffer,0,packed);device.queue.writeBuffer(uniformBuffer,0,uniforms);
+ const enc=device.createCommandEncoder();let pass=enc.beginRenderPass({colorAttachments:[],depthStencilAttachment:{view:shadowTex.createView(),depthClearValue:1,depthLoadOp:'clear',depthStoreOp:'store'}});pass.setPipeline(shadowPipeline);pass.setBindGroup(0,shadowBindGroup);pass.setVertexBuffer(0,vertexBuffer);pass.setIndexBuffer(indexBuffer,'uint32');pass.drawIndexed(indices.length);pass.end();
+ pass=enc.beginRenderPass({colorAttachments:[{view:backTex.createView(),clearValue:{r:.956,g:.942,b:.910,a:1},loadOp:'clear',storeOp:'store'}],depthStencilAttachment:{view:depthTex.createView(),depthClearValue:1,depthLoadOp:'clear',depthStoreOp:'store'}});pass.setPipeline(floorPipeline);pass.setBindGroup(0,floorBindGroup);pass.setVertexBuffer(0,floorBuffer);pass.draw(6);pass.end();
+ pass=enc.beginRenderPass({colorAttachments:[{view:context.getCurrentTexture().createView(),clearValue:{r:.956,g:.942,b:.910,a:1},loadOp:'clear',storeOp:'store'}],depthStencilAttachment:{view:depthTex.createView(),depthClearValue:1,depthLoadOp:'clear',depthStoreOp:'store'}});pass.setBindGroup(0,bindGroup);pass.setPipeline(copyPipeline);pass.draw(3);pass.setPipeline(pipeline);pass.setVertexBuffer(0,vertexBuffer);pass.setIndexBuffer(indexBuffer,'uint32');pass.drawIndexed(indices.length);if(showMesh){pass.setPipeline(linePipeline);pass.setIndexBuffer(lineBuffer,'uint32');pass.drawIndexed(lineIndices.length)}pass.end();device.queue.submit([enc.finish()]);frameCount++;
+ if(now-lastRead>150){canvas.dataset.diagnostics=JSON.stringify(window.citrusDiagnostics());$('volume').innerHTML=(totalVolume/restVolume*100).toFixed(1)+'<small>%</small>';$('energy').innerHTML=kinetic.toFixed(3)+'<small>J</small>';lastRead=now}requestAnimationFrame(frame);
+}
+function rayAt(x,y){const nx=x/innerWidth*2-1,ny=1-y/innerHeight*2;const a=transform(camera.inverse,[nx,ny,0]),b=transform(camera.inverse,[nx,ny,1]);return {origin:a,direction:V.unit(V.sub(b,a))}}
+function intersectTriangle(ray,a,b,c){const edge1=V.sub(b,a),edge2=V.sub(c,a),h=V.cross(ray.direction,edge2),det=V.dot(edge1,h);if(Math.abs(det)<1e-7)return null;const s=V.sub(ray.origin,a),u=V.dot(s,h)/det;if(u<0||u>1)return null;const q=V.cross(s,edge1),v=V.dot(ray.direction,q)/det;if(v<0||u+v>1)return null;const t=V.dot(edge2,q)/det;return t>0?{t,u,v}:null}
+function pick(ray){let best=null;for(let f=0;f<surface.length;f+=3){const ids=surface.slice(f,f+3),positions=ids.map(i=>Array.from(p.slice(i*3,i*3+3))),hit=intersectTriangle(ray,...positions);if(hit&&(!best||hit.t<best.t)){const bary=[1-hit.u-hit.v,hit.u,hit.v],restHit=[0,0,0];for(let j=0;j<3;j++)for(let k=0;k<3;k++)restHit[k]+=initial[ids[j]*3+k]*bary[j];best={...hit,restHit,position:V.add(ray.origin,V.scale(ray.direction,hit.t))}}}return best}
+canvas.addEventListener('pointerdown',e=>{if(!ready||drag||orbit)return;canvas.focus({preventScroll:true});const ray=rayAt(e.clientX,e.clientY),hit=pick(ray);canvas.setPointerCapture(e.pointerId);if(hit){if(paused){paused=false;syncPause()}const nodes=[];for(let i=0;i<count;i++){const d=Math.hypot(initial[i*3]-hit.restHit[0],initial[i*3+1]-hit.restHit[1],initial[i*3+2]-hit.restHit[2]);if(d<.48)nodes.push([i,Math.pow(1-d/.48,1.2),V.sub(Array.from(p.slice(i*3,i*3+3)),hit.position)])}drag={id:e.pointerId,restHit:hit.restHit,target:[...hit.position],desired:[...hit.position],start:hit.position,planeNormal:V.unit(V.sub(camera.eye,camera.target)),planePoint:hit.position,nodes};canvas.style.cursor='grabbing';}else orbit={id:e.pointerId,x:e.clientX,y:e.clientY,yaw:camera.yaw,pitch:camera.pitch}});
+canvas.addEventListener('pointermove',e=>{if(!ready)return;if(drag?.id===e.pointerId){const ray=rayAt(e.clientX,e.clientY),den=V.dot(ray.direction,drag.planeNormal);if(Math.abs(den)>.01){const t=V.dot(V.sub(drag.planePoint,ray.origin),drag.planeNormal)/den;let target=V.add(ray.origin,V.scale(ray.direction,t));const delta=V.sub(target,drag.start),len=Math.hypot(...delta);if(len>1.85)target=V.add(drag.start,V.scale(delta,1.85/len));target[1]=Math.max(.15,target[1]);drag.desired=target}}else if(orbit?.id===e.pointerId){camera.yaw=orbit.yaw-(e.clientX-orbit.x)*.008;camera.pitch=clamp(orbit.pitch+(e.clientY-orbit.y)*.006,-.02,1.1)}else if(!drag&&!orbit){canvas.style.cursor=pick(rayAt(e.clientX,e.clientY))?'grab':'default'}});
+function release(e){if(drag?.id===e.pointerId)drag=null;if(orbit?.id===e.pointerId)orbit=null;canvas.style.cursor='default'}
+canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);canvas.addEventListener('wheel',e=>{if(!ready)return;e.preventDefault();camera.zoom=clamp(camera.zoom*Math.exp(-e.deltaY*.0007),.75,1.35)},{passive:false});
+document.addEventListener('visibilitychange',()=>{last=0;accumulator=0;if(document.hidden){drag=null;orbit=null}});
+function fail(message,detail=''){if($('fallback').style.display==='flex')return;ready=false;$('fallback-message').textContent=message;$('fallback-detail').textContent=detail;$('fallback').style.display='flex';$('status-text').textContent='WEBGPU · UNAVAILABLE';$('status-dot').classList.remove('live');document.querySelectorAll('.panel button,.panel input').forEach(el=>el.disabled=true)}
+// Read-only diagnostics for checking the native renderer and simulation in a browser.
+window.citrusDiagnostics=()=>({ready,frameCount,lastError,recoveries,nodes:count,tetrahedra:tetList.length,surfaceTriangles:surface.length/3,restVolume,volumeRatio:totalVolume/restVolume,kinetic,paused,preset,slow,showMesh,dragging:!!drag,finite:p.every(Number.isFinite),minY:Math.min(...Array.from({length:count},(_,i)=>p[i*3+1])),bounds:[0,1,2].map(k=>[Math.min(...Array.from({length:count},(_,i)=>p[i*3+k])),Math.max(...Array.from({length:count},(_,i)=>p[i*3+k]))])});
+init().catch(e=>{console.error(e);lastError=e.message;fail('This experiment could not start WebGPU.',e.message)});
+</script>
+</body>
+</html>

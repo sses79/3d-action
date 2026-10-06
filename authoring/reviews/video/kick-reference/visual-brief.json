@@ -1,0 +1,22 @@
+{
+  "status":"visual-only baseline frozen before pose inference",
+  "sourceInterval":[11.45,13.75],
+  "action":"Single lateral snap kick, compact chamber, outward extension, recoil and return to wide ready stance",
+  "camera":"Fixed oblique/front gym view, mirrors behind performer; screen recording",
+  "mirrored":"unknown",
+  "limb":"Screen-left-directed kicking leg; appears anatomical right if recording is not mirrored. Anatomical assignment provisional.",
+  "phases":[
+    {"name":"Ready","window":[11.45,11.7],"observation":"Wide stance, both feet on floor, arms bent and hands held ahead of torso."},
+    {"name":"Gather","window":[11.7,12.3],"observation":"Feet draw closer, weight shifts over the leg remaining on floor; body turns slightly toward screen-left."},
+    {"name":"Chamber","window":[12.3,12.6],"observation":"Kicking thigh rises toward screen-left with knee flexed; hands remain raised."},
+    {"name":"Snap extension","window":[12.6,12.8],"observation":"Lower leg projects outward/up toward screen-left, approaching a straight knee. Torso inclines away from kicking side; base foot remains near same floor position."},
+    {"name":"Recoil","window":[12.8,13.05],"observation":"Knee flexes again while thigh stays lifted; foot retracts before being lowered."},
+    {"name":"Return","window":[13.05,13.4],"observation":"Kicking foot lowers back to floor, stance widens and torso returns upright."},
+    {"name":"Ready hold","window":[13.4,13.75],"observation":"Both feet down in wide stance, hands remain raised."}
+  ],
+  "support":"Apparent single-foot support during chamber/extension/recoil; load, heel/toe pivot and pressure unknown",
+  "travel":"Gathering step and lateral reset visible; exact root path/meters unknown",
+  "unknowns":["Mirroring","Exact anatomical kicking side","Anatomical 3D knee/hip angles","Foot edge/toe orientation","True ground reaction/contact pressure","Original playback-speed alteration"],
+  "libraryGap":"Current coordinated move-kick is a right forward kick with arms-down stance, not this lateral snap kick or wide raised-hand stance. No side-kick source confirmed.",
+  "timingScope":"Approximate phase boundaries from 0.25s samples; refine from native-timestamp frames and pose evidence. Time values use recording seconds, not embedded player clock."
+}

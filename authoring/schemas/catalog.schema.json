@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Animation Studio catalog v1",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "library": {
+          "const": "ual2-standard"
+        },
+        "edition": {
+          "type": "string"
+        },
+        "license": {
+          "const": "CC0-1.0"
+        },
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sourceRig": {
+          "type": "string"
+        },
+        "targetRig": {
+          "const": "quaternius-ual1"
+        },
+        "adapter": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "library",
+        "edition",
+        "license",
+        "path",
+        "sha256",
+        "sourceRig",
+        "targetRig",
+        "adapter"
+      ],
+      "additionalProperties": false
+    },
+    "movements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "clip": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "number",
+            "minimum": 0.016
+          },
+          "roles": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "enum": [
+                "primitive",
+                "source-sequence",
+                "recovery",
+                "loop"
+              ]
+            }
+          },
+          "semantics": {
+            "type": "object",
+            "properties": {
+              "family": {
+                "type": "string"
+              },
+              "purpose": {
+                "type": "string"
+              },
+              "equipment": {
+                "type": "string"
+              },
+              "review": {
+                "enum": [
+                  "candidate",
+                  "unreviewed"
+                ]
+              }
+            },
+            "required": [
+              "family",
+              "purpose",
+              "equipment",
+              "review"
+            ],
+            "additionalProperties": false
+          },
+          "motionHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "id",
+          "clip",
+          "duration",
+          "roles",
+          "semantics",
+          "motionHash"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "from": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "fromHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "toHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "purpose": {
+            "enum": [
+              "continue",
+              "recover"
+            ]
+          },
+          "policy": {
+            "const": "positive-pose-blend-no-anchor"
+          },
+          "review": {
+            "const": "candidate"
+          },
+          "evidence": {
+            "type": "object",
+            "properties": {
+              "representation": {
+                "type": "string"
+              },
+              "positionRmsMeters": {
+                "type": "number"
+              },
+              "rotationRmsDegrees": {
+                "type": "number"
+              },
+              "visualReview": {
+                "const": "pending"
+              },
+              "trajectoryValidation": {
+                "const": "not-performed"
+              }
+            },
+            "required": [
+              "representation",
+              "positionRmsMeters",
+              "rotationRmsDegrees",
+              "visualReview",
+              "trajectoryValidation"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "from",
+          "to",
+          "fromHash",
+          "toHash",
+          "purpose",
+          "policy",
+          "review",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "source",
+    "movements",
+    "connections"
+  ],
+  "additionalProperties": false
+}

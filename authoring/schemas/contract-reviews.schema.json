@@ -1,0 +1,1070 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Animation Studio contract-reviews v1",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "contacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "measurement": {
+            "type": "object",
+            "properties": {
+              "algorithm": {
+                "const": "rig-motion-quality-v1"
+              },
+              "sampleRate": {
+                "const": 60
+              },
+              "measuredAt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "thresholds": {
+                "type": "object",
+                "properties": {
+                  "floorY": {
+                    "type": "number"
+                  },
+                  "footHeightTolerance": {
+                    "type": "number"
+                  },
+                  "footSpeedTolerance": {
+                    "type": "number"
+                  },
+                  "minContactDuration": {
+                    "type": "number"
+                  },
+                  "contactDriftTolerance": {
+                    "type": "number"
+                  },
+                  "boneLengthRelativeTolerance": {
+                    "type": "number"
+                  },
+                  "scaleRelativeTolerance": {
+                    "type": "number"
+                  },
+                  "rootVelocityJumpTolerance": {
+                    "type": "number"
+                  },
+                  "jointVelocityJumpTolerance": {
+                    "type": "number"
+                  },
+                  "angularVelocityJumpTolerance": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "floorY",
+                  "footHeightTolerance",
+                  "footSpeedTolerance",
+                  "minContactDuration",
+                  "contactDriftTolerance",
+                  "boneLengthRelativeTolerance",
+                  "scaleRelativeTolerance",
+                  "rootVelocityJumpTolerance",
+                  "jointVelocityJumpTolerance",
+                  "angularVelocityJumpTolerance"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "algorithm",
+              "sampleRate",
+              "measuredAt",
+              "thresholds"
+            ],
+            "additionalProperties": false
+          },
+          "schemaVersion": {
+            "const": 1
+          },
+          "reviewRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reviewedAt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "reviewer": {
+            "const": "llm-visual"
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "Front",
+                "Side",
+                "Orbit",
+                "Top"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "minItems": 0,
+            "maxItems": 8
+          },
+          "physicalValidation": {
+            "const": "not-performed"
+          },
+          "movementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "motionHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "intervals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "foot": {
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                },
+                "start": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "end": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "decision": {
+                  "enum": [
+                    "supported",
+                    "uncertain",
+                    "rejected"
+                  ]
+                },
+                "notes": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000
+                },
+                "measurements": {
+                  "type": "object",
+                  "properties": {
+                    "maxHorizontalDriftMeters": {
+                      "type": "number"
+                    },
+                    "pathMeters": {
+                      "type": "number"
+                    },
+                    "maxSpeedMetersPerSecond": {
+                      "type": "number"
+                    },
+                    "minHeightMeters": {
+                      "type": "number"
+                    },
+                    "maxHeightMeters": {
+                      "type": "number"
+                    },
+                    "sampleCount": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "maxHorizontalDriftMeters",
+                    "pathMeters",
+                    "maxSpeedMetersPerSecond",
+                    "minHeightMeters",
+                    "maxHeightMeters",
+                    "sampleCount"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "foot",
+                "start",
+                "end",
+                "decision",
+                "notes",
+                "measurements"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 16
+          },
+          "uncoveredIntervals": {
+            "const": "unknown"
+          }
+        },
+        "required": [
+          "measurement",
+          "schemaVersion",
+          "reviewRevision",
+          "reviewedAt",
+          "reviewer",
+          "views",
+          "notes",
+          "artifacts",
+          "physicalValidation",
+          "movementId",
+          "sourceRevision",
+          "motionHash",
+          "intervals",
+          "uncoveredIntervals"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 200
+    },
+    "seams": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "measurement": {
+            "type": "object",
+            "properties": {
+              "algorithm": {
+                "const": "rig-motion-quality-v1"
+              },
+              "sampleRate": {
+                "const": 60
+              },
+              "measuredAt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "thresholds": {
+                "type": "object",
+                "properties": {
+                  "floorY": {
+                    "type": "number"
+                  },
+                  "footHeightTolerance": {
+                    "type": "number"
+                  },
+                  "footSpeedTolerance": {
+                    "type": "number"
+                  },
+                  "minContactDuration": {
+                    "type": "number"
+                  },
+                  "contactDriftTolerance": {
+                    "type": "number"
+                  },
+                  "boneLengthRelativeTolerance": {
+                    "type": "number"
+                  },
+                  "scaleRelativeTolerance": {
+                    "type": "number"
+                  },
+                  "rootVelocityJumpTolerance": {
+                    "type": "number"
+                  },
+                  "jointVelocityJumpTolerance": {
+                    "type": "number"
+                  },
+                  "angularVelocityJumpTolerance": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "floorY",
+                  "footHeightTolerance",
+                  "footSpeedTolerance",
+                  "minContactDuration",
+                  "contactDriftTolerance",
+                  "boneLengthRelativeTolerance",
+                  "scaleRelativeTolerance",
+                  "rootVelocityJumpTolerance",
+                  "jointVelocityJumpTolerance",
+                  "angularVelocityJumpTolerance"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "algorithm",
+              "sampleRate",
+              "measuredAt",
+              "thresholds"
+            ],
+            "additionalProperties": false
+          },
+          "schemaVersion": {
+            "const": 1
+          },
+          "reviewRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reviewedAt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "reviewer": {
+            "const": "llm-visual"
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "Front",
+                "Side",
+                "Orbit",
+                "Top"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "minItems": 0,
+            "maxItems": 8
+          },
+          "physicalValidation": {
+            "const": "not-performed"
+          },
+          "contractId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "fromRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "toRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "fromHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "toHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "decision": {
+            "enum": [
+              "supported",
+              "needs-review",
+              "rejected"
+            ]
+          },
+          "configuration": {
+            "type": "object",
+            "properties": {
+              "duration": {
+                "type": "number",
+                "minimum": 0.001,
+                "maximum": 1
+              },
+              "fromSpeed": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 1.5
+              },
+              "toSpeed": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 1.5
+              },
+              "anchor": {
+                "const": "none"
+              },
+              "blend": {
+                "enum": [
+                  "pose",
+                  "velocity"
+                ]
+              },
+              "travel": {
+                "enum": [
+                  "source",
+                  "continue"
+                ]
+              }
+            },
+            "required": [
+              "duration",
+              "fromSpeed",
+              "toSpeed",
+              "anchor"
+            ],
+            "additionalProperties": false
+          },
+          "evidenceAction": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[-a-z0-9]{1,48}$"
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "motionHash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "step": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              }
+            },
+            "required": [
+              "id",
+              "revision",
+              "motionHash",
+              "step"
+            ],
+            "additionalProperties": false
+          },
+          "seams": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "rootVelocityJumpMetersPerSecond": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "jointVelocityJumpRmsMetersPerSecond": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "angularVelocityJumpRmsDegreesPerSecond": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "time",
+                "rootVelocityJumpMetersPerSecond",
+                "jointVelocityJumpRmsMetersPerSecond",
+                "angularVelocityJumpRmsDegreesPerSecond"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "flagCodes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "minItems": 0,
+            "maxItems": 64
+          }
+        },
+        "required": [
+          "measurement",
+          "schemaVersion",
+          "reviewRevision",
+          "reviewedAt",
+          "reviewer",
+          "views",
+          "notes",
+          "artifacts",
+          "physicalValidation",
+          "contractId",
+          "fromRevision",
+          "toRevision",
+          "fromHash",
+          "toHash",
+          "decision",
+          "configuration",
+          "evidenceAction",
+          "seams",
+          "flagCodes"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 200
+    },
+    "contactHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "measurement": {
+            "type": "object",
+            "properties": {
+              "algorithm": {
+                "const": "rig-motion-quality-v1"
+              },
+              "sampleRate": {
+                "const": 60
+              },
+              "measuredAt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "thresholds": {
+                "type": "object",
+                "properties": {
+                  "floorY": {
+                    "type": "number"
+                  },
+                  "footHeightTolerance": {
+                    "type": "number"
+                  },
+                  "footSpeedTolerance": {
+                    "type": "number"
+                  },
+                  "minContactDuration": {
+                    "type": "number"
+                  },
+                  "contactDriftTolerance": {
+                    "type": "number"
+                  },
+                  "boneLengthRelativeTolerance": {
+                    "type": "number"
+                  },
+                  "scaleRelativeTolerance": {
+                    "type": "number"
+                  },
+                  "rootVelocityJumpTolerance": {
+                    "type": "number"
+                  },
+                  "jointVelocityJumpTolerance": {
+                    "type": "number"
+                  },
+                  "angularVelocityJumpTolerance": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "floorY",
+                  "footHeightTolerance",
+                  "footSpeedTolerance",
+                  "minContactDuration",
+                  "contactDriftTolerance",
+                  "boneLengthRelativeTolerance",
+                  "scaleRelativeTolerance",
+                  "rootVelocityJumpTolerance",
+                  "jointVelocityJumpTolerance",
+                  "angularVelocityJumpTolerance"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "algorithm",
+              "sampleRate",
+              "measuredAt",
+              "thresholds"
+            ],
+            "additionalProperties": false
+          },
+          "schemaVersion": {
+            "const": 1
+          },
+          "reviewRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reviewedAt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "reviewer": {
+            "const": "llm-visual"
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "Front",
+                "Side",
+                "Orbit",
+                "Top"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "minItems": 0,
+            "maxItems": 8
+          },
+          "physicalValidation": {
+            "const": "not-performed"
+          },
+          "movementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "motionHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "intervals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "foot": {
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                },
+                "start": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "end": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "decision": {
+                  "enum": [
+                    "supported",
+                    "uncertain",
+                    "rejected"
+                  ]
+                },
+                "notes": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000
+                },
+                "measurements": {
+                  "type": "object",
+                  "properties": {
+                    "maxHorizontalDriftMeters": {
+                      "type": "number"
+                    },
+                    "pathMeters": {
+                      "type": "number"
+                    },
+                    "maxSpeedMetersPerSecond": {
+                      "type": "number"
+                    },
+                    "minHeightMeters": {
+                      "type": "number"
+                    },
+                    "maxHeightMeters": {
+                      "type": "number"
+                    },
+                    "sampleCount": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "maxHorizontalDriftMeters",
+                    "pathMeters",
+                    "maxSpeedMetersPerSecond",
+                    "minHeightMeters",
+                    "maxHeightMeters",
+                    "sampleCount"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "foot",
+                "start",
+                "end",
+                "decision",
+                "notes",
+                "measurements"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 16
+          },
+          "uncoveredIntervals": {
+            "const": "unknown"
+          }
+        },
+        "required": [
+          "measurement",
+          "schemaVersion",
+          "reviewRevision",
+          "reviewedAt",
+          "reviewer",
+          "views",
+          "notes",
+          "artifacts",
+          "physicalValidation",
+          "movementId",
+          "sourceRevision",
+          "motionHash",
+          "intervals",
+          "uncoveredIntervals"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 100
+    },
+    "seamHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "measurement": {
+            "type": "object",
+            "properties": {
+              "algorithm": {
+                "const": "rig-motion-quality-v1"
+              },
+              "sampleRate": {
+                "const": 60
+              },
+              "measuredAt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "thresholds": {
+                "type": "object",
+                "properties": {
+                  "floorY": {
+                    "type": "number"
+                  },
+                  "footHeightTolerance": {
+                    "type": "number"
+                  },
+                  "footSpeedTolerance": {
+                    "type": "number"
+                  },
+                  "minContactDuration": {
+                    "type": "number"
+                  },
+                  "contactDriftTolerance": {
+                    "type": "number"
+                  },
+                  "boneLengthRelativeTolerance": {
+                    "type": "number"
+                  },
+                  "scaleRelativeTolerance": {
+                    "type": "number"
+                  },
+                  "rootVelocityJumpTolerance": {
+                    "type": "number"
+                  },
+                  "jointVelocityJumpTolerance": {
+                    "type": "number"
+                  },
+                  "angularVelocityJumpTolerance": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "floorY",
+                  "footHeightTolerance",
+                  "footSpeedTolerance",
+                  "minContactDuration",
+                  "contactDriftTolerance",
+                  "boneLengthRelativeTolerance",
+                  "scaleRelativeTolerance",
+                  "rootVelocityJumpTolerance",
+                  "jointVelocityJumpTolerance",
+                  "angularVelocityJumpTolerance"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "algorithm",
+              "sampleRate",
+              "measuredAt",
+              "thresholds"
+            ],
+            "additionalProperties": false
+          },
+          "schemaVersion": {
+            "const": 1
+          },
+          "reviewRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reviewedAt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "reviewer": {
+            "const": "llm-visual"
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "Front",
+                "Side",
+                "Orbit",
+                "Top"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "minItems": 0,
+            "maxItems": 8
+          },
+          "physicalValidation": {
+            "const": "not-performed"
+          },
+          "contractId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "fromRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "toRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "fromHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "toHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "decision": {
+            "enum": [
+              "supported",
+              "needs-review",
+              "rejected"
+            ]
+          },
+          "configuration": {
+            "type": "object",
+            "properties": {
+              "duration": {
+                "type": "number",
+                "minimum": 0.001,
+                "maximum": 1
+              },
+              "fromSpeed": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 1.5
+              },
+              "toSpeed": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 1.5
+              },
+              "anchor": {
+                "const": "none"
+              },
+              "blend": {
+                "enum": [
+                  "pose",
+                  "velocity"
+                ]
+              },
+              "travel": {
+                "enum": [
+                  "source",
+                  "continue"
+                ]
+              }
+            },
+            "required": [
+              "duration",
+              "fromSpeed",
+              "toSpeed",
+              "anchor"
+            ],
+            "additionalProperties": false
+          },
+          "evidenceAction": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[-a-z0-9]{1,48}$"
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "motionHash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "step": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              }
+            },
+            "required": [
+              "id",
+              "revision",
+              "motionHash",
+              "step"
+            ],
+            "additionalProperties": false
+          },
+          "seams": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "rootVelocityJumpMetersPerSecond": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "jointVelocityJumpRmsMetersPerSecond": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "angularVelocityJumpRmsDegreesPerSecond": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "time",
+                "rootVelocityJumpMetersPerSecond",
+                "jointVelocityJumpRmsMetersPerSecond",
+                "angularVelocityJumpRmsDegreesPerSecond"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "flagCodes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "minItems": 0,
+            "maxItems": 64
+          }
+        },
+        "required": [
+          "measurement",
+          "schemaVersion",
+          "reviewRevision",
+          "reviewedAt",
+          "reviewer",
+          "views",
+          "notes",
+          "artifacts",
+          "physicalValidation",
+          "contractId",
+          "fromRevision",
+          "toRevision",
+          "fromHash",
+          "toHash",
+          "decision",
+          "configuration",
+          "evidenceAction",
+          "seams",
+          "flagCodes"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 100
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "contacts",
+    "seams",
+    "contactHistory",
+    "seamHistory"
+  ],
+  "additionalProperties": false
+}

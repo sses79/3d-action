@@ -1,0 +1,100 @@
+{
+  "id": "320d7307-08ae-4927-9773-2c79468fec89",
+  "prompt": "Verify MotionBERT input conventions and benchmark observation-constrained fitting of the trimmed side kick.",
+  "actionId": "video-side-kick-fitted",
+  "status": "completed",
+  "startedAt": "2026-10-05T18:14:28.035Z",
+  "finishedAt": "2026-10-05T18:22:34.340Z",
+  "elapsedMs": 486305,
+  "actionRevision": 1,
+  "eventCount": 7,
+  "toolCalls": 3,
+  "toolElapsedMs": 3879.47,
+  "events": [
+    {
+      "index": 1,
+      "timestamp": "2026-10-05T18:14:28.035Z",
+      "relativeMs": 0,
+      "source": "llm",
+      "name": "prompt",
+      "phase": "prompt",
+      "status": "completed",
+      "note": "Verify MotionBERT input conventions and benchmark observation-constrained fitting of the trimmed side kick."
+    },
+    {
+      "index": 2,
+      "timestamp": "2026-10-05T18:19:10.333Z",
+      "relativeMs": 282298,
+      "source": "llm",
+      "name": "fitting-review",
+      "phase": "fitting-review",
+      "status": "completed",
+      "note": "Official Halpe/H36M leg indices and crop equation agree with adapter. Synthetic axial landmarks/confidence remain approximations. Image-only fit 79.6 degree knee; adding side-view near-straight observation prior yields179.9 degree knee and recognizable lateral extension in two-camera captures. Prior is an explicit ambiguity assumption, not recovered3D ground truth."
+    },
+    {
+      "index": 3,
+      "timestamp": "2026-10-05T18:19:10.353Z",
+      "relativeMs": 282318,
+      "source": "mcp",
+      "transport": "cli",
+      "name": "create_action",
+      "phase": "tool",
+      "status": "completed",
+      "startedAt": "2026-10-05T18:19:10.353Z",
+      "target": "video-side-kick-fitted",
+      "finishedAt": "2026-10-05T18:19:13.930Z",
+      "elapsedMs": 3576.41,
+      "revision": 1
+    },
+    {
+      "index": 4,
+      "timestamp": "2026-10-05T18:19:14.080Z",
+      "relativeMs": 286045,
+      "source": "mcp",
+      "transport": "cli",
+      "name": "inspect_motion_quality",
+      "phase": "tool",
+      "status": "completed",
+      "startedAt": "2026-10-05T18:19:14.080Z",
+      "target": "video-side-kick-fitted",
+      "finishedAt": "2026-10-05T18:19:14.373Z",
+      "elapsedMs": 292.2,
+      "revision": 1
+    },
+    {
+      "index": 5,
+      "timestamp": "2026-10-05T18:19:14.386Z",
+      "relativeMs": 286351,
+      "source": "mcp",
+      "transport": "cli",
+      "name": "set_preview",
+      "phase": "tool",
+      "status": "completed",
+      "startedAt": "2026-10-05T18:19:14.386Z",
+      "target": "video-side-kick-fitted",
+      "finishedAt": "2026-10-05T18:19:14.397Z",
+      "elapsedMs": 10.86,
+      "revision": null
+    },
+    {
+      "index": 6,
+      "timestamp": "2026-10-05T18:22:34.325Z",
+      "relativeMs": 486290,
+      "source": "llm",
+      "name": "whole-motion-review",
+      "phase": "whole-motion-review",
+      "status": "completed",
+      "note": "Captured70 timestamps from two cameras. Dense extension/recoil sheet shows recognizable kick with directional instability; five velocity flags remain. New fitted draft selected Front1.4s, previous failed draft retained. Four tests pass. No movement/contact approval."
+    },
+    {
+      "index": 7,
+      "timestamp": "2026-10-05T18:22:34.338Z",
+      "relativeMs": 486303,
+      "source": "llm",
+      "name": "finish",
+      "phase": "finish",
+      "status": "completed",
+      "note": "Input verification and two fitting variants benchmarked. Explicit side-view straight-knee prior achieves recognizable first draft; temporal/depth instability and five motion flags remain. Evidence/report/plan updated; independent backend and synchronized viewer remain future work."
+    }
+  ]
+}

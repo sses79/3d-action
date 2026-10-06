@@ -1,0 +1,917 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "library": "ual2-standard",
+    "edition": "Free Standard",
+    "license": "CC0-1.0",
+    "path": "editor/source/ual2/UAL2_Standard.glb",
+    "sha256": "8cee20ab1bc55130092447e810e26df22dd2803eccc54f52137a7d54d7ab88a8",
+    "sourceRig": "UAL2 Standard humanoid",
+    "targetRig": "quaternius-ual1",
+    "adapter": "authoring/source/import-ual2.mjs"
+  },
+  "movements": [
+    {
+      "id": "move-ual2-a-tpose",
+      "clip": "A_TPose",
+      "duration": 2.5,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "rig-reference",
+        "purpose": "Static T-pose for rig reference; not a gameplay guard",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "88b0663055f3f5e7e09ed15246a62e4a15ca55045fdffad02d372bc894e41d73"
+    },
+    {
+      "id": "move-ual2-chest-open",
+      "clip": "Chest_Open",
+      "duration": 1.3666666746139526,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "object-interaction",
+        "purpose": "Bend forward and reach toward a low container, then return upright",
+        "equipment": "container; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "0df69bdfb67d5eb874337ec7d285942fd4914a3d5a475103c43822f377afbd7f"
+    },
+    {
+      "id": "move-ual2-climbup-1m",
+      "clip": "ClimbUp_1m",
+      "duration": 0.6666666865348816,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "obstacle-traversal",
+        "purpose": "Running climb/vault gesture in place; controller must supply obstacle alignment and world trajectory",
+        "equipment": "obstacle; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "c37bfd22867153bbd1ab3feedb3cf21d05651feb9e6f033e20026514622befe8"
+    },
+    {
+      "id": "move-ual2-consume",
+      "clip": "Consume",
+      "duration": 1.3333333730697632,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "object-interaction",
+        "purpose": "Raise hand toward head in a consuming gesture and return",
+        "equipment": "consumable; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "cd3d70842a569c2b01e44cf89a1db6d670efab6509958f331e2b9749f71ed945"
+    },
+    {
+      "id": "move-ual2-farm-harvest",
+      "clip": "Farm_Harvest",
+      "duration": 2.5,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "farming",
+        "purpose": "Bend deeply and gather near the ground, then stand",
+        "equipment": "harvest target; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "d406e34513d3fb91d19482eec08ac33601195e84c7675a664f08bc2884f15d80"
+    },
+    {
+      "id": "move-ual2-farm-plantseed",
+      "clip": "Farm_PlantSeed",
+      "duration": 2.7666666507720947,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "farming",
+        "purpose": "Lower into a crouch/kneel and reach toward the ground, then stand",
+        "equipment": "seed and ground target; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "2bc84e8bd633dfff87c074a0f7c8fcfaa55e0b3c25707435132e12f5acfdaa95"
+    },
+    {
+      "id": "move-ual2-farm-watering",
+      "clip": "Farm_Watering",
+      "duration": 3.799999952316284,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "farming",
+        "purpose": "Hold and tilt arms in a watering gesture while standing",
+        "equipment": "watering can and target; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "c8b295c1e7cea9b011a336ed5a7b76c679fdd4d82a14d208256db1a382a26dec"
+    },
+    {
+      "id": "move-ual2-hit-knockback",
+      "clip": "Hit_Knockback",
+      "duration": 0.8333333134651184,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "hit-recovery",
+        "purpose": "React to a hit, fall backward and end lying down; does not regain guard",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "65cd2360854dd58a027c77d953e5f3af58f1c297a4e20255d4319f5c9c4b59a3"
+    },
+    {
+      "id": "move-ual2-idle-foldarms-loop",
+      "clip": "Idle_FoldArms_Loop",
+      "duration": 2.5,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "social-idle",
+        "purpose": "Standing folded-arm hold with small body shifts",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "7c74e4edaefdb30749649b25b8b3abd2378e0dcfded3cef8bf8029f773f6a560"
+    },
+    {
+      "id": "move-ual2-idle-lantern-loop",
+      "clip": "Idle_Lantern_Loop",
+      "duration": 2.5,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "equipment-idle",
+        "purpose": "Standing hold with one arm extended for a lantern",
+        "equipment": "lantern; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "5855198abea48eb545c7d872d9d0b23b273b224fdb20df1f5357e1c30a0d2a83"
+    },
+    {
+      "id": "move-ual2-idle-no-loop",
+      "clip": "Idle_No_Loop",
+      "duration": 2.5,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "social-idle",
+        "purpose": "Standing idle with small head and body shifts; source name does not establish a refusal gesture",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "d172c193b95f4768e108e57ed9b6fa1b87f0f0d38c0fa7b4dd1f0f3e052d7baa"
+    },
+    {
+      "id": "move-ual2-idle-rail-call",
+      "clip": "Idle_Rail_Call",
+      "duration": 2.5,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "environment-idle",
+        "purpose": "Lean forward with arms near a rail and make a calling gesture",
+        "equipment": "rail; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "532c71ad432dea935325499b0a73f0de7200f5e1f4a5a630cdbc00459adab563"
+    },
+    {
+      "id": "move-ual2-idle-rail-loop",
+      "clip": "Idle_Rail_Loop",
+      "duration": 2.5,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "environment-idle",
+        "purpose": "Lean forward with forearms positioned near a rail",
+        "equipment": "rail; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "409d367f808868f4ccb536ddfa19901ec59181a4e0e59c86fc1a8c6a620f3004"
+    },
+    {
+      "id": "move-ual2-idle-shield-break",
+      "clip": "Idle_Shield_Break",
+      "duration": 1.0666667222976685,
+      "roles": [
+        "recovery"
+      ],
+      "semantics": {
+        "family": "shield",
+        "purpose": "Recoil from a shield-holding stance and return to the holding stance",
+        "equipment": "shield; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "fcb1af7a14e0703c60e1334889f108b696f98c78766547132631db0f0f965f46"
+    },
+    {
+      "id": "move-ual2-idle-shield-loop",
+      "clip": "Idle_Shield_Loop",
+      "duration": 2.5,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "shield",
+        "purpose": "Standing shield-holding stance with small body shifts",
+        "equipment": "shield; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "ba1d3354ad54fa35c595d1bb1bb7bb98695a44e90a5bcb6950b73fc8fe14dd66"
+    },
+    {
+      "id": "move-ual2-idle-talkingphone-loop",
+      "clip": "Idle_TalkingPhone_Loop",
+      "duration": 2.933333396911621,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "equipment-idle",
+        "purpose": "Hold a hand to the head while gesturing with the other arm",
+        "equipment": "phone; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "c5230855b978f61724aa05dbd0d211e0280e613b8b36ab222ed37e2fd549a5af"
+    },
+    {
+      "id": "move-ual2-laytoidle",
+      "clip": "LayToIdle",
+      "duration": 1.5333333015441895,
+      "roles": [
+        "recovery"
+      ],
+      "semantics": {
+        "family": "hit-recovery",
+        "purpose": "Rise from lying through seated and crouched support to upright standing",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "c0c0484f6d52c56c1b788263c3656957d7e3e4a303f8e91ec0dcc2e7af2155a1"
+    },
+    {
+      "id": "move-ual2-melee-hook",
+      "clip": "Melee_Hook",
+      "duration": 0.46666666865348816,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "unarmed-melee",
+        "purpose": "Wind up and swing a hook with whole-body rotation; ends in low follow-through",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "1d093d071087f86f757a5b76446d20e6b97cc4881737ef9e3ef716ab894bbf94"
+    },
+    {
+      "id": "move-ual2-melee-hook-rec",
+      "clip": "Melee_Hook_Rec",
+      "duration": 0.6000000238418579,
+      "roles": [
+        "recovery"
+      ],
+      "semantics": {
+        "family": "unarmed-melee",
+        "purpose": "Recover from low hook follow-through to raised-arm guard",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "81ba1d22197638c00409e4eeb4fc373f1e545777c21a8a69039e9ee773e347bb"
+    },
+    {
+      "id": "move-ual2-ninjajump-idle-loop",
+      "clip": "NinjaJump_Idle_Loop",
+      "duration": 2,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "ninja-jump",
+        "purpose": "Maintain tucked airborne pose; controller supplies world flight",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "244ac0443dd08d5dfc2e346acd85dd8e689960d4a5e685e7715ab4d2127423f3"
+    },
+    {
+      "id": "move-ual2-ninjajump-land",
+      "clip": "NinjaJump_Land",
+      "duration": 1.2666666507720947,
+      "roles": [
+        "recovery"
+      ],
+      "semantics": {
+        "family": "ninja-jump",
+        "purpose": "Lower from tucked airborne pose into landing crouch and return upright",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "46daac174af2edb09070d37325d71f352b3c95e1e54445068097ecfd951fc4c5"
+    },
+    {
+      "id": "move-ual2-ninjajump-start",
+      "clip": "NinjaJump_Start",
+      "duration": 0.9666666388511658,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "ninja-jump",
+        "purpose": "Push from crouch into tucked airborne pose; root remains in place",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "b9e898e5939e6a09092e5679f47ec108db58e2541c4c4b7d3e167e9bae4dcab0"
+    },
+    {
+      "id": "move-ual2-overhandthrow",
+      "clip": "OverhandThrow",
+      "duration": 1.3333333730697632,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "projectile",
+        "purpose": "Wind up an overhand throw, follow through and recover upright; no projectile is supplied",
+        "equipment": "throwable; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "c0a8fb35b5002008407c4486445d5829ebf96382262fc8f5ce4daaf12b8cf904"
+    },
+    {
+      "id": "move-ual2-shield-dash",
+      "clip": "Shield_Dash",
+      "duration": 1.100000023841858,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "shield",
+        "purpose": "Lunging shield gesture and recovery in place; controller supplies world dash",
+        "equipment": "shield; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "2a1bcee90ba1e04b0123a740e1d87ecb695e0d0e7e4b69ce41b3ce9de9f61c24"
+    },
+    {
+      "id": "move-ual2-shield-oneshot",
+      "clip": "Shield_OneShot",
+      "duration": 0.8333333134651184,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "shield",
+        "purpose": "Raise shielding arm briefly and lower to standing",
+        "equipment": "shield; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "68e4844f485fb0f6c50ae8aadb8cfb704815302dcf60c15dbe42053f860e7a2d"
+    },
+    {
+      "id": "move-ual2-slide-exit",
+      "clip": "Slide_Exit",
+      "duration": 0.5,
+      "roles": [
+        "recovery"
+      ],
+      "semantics": {
+        "family": "locomotion-slide",
+        "purpose": "Leave the low slide into a running stride; does not finish in standing guard",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "1322063f4a98f4539e36ea2fd8ed321d6cbadfb8564c8f8e909fe1a2ab8adcec"
+    },
+    {
+      "id": "move-ual2-slide-loop",
+      "clip": "Slide_Loop",
+      "duration": 2,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "locomotion-slide",
+        "purpose": "Sustain the low seated slide in place; body/hand support unverified, controller supplies world travel",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "e5b1a74e645ee6c33364cee1b992bdd39f032df86098579015af2a47cc623d1b"
+    },
+    {
+      "id": "move-ual2-slide-start",
+      "clip": "Slide_Start",
+      "duration": 0.8333333134651184,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "locomotion-slide",
+        "purpose": "Enter a low seated slide from a running stride; in-place source, controller supplies world travel",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "bd9f195edd24b5da35f3b8b6bae0f09df20e48245ff187688a3f166e56876348"
+    },
+    {
+      "id": "move-ual2-sword-block",
+      "clip": "Sword_Block",
+      "duration": 1.2333333492279053,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "sword-defense",
+        "purpose": "Lower into a defensive sword stance and recover upright",
+        "equipment": "sword; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "189fdb9bd7958006e0d8d87bfa8a7afc01eb2ee7117ffd88d69bd44b07ff79b4"
+    },
+    {
+      "id": "move-ual2-sword-dash",
+      "clip": "Sword_Dash",
+      "duration": 1.5666667222976685,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "sword-attack",
+        "purpose": "Wind up, lunge and swing, then recover upright in place; controller supplies world dash",
+        "equipment": "sword; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "4c386be54f4c126a810ddc9b08c571cf61c3513947541c9f1576a41b299ebd70"
+    },
+    {
+      "id": "move-ual2-sword-heavy-combo",
+      "clip": "Sword_Heavy_Combo",
+      "duration": 4.333333492279053,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "sword-heavy",
+        "purpose": "Complete multi-swing heavy sword sequence with body turns and recovery; not movement references",
+        "equipment": "sword; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "4872590589707e70fbfd1d446435357b9f628e084955e2140b3424a90d957f11"
+    },
+    {
+      "id": "move-ual2-sword-regular-a",
+      "clip": "Sword_Regular_A",
+      "duration": 0.4333333373069763,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "sword-regular",
+        "purpose": "attack",
+        "equipment": "sword",
+        "review": "candidate"
+      },
+      "motionHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad"
+    },
+    {
+      "id": "move-ual2-sword-regular-a-rec",
+      "clip": "Sword_Regular_A_Rec",
+      "duration": 0.9666666388511658,
+      "roles": [
+        "recovery"
+      ],
+      "semantics": {
+        "family": "sword-regular",
+        "purpose": "recovery",
+        "equipment": "sword",
+        "review": "candidate"
+      },
+      "motionHash": "6477c5f621b3b815e3077fa3c9615e07686d0b09a100b1b102444b92b4c26b19"
+    },
+    {
+      "id": "move-ual2-sword-regular-b",
+      "clip": "Sword_Regular_B",
+      "duration": 0.5333333611488342,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "sword-regular",
+        "purpose": "attack",
+        "equipment": "sword",
+        "review": "candidate"
+      },
+      "motionHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad"
+    },
+    {
+      "id": "move-ual2-sword-regular-b-rec",
+      "clip": "Sword_Regular_B_Rec",
+      "duration": 1.0333333015441895,
+      "roles": [
+        "recovery"
+      ],
+      "semantics": {
+        "family": "sword-regular",
+        "purpose": "recovery",
+        "equipment": "sword",
+        "review": "candidate"
+      },
+      "motionHash": "0aef61d9473ceebef4c37ac40c9996b8695ae74afec47e19602508d86571e3e4"
+    },
+    {
+      "id": "move-ual2-sword-regular-c",
+      "clip": "Sword_Regular_C",
+      "duration": 2,
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "sword-regular",
+        "purpose": "attack-and-recover",
+        "equipment": "sword",
+        "review": "candidate"
+      },
+      "motionHash": "40facb0220ac0f2c99188cb5aa1be89489ee9414b3bb35f3c7e2034eb60faad2"
+    },
+    {
+      "id": "move-ual2-sword-regular-combo",
+      "clip": "Sword_Regular_Combo",
+      "duration": 3,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "sword-regular",
+        "purpose": "attack-chain",
+        "equipment": "sword",
+        "review": "candidate"
+      },
+      "motionHash": "ccf002d937d7a5a04eaa22d7f9ddfcfcfd98c09a156bce8522f5cede9f49e2f9"
+    },
+    {
+      "id": "move-ual2-treechopping-loop",
+      "clip": "TreeChopping_Loop",
+      "duration": 0.9666666388511658,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "work",
+        "purpose": "Repeat a raised-arm chopping swing",
+        "equipment": "axe and tree target; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "b61017e469e3220ea026c38d224ec9c74b75ce8a387c1ea7147c1029b73b9b20"
+    },
+    {
+      "id": "move-ual2-walk-carry-loop",
+      "clip": "Walk_Carry_Loop",
+      "duration": 2,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "locomotion-carry",
+        "purpose": "Walk in place while holding arms around a carried load; controller supplies world travel",
+        "equipment": "carried load; absent in mannequin preview",
+        "review": "candidate"
+      },
+      "motionHash": "3ded087b30fd08504eb8c11c194c507eed2d5eec167f0a6d972738a2bfd7f246"
+    },
+    {
+      "id": "move-ual2-yes",
+      "clip": "Yes",
+      "duration": 2.5,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "social-gesture",
+        "purpose": "Raise one hand in an affirmative gesture and return upright",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "bb24118a3d24692525957841d114c3fefcfa7b816459fb5c5984cdc65231eafb"
+    },
+    {
+      "id": "move-ual2-zombie-idle-loop",
+      "clip": "Zombie_Idle_Loop",
+      "duration": 1.3333333730697632,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "zombie",
+        "purpose": "Hunched standing idle with small shifts",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "077dd7b301382d5feed829484e06a316414d66c5b9292e78053a128c0828a8fc"
+    },
+    {
+      "id": "move-ual2-zombie-scratch",
+      "clip": "Zombie_Scratch",
+      "duration": 1.7999999523162842,
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "zombie",
+        "purpose": "Wind up and swipe a hand, lean into follow-through, then return to hunched idle",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "93853420948b98350b4d2867ca8c652b87685597b9f217286c46df46af944275"
+    },
+    {
+      "id": "move-ual2-zombie-walk-fwd-loop",
+      "clip": "Zombie_Walk_Fwd_Loop",
+      "duration": 1.3333333730697632,
+      "roles": [
+        "loop"
+      ],
+      "semantics": {
+        "family": "zombie",
+        "purpose": "Hunched forward walking cycle in place; controller supplies world travel",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "motionHash": "f029bd0b41ddf3cc69c6f2d79dafe75003ebc1fe7421e820dc3da3686ac70b2b"
+    }
+  ],
+  "connections": [
+    {
+      "id": "regular-a-to-b",
+      "from": "move-ual2-sword-regular-a",
+      "to": "move-ual2-sword-regular-b",
+      "fromHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad",
+      "toHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "adapted rig revision 1 endpoints",
+        "positionRmsMeters": 0.0511,
+        "rotationRmsDegrees": 5.77,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "regular-b-to-c",
+      "from": "move-ual2-sword-regular-b",
+      "to": "move-ual2-sword-regular-c",
+      "fromHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad",
+      "toHash": "40facb0220ac0f2c99188cb5aa1be89489ee9414b3bb35f3c7e2034eb60faad2",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "adapted rig revision 1 endpoints",
+        "positionRmsMeters": 0.0496,
+        "rotationRmsDegrees": 5.72,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "regular-a-to-a-rec",
+      "from": "move-ual2-sword-regular-a",
+      "to": "move-ual2-sword-regular-a-rec",
+      "fromHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad",
+      "toHash": "6477c5f621b3b815e3077fa3c9615e07686d0b09a100b1b102444b92b4c26b19",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "adapted rig revision 1 endpoints",
+        "positionRmsMeters": 0.0002,
+        "rotationRmsDegrees": 0.06,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "regular-b-to-b-rec",
+      "from": "move-ual2-sword-regular-b",
+      "to": "move-ual2-sword-regular-b-rec",
+      "fromHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad",
+      "toHash": "0aef61d9473ceebef4c37ac40c9996b8695ae74afec47e19602508d86571e3e4",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "adapted rig revision 1 endpoints",
+        "positionRmsMeters": 0,
+        "rotationRmsDegrees": 0.13,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "slide-start-to-loop",
+      "from": "move-ual2-slide-start",
+      "to": "move-ual2-slide-loop",
+      "fromHash": "bd9f195edd24b5da35f3b8b6bae0f09df20e48245ff187688a3f166e56876348",
+      "toHash": "e5b1a74e645ee6c33364cee1b992bdd39f032df86098579015af2a47cc623d1b",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Adapted normalized rig revision 1 endpoint profiles; sampled source visuals stored in authoring/reviews/slide",
+        "positionRmsMeters": 0.0022689250830246308,
+        "rotationRmsDegrees": 2.6564350712655638,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "slide-loop-to-exit",
+      "from": "move-ual2-slide-loop",
+      "to": "move-ual2-slide-exit",
+      "fromHash": "e5b1a74e645ee6c33364cee1b992bdd39f032df86098579015af2a47cc623d1b",
+      "toHash": "1322063f4a98f4539e36ea2fd8ed321d6cbadfb8564c8f8e909fe1a2ab8adcec",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Adapted normalized rig revision 1 endpoint profiles; sampled source visuals stored in authoring/reviews/slide",
+        "positionRmsMeters": 0.002268908415555757,
+        "rotationRmsDegrees": 2.6564353565038763,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "knockback-to-getup",
+      "from": "move-ual2-hit-knockback",
+      "to": "move-ual2-laytoidle",
+      "fromHash": "65cd2360854dd58a027c77d953e5f3af58f1c297a4e20255d4319f5c9c4b59a3",
+      "toHash": "c0c0484f6d52c56c1b788263c3656957d7e3e4a303f8e91ec0dcc2e7af2155a1",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.07036483212859543,
+        "rotationRmsDegrees": 25.960344397811294,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "hook-to-recovery",
+      "from": "move-ual2-melee-hook",
+      "to": "move-ual2-melee-hook-rec",
+      "fromHash": "1d093d071087f86f757a5b76446d20e6b97cc4881737ef9e3ef716ab894bbf94",
+      "toHash": "81ba1d22197638c00409e4eeb4fc373f1e545777c21a8a69039e9ee773e347bb",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.012482460480683725,
+        "rotationRmsDegrees": 2.215990152167165,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "ninja-start-to-hold",
+      "from": "move-ual2-ninjajump-start",
+      "to": "move-ual2-ninjajump-idle-loop",
+      "fromHash": "b9e898e5939e6a09092e5679f47ec108db58e2541c4c4b7d3e167e9bae4dcab0",
+      "toHash": "244ac0443dd08d5dfc2e346acd85dd8e689960d4a5e685e7715ab4d2127423f3",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 3.158892094738845e-8,
+        "rotationRmsDegrees": 0.000004228837772283831,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "ninja-hold-to-land",
+      "from": "move-ual2-ninjajump-idle-loop",
+      "to": "move-ual2-ninjajump-land",
+      "fromHash": "244ac0443dd08d5dfc2e346acd85dd8e689960d4a5e685e7715ab4d2127423f3",
+      "toHash": "46daac174af2edb09070d37325d71f352b3c95e1e54445068097ecfd951fc4c5",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 4.3743230985469614e-8,
+        "rotationRmsDegrees": 0.000002020397203172919,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "shield-hold-to-break",
+      "from": "move-ual2-idle-shield-loop",
+      "to": "move-ual2-idle-shield-break",
+      "fromHash": "ba1d3354ad54fa35c595d1bb1bb7bb98695a44e90a5bcb6950b73fc8fe14dd66",
+      "toHash": "fcb1af7a14e0703c60e1334889f108b696f98c78766547132631db0f0f965f46",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.0005849472970412234,
+        "rotationRmsDegrees": 0.15176716799538464,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "zombie-idle-to-scratch",
+      "from": "move-ual2-zombie-idle-loop",
+      "to": "move-ual2-zombie-scratch",
+      "fromHash": "077dd7b301382d5feed829484e06a316414d66c5b9292e78053a128c0828a8fc",
+      "toHash": "93853420948b98350b4d2867ca8c652b87685597b9f217286c46df46af944275",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.005986996698517641,
+        "rotationRmsDegrees": 0.9296027429928102,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "zombie-scratch-to-idle",
+      "from": "move-ual2-zombie-scratch",
+      "to": "move-ual2-zombie-idle-loop",
+      "fromHash": "93853420948b98350b4d2867ca8c652b87685597b9f217286c46df46af944275",
+      "toHash": "077dd7b301382d5feed829484e06a316414d66c5b9292e78053a128c0828a8fc",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 0.004196004367334328,
+        "rotationRmsDegrees": 0.6530567337505061,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "rail-idle-to-call",
+      "from": "move-ual2-idle-rail-loop",
+      "to": "move-ual2-idle-rail-call",
+      "fromHash": "409d367f808868f4ccb536ddfa19901ec59181a4e0e59c86fc1a8c6a620f3004",
+      "toHash": "532c71ad432dea935325499b0a73f0de7200f5e1f4a5a630cdbc00459adab563",
+      "purpose": "continue",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 3.140742033798075e-8,
+        "rotationRmsDegrees": 0.000002067942465914196,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    },
+    {
+      "id": "rail-call-to-idle",
+      "from": "move-ual2-idle-rail-call",
+      "to": "move-ual2-idle-rail-loop",
+      "fromHash": "532c71ad432dea935325499b0a73f0de7200f5e1f4a5a630cdbc00459adab563",
+      "toHash": "409d367f808868f4ccb536ddfa19901ec59181a4e0e59c86fc1a8c6a620f3004",
+      "purpose": "recover",
+      "policy": "positive-pose-blend-no-anchor",
+      "review": "candidate",
+      "evidence": {
+        "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+        "positionRmsMeters": 3.176931003549245e-8,
+        "rotationRmsDegrees": 0.22192380925077795,
+        "visualReview": "pending",
+        "trajectoryValidation": "not-performed"
+      }
+    }
+  ]
+}

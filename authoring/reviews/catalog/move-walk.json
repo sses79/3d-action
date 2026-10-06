@@ -1,0 +1,1640 @@
+{
+  "id": "move-walk",
+  "name": "Walk cycle",
+  "revision": 3,
+  "motionHash": "135b90dad343a70a7e0052dbc7069429fe403c4e19173b592846d747588f8b06",
+  "metadata": {
+    "source": "Quaternius UAL1 · CC0",
+    "support": "unknown",
+    "travel": "source",
+    "notes": "Complete source cycle, not yet a verified single step."
+  },
+  "profile": {
+    "version": 1,
+    "sourceRevision": 3,
+    "entry": {
+      "pose": "upright",
+      "headHeight": 1.5299209550875452,
+      "root": [
+        0,
+        0,
+        0
+      ],
+      "forward": [
+        0,
+        0,
+        1
+      ],
+      "positions": [
+        [
+          -0.018799802869314174,
+          0.8807733717956647,
+          -0.050381534088497694
+        ],
+        [
+          -0.0032157902470379245,
+          1.2824111779591894,
+          0.015566302821749659
+        ],
+        [
+          0.015603770169043516,
+          1.5299209550875452,
+          0.0868226889203303
+        ],
+        [
+          0.18047129256333733,
+          1.4162483271446409,
+          -0.041615694574950735
+        ],
+        [
+          0.22242687929880414,
+          1.1620364468915936,
+          -0.14504106742946682
+        ],
+        [
+          0.25698483243155834,
+          0.8928508327711948,
+          -0.09586862910298
+        ],
+        [
+          -0.19063241181516583,
+          1.4325989514183661,
+          0.01548761174187098
+        ],
+        [
+          -0.2956836919436644,
+          1.1783497180652234,
+          0.05293478501597503
+        ],
+        [
+          -0.3126015281457847,
+          0.9826599901121325,
+          0.24656438275138062
+        ],
+        [
+          0.07357600344599344,
+          0.892541559276394,
+          -0.0014762225841056312
+        ],
+        [
+          0.08342823130781209,
+          0.5293470359054606,
+          0.17738771401445041
+        ],
+        [
+          0.09003585146320248,
+          0.10490615280893395,
+          0.2700037355632892
+        ],
+        [
+          -0.10622581369150028,
+          0.9001359671806578,
+          0.004802597472765215
+        ],
+        [
+          -0.1010959698613236,
+          0.5220033616522808,
+          -0.14007359623434243
+        ],
+        [
+          -0.09742915494897669,
+          0.14644471498086048,
+          -0.35850823531221476
+        ]
+      ],
+      "rotations": [
+        [
+          0.7899467967877154,
+          0.026709712966090877,
+          -0.005983085868681068,
+          0.6125641616692777
+        ],
+        [
+          0.07289852751578903,
+          0.026779762682674322,
+          -0.025789966115422336,
+          0.9966461391308625
+        ],
+        [
+          -0.03478385847323195,
+          -0.013671350534641592,
+          0.020016496809619835,
+          0.9991008543784475
+        ],
+        [
+          -0.29736098262468685,
+          0.6564469252549211,
+          -0.5389776160139379,
+          0.4360699597218006
+        ],
+        [
+          0.2706837077795008,
+          0.030970446991138385,
+          -0.060446087711511956,
+          0.9602694581398926
+        ],
+        [
+          0.09719677866330606,
+          0.01571065349766274,
+          -0.011153771371962275,
+          0.9950786677285042
+        ],
+        [
+          -0.06438847702822646,
+          -0.6144443222667538,
+          0.6631027533842101,
+          0.42261925809694795
+        ],
+        [
+          0.3393425846902246,
+          0.1930298900456538,
+          0.03205797359417939,
+          0.9200860601561984
+        ],
+        [
+          0.15218729508188608,
+          -0.012884604098911952,
+          0.010366608800530539,
+          0.9882133107861126
+        ],
+        [
+          0.9372474551200867,
+          0.023831581696867943,
+          -0.0029383720830082893,
+          0.3478371798992157
+        ],
+        [
+          0.12114761024713516,
+          0.0019149072468280792,
+          -0.0002433728368487209,
+          0.9926326870918274
+        ],
+        [
+          -0.5955362915992737,
+          0.011063560843467712,
+          0.018290938809514046,
+          0.8030439019203186
+        ],
+        [
+          -0.9978612065315247,
+          -0.032548028975725174,
+          0.00401307875290513,
+          0.05654731020331383
+        ],
+        [
+          0.08039376139640808,
+          0.001864560879766941,
+          -0.00016000781033653766,
+          0.9967614412307739
+        ],
+        [
+          -0.5934976185775892,
+          0.014719890981022958,
+          -0.015945998539198578,
+          0.8045431167332334
+        ]
+      ],
+      "feet": {
+        "left": {
+          "height": 0.09099583266091936,
+          "speed": 1.102181568795421
+        },
+        "right": {
+          "height": 0.017613540774290615,
+          "speed": 0.27257558816179833
+        }
+      },
+      "supportHint": "none"
+    },
+    "exit": {
+      "pose": "upright",
+      "headHeight": 1.5299210532162086,
+      "root": [
+        0,
+        0,
+        0
+      ],
+      "forward": [
+        0,
+        0,
+        1
+      ],
+      "positions": [
+        [
+          -0.018799802869314174,
+          0.8807733717956647,
+          -0.050381534088497694
+        ],
+        [
+          -0.0032157872162819953,
+          1.2824112416525506,
+          0.015566370305659187
+        ],
+        [
+          0.015603776062767872,
+          1.5299210532162086,
+          0.08682280603075204
+        ],
+        [
+          0.1804713030704245,
+          1.4162484138872231,
+          -0.04161562566608354
+        ],
+        [
+          0.22242688369102107,
+          1.1620364788495487,
+          -0.14504104629717102
+        ],
+        [
+          0.2569848271320422,
+          0.8928507859836152,
+          -0.09586862425369648
+        ],
+        [
+          -0.19063241785596996,
+          1.4325990357908693,
+          0.01548769306599114
+        ],
+        [
+          -0.2956837015041286,
+          1.1783497424419462,
+          0.0529348436752916
+        ],
+        [
+          -0.3126015268157789,
+          0.9826599565139913,
+          0.24656446604704108
+        ],
+        [
+          0.0735760037856231,
+          0.8925415542267578,
+          -0.001476211408330326
+        ],
+        [
+          0.08342823033153203,
+          0.5293469398255848,
+          0.17738770666299697
+        ],
+        [
+          0.09003584835890732,
+          0.10490596672174479,
+          0.27000368543723746
+        ],
+        [
+          -0.10622581331270967,
+          0.9001359632332743,
+          0.004802609559826886
+        ],
+        [
+          -0.10109597252930906,
+          0.5220033094709323,
+          -0.1400736634518768
+        ],
+        [
+          -0.09742916102056785,
+          0.1464446253731001,
+          -0.3585083948086111
+        ]
+      ],
+      "rotations": [
+        [
+          0.7899468541145325,
+          0.02670971490442753,
+          -0.0059830863028764725,
+          0.612564206123352
+        ],
+        [
+          0.07289852946996689,
+          0.026779763400554657,
+          -0.02578996680676937,
+          0.9966461658477783
+        ],
+        [
+          -0.03478385880589485,
+          -0.013671350665390491,
+          0.020016497001051903,
+          0.9991008639335632
+        ],
+        [
+          -0.29736098647117615,
+          0.6564469337463379,
+          -0.5389776229858398,
+          0.43606996536254883
+        ],
+        [
+          0.2706837058067322,
+          0.03097044676542282,
+          -0.06044608727097511,
+          0.9602694511413574
+        ],
+        [
+          0.0971967801451683,
+          0.015710653737187386,
+          -0.011153771542012691,
+          0.9950786828994751
+        ],
+        [
+          -0.06438847631216049,
+          -0.6144443154335022,
+          0.6631027460098267,
+          0.4226192533969879
+        ],
+        [
+          0.3393425941467285,
+          0.19302989542484283,
+          0.032057974487543106,
+          0.9200860857963562
+        ],
+        [
+          0.1521873027086258,
+          -0.01288460474461317,
+          0.010366609320044518,
+          0.9882133603096008
+        ],
+        [
+          0.9372474551200867,
+          0.023831581696867943,
+          -0.0029383720830082893,
+          0.3478371798992157
+        ],
+        [
+          0.12114761024713516,
+          0.0019149072468280792,
+          -0.0002433728368487209,
+          0.9926326870918274
+        ],
+        [
+          -0.5955362915992737,
+          0.011063560843467712,
+          0.018290938809514046,
+          0.8030439019203186
+        ],
+        [
+          -0.9978612065315247,
+          -0.032548028975725174,
+          0.00401307875290513,
+          0.05654731020331383
+        ],
+        [
+          0.08039376139640808,
+          0.001864560879766941,
+          -0.00016000781033653766,
+          0.9967614412307739
+        ],
+        [
+          -0.593497633934021,
+          0.014719891361892223,
+          -0.015945998951792717,
+          0.804543137550354
+        ]
+      ],
+      "feet": {
+        "left": {
+          "height": 0.09099561949452993,
+          "speed": 0.3313908412175654
+        },
+        "right": {
+          "height": 0.017613412273437018,
+          "speed": 0.9894581722679854
+        }
+      },
+      "supportHint": "none"
+    },
+    "travel": {
+      "rootDelta": [
+        0,
+        0,
+        0
+      ],
+      "bodyDelta": [
+        0,
+        0,
+        0
+      ],
+      "rootDistance": 0
+    }
+  },
+  "duration": 1.3333333333333333,
+  "report": {
+    "actionId": "move-walk",
+    "revision": 3,
+    "motionHash": "135b90dad343a70a7e0052dbc7069429fe403c4e19173b592846d747588f8b06",
+    "rig": "quaternius-ual1",
+    "measuredAt": "2026-10-05T09:01:58.414Z",
+    "schemaVersion": 1,
+    "algorithm": "rig-motion-quality-v1",
+    "window": {
+      "start": 0,
+      "end": 1.3333333333333333
+    },
+    "sampleRate": 60,
+    "sampledFrames": 81,
+    "thresholds": {
+      "floorY": 0,
+      "footHeightTolerance": 0.05,
+      "footSpeedTolerance": 0.15,
+      "minContactDuration": 0.1,
+      "contactDriftTolerance": 0.03,
+      "boneLengthRelativeTolerance": 0.02,
+      "scaleRelativeTolerance": 0.02,
+      "rootVelocityJumpTolerance": 0.5,
+      "jointVelocityJumpTolerance": 1,
+      "angularVelocityJumpTolerance": 360
+    },
+    "thresholdStatus": "Configured review thresholds, not universal physical limits",
+    "boneLengths": [
+      {
+        "bone": "pelvis",
+        "parent": "root",
+        "kind": "body-offset",
+        "restMeters": 0.9287528030182817,
+        "minMeters": 0.8767036612152214,
+        "maxMeters": 0.9305815906900905,
+        "maxRelativeChange": 0.056041975468509864,
+        "peakTime": 0.06666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "spine_01",
+        "parent": "pelvis",
+        "kind": "skeletal-link",
+        "restMeters": 0.13978448564468604,
+        "minMeters": 0.1397843115834171,
+        "maxMeters": 0.13978461981459026,
+        "maxRelativeChange": 0.0000012452116424643833,
+        "peakTime": 0.16666666666666666,
+        "measurable": true
+      },
+      {
+        "bone": "spine_02",
+        "parent": "spine_01",
+        "kind": "skeletal-link",
+        "restMeters": 0.1254784091070973,
+        "minMeters": 0.1254781303535328,
+        "maxMeters": 0.12547860525054394,
+        "maxRelativeChange": 0.000002221526129164708,
+        "peakTime": 1.1,
+        "measurable": true
+      },
+      {
+        "bone": "spine_03",
+        "parent": "spine_02",
+        "kind": "skeletal-link",
+        "restMeters": 0.1429160333478955,
+        "minMeters": 0.1429155791327893,
+        "maxMeters": 0.14291618390314273,
+        "maxRelativeChange": 0.0000031781955848186882,
+        "peakTime": 1.2666666666666666,
+        "measurable": true
+      },
+      {
+        "bone": "neck_01",
+        "parent": "spine_03",
+        "kind": "skeletal-link",
+        "restMeters": 0.17490292009772296,
+        "minMeters": 0.1749024968030178,
+        "maxMeters": 0.174903055637062,
+        "maxRelativeChange": 0.0000024201694569514487,
+        "peakTime": 0.3333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "Head",
+        "parent": "neck_01",
+        "kind": "skeletal-link",
+        "restMeters": 0.08354793717208693,
+        "minMeters": 0.08354762247093689,
+        "maxMeters": 0.08354811530153824,
+        "maxRelativeChange": 0.0000037667135861507717,
+        "peakTime": 0.6333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "clavicle_l",
+        "parent": "spine_03",
+        "kind": "skeletal-link",
+        "restMeters": 0.1651567369952267,
+        "minMeters": 0.16515641936979986,
+        "maxMeters": 0.16515687352309102,
+        "maxRelativeChange": 0.0000019231757215631973,
+        "peakTime": 0.3,
+        "measurable": true
+      },
+      {
+        "bone": "upperarm_l",
+        "parent": "clavicle_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.22386773129458917,
+        "minMeters": 0.22386759570217493,
+        "maxMeters": 0.223867732970033,
+        "maxRelativeChange": 6.056809235266414e-7,
+        "peakTime": 0.36666666666666664,
+        "measurable": true
+      },
+      {
+        "bone": "lowerarm_l",
+        "parent": "upperarm_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.27763430098204817,
+        "minMeters": 0.2776339704902191,
+        "maxMeters": 0.27763445624070276,
+        "maxRelativeChange": 0.0000011903854383321644,
+        "peakTime": 0.8,
+        "measurable": true
+      },
+      {
+        "bone": "hand_l",
+        "parent": "lowerarm_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.27581365274140107,
+        "minMeters": 0.2758132935725498,
+        "maxMeters": 0.2758136807368778,
+        "maxRelativeChange": 0.000001302215636211912,
+        "peakTime": 0.4666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "index_01_l",
+        "parent": "hand_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.12527498699263923,
+        "minMeters": 0.125274860630442,
+        "maxMeters": 0.12527513042849125,
+        "maxRelativeChange": 0.0000011449680057395994,
+        "peakTime": 1.1,
+        "measurable": true
+      },
+      {
+        "bone": "index_02_l",
+        "parent": "index_01_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.04117369120215243,
+        "minMeters": 0.041173613210226015,
+        "maxMeters": 0.04117378650660654,
+        "maxRelativeChange": 0.000002314692982841038,
+        "peakTime": 0.3333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "index_03_l",
+        "parent": "index_02_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.03520506077034141,
+        "minMeters": 0.03520494104248741,
+        "maxMeters": 0.03520513247197289,
+        "maxRelativeChange": 0.0000034008705390720095,
+        "peakTime": 0.6666666666666666,
+        "measurable": true
+      },
+      {
+        "bone": "index_04_leaf_l",
+        "parent": "index_03_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.030450412965267706,
+        "minMeters": 0.030450173564629836,
+        "maxMeters": 0.03045040690662108,
+        "maxRelativeChange": 0.000007861983288726115,
+        "peakTime": 0.13333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "middle_01_l",
+        "parent": "hand_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.12312822477298328,
+        "minMeters": 0.1231280681449228,
+        "maxMeters": 0.12312834709709952,
+        "maxRelativeChange": 0.0000012720727580184388,
+        "peakTime": 0.1,
+        "measurable": true
+      },
+      {
+        "bone": "middle_02_l",
+        "parent": "middle_01_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.042840097261868174,
+        "minMeters": 0.042840035940258495,
+        "maxMeters": 0.04284024434973503,
+        "maxRelativeChange": 0.000003433415801001871,
+        "peakTime": 0.43333333333333335,
+        "measurable": true
+      },
+      {
+        "bone": "middle_03_l",
+        "parent": "middle_02_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.03432807084703786,
+        "minMeters": 0.034327966930697174,
+        "maxMeters": 0.034328184202337214,
+        "maxRelativeChange": 0.0000033021167971103438,
+        "peakTime": 1,
+        "measurable": true
+      },
+      {
+        "bone": "middle_04_leaf_l",
+        "parent": "middle_03_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.03483797245018708,
+        "minMeters": 0.03483782141864572,
+        "maxMeters": 0.03483803084968579,
+        "maxRelativeChange": 0.000004335256352017147,
+        "peakTime": 0.5666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "pinky_01_l",
+        "parent": "hand_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.11652068087489241,
+        "minMeters": 0.11652052397161115,
+        "maxMeters": 0.1165208210657834,
+        "maxRelativeChange": 0.0000013465702404236168,
+        "peakTime": 0.8666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "pinky_02_l",
+        "parent": "pinky_01_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.0407594890771795,
+        "minMeters": 0.04075941521133236,
+        "maxMeters": 0.04075955209129765,
+        "maxRelativeChange": 0.000001812236826603808,
+        "peakTime": 0.23333333333333334,
+        "measurable": true
+      },
+      {
+        "bone": "pinky_03_l",
+        "parent": "pinky_02_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.02798731372766428,
+        "minMeters": 0.02798715357403302,
+        "maxMeters": 0.02798735517323543,
+        "maxRelativeChange": 0.0000057223652408788794,
+        "peakTime": 1.2333333333333334,
+        "measurable": true
+      },
+      {
+        "bone": "pinky_04_leaf_l",
+        "parent": "pinky_03_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.028491984880748628,
+        "minMeters": 0.028491891950964913,
+        "maxMeters": 0.02849205169825535,
+        "maxRelativeChange": 0.000003261611435823042,
+        "peakTime": 1.1666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "ring_01_l",
+        "parent": "hand_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.12172160909161148,
+        "minMeters": 0.12172150100012616,
+        "maxMeters": 0.12172173303727774,
+        "maxRelativeChange": 0.0000010182716707607398,
+        "peakTime": 0.03333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "ring_02_l",
+        "parent": "ring_01_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.03978265390155425,
+        "minMeters": 0.03978252267590944,
+        "maxMeters": 0.03978268942202672,
+        "maxRelativeChange": 0.000003298564372644641,
+        "peakTime": 0.3333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "ring_03_l",
+        "parent": "ring_02_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.031279400025772966,
+        "minMeters": 0.03127930162418749,
+        "maxMeters": 0.03127950901105476,
+        "maxRelativeChange": 0.000003484251031027341,
+        "peakTime": 0.23333333333333334,
+        "measurable": true
+      },
+      {
+        "bone": "ring_04_leaf_l",
+        "parent": "ring_03_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.032192949876892245,
+        "minMeters": 0.03219284290332658,
+        "maxMeters": 0.032193006363869896,
+        "maxRelativeChange": 0.000003322887963785881,
+        "peakTime": 1.1,
+        "measurable": true
+      },
+      {
+        "bone": "thumb_01_l",
+        "parent": "hand_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.04949878066432001,
+        "minMeters": 0.04949877412299949,
+        "maxMeters": 0.04949897281622243,
+        "maxRelativeChange": 0.000003881952238993236,
+        "peakTime": 0.8,
+        "measurable": true
+      },
+      {
+        "bone": "thumb_02_l",
+        "parent": "thumb_01_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.04353059619470232,
+        "minMeters": 0.043530571927513424,
+        "maxMeters": 0.0435308203293843,
+        "maxRelativeChange": 0.000005148899890450309,
+        "peakTime": 0.06666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "thumb_03_l",
+        "parent": "thumb_02_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.04964913599457447,
+        "minMeters": 0.04964904049008462,
+        "maxMeters": 0.04964930191696871,
+        "maxRelativeChange": 0.0000033418989255906695,
+        "peakTime": 0.06666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "thumb_04_leaf_l",
+        "parent": "thumb_03_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.04133787810289282,
+        "minMeters": 0.041337781842754766,
+        "maxMeters": 0.04133795256897917,
+        "maxRelativeChange": 0.0000023286182666559796,
+        "peakTime": 0.6333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "clavicle_r",
+        "parent": "spine_03",
+        "kind": "skeletal-link",
+        "restMeters": 0.1651567369952267,
+        "minMeters": 0.16515651752487126,
+        "maxMeters": 0.16515689078916015,
+        "maxRelativeChange": 0.0000013288610530848288,
+        "peakTime": 0.3333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "upperarm_r",
+        "parent": "clavicle_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.22386773129458917,
+        "minMeters": 0.2238676241484486,
+        "maxMeters": 0.2238677550387378,
+        "maxRelativeChange": 4.786135989753859e-7,
+        "peakTime": 0.3333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "lowerarm_r",
+        "parent": "upperarm_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.2776342708329145,
+        "minMeters": 0.27763398807179057,
+        "maxMeters": 0.27763444978163015,
+        "maxRelativeChange": 0.000001018466211144542,
+        "peakTime": 0.36666666666666664,
+        "measurable": true
+      },
+      {
+        "bone": "hand_r",
+        "parent": "lowerarm_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.27581356229396514,
+        "minMeters": 0.27581337681248874,
+        "maxMeters": 0.2758137623683124,
+        "maxRelativeChange": 7.253970601972526e-7,
+        "peakTime": 0.8333333333333334,
+        "measurable": true
+      },
+      {
+        "bone": "index_01_r",
+        "parent": "hand_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.12527501642245503,
+        "minMeters": 0.1252749127742159,
+        "maxMeters": 0.12527518517146305,
+        "maxRelativeChange": 0.0000013470284245808983,
+        "peakTime": 0.7333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "index_02_r",
+        "parent": "index_01_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.041173786558105316,
+        "minMeters": 0.041173607245596655,
+        "maxMeters": 0.041173806543788556,
+        "maxRelativeChange": 0.000004355016228752007,
+        "peakTime": 0.8333333333333334,
+        "measurable": true
+      },
+      {
+        "bone": "index_03_r",
+        "parent": "index_02_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.035205034818120456,
+        "minMeters": 0.03520490402018666,
+        "maxMeters": 0.0352050825913344,
+        "maxRelativeChange": 0.0000037153189728078573,
+        "peakTime": 0.8666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "index_04_leaf_r",
+        "parent": "index_03_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.030450271433033617,
+        "minMeters": 0.030450192967337322,
+        "maxMeters": 0.030450376021779427,
+        "maxRelativeChange": 0.0000034347393598199716,
+        "peakTime": 0.6,
+        "measurable": true
+      },
+      {
+        "bone": "middle_01_r",
+        "parent": "hand_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.12312824765998508,
+        "minMeters": 0.12312814223513804,
+        "maxMeters": 0.12312841206185973,
+        "maxRelativeChange": 0.0000013352084333728698,
+        "peakTime": 1.0666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "middle_02_r",
+        "parent": "middle_01_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.04284012862632865,
+        "minMeters": 0.042840053151117885,
+        "maxMeters": 0.04284024569738488,
+        "maxRelativeChange": 0.0000027327428742118798,
+        "peakTime": 0.9666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "middle_03_r",
+        "parent": "middle_02_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.034328102718387585,
+        "minMeters": 0.03432789523938931,
+        "maxMeters": 0.034328158944526586,
+        "maxRelativeChange": 0.000006043998410754092,
+        "peakTime": 0.9,
+        "measurable": true
+      },
+      {
+        "bone": "middle_04_leaf_r",
+        "parent": "middle_03_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.03483800221499527,
+        "minMeters": 0.034837855420505326,
+        "maxMeters": 0.034838074066958775,
+        "maxRelativeChange": 0.00000421363111002826,
+        "peakTime": 1.0666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "pinky_01_r",
+        "parent": "hand_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.11652070194560574,
+        "minMeters": 0.11652060029598578,
+        "maxMeters": 0.11652087900122782,
+        "maxRelativeChange": 0.0000015195207299090185,
+        "peakTime": 0.7333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "pinky_02_r",
+        "parent": "pinky_01_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.04075945272991068,
+        "minMeters": 0.04075940774590926,
+        "maxMeters": 0.040759515714663117,
+        "maxRelativeChange": 0.0000015452796398029989,
+        "peakTime": 1,
+        "measurable": true
+      },
+      {
+        "bone": "pinky_03_r",
+        "parent": "pinky_02_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.027987337203211223,
+        "minMeters": 0.027987177699999425,
+        "maxMeters": 0.027987381481396557,
+        "maxRelativeChange": 0.000005699120664504065,
+        "peakTime": 1.0666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "pinky_04_leaf_r",
+        "parent": "pinky_03_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.028491949450794352,
+        "minMeters": 0.028491817478848738,
+        "maxMeters": 0.028492045650390176,
+        "maxRelativeChange": 0.0000046319029817221136,
+        "peakTime": 1.1,
+        "measurable": true
+      },
+      {
+        "bone": "ring_01_r",
+        "parent": "hand_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.12172163888088268,
+        "minMeters": 0.12172153285457925,
+        "maxMeters": 0.12172174180788513,
+        "maxRelativeChange": 8.710555033930589e-7,
+        "peakTime": 1.2666666666666666,
+        "measurable": true
+      },
+      {
+        "bone": "ring_02_r",
+        "parent": "ring_01_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.03978268544862575,
+        "minMeters": 0.039782516277306064,
+        "maxMeters": 0.039782699327708025,
+        "maxRelativeChange": 0.000004252385624070598,
+        "peakTime": 0.2,
+        "measurable": true
+      },
+      {
+        "bone": "ring_03_r",
+        "parent": "ring_02_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.03127943019486703,
+        "minMeters": 0.03127928730876892,
+        "maxMeters": 0.031279509171427196,
+        "maxRelativeChange": 0.000004568053101228209,
+        "peakTime": 0.8333333333333334,
+        "measurable": true
+      },
+      {
+        "bone": "ring_04_leaf_r",
+        "parent": "ring_03_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.032192981875646336,
+        "minMeters": 0.03219283978464446,
+        "maxMeters": 0.03219310019896912,
+        "maxRelativeChange": 0.000004413726023333453,
+        "peakTime": 1,
+        "measurable": true
+      },
+      {
+        "bone": "thumb_01_r",
+        "parent": "hand_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.04949879464478367,
+        "minMeters": 0.04949878832490139,
+        "maxMeters": 0.04949899519481939,
+        "maxRelativeChange": 0.000004051614532318837,
+        "peakTime": 0.7333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "thumb_02_r",
+        "parent": "thumb_01_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.04353066086383155,
+        "minMeters": 0.043530540529587845,
+        "maxMeters": 0.043530744765602376,
+        "maxRelativeChange": 0.0000027643560036594295,
+        "peakTime": 0.5,
+        "measurable": true
+      },
+      {
+        "bone": "thumb_03_r",
+        "parent": "thumb_02_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.04964907127345862,
+        "minMeters": 0.04964905395354693,
+        "maxMeters": 0.04964930919149942,
+        "maxRelativeChange": 0.0000047919937815610325,
+        "peakTime": 0.6666666666666666,
+        "measurable": true
+      },
+      {
+        "bone": "thumb_04_leaf_r",
+        "parent": "thumb_03_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.04133786872101733,
+        "minMeters": 0.04133776751290947,
+        "maxMeters": 0.04133797797016927,
+        "maxRelativeChange": 0.0000026428346531215396,
+        "peakTime": 0.3,
+        "measurable": true
+      },
+      {
+        "bone": "thigh_l",
+        "parent": "pelvis",
+        "kind": "skeletal-link",
+        "restMeters": 0.10518319750254682,
+        "minMeters": 0.10518313941745988,
+        "maxMeters": 0.10518326257063591,
+        "maxRelativeChange": 6.186167624822048e-7,
+        "peakTime": 0.8333333333333334,
+        "measurable": true
+      },
+      {
+        "bone": "calf_l",
+        "parent": "thigh_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.4049686916089077,
+        "minMeters": 0.40496855803970694,
+        "maxMeters": 0.40496889251736184,
+        "maxRelativeChange": 4.961086086385791e-7,
+        "peakTime": 0.8333333333333334,
+        "measurable": true
+      },
+      {
+        "bone": "foot_l",
+        "parent": "calf_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.4344782554807042,
+        "minMeters": 0.4344780546836564,
+        "maxMeters": 0.43447844571352545,
+        "maxRelativeChange": 4.621567253337844e-7,
+        "peakTime": 1.0666666666666667,
+        "measurable": true
+      },
+      {
+        "bone": "ball_l",
+        "parent": "foot_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.1753179796557573,
+        "minMeters": 0.1753179574087844,
+        "maxMeters": 0.17531810701093892,
+        "maxRelativeChange": 7.264239634263703e-7,
+        "peakTime": 1.1,
+        "measurable": true
+      },
+      {
+        "bone": "ball_leaf_l",
+        "parent": "ball_l",
+        "kind": "skeletal-link",
+        "restMeters": 0.07981830151738961,
+        "minMeters": 0.07981821011632786,
+        "maxMeters": 0.07981830757514001,
+        "maxRelativeChange": 0.0000011451140905505142,
+        "peakTime": 0.7333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "thigh_r",
+        "parent": "pelvis",
+        "kind": "skeletal-link",
+        "restMeters": 0.10518319750254682,
+        "minMeters": 0.10518315231093464,
+        "maxMeters": 0.10518325944462402,
+        "maxRelativeChange": 5.888970735501431e-7,
+        "peakTime": 0.8333333333333334,
+        "measurable": true
+      },
+      {
+        "bone": "calf_r",
+        "parent": "thigh_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.4049686916089077,
+        "minMeters": 0.40496860885808944,
+        "maxMeters": 0.40496888567075384,
+        "maxRelativeChange": 4.792020966704058e-7,
+        "peakTime": 0.9333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "foot_r",
+        "parent": "calf_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.43447819518237063,
+        "minMeters": 0.4344781215573589,
+        "maxMeters": 0.43447843866106894,
+        "maxRelativeChange": 5.603933661557647e-7,
+        "peakTime": 1.1,
+        "measurable": true
+      },
+      {
+        "bone": "ball_r",
+        "parent": "foot_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.17531797965575732,
+        "minMeters": 0.1753179682936449,
+        "maxMeters": 0.17531812116114934,
+        "maxRelativeChange": 8.07135653202451e-7,
+        "peakTime": 1.3333333333333333,
+        "measurable": true
+      },
+      {
+        "bone": "ball_leaf_r",
+        "parent": "ball_r",
+        "kind": "skeletal-link",
+        "restMeters": 0.07981830151738972,
+        "minMeters": 0.07981822077057145,
+        "maxMeters": 0.07981832293940641,
+        "maxRelativeChange": 0.0000010116328803544405,
+        "peakTime": 0.13333333333333333,
+        "measurable": true
+      }
+    ],
+    "scaleChanges": [
+      {
+        "target": "pelvis",
+        "maxRelativeChange": 2.980229432125725e-7,
+        "peakTime": 1.1333333333333333
+      },
+      {
+        "target": "spine_01",
+        "maxRelativeChange": 2.3841855800732503e-7,
+        "peakTime": 0.23333333333333334
+      },
+      {
+        "target": "spine_02",
+        "maxRelativeChange": 2.384185933124172e-7,
+        "peakTime": 0.3333333333333333
+      },
+      {
+        "target": "spine_03",
+        "maxRelativeChange": 2.980232238769531e-7,
+        "peakTime": 0
+      },
+      {
+        "target": "neck_01",
+        "maxRelativeChange": 1.788139449843129e-7,
+        "peakTime": 0
+      },
+      {
+        "target": "Head",
+        "maxRelativeChange": 2.980232043370279e-7,
+        "peakTime": 0.36666666666666664
+      },
+      {
+        "target": "clavicle_l",
+        "maxRelativeChange": 2.9802320788974157e-7,
+        "peakTime": 0.3
+      },
+      {
+        "target": "upperarm_l",
+        "maxRelativeChange": 2.980232185478826e-7,
+        "peakTime": 0.06666666666666667
+      },
+      {
+        "target": "lowerarm_l",
+        "maxRelativeChange": 2.3841856311435095e-7,
+        "peakTime": 0.36666666666666664
+      },
+      {
+        "target": "hand_l",
+        "maxRelativeChange": 2.384185791015625e-7,
+        "peakTime": 0.16666666666666666
+      },
+      {
+        "target": "index_01_l",
+        "maxRelativeChange": 3.576277620709334e-7,
+        "peakTime": 1
+      },
+      {
+        "target": "index_02_l",
+        "maxRelativeChange": 1.7881392366803084e-7,
+        "peakTime": 0.2
+      },
+      {
+        "target": "index_03_l",
+        "maxRelativeChange": 2.384185791015625e-7,
+        "peakTime": 0.31666666666666665
+      },
+      {
+        "target": "index_04_leaf_l",
+        "maxRelativeChange": 1.1920928955078125e-7,
+        "peakTime": 0
+      },
+      {
+        "target": "middle_01_l",
+        "maxRelativeChange": 2.9802310308468805e-7,
+        "peakTime": 0.7666666666666667
+      },
+      {
+        "target": "middle_02_l",
+        "maxRelativeChange": 2.384184938364342e-7,
+        "peakTime": 0.8
+      },
+      {
+        "target": "middle_03_l",
+        "maxRelativeChange": 2.3841856844342146e-7,
+        "peakTime": 0.13333333333333333
+      },
+      {
+        "target": "middle_04_leaf_l",
+        "maxRelativeChange": 2.38418628839554e-7,
+        "peakTime": 0.4
+      },
+      {
+        "target": "pinky_01_l",
+        "maxRelativeChange": 2.980232238769531e-7,
+        "peakTime": 0.6666666666666666
+      },
+      {
+        "target": "pinky_02_l",
+        "maxRelativeChange": 2.3841857377249198e-7,
+        "peakTime": 0.03333333333333333
+      },
+      {
+        "target": "pinky_03_l",
+        "maxRelativeChange": 3.5762778338721546e-7,
+        "peakTime": 0.8666666666666667
+      },
+      {
+        "target": "pinky_04_leaf_l",
+        "maxRelativeChange": 2.9802304979398286e-7,
+        "peakTime": 1.2666666666666666
+      },
+      {
+        "target": "ring_01_l",
+        "maxRelativeChange": 3.57627655489523e-7,
+        "peakTime": 1
+      },
+      {
+        "target": "ring_02_l",
+        "maxRelativeChange": 2.384184938364342e-7,
+        "peakTime": 0.5333333333333333
+      },
+      {
+        "target": "ring_03_l",
+        "maxRelativeChange": 1.788139449843129e-7,
+        "peakTime": 0
+      },
+      {
+        "target": "ring_04_leaf_l",
+        "maxRelativeChange": 1.1920928955078125e-7,
+        "peakTime": 0.16666666666666666
+      },
+      {
+        "target": "thumb_01_l",
+        "maxRelativeChange": 4.172324503670666e-7,
+        "peakTime": 0.1
+      },
+      {
+        "target": "thumb_02_l",
+        "maxRelativeChange": 2.3841860752327193e-7,
+        "peakTime": 0.1
+      },
+      {
+        "target": "thumb_03_l",
+        "maxRelativeChange": 2.3841860752327193e-7,
+        "peakTime": 0.6333333333333333
+      },
+      {
+        "target": "thumb_04_leaf_l",
+        "maxRelativeChange": 2.3841855756323582e-7,
+        "peakTime": 0.2
+      },
+      {
+        "target": "clavicle_r",
+        "maxRelativeChange": 2.9802320256067105e-7,
+        "peakTime": 0.3
+      },
+      {
+        "target": "upperarm_r",
+        "maxRelativeChange": 2.3841813145963897e-7,
+        "peakTime": 1.1333333333333333
+      },
+      {
+        "target": "lowerarm_r",
+        "maxRelativeChange": 2.3841856844342146e-7,
+        "peakTime": 0.3
+      },
+      {
+        "target": "hand_r",
+        "maxRelativeChange": 1.7881394120955463e-7,
+        "peakTime": 0.03333333333333333
+      },
+      {
+        "target": "index_01_r",
+        "maxRelativeChange": 2.384185791015625e-7,
+        "peakTime": 0.6666666666666666
+      },
+      {
+        "target": "index_02_r",
+        "maxRelativeChange": 2.3841855756323582e-7,
+        "peakTime": 0.2
+      },
+      {
+        "target": "index_03_r",
+        "maxRelativeChange": 2.3841856311435095e-7,
+        "peakTime": 0.1
+      },
+      {
+        "target": "index_04_leaf_r",
+        "maxRelativeChange": 1.1920928955078125e-7,
+        "peakTime": 0.16666666666666666
+      },
+      {
+        "target": "middle_01_r",
+        "maxRelativeChange": 2.980232041149833e-7,
+        "peakTime": 0.3
+      },
+      {
+        "target": "middle_02_r",
+        "maxRelativeChange": 2.3841828067361348e-7,
+        "peakTime": 1.1333333333333333
+      },
+      {
+        "target": "middle_03_r",
+        "maxRelativeChange": 2.3841855756323582e-7,
+        "peakTime": 0.2
+      },
+      {
+        "target": "middle_04_leaf_r",
+        "maxRelativeChange": 1.1920928955078125e-7,
+        "peakTime": 0.16666666666666666
+      },
+      {
+        "target": "pinky_01_r",
+        "maxRelativeChange": 2.3841855778528043e-7,
+        "peakTime": 0.23333333333333334
+      },
+      {
+        "target": "pinky_02_r",
+        "maxRelativeChange": 2.384185933124172e-7,
+        "peakTime": 0.6666666666666666
+      },
+      {
+        "target": "pinky_03_r",
+        "maxRelativeChange": 2.384183126480366e-7,
+        "peakTime": 1
+      },
+      {
+        "target": "pinky_04_leaf_r",
+        "maxRelativeChange": 1.1920928955078125e-7,
+        "peakTime": 0
+      },
+      {
+        "target": "ring_01_r",
+        "maxRelativeChange": 3.5762786865234375e-7,
+        "peakTime": 0.16666666666666666
+      },
+      {
+        "target": "ring_02_r",
+        "maxRelativeChange": 2.384185791015625e-7,
+        "peakTime": 0.16666666666666666
+      },
+      {
+        "target": "ring_03_r",
+        "maxRelativeChange": 2.3841856844342146e-7,
+        "peakTime": 0.13333333333333333
+      },
+      {
+        "target": "ring_04_leaf_r",
+        "maxRelativeChange": 2.3841853291628468e-7,
+        "peakTime": 0.7
+      },
+      {
+        "target": "thumb_01_r",
+        "maxRelativeChange": 2.9802318834981634e-7,
+        "peakTime": 0.7666666666666667
+      },
+      {
+        "target": "thumb_02_r",
+        "maxRelativeChange": 2.384185791015625e-7,
+        "peakTime": 0.16666666666666666
+      },
+      {
+        "target": "thumb_03_r",
+        "maxRelativeChange": 3.5762771943836924e-7,
+        "peakTime": 0.8666666666666667
+      },
+      {
+        "target": "thumb_04_leaf_r",
+        "maxRelativeChange": 2.3841817409220312e-7,
+        "peakTime": 0.9666666666666667
+      },
+      {
+        "target": "thigh_l",
+        "maxRelativeChange": 1.7881391833896032e-7,
+        "peakTime": 0.36666666666666664
+      },
+      {
+        "target": "calf_l",
+        "maxRelativeChange": 2.3841860752327193e-7,
+        "peakTime": 0.43333333333333335
+      },
+      {
+        "target": "foot_l",
+        "maxRelativeChange": 2.980232416405215e-7,
+        "peakTime": 0.8333333333333334
+      },
+      {
+        "target": "ball_l",
+        "maxRelativeChange": 5.960462345910855e-7,
+        "peakTime": 1.2333333333333334
+      },
+      {
+        "target": "ball_leaf_l",
+        "maxRelativeChange": 1.1920928955078125e-7,
+        "peakTime": 1.1333333333333333
+      },
+      {
+        "target": "thigh_r",
+        "maxRelativeChange": 1.7881395564245395e-7,
+        "peakTime": 0.36666666666666664
+      },
+      {
+        "target": "calf_r",
+        "maxRelativeChange": 3.5762781536163857e-7,
+        "peakTime": 1.1
+      },
+      {
+        "target": "foot_r",
+        "maxRelativeChange": 3.576274210104202e-7,
+        "peakTime": 1.1333333333333333
+      },
+      {
+        "target": "ball_r",
+        "maxRelativeChange": 5.96046229262015e-7,
+        "peakTime": 0.13333333333333333
+      },
+      {
+        "target": "ball_leaf_r",
+        "maxRelativeChange": 1.1920928688624599e-7,
+        "peakTime": 0.03333333333333333
+      }
+    ],
+    "feet": {
+      "left": {
+        "maxHorizontalDriftMeters": 0.8193037265569668,
+        "pathMeters": 1.7418778504776566,
+        "maxSpeedMetersPerSecond": 3.4566355755798326,
+        "minHeightMeters": 0.01503585515951987,
+        "maxHeightMeters": 0.1897810257421782,
+        "sampleCount": 81
+      },
+      "right": {
+        "maxHorizontalDriftMeters": 0.6845439872373097,
+        "pathMeters": 1.7414746304505366,
+        "maxSpeedMetersPerSecond": 3.4445650533538674,
+        "minHeightMeters": 0.015600729157504364,
+        "maxHeightMeters": 0.18978114613489108,
+        "sampleCount": 81
+      }
+    },
+    "candidateContacts": [],
+    "declaredContacts": [],
+    "travel": {
+      "root": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0
+      },
+      "pelvis": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0.26970093450423854
+      }
+    },
+    "velocities": [
+      {
+        "joint": "pelvis",
+        "maxWorldSpeedMetersPerSecond": 0.284712821560817,
+        "linearPeakTime": 0.8833333333333333,
+        "maxLocalAngularSpeedDegreesPerSecond": 15.197454670804667,
+        "angularPeakTime": 1.0166666666666666
+      },
+      {
+        "joint": "spine_03",
+        "maxWorldSpeedMetersPerSecond": 0.2638192323457937,
+        "linearPeakTime": 1.2666666666666666,
+        "maxLocalAngularSpeedDegreesPerSecond": 21.605325846539056,
+        "angularPeakTime": 0.38333333333333336
+      },
+      {
+        "joint": "Head",
+        "maxWorldSpeedMetersPerSecond": 0.2925111916348152,
+        "linearPeakTime": 1.2666666666666666,
+        "maxLocalAngularSpeedDegreesPerSecond": 22.247449054915894,
+        "angularPeakTime": 0.9166666666666666
+      },
+      {
+        "joint": "upperarm_l",
+        "maxWorldSpeedMetersPerSecond": 0.33142852143216694,
+        "linearPeakTime": 0.21666666666666667,
+        "maxLocalAngularSpeedDegreesPerSecond": 106.23437113759643,
+        "angularPeakTime": 0.8833333333333333
+      },
+      {
+        "joint": "lowerarm_l",
+        "maxWorldSpeedMetersPerSecond": 0.6339844969321694,
+        "linearPeakTime": 0.9333333333333333,
+        "maxLocalAngularSpeedDegreesPerSecond": 92.88817044430051,
+        "angularPeakTime": 0.8833333333333333
+      },
+      {
+        "joint": "hand_l",
+        "maxWorldSpeedMetersPerSecond": 1.0125200978547335,
+        "linearPeakTime": 0.9,
+        "maxLocalAngularSpeedDegreesPerSecond": 60.07096967755399,
+        "angularPeakTime": 1.25
+      },
+      {
+        "joint": "upperarm_r",
+        "maxWorldSpeedMetersPerSecond": 0.32853323060481665,
+        "linearPeakTime": 0.8833333333333333,
+        "maxLocalAngularSpeedDegreesPerSecond": 106.01644828550856,
+        "angularPeakTime": 0.21666666666666667
+      },
+      {
+        "joint": "lowerarm_r",
+        "maxWorldSpeedMetersPerSecond": 0.6933770318310953,
+        "linearPeakTime": 0.26666666666666666,
+        "maxLocalAngularSpeedDegreesPerSecond": 92.94263203325939,
+        "angularPeakTime": 0.23333333333333334
+      },
+      {
+        "joint": "hand_r",
+        "maxWorldSpeedMetersPerSecond": 1.0882059603289844,
+        "linearPeakTime": 0.23333333333333334,
+        "maxLocalAngularSpeedDegreesPerSecond": 60.06804157631329,
+        "angularPeakTime": 1.25
+      },
+      {
+        "joint": "thigh_l",
+        "maxWorldSpeedMetersPerSecond": 0.29064182313000325,
+        "linearPeakTime": 0.21666666666666667,
+        "maxLocalAngularSpeedDegreesPerSecond": 251.05834625403324,
+        "angularPeakTime": 0.95
+      },
+      {
+        "joint": "calf_l",
+        "maxWorldSpeedMetersPerSecond": 1.8350407257180892,
+        "linearPeakTime": 0.9666666666666667,
+        "maxLocalAngularSpeedDegreesPerSecond": 380.3876315370833,
+        "angularPeakTime": 1.25
+      },
+      {
+        "joint": "foot_l",
+        "maxWorldSpeedMetersPerSecond": 2.0488293505054695,
+        "linearPeakTime": 1.0666666666666667,
+        "maxLocalAngularSpeedDegreesPerSecond": 311.6060344361654,
+        "angularPeakTime": 1.1166666666666667
+      },
+      {
+        "joint": "thigh_r",
+        "maxWorldSpeedMetersPerSecond": 0.2934099677134923,
+        "linearPeakTime": 0.8833333333333333,
+        "maxLocalAngularSpeedDegreesPerSecond": 250.2555355622239,
+        "angularPeakTime": 0.2833333333333333
+      },
+      {
+        "joint": "calf_r",
+        "maxWorldSpeedMetersPerSecond": 1.83313900038964,
+        "linearPeakTime": 0.3,
+        "maxLocalAngularSpeedDegreesPerSecond": 385.26073651077536,
+        "angularPeakTime": 0.6
+      },
+      {
+        "joint": "foot_r",
+        "maxWorldSpeedMetersPerSecond": 2.0257393509465054,
+        "linearPeakTime": 0.4,
+        "maxLocalAngularSpeedDegreesPerSecond": 311.1747970317168,
+        "angularPeakTime": 0.45
+      }
+    ],
+    "seams": [],
+    "diagnostics": [],
+    "inspectionWindows": [],
+    "status": "no-configured-flags",
+    "physicalValidation": "not-performed",
+    "unknowns": [
+      "anatomical facing",
+      "physical support and balance",
+      "collision and equipment",
+      "contact confirmation"
+    ],
+    "notes": [
+      "All distances are normalized world meters, times seconds; floor Y is caller-configured. Feet use ball joint pivots, not sole geometry.",
+      "60Hz finite differences plus exact phase/contact/window endpoints; seams use samples up to 1/60s either side and may include neighboring short phases.",
+      "Joint seam linear velocities remove model-root translation; local angular velocities are quaternion differences in parent coordinates. Peak joint linear speeds are world-space.",
+      "Candidate contacts use height AND adjacent speed. Declared contacts are intent, never automatically confirmed. Metadata endpoint support is not treated as a full-clip contact declaration.",
+      "The root-bone to pelvis link is a body offset, not anatomical bone length; its variation is measured but never flagged as bone distortion.",
+      "Bone lengths/scales compare to imported rest rig, including model-root scale. Authored squash/stretch may intentionally trigger review.",
+      "No configured flags does not certify natural motion. Sparse sampling can miss subframe events. Anatomical facing is not inferred."
+    ],
+    "elapsedMs": 18.75
+  }
+}

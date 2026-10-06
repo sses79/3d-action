@@ -1,0 +1,2144 @@
+{
+  "at": "2026-10-05T10:04:33.198Z",
+  "runId": "74b439a3-6067-4f9b-94dc-99422fcf6960",
+  "scope": "All current active movement semantics, measured candidate-foot decisions and all curated seam policies. This is evidence coverage, not certification of motion naturalness or all possible pairs.",
+  "totals": {
+    "activeMovements": 61,
+    "classifiedMovements": 61,
+    "sourceLibraries": [
+      {
+        "library": "ual2-standard",
+        "movements": 43
+      },
+      {
+        "library": "studio-local",
+        "movements": 18
+      }
+    ],
+    "candidateContacts": 102,
+    "reviewedIntervals": 102,
+    "supportedIntervals": 96,
+    "uncertainIntervals": 6,
+    "curatedConnections": 27,
+    "supportedConnections": 26,
+    "needsReviewConnections": 1
+  },
+  "failures": [],
+  "movements": [
+    {
+      "id": "move-guard",
+      "revision": 1,
+      "motionHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+      "family": "kick",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.5,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.5,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-kick",
+      "revision": 1,
+      "motionHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+      "family": "kick",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 1,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 1.8333333730697634,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-punch",
+      "revision": 2,
+      "motionHash": "44e9e822a7a8c4e2562fdc2d457b0146a6c47b7e10795822dd8a61c9dccd05c7",
+      "family": "unarmed-melee",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 4,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 1,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.15,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.25,
+          "end": 0.48333333333333334,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.6833333333333333,
+          "end": 1,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-walk",
+      "revision": 3,
+      "motionHash": "135b90dad343a70a7e0052dbc7069429fe403c4e19173b592846d747588f8b06",
+      "family": "locomotion",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-step-forward",
+      "revision": 1,
+      "motionHash": "f45dcfed8d47dd6f07982b9295348e3e328deb07d0d5e2f8d41eab4296201835",
+      "family": "locomotion",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 1,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "right",
+          "start": 0.05,
+          "end": 0.5166666666666667,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": [
+        "connection/velocity-change"
+      ]
+    },
+    {
+      "id": "move-ual2-a-tpose",
+      "revision": 1,
+      "motionHash": "88b0663055f3f5e7e09ed15246a62e4a15ca55045fdffad02d372bc894e41d73",
+      "family": "rig-reference",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-chest-open",
+      "revision": 1,
+      "motionHash": "0df69bdfb67d5eb874337ec7d285942fd4914a3d5a475103c43822f377afbd7f",
+      "family": "object-interaction",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 1.3666666666666667,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 1.3666666666666667,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-climbup-1m",
+      "revision": 1,
+      "motionHash": "c37bfd22867153bbd1ab3feedb3cf21d05651feb9e6f033e20026514622befe8",
+      "family": "obstacle-traversal",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-consume",
+      "revision": 1,
+      "motionHash": "cd3d70842a569c2b01e44cf89a1db6d670efab6509958f331e2b9749f71ed945",
+      "family": "object-interaction",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 1.3333333730697632,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 1.3333333730697632,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-farm-harvest",
+      "revision": 1,
+      "motionHash": "d406e34513d3fb91d19482eec08ac33601195e84c7675a664f08bc2884f15d80",
+      "family": "farming",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-farm-plantseed",
+      "revision": 1,
+      "motionHash": "2bc84e8bd633dfff87c074a0f7c8fcfaa55e0b3c25707435132e12f5acfdaa95",
+      "family": "farming",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 5,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.38333333333333336,
+          "decision": "supported"
+        },
+        {
+          "foot": "left",
+          "start": 0.6166666666666667,
+          "end": 1.9833333333333334,
+          "decision": "supported"
+        },
+        {
+          "foot": "left",
+          "start": 2.15,
+          "end": 2.7666666507720947,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.18333333333333332,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 2.283333333333333,
+          "end": 2.7666666507720947,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-farm-watering",
+      "revision": 1,
+      "motionHash": "c8b295c1e7cea9b011a336ed5a7b76c679fdd4d82a14d208256db1a382a26dec",
+      "family": "farming",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 3.799999952316284,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 3.799999952316284,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-hit-knockback",
+      "revision": 1,
+      "motionHash": "65cd2360854dd58a027c77d953e5f3af58f1c297a4e20255d4319f5c9c4b59a3",
+      "family": "hit-recovery",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-idle-foldarms-loop",
+      "revision": 1,
+      "motionHash": "7c74e4edaefdb30749649b25b8b3abd2378e0dcfded3cef8bf8029f773f6a560",
+      "family": "social-idle",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 5,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.75,
+          "decision": "supported"
+        },
+        {
+          "foot": "left",
+          "start": 1.2166666666666666,
+          "end": 1.3166666666666667,
+          "decision": "supported"
+        },
+        {
+          "foot": "left",
+          "start": 1.4166666666666667,
+          "end": 1.5166666666666666,
+          "decision": "supported"
+        },
+        {
+          "foot": "left",
+          "start": 1.8166666666666667,
+          "end": 2.5,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-idle-lantern-loop",
+      "revision": 1,
+      "motionHash": "5855198abea48eb545c7d872d9d0b23b273b224fdb20df1f5357e1c30a0d2a83",
+      "family": "equipment-idle",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-idle-no-loop",
+      "revision": 1,
+      "motionHash": "d172c193b95f4768e108e57ed9b6fa1b87f0f0d38c0fa7b4dd1f0f3e052d7baa",
+      "family": "social-idle",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-idle-rail-call",
+      "revision": 1,
+      "motionHash": "532c71ad432dea935325499b0a73f0de7200f5e1f4a5a630cdbc00459adab563",
+      "family": "environment-idle",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-idle-rail-loop",
+      "revision": 1,
+      "motionHash": "409d367f808868f4ccb536ddfa19901ec59181a4e0e59c86fc1a8c6a620f3004",
+      "family": "environment-idle",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-idle-shield-break",
+      "revision": 1,
+      "motionHash": "fcb1af7a14e0703c60e1334889f108b696f98c78766547132631db0f0f965f46",
+      "family": "shield",
+      "roles": [
+        "recovery"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 1.0666667222976685,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.06666666666666667,
+          "end": 1.0666667222976685,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-idle-shield-loop",
+      "revision": 1,
+      "motionHash": "ba1d3354ad54fa35c595d1bb1bb7bb98695a44e90a5bcb6950b73fc8fe14dd66",
+      "family": "shield",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-idle-talkingphone-loop",
+      "revision": 1,
+      "motionHash": "c5230855b978f61724aa05dbd0d211e0280e613b8b36ab222ed37e2fd549a5af",
+      "family": "equipment-idle",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 2.933333396911621,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 2.933333396911621,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-laytoidle",
+      "revision": 1,
+      "motionHash": "c0c0484f6d52c56c1b788263c3656957d7e3e4a303f8e91ec0dcc2e7af2155a1",
+      "family": "hit-recovery",
+      "roles": [
+        "recovery"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 4,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0.8166666666666667,
+          "end": 1.0833333333333333,
+          "decision": "supported"
+        },
+        {
+          "foot": "left",
+          "start": 1.3,
+          "end": 1.5333333015441895,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.45,
+          "end": 0.9166666666666666,
+          "decision": "uncertain"
+        },
+        {
+          "foot": "right",
+          "start": 1.35,
+          "end": 1.5333333015441895,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-melee-hook",
+      "revision": 1,
+      "motionHash": "1d093d071087f86f757a5b76446d20e6b97cc4881737ef9e3ef716ab894bbf94",
+      "family": "unarmed-melee",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-melee-hook-rec",
+      "revision": 1,
+      "motionHash": "81ba1d22197638c00409e4eeb4fc373f1e545777c21a8a69039e9ee773e347bb",
+      "family": "unarmed-melee",
+      "roles": [
+        "recovery"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 1,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "right",
+          "start": 0.23333333333333334,
+          "end": 0.6000000238418579,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-ninjajump-idle-loop",
+      "revision": 1,
+      "motionHash": "244ac0443dd08d5dfc2e346acd85dd8e689960d4a5e685e7715ab4d2127423f3",
+      "family": "ninja-jump",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-ninjajump-land",
+      "revision": 1,
+      "motionHash": "46daac174af2edb09070d37325d71f352b3c95e1e54445068097ecfd951fc4c5",
+      "family": "ninja-jump",
+      "roles": [
+        "recovery"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0.11666666666666667,
+          "end": 1.2666666507720947,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.11666666666666667,
+          "end": 1.2666666507720947,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-ninjajump-start",
+      "revision": 1,
+      "motionHash": "b9e898e5939e6a09092e5679f47ec108db58e2541c4c4b7d3e167e9bae4dcab0",
+      "family": "ninja-jump",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-overhandthrow",
+      "revision": 1,
+      "motionHash": "c0a8fb35b5002008407c4486445d5829ebf96382262fc8f5ce4daaf12b8cf904",
+      "family": "projectile",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 3,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0.38333333333333336,
+          "end": 1.0833333333333333,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.2833333333333333,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.36666666666666664,
+          "end": 1.3333333730697632,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-shield-dash",
+      "revision": 1,
+      "motionHash": "2a1bcee90ba1e04b0123a740e1d87ecb695e0d0e7e4b69ce41b3ce9de9f61c24",
+      "family": "shield",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 3,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0.3,
+          "end": 0.4666666666666667,
+          "decision": "supported"
+        },
+        {
+          "foot": "left",
+          "start": 0.75,
+          "end": 1.100000023841858,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.2833333333333333,
+          "end": 0.7166666666666667,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-shield-oneshot",
+      "revision": 1,
+      "motionHash": "68e4844f485fb0f6c50ae8aadb8cfb704815302dcf60c15dbe42053f860e7a2d",
+      "family": "shield",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.8333333134651184,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.8333333134651184,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-slide-exit",
+      "revision": 1,
+      "motionHash": "1322063f4a98f4539e36ea2fd8ed321d6cbadfb8564c8f8e909fe1a2ab8adcec",
+      "family": "locomotion-slide",
+      "roles": [
+        "recovery"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-slide-loop",
+      "revision": 1,
+      "motionHash": "e5b1a74e645ee6c33364cee1b992bdd39f032df86098579015af2a47cc623d1b",
+      "family": "locomotion-slide",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-slide-start",
+      "revision": 1,
+      "motionHash": "bd9f195edd24b5da35f3b8b6bae0f09df20e48245ff187688a3f166e56876348",
+      "family": "locomotion-slide",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-sword-block",
+      "revision": 1,
+      "motionHash": "189fdb9bd7958006e0d8d87bfa8a7afc01eb2ee7117ffd88d69bd44b07ff79b4",
+      "family": "sword-defense",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0.11666666666666667,
+          "end": 1.2333333492279053,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.11666666666666667,
+          "end": 1.2333333492279053,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-sword-dash",
+      "revision": 1,
+      "motionHash": "4c386be54f4c126a810ddc9b08c571cf61c3513947541c9f1576a41b299ebd70",
+      "family": "sword-attack",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 4,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0.4,
+          "end": 1.0166666666666666,
+          "decision": "supported"
+        },
+        {
+          "foot": "left",
+          "start": 1.3666666666666667,
+          "end": 1.5666667222976685,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.38333333333333336,
+          "end": 1.1333333333333333,
+          "decision": "uncertain"
+        },
+        {
+          "foot": "right",
+          "start": 1.45,
+          "end": 1.5666667222976685,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-sword-heavy-combo",
+      "revision": 1,
+      "motionHash": "4872590589707e70fbfd1d446435357b9f628e084955e2140b3424a90d957f11",
+      "family": "sword-heavy",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 4,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 2.7,
+          "end": 3.216666666666667,
+          "decision": "uncertain"
+        },
+        {
+          "foot": "left",
+          "start": 3.9166666666666665,
+          "end": 4.333333492279053,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 2.7,
+          "end": 3.25,
+          "decision": "uncertain"
+        },
+        {
+          "foot": "right",
+          "start": 3.9166666666666665,
+          "end": 4.333333492279053,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-sword-regular-a",
+      "revision": 1,
+      "motionHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad",
+      "family": "sword-regular",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-sword-regular-a-rec",
+      "revision": 1,
+      "motionHash": "6477c5f621b3b815e3077fa3c9615e07686d0b09a100b1b102444b92b4c26b19",
+      "family": "sword-regular",
+      "roles": [
+        "recovery"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0.75,
+          "end": 0.9666666388511658,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.75,
+          "end": 0.9666666388511658,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-sword-regular-b",
+      "revision": 1,
+      "motionHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad",
+      "family": "sword-regular",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-sword-regular-b-rec",
+      "revision": 1,
+      "motionHash": "0aef61d9473ceebef4c37ac40c9996b8695ae74afec47e19602508d86571e3e4",
+      "family": "sword-regular",
+      "roles": [
+        "recovery"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-sword-regular-c",
+      "revision": 1,
+      "motionHash": "40facb0220ac0f2c99188cb5aa1be89489ee9414b3bb35f3c7e2034eb60faad2",
+      "family": "sword-regular",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 3,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 1.05,
+          "end": 1.1666666666666667,
+          "decision": "uncertain"
+        },
+        {
+          "foot": "left",
+          "start": 1.5833333333333333,
+          "end": 1.6833333333333333,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 1.45,
+          "end": 1.6833333333333333,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-sword-regular-combo",
+      "revision": 1,
+      "motionHash": "ccf002d937d7a5a04eaa22d7f9ddfcfcfd98c09a156bce8522f5cede9f49e2f9",
+      "family": "sword-regular",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 5,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 1.7166666666666666,
+          "end": 2.0833333333333335,
+          "decision": "uncertain"
+        },
+        {
+          "foot": "left",
+          "start": 2.4833333333333334,
+          "end": 2.6166666666666667,
+          "decision": "supported"
+        },
+        {
+          "foot": "left",
+          "start": 2.85,
+          "end": 3,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 2.35,
+          "end": 2.6,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 2.85,
+          "end": 3,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-treechopping-loop",
+      "revision": 1,
+      "motionHash": "b61017e469e3220ea026c38d224ec9c74b75ce8a387c1ea7147c1029b73b9b20",
+      "family": "work",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0.11666666666666667,
+          "end": 0.9666666388511658,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.9666666388511658,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-walk-carry-loop",
+      "revision": 1,
+      "motionHash": "3ded087b30fd08504eb8c11c194c507eed2d5eec167f0a6d972738a2bfd7f246",
+      "family": "locomotion-carry",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-yes",
+      "revision": 1,
+      "motionHash": "bb24118a3d24692525957841d114c3fefcfa7b816459fb5c5984cdc65231eafb",
+      "family": "social-gesture",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 2.5,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-zombie-idle-loop",
+      "revision": 1,
+      "motionHash": "077dd7b301382d5feed829484e06a316414d66c5b9292e78053a128c0828a8fc",
+      "family": "zombie",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 1.3333333730697632,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 1.3333333730697632,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-zombie-scratch",
+      "revision": 1,
+      "motionHash": "93853420948b98350b4d2867ca8c652b87685597b9f217286c46df46af944275",
+      "family": "zombie",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 4,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0.21666666666666667,
+          "end": 0.48333333333333334,
+          "decision": "supported"
+        },
+        {
+          "foot": "left",
+          "start": 0.65,
+          "end": 1.35,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.48333333333333334,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.65,
+          "end": 1.7999999523162842,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-ual2-zombie-walk-fwd-loop",
+      "revision": 1,
+      "motionHash": "f029bd0b41ddf3cc69c6f2d79dafe75003ebc1fe7421e820dc3da3686ac70b2b",
+      "family": "zombie",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "ual2-standard",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-hook-quick",
+      "revision": 1,
+      "motionHash": "ab69374fba83adeb7ed6d21a1a937fe2cccbd54886f03dd22d3f5d61c231e6ea",
+      "family": "unarmed-melee",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-escape-slide-start",
+      "revision": 2,
+      "motionHash": "caefb8356541ce6da1dac81f1022a79f888a625f3072999a0642661cdee4b4ad",
+      "family": "escape-slide",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-escape-slide-loop",
+      "revision": 2,
+      "motionHash": "1b9d15d650ef3ee35b5019f3d465fdf8dbc6c1a1d1c7fdcf1fed5f22ddddcaf7",
+      "family": "escape-slide",
+      "roles": [
+        "loop"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-escape-slide-exit",
+      "revision": 2,
+      "motionHash": "e2e9c04ec6723c433aa8ffb8dad6148344222af8e07f05c0863b2fa48d2a5838",
+      "family": "escape-slide",
+      "roles": [
+        "recovery"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-escape-slide-standing",
+      "revision": 2,
+      "motionHash": "1b9aac3e632b9cdb1ef52507e219c1f8edf6e5ec0514852f94fd0b0cd28628c4",
+      "family": "escape-slide",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.35,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.35,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-counter-ready",
+      "revision": 1,
+      "motionHash": "212eeb816b048e755ee996871f2659fbcfce8b9423cd64f995a82f755a80fa13",
+      "family": "block-counter",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.16,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.16,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-counter-guard",
+      "revision": 1,
+      "motionHash": "d1908790ac84ac34da9a5f9acd544ff39f969d4c77e079f127e79633d128a8c6",
+      "family": "block-counter",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.28,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.28,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-counter-right-cross",
+      "revision": 1,
+      "motionHash": "48f475b3211f0c953e5bfd84b4df79a4942d847f13d3eba51e86a305a0888493",
+      "family": "block-counter",
+      "roles": [
+        "source-sequence"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 3,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.6559999999999999,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.06666666666666667,
+          "end": 0.23333333333333334,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0.4,
+          "end": 0.6559999999999999,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-counter-finish",
+      "revision": 1,
+      "motionHash": "2e963d1980f14b763ccce626d6d128e56730fb0e7cbf1a8490b65a6696ccc222",
+      "family": "block-counter",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.25,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.25,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-knockback-standing",
+      "revision": 1,
+      "motionHash": "1711c57a987f9731d500a0d95bb3686e5b7d71b97cae7e17f0056eae3a5f5603",
+      "family": "standing-hit-recovery",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-knockback-step",
+      "revision": 2,
+      "motionHash": "a0d8a09955a0bf297fbdbd3343e373a94e63d6fbf20e651decd6621cde9138c7",
+      "family": "standing-hit-recovery",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 0,
+      "contactReviewStatus": "unreviewed",
+      "reviewedIntervals": [],
+      "noCandidatesScope": "No stationary near-floor foot interval detected; not proof of no body/hand/foot contact",
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-knockback-guard",
+      "revision": 1,
+      "motionHash": "173ce434d03535c2296e9090fb5ab3d0a36527bfe8f59b7e4226b2cdcaaf4dda",
+      "family": "standing-hit-recovery",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.4,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.4,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    },
+    {
+      "id": "move-knockback-ready",
+      "revision": 1,
+      "motionHash": "8113137a44731756af91b6fdec103685d28c2c84b6eb7fbd13fb32fae5a4d51d",
+      "family": "standing-hit-recovery",
+      "roles": [
+        "primitive"
+      ],
+      "sourceLibrary": "studio-local",
+      "candidateContacts": 2,
+      "contactReviewStatus": "current",
+      "reviewedIntervals": [
+        {
+          "foot": "left",
+          "start": 0,
+          "end": 0.14,
+          "decision": "supported"
+        },
+        {
+          "foot": "right",
+          "start": 0,
+          "end": 0.14,
+          "decision": "supported"
+        }
+      ],
+      "noCandidatesScope": null,
+      "motionFlagCodes": []
+    }
+  ],
+  "seams": [
+    {
+      "id": "regular-a-to-b",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "sword-tight-join-review",
+        "revision": 1,
+        "motionHash": "0af4b353ab86d59168008f4059f4dc568bb0d4e17df981589f6014e3542713a4",
+        "step": 1
+      }
+    },
+    {
+      "id": "regular-b-to-c",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.12,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "source"
+      },
+      "reviewRevision": 3,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-regular-b-to-c",
+        "revision": 1,
+        "motionHash": "80b894bf804a3dc2148f595a83b620ead559907b0976493ef3ac732b9fb814e3",
+        "step": 1
+      }
+    },
+    {
+      "id": "regular-a-to-a-rec",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.12,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "source"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-regular-a-to-a-rec",
+        "revision": 1,
+        "motionHash": "75da8c56d067c299f2551efed2844afea6868a81ac49612c2156a0f97d422d39",
+        "step": 1
+      }
+    },
+    {
+      "id": "regular-b-to-b-rec",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.12,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "sword-b-recovery-review",
+        "revision": 1,
+        "motionHash": "12e2993e586b0ecc00548287b391a3c8594aad7262882a77ac3ce0b8b75847c4",
+        "step": 1
+      }
+    },
+    {
+      "id": "slide-start-to-loop",
+      "evidenceStatus": "retained-history",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "slide-contract-study",
+        "revision": 1,
+        "motionHash": "4b5721b49d0d4c2fcd5b214383c17f92a6467759b5dd7161973f8be01951f79f",
+        "step": 1
+      }
+    },
+    {
+      "id": "slide-loop-to-exit",
+      "evidenceStatus": "retained-history",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "slide-contract-study",
+        "revision": 1,
+        "motionHash": "4b5721b49d0d4c2fcd5b214383c17f92a6467759b5dd7161973f8be01951f79f",
+        "step": 2
+      }
+    },
+    {
+      "id": "knockback-to-getup",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.12,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "source"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-knockback-to-getup",
+        "revision": 2,
+        "motionHash": "3c211951fe500e3348378fc820309a756663db010a046d6b07d64107e0b0d6da",
+        "step": 1
+      }
+    },
+    {
+      "id": "hook-to-recovery",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "contract-hook-to-recovery",
+        "revision": 1,
+        "motionHash": "62b81c7a99435a53005ec66e1763b03da4930aea35f4f5f6ad6612d459afdaf6",
+        "step": 1
+      }
+    },
+    {
+      "id": "ninja-start-to-hold",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "contract-ninja-start-to-hold",
+        "revision": 1,
+        "motionHash": "a52eeb00bc976d7ce092aeb21656f6626a6baec5a83c9e6a943ef461ee2f18bc",
+        "step": 1
+      }
+    },
+    {
+      "id": "ninja-hold-to-land",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.2,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "source"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-ninja-hold-to-land",
+        "revision": 3,
+        "motionHash": "46c439f023e0defb308b2f3aea3e0d2d6d691e96a6a92b68a13fa4dc5e6076ed",
+        "step": 1
+      }
+    },
+    {
+      "id": "shield-hold-to-break",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.12,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "source"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-shield-hold-to-break",
+        "revision": 2,
+        "motionHash": "0585ea64ea1066bc554687640e7b0df13a310e36db6068e82bd50411adaccbd1",
+        "step": 1
+      }
+    },
+    {
+      "id": "zombie-idle-to-scratch",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "contract-zombie-idle-to-scratch",
+        "revision": 1,
+        "motionHash": "363bb0e5acce01c0e9cbe39c95d98a96a16b7d3a5fec16eeae04c598957b5d69",
+        "step": 1
+      }
+    },
+    {
+      "id": "zombie-scratch-to-idle",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "contract-zombie-scratch-to-idle",
+        "revision": 1,
+        "motionHash": "26549996ded81e331b88f24adc2a21f78fcd73881f6b02d2bd356e606f177e8b",
+        "step": 1
+      }
+    },
+    {
+      "id": "rail-idle-to-call",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1.5,
+        "toSpeed": 1.5,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "contract-rail-idle-to-call",
+        "revision": 1,
+        "motionHash": "48ca126cb6093d92412446726770393716b06a066a5a6eca95764d654deca714",
+        "step": 1
+      }
+    },
+    {
+      "id": "rail-call-to-idle",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1.5,
+        "toSpeed": 1.5,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "contract-rail-call-to-idle",
+        "revision": 1,
+        "motionHash": "48232c3098dc8fe84fdc441d4122784746f4f631dcab543eef4ef17248b9ebfd",
+        "step": 1
+      }
+    },
+    {
+      "id": "kick-entry",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "contract-kick-entry",
+        "revision": 1,
+        "motionHash": "43602db7f787ca38629aa42cb14927e9184506a3bfdb85e769b32ffb6bcd8573",
+        "step": 1
+      }
+    },
+    {
+      "id": "kick-return",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "contract-kick-return",
+        "revision": 1,
+        "motionHash": "9f9aa9b15f76bad1f8eb2e099321dbfa96ed4fcc00f63b787834be26388ab2a0",
+        "step": 1
+      }
+    },
+    {
+      "id": "quick-hook-recovery",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "source"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-quick-hook-recovery",
+        "revision": 1,
+        "motionHash": "bec406292485f2fc9897fcf5da0d4fd5b2dad3d1ea0a97e319e83ca5428a7be7",
+        "step": 1
+      }
+    },
+    {
+      "id": "escape-start-to-loop",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "continue"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-escape-start-to-loop",
+        "revision": 1,
+        "motionHash": "b447adcb61764d0c16caaea5ae8202aa180a1853405e3e79d87585878c1cf62a",
+        "step": 1
+      }
+    },
+    {
+      "id": "escape-loop-to-exit",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "continue"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-escape-loop-to-exit",
+        "revision": 1,
+        "motionHash": "a4bfad2d34f39f24f14fc9541422d223d9cd91fee9bd396fddb818dd9290573a",
+        "step": 1
+      }
+    },
+    {
+      "id": "escape-exit-to-standing",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.2,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "continue"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-escape-exit-to-standing",
+        "revision": 3,
+        "motionHash": "a4448bc1501b9b4b78a1a0201f44d413f7434f68ea84fc38df0f6f7686bfca0b",
+        "step": 1
+      }
+    },
+    {
+      "id": "counter-ready-to-guard",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.2,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "source"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-counter-ready-to-guard",
+        "revision": 3,
+        "motionHash": "b2884244f71976182f07b11c909363b82b3be31ff6935701a8fb2293db3cfd52",
+        "step": 1
+      }
+    },
+    {
+      "id": "counter-guard-to-cross",
+      "evidenceStatus": "current",
+      "decision": "needs-review",
+      "configuration": {
+        "duration": 0.5,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "source"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [
+        "connection/velocity-change"
+      ],
+      "evidenceAction": {
+        "id": "velocity-counter-guard-to-cross",
+        "revision": 5,
+        "motionHash": "f87d05b05d13442b42811a27c8e33037a43a7306e40b5d572d7ec3bd1ad0fc94",
+        "step": 1
+      }
+    },
+    {
+      "id": "counter-cross-to-finish",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.06,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none"
+      },
+      "reviewRevision": 1,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "contract-counter-cross-to-finish",
+        "revision": 1,
+        "motionHash": "19055cb283b3ba817602e2c08faf3e6f1bd30c1f2826aac86ef794fa35c2b71c",
+        "step": 1
+      }
+    },
+    {
+      "id": "standing-hit-entry",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.12,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "continue"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-standing-hit-entry",
+        "revision": 2,
+        "motionHash": "642df335e5b4819163faf1526f1c25e7ebd686a92f674dfeef8518d3af73fa1a",
+        "step": 1
+      }
+    },
+    {
+      "id": "standing-hit-to-step",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.12,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "continue"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-standing-hit-to-step",
+        "revision": 2,
+        "motionHash": "e5de57b562e48e1bc5e487cb7510b149895e9bfdc7da7121f1f769ab081b0794",
+        "step": 1
+      }
+    },
+    {
+      "id": "standing-step-to-guard",
+      "evidenceStatus": "current",
+      "decision": "supported",
+      "configuration": {
+        "duration": 0.2,
+        "fromSpeed": 1,
+        "toSpeed": 1,
+        "anchor": "none",
+        "blend": "velocity",
+        "travel": "continue"
+      },
+      "reviewRevision": 2,
+      "flagCodes": [],
+      "evidenceAction": {
+        "id": "velocity-standing-step-to-guard",
+        "revision": 3,
+        "motionHash": "a2051ae5fa7dba843443151590b472b4dc5b88b228d1a775b3b78ae70d067cce",
+        "step": 1
+      }
+    }
+  ]
+}

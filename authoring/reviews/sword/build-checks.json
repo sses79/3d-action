@@ -1,0 +1,237 @@
+{
+  "at": "2026-10-04T21:04:58.305Z",
+  "checks": [
+    {
+      "id": "sword-source-study",
+      "revision": 1,
+      "result": {
+        "valid": true,
+        "diagnostics": [
+          {
+            "code": "motion/unverified",
+            "severity": "warning",
+            "subject": "/steps",
+            "message": "Compilation does not verify equipment, contact or physical balance",
+            "evidence": null,
+            "supportedFixes": [
+              "Inspect this motion in Studio"
+            ]
+          }
+        ],
+        "steps": [
+          {
+            "movementId": "move-ual2-sword-regular-combo",
+            "revision": 1,
+            "speed": 1,
+            "transition": 0
+          }
+        ],
+        "receipt": {
+          "schemaVersion": 1,
+          "specHash": "2439701c33b5f27749609c8f3099bf8c5c26b49826592fed5eadf765eea5b53d",
+          "compiler": "pose-blend-v1",
+          "sources": [
+            {
+              "id": "move-ual2-sword-regular-combo",
+              "revision": 1,
+              "motionHash": "ccf002d937d7a5a04eaa22d7f9ddfcfcfd98c09a156bce8522f5cede9f49e2f9"
+            }
+          ],
+          "duration": 3,
+          "inspection": [
+            {
+              "step": 0,
+              "joinStart": 0,
+              "start": 0,
+              "end": 3
+            }
+          ],
+          "contactIntervals": [
+            {
+              "movementId": "move-ual2-sword-regular-combo",
+              "sourceRevision": 1,
+              "reviewRevision": 1,
+              "foot": "left",
+              "start": 2.85,
+              "end": 3,
+              "sourceStart": 2.85,
+              "sourceEnd": 3,
+              "review": "llm-visual-supported",
+              "reviewScope": "source-only"
+            },
+            {
+              "movementId": "move-ual2-sword-regular-combo",
+              "sourceRevision": 1,
+              "reviewRevision": 1,
+              "foot": "right",
+              "start": 2.85,
+              "end": 3,
+              "sourceStart": 2.85,
+              "sourceEnd": 3,
+              "review": "llm-visual-supported",
+              "reviewScope": "source-only"
+            }
+          ],
+          "seamPolicies": [],
+          "visualReview": "pending",
+          "physicalValidation": "not-performed"
+        },
+        "committed": false
+      },
+      "clientElapsedMs": 10.26
+    },
+    {
+      "id": "sword-joined-study",
+      "revision": 1,
+      "result": {
+        "valid": true,
+        "diagnostics": [
+          {
+            "code": "connection/policy-needs-review",
+            "severity": "warning",
+            "subject": "/steps/1/connection",
+            "message": "Inspected seam still needs review before production use",
+            "evidence": {
+              "configuration": {
+                "duration": 0.12,
+                "fromSpeed": 1,
+                "toSpeed": 1,
+                "anchor": "none"
+              },
+              "flagCodes": [
+                "connection/velocity-change"
+              ]
+            },
+            "supportedFixes": [
+              "Inspect this motion in Studio"
+            ]
+          },
+          {
+            "code": "connection/policy-needs-review",
+            "severity": "warning",
+            "subject": "/steps/2/connection",
+            "message": "Inspected seam still needs review before production use",
+            "evidence": {
+              "configuration": {
+                "duration": 0.12,
+                "fromSpeed": 1,
+                "toSpeed": 1,
+                "anchor": "none"
+              },
+              "flagCodes": [
+                "connection/velocity-change"
+              ]
+            },
+            "supportedFixes": [
+              "Inspect this motion in Studio"
+            ]
+          },
+          {
+            "code": "motion/unverified",
+            "severity": "warning",
+            "subject": "/steps",
+            "message": "Compilation does not verify equipment, contact or physical balance",
+            "evidence": null,
+            "supportedFixes": [
+              "Inspect this motion in Studio"
+            ]
+          }
+        ],
+        "steps": [
+          {
+            "movementId": "move-ual2-sword-regular-a",
+            "revision": 1,
+            "speed": 1,
+            "transition": 0
+          },
+          {
+            "movementId": "move-ual2-sword-regular-b",
+            "revision": 1,
+            "speed": 1,
+            "transition": 0.12
+          },
+          {
+            "movementId": "move-ual2-sword-regular-c",
+            "revision": 1,
+            "speed": 1,
+            "transition": 0.12
+          }
+        ],
+        "receipt": {
+          "schemaVersion": 1,
+          "specHash": "1c429c904c99f5c603f588a533c9583beb74b5c9d343b216620ff599821f98a7",
+          "compiler": "pose-blend-v1",
+          "sources": [
+            {
+              "id": "move-ual2-sword-regular-a",
+              "revision": 1,
+              "motionHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad"
+            },
+            {
+              "id": "move-ual2-sword-regular-b",
+              "revision": 1,
+              "motionHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad"
+            },
+            {
+              "id": "move-ual2-sword-regular-c",
+              "revision": 1,
+              "motionHash": "40facb0220ac0f2c99188cb5aa1be89489ee9414b3bb35f3c7e2034eb60faad2"
+            }
+          ],
+          "duration": 3.2066666984558108,
+          "inspection": [
+            {
+              "step": 0,
+              "joinStart": 0,
+              "start": 0,
+              "end": 0.4333333373069763
+            },
+            {
+              "step": 1,
+              "joinStart": 0.4333333373069763,
+              "start": 0.5533333373069763,
+              "end": 1.0866666984558107
+            },
+            {
+              "step": 2,
+              "joinStart": 1.0866666984558107,
+              "start": 1.2066666984558108,
+              "end": 3.2066666984558108
+            }
+          ],
+          "contactIntervals": [],
+          "seamPolicies": [
+            {
+              "contractId": "regular-a-to-b",
+              "reviewRevision": 1,
+              "decision": "needs-review",
+              "configuration": {
+                "duration": 0.12,
+                "fromSpeed": 1,
+                "toSpeed": 1,
+                "anchor": "none"
+              },
+              "matchesConfiguration": true
+            },
+            {
+              "contractId": "regular-b-to-c",
+              "reviewRevision": 1,
+              "decision": "needs-review",
+              "configuration": {
+                "duration": 0.12,
+                "fromSpeed": 1,
+                "toSpeed": 1,
+                "anchor": "none"
+              },
+              "matchesConfiguration": true
+            }
+          ],
+          "visualReview": "pending",
+          "physicalValidation": "not-performed"
+        },
+        "committed": false
+      },
+      "clientElapsedMs": 14.25
+    }
+  ]
+}

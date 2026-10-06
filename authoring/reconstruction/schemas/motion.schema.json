@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "estimated-human-motion"
+    },
+    "sourceSHA256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "window": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "skeleton": {
+      "const": "H36M17"
+    },
+    "jointNames": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 17,
+      "maxItems": 17
+    },
+    "coordinates": {
+      "const": "camera-x-right-y-down-z-depth-root-relative"
+    },
+    "units": {
+      "const": "normalized-estimated-not-meters"
+    },
+    "sourceTimes": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 256
+    },
+    "positions": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "minItems": 17,
+        "maxItems": 17
+      },
+      "minItems": 2,
+      "maxItems": 256
+    },
+    "imagePelvis": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        },
+        "minItems": 2,
+        "maxItems": 2
+      },
+      "minItems": 2,
+      "maxItems": 256
+    },
+    "backend": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checkpointSHA256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "codeCommit": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "checkpointSHA256",
+        "codeCommit"
+      ],
+      "additionalProperties": false
+    },
+    "fitting": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        }
+      },
+      "required": [
+        "algorithm",
+        "assumptions"
+      ],
+      "additionalProperties": false
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "maxItems": 10000
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "kind",
+    "sourceSHA256",
+    "window",
+    "skeleton",
+    "jointNames",
+    "coordinates",
+    "units",
+    "sourceTimes",
+    "positions",
+    "imagePelvis",
+    "backend",
+    "fitting",
+    "unknowns"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,49 @@
+{
+  "valid": true,
+  "bundle": "/Users/tim/Yun/codex-3d/authoring/reviews/video/kick-reference/bundle/bundle.json",
+  "action": {
+    "id": "video-side-kick-stable",
+    "revision": 1,
+    "rig": "quaternius-ual1",
+    "motionHash": "4f4c47fd790650e5243ea686c1bb78fe394043da64574937c153116c66210436"
+  },
+  "observationFrames": 67,
+  "estimatedFrames": 70,
+  "duration": 2.3000000000000007,
+  "mirroring": "unknown",
+  "contacts": "unconfirmed",
+  "reviewWindows": [
+    [
+      1.3133333333333335,
+      1.3466666666666667
+    ],
+    [
+      1.4533333333333334,
+      1.4866666666666666
+    ],
+    [
+      1.6833333333333333,
+      1.7166666666666666
+    ]
+  ],
+  "cacheKeys": {
+    "observation": "2498c84d51e6d30a003db35206e9232ee2380ece385cddd84d2594b4cd6ff57b",
+    "estimation": "783653b504e9acb933e1a3833e7f894f340ceed0ff0736d1dd9657a17d5ab694",
+    "fitting": "5a2d4d9738e77db42f7c02b85c278b5a9f59f9911108e5a66d1c38eab7078c0f",
+    "retarget": "a6ef99d5eb093ab9619df7938714e7961699600d2532d64ce2ffd2b8e6cfcfee"
+  },
+  "peakExample": {
+    "actionTime": 1.4,
+    "sourceTime": 12.85
+  },
+  "capabilities": [
+    "read-only-inspection",
+    "piecewise-linear-time-mapping",
+    "integrity-validation"
+  ],
+  "limitations": [
+    "Cache keys are content fingerprints; no automatic cache executor yet",
+    "Saved revision is a snapshot; compare live revision before editing",
+    "Not naturalness/contact approval"
+  ]
+}

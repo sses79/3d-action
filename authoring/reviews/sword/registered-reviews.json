@@ -1,0 +1,393 @@
+{
+  "at": "2026-10-04T20:50:16.398Z",
+  "results": [
+    {
+      "operation": "review_movement_contacts",
+      "arguments": {
+        "movementId": "move-ual2-sword-regular-a-rec",
+        "sourceRevision": 1,
+        "expectedReviewRevision": 0,
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM visual review of start/mid/end renders in both cameras. Both feet remain near the floor; small stance drift is retained, not forced into a planted-foot constraint. Only these intervals are reviewed; physical support/balance unverified.",
+        "artifacts": [
+          "authoring/reviews/sword/frames/contact-review.png",
+          "authoring/reviews/sword/frames/frames.json"
+        ],
+        "intervals": [
+          {
+            "foot": "left",
+            "start": 0.75,
+            "end": 0.96,
+            "decision": "supported",
+            "notes": "Foot appears grounded in sampled front/side renders; measured small drift is allowed. No automatic anchor."
+          },
+          {
+            "foot": "right",
+            "start": 0.75,
+            "end": 0.96,
+            "decision": "supported",
+            "notes": "Foot appears grounded in sampled front/side renders; measured small drift is allowed. No automatic anchor."
+          }
+        ]
+      },
+      "result": {
+        "schemaVersion": 1,
+        "movementId": "move-ual2-sword-regular-a-rec",
+        "sourceRevision": 1,
+        "motionHash": "6477c5f621b3b815e3077fa3c9615e07686d0b09a100b1b102444b92b4c26b19",
+        "intervals": [
+          {
+            "foot": "left",
+            "start": 0.75,
+            "end": 0.96,
+            "decision": "supported",
+            "notes": "Foot appears grounded in sampled front/side renders; measured small drift is allowed. No automatic anchor.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.011447205203252014,
+              "pathMeters": 0.011448670282368493,
+              "maxSpeedMetersPerSecond": 0.13636889715865758,
+              "minHeightMeters": 0.014791114552503842,
+              "maxHeightMeters": 0.01481751209566054,
+              "sampleCount": 14
+            }
+          },
+          {
+            "foot": "right",
+            "start": 0.75,
+            "end": 0.96,
+            "decision": "supported",
+            "notes": "Foot appears grounded in sampled front/side renders; measured small drift is allowed. No automatic anchor.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.01143213040978062,
+              "pathMeters": 0.011433132712718274,
+              "maxSpeedMetersPerSecond": 0.13555163721131872,
+              "minHeightMeters": 0.015326555778746614,
+              "maxHeightMeters": 0.015375355420471082,
+              "sampleCount": 14
+            }
+          }
+        ],
+        "reviewedAt": "2026-10-04T20:50:16.271Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T20:50:16.271Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM visual review of start/mid/end renders in both cameras. Both feet remain near the floor; small stance drift is retained, not forced into a planted-foot constraint. Only these intervals are reviewed; physical support/balance unverified.",
+        "artifacts": [
+          "authoring/reviews/sword/frames/contact-review.png",
+          "authoring/reviews/sword/frames/frames.json"
+        ],
+        "physicalValidation": "not-performed",
+        "uncoveredIntervals": "unknown",
+        "reviewRevision": 1
+      },
+      "clientElapsedMs": 223.13
+    },
+    {
+      "operation": "review_movement_contacts",
+      "arguments": {
+        "movementId": "move-ual2-sword-regular-combo",
+        "sourceRevision": 1,
+        "expectedReviewRevision": 0,
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM visual review of start/mid/end renders in both cameras. Both feet remain near the floor; small stance drift is retained, not forced into a planted-foot constraint. Only these intervals are reviewed; physical support/balance unverified.",
+        "artifacts": [
+          "authoring/reviews/sword/frames/contact-review.png",
+          "authoring/reviews/sword/frames/frames.json"
+        ],
+        "intervals": [
+          {
+            "foot": "left",
+            "start": 2.85,
+            "end": 3,
+            "decision": "supported",
+            "notes": "Foot appears grounded in sampled front/side renders; measured small drift is allowed. No automatic anchor."
+          },
+          {
+            "foot": "right",
+            "start": 2.85,
+            "end": 3,
+            "decision": "supported",
+            "notes": "Foot appears grounded in sampled front/side renders; measured small drift is allowed. No automatic anchor."
+          }
+        ]
+      },
+      "result": {
+        "schemaVersion": 1,
+        "movementId": "move-ual2-sword-regular-combo",
+        "sourceRevision": 1,
+        "motionHash": "ccf002d937d7a5a04eaa22d7f9ddfcfcfd98c09a156bce8522f5cede9f49e2f9",
+        "intervals": [
+          {
+            "foot": "left",
+            "start": 2.85,
+            "end": 3,
+            "decision": "supported",
+            "notes": "Foot appears grounded in sampled front/side renders; measured small drift is allowed. No automatic anchor.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.00913227107218023,
+              "pathMeters": 0.009132544972084624,
+              "maxSpeedMetersPerSecond": 0.1454500621975518,
+              "minHeightMeters": 0.014801332903470424,
+              "maxHeightMeters": 0.014809733640716388,
+              "sampleCount": 10
+            }
+          },
+          {
+            "foot": "right",
+            "start": 2.85,
+            "end": 3,
+            "decision": "supported",
+            "notes": "Foot appears grounded in sampled front/side renders; measured small drift is allowed. No automatic anchor.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.0091179218851018,
+              "pathMeters": 0.00911882691675015,
+              "maxSpeedMetersPerSecond": 0.144672281305559,
+              "minHeightMeters": 0.015324494982092055,
+              "maxHeightMeters": 0.015376054799491334,
+              "sampleCount": 10
+            }
+          }
+        ],
+        "reviewedAt": "2026-10-04T20:50:16.356Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T20:50:16.355Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM visual review of start/mid/end renders in both cameras. Both feet remain near the floor; small stance drift is retained, not forced into a planted-foot constraint. Only these intervals are reviewed; physical support/balance unverified.",
+        "artifacts": [
+          "authoring/reviews/sword/frames/contact-review.png",
+          "authoring/reviews/sword/frames/frames.json"
+        ],
+        "physicalValidation": "not-performed",
+        "uncoveredIntervals": "unknown",
+        "reviewRevision": 1
+      },
+      "clientElapsedMs": 82.78
+    },
+    {
+      "operation": "review_connection_policy",
+      "arguments": {
+        "contractId": "regular-a-to-b",
+        "fromRevision": 1,
+        "toRevision": 1,
+        "actionId": "sword-joined-study",
+        "actionRevision": 1,
+        "step": 1,
+        "expectedReviewRevision": 0,
+        "decision": "needs-review",
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM visual review of exact join start/mid/end renders in both cameras: closely matched endpoint poses and a nearly static added blend. Configured velocity-change flag remains at the outgoing boundary. Keep this exact no-anchor timing as inspected evidence, not production approval.",
+        "artifacts": [
+          "authoring/reviews/sword/frames/seam-review.png",
+          "authoring/reviews/sword/frames/frames.json"
+        ]
+      },
+      "result": {
+        "schemaVersion": 1,
+        "contractId": "regular-a-to-b",
+        "fromRevision": 1,
+        "toRevision": 1,
+        "fromHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad",
+        "toHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad",
+        "decision": "needs-review",
+        "configuration": {
+          "duration": 0.12,
+          "fromSpeed": 1,
+          "toSpeed": 1,
+          "anchor": "none"
+        },
+        "evidenceAction": {
+          "id": "sword-joined-study",
+          "revision": 1,
+          "motionHash": "c13e0dfeffda163d7c8597f974b752bfe65195b9328899c4087f83f4a340af08",
+          "step": 1
+        },
+        "seams": [
+          {
+            "time": 0.4333333373069763,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 0.6939174526475648,
+            "angularVelocityJumpRmsDegreesPerSecond": 106.03001043905863
+          },
+          {
+            "time": 0.5533333373069763,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0024122131655262,
+            "angularVelocityJumpRmsDegreesPerSecond": 113.92739433261879
+          }
+        ],
+        "flagCodes": [
+          "connection/velocity-change"
+        ],
+        "reviewedAt": "2026-10-04T20:50:16.373Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T20:50:16.373Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM visual review of exact join start/mid/end renders in both cameras: closely matched endpoint poses and a nearly static added blend. Configured velocity-change flag remains at the outgoing boundary. Keep this exact no-anchor timing as inspected evidence, not production approval.",
+        "artifacts": [
+          "authoring/reviews/sword/frames/seam-review.png",
+          "authoring/reviews/sword/frames/frames.json"
+        ],
+        "physicalValidation": "not-performed",
+        "reviewRevision": 1
+      },
+      "clientElapsedMs": 17.72
+    },
+    {
+      "operation": "review_connection_policy",
+      "arguments": {
+        "contractId": "regular-b-to-c",
+        "fromRevision": 1,
+        "toRevision": 1,
+        "actionId": "sword-joined-study",
+        "actionRevision": 1,
+        "step": 2,
+        "expectedReviewRevision": 0,
+        "decision": "needs-review",
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM visual review of exact join start/mid/end renders in both cameras: closely matched endpoint poses and a nearly static added blend. Configured velocity-change flag remains at the outgoing boundary. Keep this exact no-anchor timing as inspected evidence, not production approval.",
+        "artifacts": [
+          "authoring/reviews/sword/frames/seam-review.png",
+          "authoring/reviews/sword/frames/frames.json"
+        ]
+      },
+      "result": {
+        "schemaVersion": 1,
+        "contractId": "regular-b-to-c",
+        "fromRevision": 1,
+        "toRevision": 1,
+        "fromHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad",
+        "toHash": "40facb0220ac0f2c99188cb5aa1be89489ee9414b3bb35f3c7e2034eb60faad2",
+        "decision": "needs-review",
+        "configuration": {
+          "duration": 0.12,
+          "fromSpeed": 1,
+          "toSpeed": 1,
+          "anchor": "none"
+        },
+        "evidenceAction": {
+          "id": "sword-joined-study",
+          "revision": 1,
+          "motionHash": "c13e0dfeffda163d7c8597f974b752bfe65195b9328899c4087f83f4a340af08",
+          "step": 2
+        },
+        "seams": [
+          {
+            "time": 1.0866666984558107,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 0.3254598303850173,
+            "angularVelocityJumpRmsDegreesPerSecond": 50.70631050177346
+          },
+          {
+            "time": 1.2066666984558108,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0904194038726487,
+            "angularVelocityJumpRmsDegreesPerSecond": 133.69898284743707
+          }
+        ],
+        "flagCodes": [
+          "connection/velocity-change"
+        ],
+        "reviewedAt": "2026-10-04T20:50:16.394Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T20:50:16.394Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM visual review of exact join start/mid/end renders in both cameras: closely matched endpoint poses and a nearly static added blend. Configured velocity-change flag remains at the outgoing boundary. Keep this exact no-anchor timing as inspected evidence, not production approval.",
+        "artifacts": [
+          "authoring/reviews/sword/frames/seam-review.png",
+          "authoring/reviews/sword/frames/frames.json"
+        ],
+        "physicalValidation": "not-performed",
+        "reviewRevision": 1
+      },
+      "clientElapsedMs": 22.93
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "comparison": "13 local joint rotations; uniformly sampled source at 30 Hz; search combo start offsets at 60 Hz; fixed duration/no retiming. Similarity is not source-authoring provenance.",
+  "regularComboMatches": [
+    {
+      "source": "Sword_Regular_A",
+      "duration": 0.4333333373069763,
+      "bestComboOffsetSeconds": 0.0,
+      "localRotationRmsDegrees": 0.10801759138285412
+    },
+    {
+      "source": "Sword_Regular_B",
+      "duration": 0.5333333611488342,
+      "bestComboOffsetSeconds": 0.4666666666666667,
+      "localRotationRmsDegrees": 1.1178143613109761
+    },
+    {
+      "source": "Sword_Regular_C",
+      "duration": 2.0,
+      "bestComboOffsetSeconds": 0.95,
+      "localRotationRmsDegrees": 16.07450264658648
+    }
+  ]
+}

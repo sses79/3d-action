@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Animation Studio receipt v1",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "specHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "compiler": {
+      "enum": [
+        "pose-blend-v1",
+        "pose-blend-v2"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "motionHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "id",
+          "revision",
+          "motionHash"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "duration": {
+      "type": "number"
+    },
+    "inspection": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "joinStart": {
+            "type": "number"
+          },
+          "start": {
+            "type": "number"
+          },
+          "end": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "step",
+          "joinStart",
+          "start",
+          "end"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "visualReview": {
+      "const": "pending"
+    },
+    "physicalValidation": {
+      "const": "not-performed"
+    },
+    "compiledAt": {
+      "type": "string"
+    },
+    "contactIntervals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "movementId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reviewRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "foot": {
+            "enum": [
+              "left",
+              "right"
+            ]
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end": {
+            "type": "number",
+            "minimum": 0
+          },
+          "sourceStart": {
+            "type": "number",
+            "minimum": 0
+          },
+          "sourceEnd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "review": {
+            "const": "llm-visual-supported"
+          },
+          "reviewScope": {
+            "const": "source-only"
+          }
+        },
+        "required": [
+          "movementId",
+          "sourceRevision",
+          "reviewRevision",
+          "foot",
+          "start",
+          "end",
+          "sourceStart",
+          "sourceEnd",
+          "review",
+          "reviewScope"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 128
+    },
+    "seamPolicies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "contractId": {
+            "type": "string",
+            "pattern": "^[-a-z0-9]{1,48}$"
+          },
+          "reviewRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "decision": {
+            "enum": [
+              "supported",
+              "needs-review",
+              "rejected"
+            ]
+          },
+          "configuration": {
+            "type": "object",
+            "properties": {
+              "duration": {
+                "type": "number",
+                "minimum": 0.001,
+                "maximum": 1
+              },
+              "fromSpeed": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 1.5
+              },
+              "toSpeed": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 1.5
+              },
+              "anchor": {
+                "const": "none"
+              },
+              "blend": {
+                "enum": [
+                  "pose",
+                  "velocity"
+                ]
+              },
+              "travel": {
+                "enum": [
+                  "source",
+                  "continue"
+                ]
+              }
+            },
+            "required": [
+              "duration",
+              "fromSpeed",
+              "toSpeed",
+              "anchor"
+            ],
+            "additionalProperties": false
+          },
+          "matchesConfiguration": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "contractId",
+          "reviewRevision",
+          "decision",
+          "configuration",
+          "matchesConfiguration"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 7
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "specHash",
+    "compiler",
+    "sources",
+    "duration",
+    "inspection",
+    "visualReview",
+    "physicalValidation"
+  ],
+  "additionalProperties": false
+}

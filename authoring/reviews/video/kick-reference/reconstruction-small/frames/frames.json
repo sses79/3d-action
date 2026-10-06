@@ -1,0 +1,3896 @@
+{
+  "version": 1,
+  "at": "2026-10-05T17:40:03.344Z",
+  "sourceActions": {
+    "video-side-kick-draft": {
+      "revision": 0,
+      "motionHash": "33cebc789c19cdc099f62f7d3b16bca8d4612bbda4238762c81ead649817e3a8"
+    }
+  },
+  "frames": [
+    {
+      "id": "video-side-kick-draft",
+      "time": 0,
+      "view": "front",
+      "file": "video-side-kick-draft-0.000-front.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            0.1976993627853512,
+            1.4017146542093009,
+            -0.013505608362586456
+          ],
+          "xy": [
+            362.1758640608749,
+            255.63420710201584
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -0.16631307419117103,
+            1.4082503433654308,
+            -0.14842504369961285
+          ],
+          "xy": [
+            284.5198775058835,
+            254.23992674870814
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            0.22213656753033093,
+            1.14148707250485,
+            0.08011695710368172
+          ],
+          "xy": [
+            367.3891344064706,
+            311.14942453229867
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -0.38031785124720535,
+            1.2334337092938994,
+            -0.1752929898646676
+          ],
+          "xy": [
+            238.86552506726287,
+            291.53414201730146
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -0.04177696679955892,
+            1.1641040768817066,
+            0.1570015678475037
+          ],
+          "xy": [
+            311.0875804160941,
+            306.3244635985693
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -0.6035731935334906,
+            1.3159749766207323,
+            -0.03594767242694363
+          ],
+          "xy": [
+            191.23771871285533,
+            273.92533832091044
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            0.0607306422980193,
+            0.8932625630321073,
+            0.03336151994279393
+          ],
+          "xy": [
+            332.9558703569108,
+            364.1039865531505
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -0.10330125167566465,
+            0.8928450082476885,
+            -0.040929532841895405
+          ],
+          "xy": [
+            297.9623996425249,
+            364.19306490715985
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            0.32819106341676024,
+            0.6049757642494107,
+            0.1300843276236225
+          ],
+          "xy": [
+            390.0140935289089,
+            425.605170293459
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -0.27681405268840553,
+            0.5377499767471366,
+            0.04739051900048469
+          ],
+          "xy": [
+            260.9463354264735,
+            439.9466716272775
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            0.5363533826681137,
+            0.26826923845019907,
+            -0.04899254280252821
+          ],
+          "xy": [
+            434.4220549691976,
+            497.43589579729087
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -0.4064398402825381,
+            0.17072581050444569,
+            -0.14564244044842867
+          ],
+          "xy": [
+            233.29283407305854,
+            518.2451604257183
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 43.60000014305115,
+      "pngEncodeMs": 261.59999990463257,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.43447820066045595,
+        "observedShinMeters": 0.43447820066045595,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "front",
+        "projection": "orthographic",
+        "position": [
+          0,
+          1.1,
+          6
+        ],
+        "target": [
+          0,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 0,
+      "view": "side",
+      "file": "video-side-kick-draft-0.000-side.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            0.1976993627853512,
+            1.4017146542093009,
+            -0.013505608362586456
+          ],
+          "xy": [
+            322.88119645068485,
+            255.63420710201584
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -0.16631307419117103,
+            1.4082503433654308,
+            -0.14842504369961285
+          ],
+          "xy": [
+            351.66400932258375,
+            254.23992674870814
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            0.22213656753033093,
+            1.14148707250485,
+            0.08011695710368172
+          ],
+          "xy": [
+            302.9083824845476,
+            311.14942453229867
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -0.38031785124720535,
+            1.2334337092938994,
+            -0.1752929898646676
+          ],
+          "xy": [
+            357.39583783779545,
+            291.53414201730146
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -0.04177696679955892,
+            1.1641040768817066,
+            0.1570015678475037
+          ],
+          "xy": [
+            286.5063321925323,
+            306.3244635985693
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -0.6035731935334906,
+            1.3159749766207323,
+            -0.03594767242694363
+          ],
+          "xy": [
+            327.66883678441434,
+            273.92533832091044
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            0.0607306422980193,
+            0.8932625630321073,
+            0.03336151994279393
+          ],
+          "xy": [
+            312.88287574553704,
+            364.1039865531505
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -0.10330125167566465,
+            0.8928450082476885,
+            -0.040929532841895405
+          ],
+          "xy": [
+            328.7316336729374,
+            364.19306490715985
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            0.32819106341676024,
+            0.6049757642494107,
+            0.1300843276236225
+          ],
+          "xy": [
+            292.2486767736269,
+            425.605170293459
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -0.27681405268840553,
+            0.5377499767471366,
+            0.04739051900048469
+          ],
+          "xy": [
+            309.89002261322963,
+            439.9466716272775
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            0.5363533826681137,
+            0.26826923845019907,
+            -0.04899254280252821
+          ],
+          "xy": [
+            330.4517424645391,
+            497.43589579729087
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -0.4064398402825381,
+            0.17072581050444569,
+            -0.14564244044842867
+          ],
+          "xy": [
+            351.0703872956645,
+            518.2451604257183
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 1.5,
+      "pngEncodeMs": 20.299999952316284,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.43447820066045595,
+        "observedShinMeters": 0.43447820066045595,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "side",
+        "projection": "orthographic",
+        "position": [
+          6,
+          1.1,
+          0
+        ],
+        "target": [
+          0,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 0.8,
+      "view": "front",
+      "file": "video-side-kick-draft-0.800-front.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -0.45824155791678567,
+            1.3561822309831426,
+            -0.016350255964563014
+          ],
+          "xy": [
+            363.3458645076789,
+            265.3477907235963
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -0.8255286995164566,
+            1.3655861301062764,
+            -0.14190002725448098
+          ],
+          "xy": [
+            284.99127429974914,
+            263.34162557732776
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -0.45735327277068605,
+            1.0937979168906793,
+            0.07439357298267141
+          ],
+          "xy": [
+            363.5353653388469,
+            321.32311106332173
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.0094864493071878,
+            1.1696008842579722,
+            -0.07240097955714159
+          ],
+          "xy": [
+            245.74695434439317,
+            305.1518113582993
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -0.725526113025764,
+            1.10409797638832,
+            0.13803602098244006
+          ],
+          "xy": [
+            306.3251594177636,
+            319.12576503715843
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.227278703885787,
+            1.278769888612169,
+            0.056911763270814986
+          ],
+          "xy": [
+            199.28460670095865,
+            281.8624237627373
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -0.6054894395467262,
+            0.8462009529824692,
+            0.037095795599691506
+          ],
+          "xy": [
+            331.9329830932917,
+            374.14379669707324
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -0.7644669744559037,
+            0.8518912446363558,
+            -0.047281698256086885
+          ],
+          "xy": [
+            298.0177756460004,
+            372.9298678109108
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -0.7488113097623528,
+            0.48578974609058134,
+            0.15355294023897573
+          ],
+          "xy": [
+            301.3576507806246,
+            451.03152083400926
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -0.7381883617768319,
+            0.45146870977332326,
+            0.0072237356432127905
+          ],
+          "xy": [
+            303.6238796842024,
+            458.35334191502443
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -0.9309634673745761,
+            0.18117134574756494,
+            -0.09704551966550543
+          ],
+          "xy": [
+            262.4985238233503,
+            516.0167795738528
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -0.48918004911743007,
+            0.1863813117944968,
+            -0.23046271838229618
+          ],
+          "xy": [
+            356.74565305154147,
+            514.9053201505074
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 1.4000000953674316,
+      "pngEncodeMs": 16.299999952316284,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.43447821437661005,
+        "observedShinMeters": 0.43447821437661005,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "front",
+        "projection": "orthographic",
+        "position": [
+          -0.6614252977965307,
+          1.1,
+          6
+        ],
+        "target": [
+          -0.6614252977965307,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 0.8,
+      "view": "side",
+      "file": "video-side-kick-draft-0.800-side.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -0.45824155791678567,
+            1.3561822309831426,
+            -0.016350255964563014
+          ],
+          "xy": [
+            323.4880546057732,
+            265.3477907235963
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -0.8255286995164566,
+            1.3655861301062764,
+            -0.14190002725448098
+          ],
+          "xy": [
+            350.272005814289,
+            263.34162557732776
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -0.45735327277068605,
+            1.0937979168906793,
+            0.07439357298267141
+          ],
+          "xy": [
+            304.12937109702983,
+            321.32311106332173
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.0094864493071878,
+            1.1696008842579722,
+            -0.07240097955714159
+          ],
+          "xy": [
+            335.4455423055232,
+            305.1518113582993
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -0.725526113025764,
+            1.10409797638832,
+            0.13803602098244006
+          ],
+          "xy": [
+            290.55231552374585,
+            319.12576503715843
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.227278703885787,
+            1.278769888612169,
+            0.056911763270814986
+          ],
+          "xy": [
+            307.8588238355592,
+            281.8624237627373
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -0.6054894395467262,
+            0.8462009529824692,
+            0.037095795599691506
+          ],
+          "xy": [
+            312.0862302720655,
+            374.14379669707324
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -0.7644669744559037,
+            0.8518912446363558,
+            -0.047281698256086885
+          ],
+          "xy": [
+            330.08676229463157,
+            372.9298678109108
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -0.7488113097623528,
+            0.48578974609058134,
+            0.15355294023897573
+          ],
+          "xy": [
+            287.24203941568487,
+            451.03152083400926
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -0.7381883617768319,
+            0.45146870977332326,
+            0.0072237356432127905
+          ],
+          "xy": [
+            318.4589363961143,
+            458.35334191502443
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -0.9309634673745761,
+            0.18117134574756494,
+            -0.09704551966550543
+          ],
+          "xy": [
+            340.7030441953075,
+            516.0167795738528
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -0.48918004911743007,
+            0.1863813117944968,
+            -0.23046271838229618
+          ],
+          "xy": [
+            369.1653799215562,
+            514.9053201505074
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 1,
+      "pngEncodeMs": 16.5,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.43447821437661005,
+        "observedShinMeters": 0.43447821437661005,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "side",
+        "projection": "orthographic",
+        "position": [
+          5.338574702203469,
+          1.1,
+          0
+        ],
+        "target": [
+          -0.6614252977965307,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 1.15,
+      "view": "front",
+      "file": "video-side-kick-draft-1.150-front.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -0.6401307722345277,
+            1.4118955779675106,
+            0.01387260460850559
+          ],
+          "xy": [
+            391.9355343807894,
+            253.46227670026445
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.0061766917969657,
+            1.5298506889486665,
+            -0.03949404545722225
+          ],
+          "xy": [
+            313.84573820746937,
+            228.29851969095117
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -0.6327927631900906,
+            1.1408289226700083,
+            0.07345266954059061
+          ],
+          "xy": [
+            393.5009763102694,
+            311.2898298303982
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.2564894344580486,
+            1.4150996809193024,
+            -0.004046529380674992
+          ],
+          "xy": [
+            260.4456864397717,
+            252.77873473721553
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -0.870594650378803,
+            1.2149433814127812,
+            0.19190281028987122
+          ],
+          "xy": [
+            342.7699070433441,
+            295.47874529860667
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.4366809625046197,
+            1.5114114816941369,
+            0.1812321324588886
+          ],
+          "xy": [
+            222.00482712316983,
+            232.23221723858416
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -0.9123676163155492,
+            0.9499099368496173,
+            0.030840764375840934
+          ],
+          "xy": [
+            333.8583409768382,
+            352.0192134720816
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.069878869599577,
+            1.0103585597603848,
+            -0.03210339001019885
+          ],
+          "xy": [
+            300.2559402762456,
+            339.1235072511179
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -0.998667584087903,
+            0.5663417551179586,
+            0.12793571068339565
+          ],
+          "xy": [
+            315.4476811854027,
+            433.84709224150214
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.3695210299857794,
+            0.8050022370032112,
+            0.14690211453579297
+          ],
+          "xy": [
+            236.33227939385577,
+            382.9328561059816
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.0073207367118526,
+            0.16904343417278428,
+            -0.047707503540981244
+          ],
+          "xy": [
+            313.60167529229346,
+            518.6040673764727
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -1.185593229343166,
+            0.5541847258816235,
+            -0.15646639822102867
+          ],
+          "xy": [
+            275.57021019761333,
+            436.44059181192034
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.5999999046325684,
+      "pngEncodeMs": 14.600000143051147,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.43447820919666685,
+        "observedShinMeters": 0.43447820919666685,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "front",
+        "projection": "orthographic",
+        "position": [
+          -0.9773285896444783,
+          1.1,
+          6
+        ],
+        "target": [
+          -0.9773285896444783,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 1.15,
+      "view": "side",
+      "file": "video-side-kick-draft-1.150-side.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -0.6401307722345277,
+            1.4118955779675106,
+            0.01387260460850559
+          ],
+          "xy": [
+            317.0405110168519,
+            253.46227670026445
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.0061766917969657,
+            1.5298506889486665,
+            -0.03949404545722225
+          ],
+          "xy": [
+            328.42539636420713,
+            228.29851969095117
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -0.6327927631900906,
+            1.1408289226700083,
+            0.07345266954059061
+          ],
+          "xy": [
+            304.33009716467376,
+            311.2898298303982
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.2564894344580486,
+            1.4150996809193024,
+            -0.004046529380674992
+          ],
+          "xy": [
+            320.86325960121036,
+            252.77873473721553
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -0.870594650378803,
+            1.2149433814127812,
+            0.19190281028987122
+          ],
+          "xy": [
+            279.0607338048272,
+            295.47874529860667
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.4366809625046197,
+            1.5114114816941369,
+            0.1812321324588886
+          ],
+          "xy": [
+            281.3371450754368,
+            232.23221723858416
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -0.9123676163155492,
+            0.9499099368496173,
+            0.030840764375840934
+          ],
+          "xy": [
+            313.4206369331536,
+            352.0192134720816
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.069878869599577,
+            1.0103585597603848,
+            -0.03210339001019885
+          ],
+          "xy": [
+            326.84872320217545,
+            339.1235072511179
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -0.998667584087903,
+            0.5663417551179586,
+            0.12793571068339565
+          ],
+          "xy": [
+            292.707048387542,
+            433.84709224150214
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.3695210299857794,
+            0.8050022370032112,
+            0.14690211453579297
+          ],
+          "xy": [
+            288.66088223236386,
+            382.9328561059816
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.0073207367118526,
+            0.16904343417278428,
+            -0.047707503540981244
+          ],
+          "xy": [
+            330.17760075540906,
+            518.6040673764727
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -1.185593229343166,
+            0.5541847258816235,
+            -0.15646639822102867
+          ],
+          "xy": [
+            353.3794982871525,
+            436.44059181192034
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.40000009536743164,
+      "pngEncodeMs": 16.399999856948853,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.43447820919666685,
+        "observedShinMeters": 0.43447820919666685,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "side",
+        "projection": "orthographic",
+        "position": [
+          5.022671410355522,
+          1.1,
+          0
+        ],
+        "target": [
+          -0.9773285896444783,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 1.3,
+      "view": "front",
+      "file": "video-side-kick-draft-1.300-front.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -0.758127122402804,
+            1.3618298840205618,
+            0.04593343954026101
+          ],
+          "xy": [
+            410.5467556604342,
+            264.14295807561354
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.1003557872475436,
+            1.5414145238768564,
+            0.008786153496764398
+          ],
+          "xy": [
+            337.5379738268898,
+            225.831568239604
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -0.9113006548162363,
+            1.1382980949579649,
+            0.1063666223609468
+          ],
+          "xy": [
+            377.8697354122353,
+            311.82973974230083
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.3640554942163097,
+            1.4545818527511916,
+            0.010613352149528476
+          ],
+          "xy": [
+            281.2820363402197,
+            244.35587141307917
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.1126919818514094,
+            1.3095758075553843,
+            0.1849707124631358
+          ],
+          "xy": [
+            334.90625231139836,
+            275.2904943881847
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.5841759401908406,
+            1.498182977350715,
+            0.17098501723029125
+          ],
+          "xy": [
+            234.32300786565307,
+            235.05429816518085
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.1089230932893592,
+            0.9479305081835477,
+            0.00919897105534629
+          ],
+          "xy": [
+            335.71028187130247,
+            352.44149158750986
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.2553688233562672,
+            1.0520416238050492,
+            -0.0026467557481738777
+          ],
+          "xy": [
+            304.46852612369537,
+            330.23112025492287
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.1421143334017254,
+            0.5685925136873362,
+            0.14704196356603919
+          ],
+          "xy": [
+            328.6294839806643,
+            433.3669304133683
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.5200876839222677,
+            1.3236309263649322,
+            0.13934898302837848
+          ],
+          "xy": [
+            247.99516920294863,
+            272.29206904214783
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.148073376963224,
+            0.1445650476279446,
+            0.0525085232075375
+          ],
+          "xy": [
+            327.35822135421125,
+            523.8261231727051
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -1.6610317577039886,
+            0.9451659523803977,
+            -0.020870698233337065
+          ],
+          "xy": [
+            217.92710012951486,
+            353.03126349218184
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.5999999046325684,
+      "pngEncodeMs": 15.900000095367432,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.4344782097308302,
+        "observedShinMeters": 0.4344782097308302,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "front",
+        "projection": "orthographic",
+        "position": [
+          -1.1825650395610894,
+          1.1,
+          6
+        ],
+        "target": [
+          -1.1825650395610894,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 1.3,
+      "view": "side",
+      "file": "video-side-kick-draft-1.300-side.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -0.758127122402804,
+            1.3618298840205618,
+            0.04593343954026101
+          ],
+          "xy": [
+            310.2008662314107,
+            264.14295807561354
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.1003557872475436,
+            1.5414145238768564,
+            0.008786153496764398
+          ],
+          "xy": [
+            318.12562058735665,
+            225.831568239604
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -0.9113006548162363,
+            1.1382980949579649,
+            0.1063666223609468
+          ],
+          "xy": [
+            297.30845389633106,
+            311.82973974230083
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.3640554942163097,
+            1.4545818527511916,
+            0.010613352149528476
+          ],
+          "xy": [
+            317.7358182081003,
+            244.35587141307917
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.1126919818514094,
+            1.3095758075553843,
+            0.1849707124631358
+          ],
+          "xy": [
+            280.53958134119745,
+            275.2904943881847
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.5841759401908406,
+            1.498182977350715,
+            0.17098501723029125
+          ],
+          "xy": [
+            283.5231963242042,
+            235.05429816518085
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.1089230932893592,
+            0.9479305081835477,
+            0.00919897105534629
+          ],
+          "xy": [
+            318.03755284152584,
+            352.44149158750986
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.2553688233562672,
+            1.0520416238050492,
+            -0.0026467557481738777
+          ],
+          "xy": [
+            320.5646412262768,
+            330.23112025492287
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.1421143334017254,
+            0.5685925136873362,
+            0.14704196356603919
+          ],
+          "xy": [
+            288.63104777257803,
+            433.3669304133683
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.5200876839222677,
+            1.3236309263649322,
+            0.13934898302837848
+          ],
+          "xy": [
+            290.27221695394564,
+            272.29206904214783
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.148073376963224,
+            0.1445650476279446,
+            0.0525085232075375
+          ],
+          "xy": [
+            308.79818171572504,
+            523.8261231727051
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -1.6610317577039886,
+            0.9451659523803977,
+            -0.020870698233337065
+          ],
+          "xy": [
+            324.4524156231116,
+            353.03126349218184
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.5999999046325684,
+      "pngEncodeMs": 15.200000047683716,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.4344782097308302,
+        "observedShinMeters": 0.4344782097308302,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "side",
+        "projection": "orthographic",
+        "position": [
+          4.817434960438911,
+          1.1,
+          0
+        ],
+        "target": [
+          -1.1825650395610894,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 1.4,
+      "view": "front",
+      "file": "video-side-kick-draft-1.400-front.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -0.7931759945146861,
+            1.3327392717669868,
+            0.05697755888234893
+          ],
+          "xy": [
+            416.26631928872087,
+            270.34895535637617
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.1213134232528534,
+            1.5393508362192678,
+            0.03726684936162333
+          ],
+          "xy": [
+            346.26366782457853,
+            226.27182160655622
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -0.9665743994029398,
+            1.122623821812505,
+            0.11050561112936816
+          ],
+          "xy": [
+            379.27465957922675,
+            315.17358467999895
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.387933665131357,
+            1.4622702868198203,
+            0.02998529117726984
+          ],
+          "xy": [
+            289.38468289049774,
+            242.71567214510503
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.1591231382722933,
+            1.3066852526848165,
+            0.1820562746584381
+          ],
+          "xy": [
+            338.197595287098,
+            275.90714609390585
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.5715609708139993,
+            1.411553997688279,
+            0.22943957043103225
+          ],
+          "xy": [
+            250.21085767820074,
+            253.53514715983385
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.1697947121714802,
+            0.9492045474113662,
+            0.0011275950081453268
+          ],
+          "xy": [
+            335.9209928552715,
+            352.16969655224193
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.312268653179208,
+            1.0592202172534937,
+            0.00597795759267717
+          ],
+          "xy": [
+            305.52655210695616,
+            328.6996869859214
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.1604634522479536,
+            0.5591780066932641,
+            0.10971805589959507
+          ],
+          "xy": [
+            337.9116616389572,
+            435.37535857210366
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.5585309142280477,
+            1.3332107038821446,
+            0.1741556203637255
+          ],
+          "xy": [
+            252.99060308320375,
+            270.24838317180917
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.180069891370303,
+            0.12726717414292482,
+            0.06682286577281349
+          ],
+          "xy": [
+            333.7289546261893,
+            527.5163361828427
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -1.733591518969214,
+            0.9656122386823094,
+            0.02250976532799398
+          ],
+          "xy": [
+            215.64434073842162,
+            348.66938908110734
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.5,
+      "pngEncodeMs": 16,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.43447820693233324,
+        "observedShinMeters": 0.43447820693233324,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "front",
+        "projection": "orthographic",
+        "position": [
+          -1.2444243661805652,
+          1.1,
+          6
+        ],
+        "target": [
+          -1.2444243661805652,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 1.4,
+      "view": "side",
+      "file": "video-side-kick-draft-1.400-side.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -0.7931759945146861,
+            1.3327392717669868,
+            0.05697755888234893
+          ],
+          "xy": [
+            307.8447874384319,
+            270.34895535637617
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.1213134232528534,
+            1.5393508362192678,
+            0.03726684936162333
+          ],
+          "xy": [
+            312.0497388028534,
+            226.27182160655622
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -0.9665743994029398,
+            1.122623821812505,
+            0.11050561112936816
+          ],
+          "xy": [
+            296.42546962573454,
+            315.17358467999895
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.387933665131357,
+            1.4622702868198203,
+            0.02998529117726984
+          ],
+          "xy": [
+            313.6031378821821,
+            242.71567214510503
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.1591231382722933,
+            1.3066852526848165,
+            0.1820562746584381
+          ],
+          "xy": [
+            281.16132807286624,
+            275.90714609390585
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.5715609708139993,
+            1.411553997688279,
+            0.22943957043103225
+          ],
+          "xy": [
+            271.0528916413795,
+            253.53514715983385
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.1697947121714802,
+            0.9492045474113662,
+            0.0011275950081453268
+          ],
+          "xy": [
+            319.75944639826207,
+            352.16969655224193
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.312268653179208,
+            1.0592202172534937,
+            0.00597795759267717
+          ],
+          "xy": [
+            318.7247023802286,
+            328.6996869859214
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.1604634522479536,
+            0.5591780066932641,
+            0.10971805589959507
+          ],
+          "xy": [
+            296.5934814080861,
+            435.37535857210366
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.5585309142280477,
+            1.3332107038821446,
+            0.1741556203637255
+          ],
+          "xy": [
+            282.8468009890716,
+            270.24838317180917
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.180069891370303,
+            0.12726717414292482,
+            0.06682286577281349
+          ],
+          "xy": [
+            305.7444553017995,
+            527.5163361828427
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -1.733591518969214,
+            0.9656122386823094,
+            0.02250976532799398
+          ],
+          "xy": [
+            315.19791673002766,
+            348.66938908110734
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.5999999046325684,
+      "pngEncodeMs": 15,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.43447820693233324,
+        "observedShinMeters": 0.43447820693233324,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "side",
+        "projection": "orthographic",
+        "position": [
+          4.755575633819435,
+          1.1,
+          0
+        ],
+        "target": [
+          -1.2444243661805652,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 1.533,
+      "view": "front",
+      "file": "video-side-kick-draft-1.533-front.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -0.9372089524327316,
+            1.3645422372945994,
+            0.029021067424088956
+          ],
+          "xy": [
+            405.48953812991624,
+            263.5643227104855
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.2861162409141011,
+            1.531140179934267,
+            -0.0064733311048881526
+          ],
+          "xy": [
+            331.0559832538908,
+            228.02342828068973
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -1.0914406241737584,
+            1.1406303307654224,
+            0.08520656450940894
+          ],
+          "xy": [
+            372.5867814918306,
+            311.3321961033766
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.5210375242209861,
+            1.3916397085107712,
+            -0.055792596285912995
+          ],
+          "xy": [
+            280.9394428150887,
+            257.7835288510355
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.3155961537037484,
+            1.2872394360154276,
+            0.15103356148419186
+          ],
+          "xy": [
+            324.76693519209937,
+            280.05558698337546
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.6734804263119984,
+            1.3687622667720767,
+            0.17292320697216498
+          ],
+          "xy": [
+            248.41829036900606,
+            262.66404975529036
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.2548759118178126,
+            0.9401840136237661,
+            0.005049233109661308
+          ],
+          "xy": [
+            337.7205867944324,
+            354.0940770935965
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.4166075085819738,
+            1.019272189126809,
+            0.0013413229163600493
+          ],
+          "xy": [
+            303.2178461514113,
+            337.22193298628076
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.2438734540441017,
+            0.569810102573164,
+            0.16845601084218237
+          ],
+          "xy": [
+            340.06777778615736,
+            433.1071781177251
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.631803687767277,
+            0.7646414621328665,
+            0.2312400214111696
+          ],
+          "xy": [
+            257.3093279252133,
+            391.5431547449885
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.254452632894378,
+            0.1504150819607986,
+            0.05546367122673998
+          ],
+          "xy": [
+            337.81088629809847,
+            522.5781158483629
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -1.6018580554096105,
+            0.4205843542551136,
+            -0.032387128310895325
+          ],
+          "xy": [
+            263.69772949484883,
+            464.94200442557576
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.5,
+      "pngEncodeMs": 16,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.43447820250167246,
+        "observedShinMeters": 0.43447820250167246,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "front",
+        "projection": "orthographic",
+        "position": [
+          -1.3379411624167143,
+          1.1,
+          6
+        ],
+        "target": [
+          -1.3379411624167143,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 1.533,
+      "view": "side",
+      "file": "video-side-kick-draft-1.533-side.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -0.9372089524327316,
+            1.3645422372945994,
+            0.029021067424088956
+          ],
+          "xy": [
+            313.8088389495274,
+            263.5643227104855
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.2861162409141011,
+            1.531140179934267,
+            -0.0064733311048881526
+          ],
+          "xy": [
+            321.3809773023758,
+            228.02342828068973
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -1.0914406241737584,
+            1.1406303307654224,
+            0.08520656450940894
+          ],
+          "xy": [
+            301.82259957132584,
+            311.3321961033766
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.5210375242209861,
+            1.3916397085107712,
+            -0.055792596285912995
+          ],
+          "xy": [
+            331.9024205409945,
+            257.7835288510355
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.3155961537037484,
+            1.2872394360154276,
+            0.15103356148419186
+          ],
+          "xy": [
+            287.77950688337216,
+            280.05558698337546
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.6734804263119984,
+            1.3687622667720767,
+            0.17292320697216498
+          ],
+          "xy": [
+            283.10971584593784,
+            262.66404975529036
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.2548759118178126,
+            0.9401840136237661,
+            0.005049233109661308
+          ],
+          "xy": [
+            318.9228302699387,
+            354.0940770935965
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.4166075085819738,
+            1.019272189126809,
+            0.0013413229163600493
+          ],
+          "xy": [
+            319.7138511111762,
+            337.22193298628076
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.2438734540441017,
+            0.569810102573164,
+            0.16845601084218237
+          ],
+          "xy": [
+            284.0627176870008,
+            433.1071781177251
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.631803687767277,
+            0.7646414621328665,
+            0.2312400214111696
+          ],
+          "xy": [
+            270.66879543228356,
+            391.5431547449885
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.254452632894378,
+            0.1504150819607986,
+            0.05546367122673998
+          ],
+          "xy": [
+            308.1677501382952,
+            522.5781158483629
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -1.6018580554096105,
+            0.4205843542551136,
+            -0.032387128310895325
+          ],
+          "xy": [
+            326.90925403965736,
+            464.94200442557576
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.39999985694885254,
+      "pngEncodeMs": 15.300000190734863,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.43447820250167246,
+        "observedShinMeters": 0.43447820250167246,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "side",
+        "projection": "orthographic",
+        "position": [
+          4.662058837583285,
+          1.1,
+          0
+        ],
+        "target": [
+          -1.3379411624167143,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 1.733,
+      "view": "front",
+      "file": "video-side-kick-draft-1.733-front.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -1.0957881056298289,
+            1.4123410777988998,
+            -0.0016511673206733302
+          ],
+          "xy": [
+            382.23578451784925,
+            253.36723673623476
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.4747110866607114,
+            1.4790466478807902,
+            -0.05379293695735518
+          ],
+          "xy": [
+            301.39888189792765,
+            239.1367151187648
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -1.1602675894037384,
+            1.1479708737859877,
+            0.05340834944824507
+          ],
+          "xy": [
+            368.4801613127485,
+            309.76621359232263
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.6542354948423448,
+            1.2814790309101234,
+            -0.13007401887030937
+          ],
+          "xy": [
+            263.1003414858459,
+            281.28447340584034
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.4102270983673237,
+            1.2344747461579695,
+            0.13157770231479857
+          ],
+          "xy": [
+            315.1554660671837,
+            291.31205415296654
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.8433317764427277,
+            1.32121299035159,
+            0.06674300018235207
+          ],
+          "xy": [
+            222.75980141109753,
+            272.80789539166085
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.3013138578923065,
+            0.9154303726458086,
+            0.008583703282916633
+          ],
+          "xy": [
+            338.39029070185404,
+            359.3748538355609
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.475125318217211,
+            0.960845875833478,
+            -0.003777762011368209
+          ],
+          "xy": [
+            301.31051249920773,
+            349.6862131555247
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.1661316703840299,
+            0.5604690143307072,
+            0.1490396513822503
+          ],
+          "xy": [
+            367.2291573702864,
+            435.09994360944916
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.7826264722912235,
+            0.7371847189016565,
+            0.1355719468440632
+          ],
+          "xy": [
+            235.71026629675174,
+            397.40059330098
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.1808337715990582,
+            0.1768410841066672,
+            -0.054392959055223455
+          ],
+          "xy": [
+            364.0927091110803,
+            516.940568723911
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -1.7832666246743085,
+            0.3569188111162415,
+            -0.07459166717937471
+          ],
+          "xy": [
+            235.57370045502694,
+            478.52398696186845
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.5,
+      "pngEncodeMs": 16.5,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.4344782101306484,
+        "observedShinMeters": 0.4344782101306484,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "front",
+        "projection": "orthographic",
+        "position": [
+          -1.3875183455572473,
+          1.1,
+          6
+        ],
+        "target": [
+          -1.3875183455572473,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 1.733,
+      "view": "side",
+      "file": "video-side-kick-draft-1.733-side.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -1.0957881056298289,
+            1.4123410777988998,
+            -0.0016511673206733302
+          ],
+          "xy": [
+            320.35224902841003,
+            253.36723673623476
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.4747110866607114,
+            1.4790466478807902,
+            -0.05379293695735518
+          ],
+          "xy": [
+            331.4758265509022,
+            239.1367151187648
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -1.1602675894037384,
+            1.1479708737859877,
+            0.05340834944824507
+          ],
+          "xy": [
+            308.6062187843741,
+            309.76621359232263
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.6542354948423448,
+            1.2814790309101234,
+            -0.13007401887030937
+          ],
+          "xy": [
+            347.7491240256657,
+            281.28447340584034
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.4102270983673237,
+            1.2344747461579695,
+            0.13157770231479857
+          ],
+          "xy": [
+            291.9300901728427,
+            291.31205415296654
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -1.8433317764427277,
+            1.32121299035159,
+            0.06674300018235207
+          ],
+          "xy": [
+            305.76149329443126,
+            272.80789539166085
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.3013138578923065,
+            0.9154303726458086,
+            0.008583703282916633
+          ],
+          "xy": [
+            318.16880996631085,
+            359.3748538355609
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.475125318217211,
+            0.960845875833478,
+            -0.003777762011368209
+          ],
+          "xy": [
+            320.8059225624249,
+            349.6862131555247
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.1661316703840299,
+            0.5604690143307072,
+            0.1490396513822503
+          ],
+          "xy": [
+            288.20487437178633,
+            435.09994360944916
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.7826264722912235,
+            0.7371847189016565,
+            0.1355719468440632
+          ],
+          "xy": [
+            291.0779846732662,
+            397.40059330098
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.1808337715990582,
+            0.1768410841066672,
+            -0.054392959055223455
+          ],
+          "xy": [
+            331.6038312651141,
+            516.940568723911
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -1.7832666246743085,
+            0.3569188111162415,
+            -0.07459166717937471
+          ],
+          "xy": [
+            335.9128889982663,
+            478.52398696186845
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.6000001430511475,
+      "pngEncodeMs": 15.899999856948853,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.4344782101306484,
+        "observedShinMeters": 0.4344782101306484,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "side",
+        "projection": "orthographic",
+        "position": [
+          4.612481654442753,
+          1.1,
+          0
+        ],
+        "target": [
+          -1.3875183455572473,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 2.05,
+      "view": "front",
+      "file": "video-side-kick-draft-2.050-front.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -1.375617081499635,
+            1.3327030209257618,
+            -0.040282773028589014
+          ],
+          "xy": [
+            365.3601325211754,
+            270.35668886917085
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.7618759556299328,
+            1.3451543621083875,
+            -0.07770026937019203
+          ],
+          "xy": [
+            282.95823937337855,
+            267.7004027502107
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -1.3669596725683666,
+            1.0627722364128478,
+            0.024084762313066735
+          ],
+          "xy": [
+            367.20704642651265,
+            327.94192289859245
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.9584023519066245,
+            1.153932512957939,
+            -0.12120157737842421
+          ],
+          "xy": [
+            241.03260816768432,
+            308.4943972356397
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.6277149182715231,
+            1.0885308027639118,
+            0.1102028366639262
+          ],
+          "xy": [
+            311.5792606765059,
+            322.44676207703213
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -2.1717736903176466,
+            1.223132204912022,
+            0.03928892613559645
+          ],
+          "xy": [
+            195.51338930666628,
+            293.73179628543534
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.499905966997935,
+            0.8213377618483373,
+            0.005072917555945647
+          ],
+          "xy": [
+            338.845170281538,
+            379.4479441390214
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.6797726478397719,
+            0.8264101213779942,
+            -0.001858589208795905
+          ],
+          "xy": [
+            300.4736117019462,
+            378.3658407726946
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.2359539735895786,
+            0.527400690861179,
+            0.09412350176600227
+          ],
+          "xy": [
+            395.15492887532076,
+            442.15451928294846
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.930589192209068,
+            0.525612764450389,
+            0.10115415452243402
+          ],
+          "xy": [
+            246.96608223649633,
+            442.535943583917
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.1267490081181792,
+            0.18453902216950824,
+            -0.14937499801471193
+          ],
+          "xy": [
+            418.45198817588596,
+            515.2983419371716
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -2.1322074279627863,
+            0.19029093558157645,
+            -0.08773913810892552
+          ],
+          "xy": [
+            203.9541919423698,
+            514.0712670759303
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.40000009536743164,
+      "pngEncodeMs": 15.599999904632568,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.4344782133841506,
+        "observedShinMeters": 0.4344782133841506,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "front",
+        "projection": "orthographic",
+        "position": [
+          -1.5882427026926447,
+          1.1,
+          6
+        ],
+        "target": [
+          -1.5882427026926447,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 2.05,
+      "view": "side",
+      "file": "video-side-kick-draft-2.050-side.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -1.375617081499635,
+            1.3327030209257618,
+            -0.040282773028589014
+          ],
+          "xy": [
+            328.59365824609876,
+            270.35668886917085
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.7618759556299328,
+            1.3451543621083875,
+            -0.07770026937019203
+          ],
+          "xy": [
+            336.57605746564064,
+            267.7004027502107
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -1.3669596725683666,
+            1.0627722364128478,
+            0.024084762313066735
+          ],
+          "xy": [
+            314.8619173732122,
+            327.94192289859245
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -1.9584023519066245,
+            1.153932512957939,
+            -0.12120157737842421
+          ],
+          "xy": [
+            345.85633650739686,
+            308.4943972356397
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.6277149182715231,
+            1.0885308027639118,
+            0.1102028366639262
+          ],
+          "xy": [
+            296.49006151169544,
+            322.44676207703213
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -2.1717736903176466,
+            1.223132204912022,
+            0.03928892613559645
+          ],
+          "xy": [
+            311.6183624244058,
+            293.73179628543534
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.499905966997935,
+            0.8213377618483373,
+            0.005072917555945647
+          ],
+          "xy": [
+            318.91777758806467,
+            379.4479441390214
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.6797726478397719,
+            0.8264101213779942,
+            -0.001858589208795905
+          ],
+          "xy": [
+            320.39649903120954,
+            378.3658407726946
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.2359539735895786,
+            0.527400690861179,
+            0.09412350176600227
+          ],
+          "xy": [
+            299.92031962325257,
+            442.15451928294846
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -1.930589192209068,
+            0.525612764450389,
+            0.10115415452243402
+          ],
+          "xy": [
+            298.4204470352138,
+            442.535943583917
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.1267490081181792,
+            0.18453902216950824,
+            -0.14937499801471193
+          ],
+          "xy": [
+            351.8666662431383,
+            515.2983419371716
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -2.1322074279627863,
+            0.19029093558157645,
+            -0.08773913810892552
+          ],
+          "xy": [
+            338.71768279657044,
+            514.0712670759303
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.5,
+      "pngEncodeMs": 15.799999952316284,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.4344782133841506,
+        "observedShinMeters": 0.4344782133841506,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "side",
+        "projection": "orthographic",
+        "position": [
+          4.411757297307355,
+          1.1,
+          0
+        ],
+        "target": [
+          -1.5882427026926447,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 2.3,
+      "view": "front",
+      "file": "video-side-kick-draft-2.300-front.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -1.5128987156268707,
+            1.3708848777253608,
+            -0.03888186870443845
+          ],
+          "xy": [
+            359.40193412503226,
+            262.2112260852564
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.8979186943489723,
+            1.3579464574341975,
+            -0.08728885207798723
+          ],
+          "xy": [
+            277.2643386643173,
+            264.9714224140379
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -1.4895183648163848,
+            1.099185443661158,
+            0.01320972957151087
+          ],
+          "xy": [
+            364.3897422979359,
+            320.173772018953
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -2.084557313434825,
+            1.157256044544363,
+            -0.13167543003332402
+          ],
+          "xy": [
+            237.44809992600204,
+            307.78537716386927
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.7474967538444477,
+            1.0902469895835352,
+            0.11037134383500387
+          ],
+          "xy": [
+            309.3543526386158,
+            322.0806422221792
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -2.303496556427586,
+            1.2206302134211626,
+            0.02363860397454251
+          ],
+          "xy": [
+            190.74106142087965,
+            294.265554470152
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.6093487061488072,
+            0.8491125178255567,
+            0.004676326831046851
+          ],
+          "xy": [
+            338.8259361470191,
+            373.52266286388124
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.7893125879012928,
+            0.8498488951865752,
+            -0.0015088576647107471
+          ],
+          "xy": [
+            300.4336413731555,
+            373.36556902686397
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.3994810514308216,
+            0.5118692625796649,
+            0.08355735983159734
+          ],
+          "xy": [
+            383.59770248685606,
+            445.4678906496715
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -2.0354665745174447,
+            0.5382421196862054,
+            0.07792064925974007
+          ],
+          "xy": [
+            247.92079089504313,
+            439.84168113360954
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.1929490166304302,
+            0.18659809590214993,
+            -0.11722749506414723
+          ],
+          "xy": [
+            427.65786991093955,
+            514.859072874208
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -2.158751880077634,
+            0.1730607376555205,
+            -0.12261515849195506
+          ],
+          "xy": [
+            221.61992570886946,
+            517.747042633489
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.40000009536743164,
+      "pngEncodeMs": 16.59999990463257,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.4344782141138208,
+        "observedShinMeters": 0.4344782141138208,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "front",
+        "projection": "orthographic",
+        "position": [
+          -1.6975952818379594,
+          1.1,
+          6
+        ],
+        "target": [
+          -1.6975952818379594,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    },
+    {
+      "id": "video-side-kick-draft",
+      "time": 2.3,
+      "view": "side",
+      "file": "video-side-kick-draft-2.300-side.png",
+      "points": [
+        {
+          "name": "left_shoulder",
+          "bone": "upperarm_l",
+          "index": 5,
+          "world": [
+            -1.5128987156268707,
+            1.3708848777253608,
+            -0.03888186870443845
+          ],
+          "xy": [
+            328.29479865694657,
+            262.2112260852564
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_shoulder",
+          "bone": "upperarm_r",
+          "index": 6,
+          "world": [
+            -1.8979186943489723,
+            1.3579464574341975,
+            -0.08728885207798723
+          ],
+          "xy": [
+            338.62162177663697,
+            264.9714224140379
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_elbow",
+          "bone": "lowerarm_l",
+          "index": 7,
+          "world": [
+            -1.4895183648163848,
+            1.099185443661158,
+            0.01320972957151087
+          ],
+          "xy": [
+            317.1819243580774,
+            320.173772018953
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_elbow",
+          "bone": "lowerarm_r",
+          "index": 8,
+          "world": [
+            -2.084557313434825,
+            1.157256044544363,
+            -0.13167543003332402
+          ],
+          "xy": [
+            348.0907584071088,
+            307.78537716386927
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_wrist",
+          "bone": "hand_l",
+          "index": 9,
+          "world": [
+            -1.7474967538444477,
+            1.0902469895835352,
+            0.11037134383500387
+          ],
+          "xy": [
+            296.45411331519887,
+            322.0806422221792
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_wrist",
+          "bone": "hand_r",
+          "index": 10,
+          "world": [
+            -2.303496556427586,
+            1.2206302134211626,
+            0.02363860397454251
+          ],
+          "xy": [
+            314.95709781876394,
+            294.265554470152
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_hip",
+          "bone": "thigh_l",
+          "index": 11,
+          "world": [
+            -1.6093487061488072,
+            0.8491125178255567,
+            0.004676326831046851
+          ],
+          "xy": [
+            319.0023836093764,
+            373.52266286388124
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_hip",
+          "bone": "thigh_r",
+          "index": 12,
+          "world": [
+            -1.7893125879012928,
+            0.8498488951865752,
+            -0.0015088576647107471
+          ],
+          "xy": [
+            320.32188963513806,
+            373.36556902686397
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_knee",
+          "bone": "calf_l",
+          "index": 13,
+          "world": [
+            -1.3994810514308216,
+            0.5118692625796649,
+            0.08355735983159734
+          ],
+          "xy": [
+            302.1744299025923,
+            445.4678906496715
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_knee",
+          "bone": "calf_r",
+          "index": 14,
+          "world": [
+            -2.0354665745174447,
+            0.5382421196862054,
+            0.07792064925974007
+          ],
+          "xy": [
+            303.37692815792184,
+            439.84168113360954
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "left_ankle",
+          "bone": "foot_l",
+          "index": 15,
+          "world": [
+            -1.1929490166304302,
+            0.18659809590214993,
+            -0.11722749506414723
+          ],
+          "xy": [
+            345.0085322803511,
+            514.859072874208
+          ],
+          "inFrame": true
+        },
+        {
+          "name": "right_ankle",
+          "bone": "foot_r",
+          "index": 16,
+          "world": [
+            -2.158751880077634,
+            0.1730607376555205,
+            -0.12261515849195506
+          ],
+          "xy": [
+            346.1579004782834,
+            517.747042633489
+          ],
+          "inFrame": true
+        }
+      ],
+      "renderMs": 0.39999985694885254,
+      "pngEncodeMs": 15,
+      "control": {
+        "flawed": false,
+        "kind": "none",
+        "expectedShinMeters": 0.4344782141138208,
+        "observedShinMeters": 0.4344782141138208,
+        "lengthRatio": 1
+      },
+      "camera": {
+        "view": "side",
+        "projection": "orthographic",
+        "position": [
+          4.302404718162041,
+          1.1,
+          0
+        ],
+        "target": [
+          -1.6975952818379594,
+          1.1,
+          0
+        ],
+        "tracking": "root-xz",
+        "width": 640,
+        "height": 640
+      },
+      "mapping": "12 COCO body landmarks approximated by rig joint pivots; facial landmarks omitted"
+    }
+  ],
+  "timings": {
+    "fetchMs": 3.843207999999997,
+    "bundleAndAssetMs": 125.26683299999999,
+    "startupMs": 3874.2394999999997,
+    "renderMs": 54.5,
+    "pngEncodeMs": 534.4999997615814,
+    "writeMs": 7.834878000000572,
+    "captureWallMs": 4811.8150829999995
+  },
+  "notes": [
+    "Offline uncommitted reconstruction draft; original Studio state unchanged.",
+    "Rig pivots approximate anatomical keypoints; no facial landmarks or occlusion ground truth.",
+    "Software WebGL renderer for repeatable capture; this is not an interactive WebGPU performance benchmark."
+  ]
+}

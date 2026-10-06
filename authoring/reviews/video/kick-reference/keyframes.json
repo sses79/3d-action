@@ -1,0 +1,98 @@
+[
+  {
+    "time": 11.483333,
+    "clipTime": 0.03333300000000072,
+    "frameIndex": 336,
+    "file": "keyframe-0336.jpg",
+    "sheetCrop": [
+      550,
+      140,
+      1478,
+      780
+    ]
+  },
+  {
+    "time": 12.25,
+    "clipTime": 0.8000000000000007,
+    "frameIndex": 359,
+    "file": "keyframe-0359.jpg",
+    "sheetCrop": [
+      550,
+      140,
+      1478,
+      780
+    ]
+  },
+  {
+    "time": 12.583333,
+    "clipTime": 1.1333330000000004,
+    "frameIndex": 367,
+    "file": "keyframe-0367.jpg",
+    "sheetCrop": [
+      550,
+      140,
+      1478,
+      780
+    ]
+  },
+  {
+    "time": 12.75,
+    "clipTime": 1.3000000000000007,
+    "frameIndex": 372,
+    "file": "keyframe-0372.jpg",
+    "sheetCrop": [
+      550,
+      140,
+      1478,
+      780
+    ]
+  },
+  {
+    "time": 12.85,
+    "clipTime": 1.4000000000000004,
+    "frameIndex": 375,
+    "file": "keyframe-0375.jpg",
+    "sheetCrop": [
+      550,
+      140,
+      1478,
+      780
+    ]
+  },
+  {
+    "time": 12.983333,
+    "clipTime": 1.5333330000000007,
+    "frameIndex": 379,
+    "file": "keyframe-0379.jpg",
+    "sheetCrop": [
+      550,
+      140,
+      1478,
+      780
+    ]
+  },
+  {
+    "time": 13.183333,
+    "clipTime": 1.733333,
+    "frameIndex": 385,
+    "file": "keyframe-0385.jpg",
+    "sheetCrop": [
+      550,
+      140,
+      1478,
+      780
+    ]
+  },
+  {
+    "time": 13.483333,
+    "clipTime": 2.0333330000000007,
+    "frameIndex": 393,
+    "file": "keyframe-0393.jpg",
+    "sheetCrop": [
+      550,
+      140,
+      1478,
+      780
+    ]
+  }
+]

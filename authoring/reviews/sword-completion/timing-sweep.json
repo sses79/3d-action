@@ -1,0 +1,2197 @@
+{
+  "at": "2026-10-04T21:33:02.507Z",
+  "sourcePins": [
+    {
+      "id": "move-ual2-sword-regular-a",
+      "revision": 1,
+      "motionHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad"
+    },
+    {
+      "id": "move-ual2-sword-regular-a-rec",
+      "revision": 1,
+      "motionHash": "6477c5f621b3b815e3077fa3c9615e07686d0b09a100b1b102444b92b4c26b19"
+    },
+    {
+      "id": "move-ual2-sword-regular-b",
+      "revision": 1,
+      "motionHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad"
+    },
+    {
+      "id": "move-ual2-sword-regular-b-rec",
+      "revision": 1,
+      "motionHash": "0aef61d9473ceebef4c37ac40c9996b8695ae74afec47e19602508d86571e3e4"
+    },
+    {
+      "id": "move-ual2-sword-regular-c",
+      "revision": 1,
+      "motionHash": "40facb0220ac0f2c99188cb5aa1be89489ee9414b3bb35f3c7e2034eb60faad2"
+    },
+    {
+      "id": "move-ual2-sword-regular-combo",
+      "revision": 1,
+      "motionHash": "ccf002d937d7a5a04eaa22d7f9ddfcfcfd98c09a156bce8522f5cede9f49e2f9"
+    }
+  ],
+  "speeds": [
+    1,
+    1
+  ],
+  "anchor": "none",
+  "productionCompiler": "pose-blend-v1",
+  "transient": true,
+  "results": [
+    {
+      "from": "a",
+      "to": "b",
+      "transition": 0.016666666666666666,
+      "elapsedMs": 52.310542,
+      "seams": [
+        {
+          "time": 0.4333333373069763,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.9876675360474202,
+          "jointVelocityJumpRmsMetersPerSecond": 2.38148452254928,
+          "angularVelocityJumpRmsDegreesPerSecond": 260.2035136208354,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        },
+        {
+          "time": 0.450000003973643,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.4333333373069763,
+            "end": 0.46666667064030964
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.4965831368010146,
+          "jointVelocityJumpRmsMetersPerSecond": 2.052717879554507,
+          "angularVelocityJumpRmsDegreesPerSecond": 243.59049030852503,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/1",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "evidence": {
+            "time": 0.4333333373069763,
+            "index": 1,
+            "before": "m0-motion-0",
+            "after": "join-1",
+            "kind": "join-start",
+            "window": {
+              "start": 0.41666667064030966,
+              "end": 0.450000003973643
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.9876675360474202,
+            "jointVelocityJumpRmsMetersPerSecond": 2.38148452254928,
+            "angularVelocityJumpRmsDegreesPerSecond": 260.2035136208354,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "lowerarm_r"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        },
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.4333333373069763,
+            "end": 0.46666667064030964
+          },
+          "evidence": {
+            "time": 0.450000003973643,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.4333333373069763,
+              "end": 0.46666667064030964
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.4965831368010146,
+            "jointVelocityJumpRmsMetersPerSecond": 2.052717879554507,
+            "angularVelocityJumpRmsDegreesPerSecond": 243.59049030852503,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "lowerarm_r"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "a",
+      "to": "b",
+      "transition": 0.03333333333333333,
+      "elapsedMs": 32.657624999999996,
+      "seams": [
+        {
+          "time": 0.4333333373069763,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.3620316595223883,
+          "jointVelocityJumpRmsMetersPerSecond": 0.9016680622903803,
+          "angularVelocityJumpRmsDegreesPerSecond": 105.48608161474199,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "upperarm_r"
+        },
+        {
+          "time": 0.46666667064030964,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.450000003973643,
+            "end": 0.4833333373069763
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.17556219713378726,
+          "jointVelocityJumpRmsMetersPerSecond": 0.6454337771370114,
+          "angularVelocityJumpRmsDegreesPerSecond": 91.29509947822397,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        }
+      ],
+      "diagnostics": [],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "a",
+      "to": "b",
+      "transition": 0.06,
+      "elapsedMs": 29.760667000000012,
+      "seams": [
+        {
+          "time": 0.4333333373069763,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.04395415907407752,
+          "jointVelocityJumpRmsMetersPerSecond": 0.42915891783533916,
+          "angularVelocityJumpRmsDegreesPerSecond": 78.32270627774716,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        },
+        {
+          "time": 0.4933333373069763,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.47666667064030965,
+            "end": 0.510000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.5136699503904093,
+          "jointVelocityJumpRmsMetersPerSecond": 0.6173970501369583,
+          "angularVelocityJumpRmsDegreesPerSecond": 78.37932830373768,
+          "peakJoint": "calf_r",
+          "peakAngularJoint": "thigh_r"
+        }
+      ],
+      "diagnostics": [],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "a",
+      "to": "b",
+      "transition": 0.12,
+      "elapsedMs": 31.71158300000002,
+      "seams": [
+        {
+          "time": 0.4333333373069763,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.202799112575968,
+          "jointVelocityJumpRmsMetersPerSecond": 0.6939174526475648,
+          "angularVelocityJumpRmsDegreesPerSecond": 106.03001043905863,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        },
+        {
+          "time": 0.5533333373069763,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.5366666706403096,
+            "end": 0.570000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.7006573529026884,
+          "jointVelocityJumpRmsMetersPerSecond": 1.0024122131655262,
+          "angularVelocityJumpRmsDegreesPerSecond": 113.92739433261879,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "thigh_r"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.5366666706403096,
+            "end": 0.570000003973643
+          },
+          "evidence": {
+            "time": 0.5533333373069763,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.5366666706403096,
+              "end": 0.570000003973643
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.7006573529026884,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0024122131655262,
+            "angularVelocityJumpRmsDegreesPerSecond": 113.92739433261879,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "thigh_r"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "a",
+      "to": "b",
+      "transition": 0.2,
+      "elapsedMs": 29.972875000000045,
+      "seams": [
+        {
+          "time": 0.4333333373069763,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.24350514329610642,
+          "jointVelocityJumpRmsMetersPerSecond": 0.777826210861116,
+          "angularVelocityJumpRmsDegreesPerSecond": 114.6241588522676,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        },
+        {
+          "time": 0.6333333373069763,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.6166666706403096,
+            "end": 0.650000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.750305881624331,
+          "jointVelocityJumpRmsMetersPerSecond": 1.1152983854540743,
+          "angularVelocityJumpRmsDegreesPerSecond": 125.31454867078183,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "thigh_r"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.6166666706403096,
+            "end": 0.650000003973643
+          },
+          "evidence": {
+            "time": 0.6333333373069763,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.6166666706403096,
+              "end": 0.650000003973643
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.750305881624331,
+            "jointVelocityJumpRmsMetersPerSecond": 1.1152983854540743,
+            "angularVelocityJumpRmsDegreesPerSecond": 125.31454867078183,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "thigh_r"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "b",
+      "to": "c",
+      "transition": 0.016666666666666666,
+      "elapsedMs": 55.80458299999998,
+      "seams": [
+        {
+          "time": 0.5333333611488342,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 2.1208421305750225,
+          "jointVelocityJumpRmsMetersPerSecond": 3.02760652314783,
+          "angularVelocityJumpRmsDegreesPerSecond": 365.1320214438217,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "foot_l"
+        },
+        {
+          "time": 0.550000027815501,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.5333333611488342,
+            "end": 0.5666666944821677
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 2.129995143277407,
+          "jointVelocityJumpRmsMetersPerSecond": 2.975808753544928,
+          "angularVelocityJumpRmsDegreesPerSecond": 387.3353824055242,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "foot_l"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/1",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "evidence": {
+            "time": 0.5333333611488342,
+            "index": 1,
+            "before": "m0-motion-0",
+            "after": "join-1",
+            "kind": "join-start",
+            "window": {
+              "start": 0.5166666944821675,
+              "end": 0.550000027815501
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 2.1208421305750225,
+            "jointVelocityJumpRmsMetersPerSecond": 3.02760652314783,
+            "angularVelocityJumpRmsDegreesPerSecond": 365.1320214438217,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "foot_l"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        },
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.5333333611488342,
+            "end": 0.5666666944821677
+          },
+          "evidence": {
+            "time": 0.550000027815501,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.5333333611488342,
+              "end": 0.5666666944821677
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 2.129995143277407,
+            "jointVelocityJumpRmsMetersPerSecond": 2.975808753544928,
+            "angularVelocityJumpRmsDegreesPerSecond": 387.3353824055242,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "foot_l"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "b",
+      "to": "c",
+      "transition": 0.03333333333333333,
+      "elapsedMs": 56.04400000000004,
+      "seams": [
+        {
+          "time": 0.5333333611488342,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 1.0811693019082311,
+          "jointVelocityJumpRmsMetersPerSecond": 1.5581906286935983,
+          "angularVelocityJumpRmsDegreesPerSecond": 194.5574465436337,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "foot_l"
+        },
+        {
+          "time": 0.5666666944821676,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.550000027815501,
+            "end": 0.5833333611488343
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 1.0912459472030396,
+          "jointVelocityJumpRmsMetersPerSecond": 1.6788470950370706,
+          "angularVelocityJumpRmsDegreesPerSecond": 231.83866863575642,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "foot_l"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/1",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "evidence": {
+            "time": 0.5333333611488342,
+            "index": 1,
+            "before": "m0-motion-0",
+            "after": "join-1",
+            "kind": "join-start",
+            "window": {
+              "start": 0.5166666944821675,
+              "end": 0.550000027815501
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 1.0811693019082311,
+            "jointVelocityJumpRmsMetersPerSecond": 1.5581906286935983,
+            "angularVelocityJumpRmsDegreesPerSecond": 194.5574465436337,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "foot_l"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        },
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.550000027815501,
+            "end": 0.5833333611488343
+          },
+          "evidence": {
+            "time": 0.5666666944821676,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.550000027815501,
+              "end": 0.5833333611488343
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 1.0912459472030396,
+            "jointVelocityJumpRmsMetersPerSecond": 1.6788470950370706,
+            "angularVelocityJumpRmsDegreesPerSecond": 231.83866863575642,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "foot_l"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "b",
+      "to": "c",
+      "transition": 0.06,
+      "elapsedMs": 54.471082999999965,
+      "seams": [
+        {
+          "time": 0.5333333611488342,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.4364683941337317,
+          "jointVelocityJumpRmsMetersPerSecond": 0.6552799715521046,
+          "angularVelocityJumpRmsDegreesPerSecond": 90.48790926565417,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "foot_l"
+        },
+        {
+          "time": 0.5933333611488343,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.5766666944821676,
+            "end": 0.610000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.4953387787387593,
+          "jointVelocityJumpRmsMetersPerSecond": 1.1693458555318414,
+          "angularVelocityJumpRmsDegreesPerSecond": 158.11975462146606,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.5766666944821676,
+            "end": 0.610000027815501
+          },
+          "evidence": {
+            "time": 0.5933333611488343,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.5766666944821676,
+              "end": 0.610000027815501
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.4953387787387593,
+            "jointVelocityJumpRmsMetersPerSecond": 1.1693458555318414,
+            "angularVelocityJumpRmsDegreesPerSecond": 158.11975462146606,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "lowerarm_r"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "b",
+      "to": "c",
+      "transition": 0.12,
+      "elapsedMs": 65.85350000000005,
+      "seams": [
+        {
+          "time": 0.5333333611488342,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.16358497746833592,
+          "jointVelocityJumpRmsMetersPerSecond": 0.3132362708668464,
+          "angularVelocityJumpRmsDegreesPerSecond": 49.023824088891345,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "calf_l"
+        },
+        {
+          "time": 0.6533333611488342,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.6366666944821675,
+            "end": 0.6700000278155009
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.19570484144501626,
+          "jointVelocityJumpRmsMetersPerSecond": 1.0905758945170105,
+          "angularVelocityJumpRmsDegreesPerSecond": 133.3506593221335,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "calf_r"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.6366666944821675,
+            "end": 0.6700000278155009
+          },
+          "evidence": {
+            "time": 0.6533333611488342,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.6366666944821675,
+              "end": 0.6700000278155009
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.19570484144501626,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0905758945170105,
+            "angularVelocityJumpRmsDegreesPerSecond": 133.3506593221335,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "calf_r"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "b",
+      "to": "c",
+      "transition": 0.2,
+      "elapsedMs": 61.898459,
+      "seams": [
+        {
+          "time": 0.5333333611488342,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.10626710525693885,
+          "jointVelocityJumpRmsMetersPerSecond": 0.26107856572568294,
+          "angularVelocityJumpRmsDegreesPerSecond": 40.76513429563575,
+          "peakJoint": "calf_l",
+          "peakAngularJoint": "calf_l"
+        },
+        {
+          "time": 0.7333333611488342,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.7166666944821675,
+            "end": 0.7500000278155009
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.1297240709885508,
+          "jointVelocityJumpRmsMetersPerSecond": 1.0993950736678533,
+          "angularVelocityJumpRmsDegreesPerSecond": 129.53496845365257,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "calf_r"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.7166666944821675,
+            "end": 0.7500000278155009
+          },
+          "evidence": {
+            "time": 0.7333333611488342,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.7166666944821675,
+              "end": 0.7500000278155009
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.1297240709885508,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0993950736678533,
+            "angularVelocityJumpRmsDegreesPerSecond": 129.53496845365257,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "calf_r"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "a",
+      "to": "a-rec",
+      "transition": 0.016666666666666666,
+      "elapsedMs": 32.54212499999994,
+      "seams": [
+        {
+          "time": 0.4333333373069763,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.2539809235103279,
+          "jointVelocityJumpRmsMetersPerSecond": 0.8296229955462229,
+          "angularVelocityJumpRmsDegreesPerSecond": 119.59740569626992,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        },
+        {
+          "time": 0.450000003973643,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.4333333373069763,
+            "end": 0.46666667064030964
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.32950956102850126,
+          "jointVelocityJumpRmsMetersPerSecond": 1.008629339080369,
+          "angularVelocityJumpRmsDegreesPerSecond": 87.06128769583543,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "thigh_l"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.4333333373069763,
+            "end": 0.46666667064030964
+          },
+          "evidence": {
+            "time": 0.450000003973643,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.4333333373069763,
+              "end": 0.46666667064030964
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.32950956102850126,
+            "jointVelocityJumpRmsMetersPerSecond": 1.008629339080369,
+            "angularVelocityJumpRmsDegreesPerSecond": 87.06128769583543,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "thigh_l"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "a",
+      "to": "a-rec",
+      "transition": 0.03333333333333333,
+      "elapsedMs": 32.451459,
+      "seams": [
+        {
+          "time": 0.4333333373069763,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.26080616456574407,
+          "jointVelocityJumpRmsMetersPerSecond": 0.8297115423480884,
+          "angularVelocityJumpRmsDegreesPerSecond": 119.78401220976964,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        },
+        {
+          "time": 0.46666667064030964,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.450000003973643,
+            "end": 0.4833333373069763
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.32704964598543423,
+          "jointVelocityJumpRmsMetersPerSecond": 1.0088238201107793,
+          "angularVelocityJumpRmsDegreesPerSecond": 86.76892900498142,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "thigh_l"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.450000003973643,
+            "end": 0.4833333373069763
+          },
+          "evidence": {
+            "time": 0.46666667064030964,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.450000003973643,
+              "end": 0.4833333373069763
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.32704964598543423,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0088238201107793,
+            "angularVelocityJumpRmsDegreesPerSecond": 86.76892900498142,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "thigh_l"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "a",
+      "to": "a-rec",
+      "transition": 0.06,
+      "elapsedMs": 32.41587500000003,
+      "seams": [
+        {
+          "time": 0.4333333373069763,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.2652252023953692,
+          "jointVelocityJumpRmsMetersPerSecond": 0.8297830313659854,
+          "angularVelocityJumpRmsDegreesPerSecond": 119.91231500832852,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        },
+        {
+          "time": 0.4933333373069763,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.47666667064030965,
+            "end": 0.510000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.3258093473083402,
+          "jointVelocityJumpRmsMetersPerSecond": 1.0089484986009543,
+          "angularVelocityJumpRmsDegreesPerSecond": 86.61491073070115,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "thigh_l"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.47666667064030965,
+            "end": 0.510000003973643
+          },
+          "evidence": {
+            "time": 0.4933333373069763,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.47666667064030965,
+              "end": 0.510000003973643
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.3258093473083402,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0089484986009543,
+            "angularVelocityJumpRmsDegreesPerSecond": 86.61491073070115,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "thigh_l"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "a",
+      "to": "a-rec",
+      "transition": 0.12,
+      "elapsedMs": 35.53575000000001,
+      "seams": [
+        {
+          "time": 0.4333333373069763,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.2671952935708178,
+          "jointVelocityJumpRmsMetersPerSecond": 0.8298182182655269,
+          "angularVelocityJumpRmsDegreesPerSecond": 119.97129954796027,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        },
+        {
+          "time": 0.5533333373069763,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.5366666706403096,
+            "end": 0.570000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.3252119463539857,
+          "jointVelocityJumpRmsMetersPerSecond": 1.0090175160751087,
+          "angularVelocityJumpRmsDegreesPerSecond": 86.538452610105,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "thigh_l"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.5366666706403096,
+            "end": 0.570000003973643
+          },
+          "evidence": {
+            "time": 0.5533333373069763,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.5366666706403096,
+              "end": 0.570000003973643
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.3252119463539857,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0090175160751087,
+            "angularVelocityJumpRmsDegreesPerSecond": 86.538452610105,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "thigh_l"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "a",
+      "to": "a-rec",
+      "transition": 0.2,
+      "elapsedMs": 36.401958000000036,
+      "seams": [
+        {
+          "time": 0.4333333373069763,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.41666667064030966,
+            "end": 0.450000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.2676740213241153,
+          "jointVelocityJumpRmsMetersPerSecond": 0.82982706630507,
+          "angularVelocityJumpRmsDegreesPerSecond": 119.98579429450086,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "lowerarm_r"
+        },
+        {
+          "time": 0.6333333373069763,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.6166666706403096,
+            "end": 0.650000003973643
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.3250602910064247,
+          "jointVelocityJumpRmsMetersPerSecond": 1.0090361500859408,
+          "angularVelocityJumpRmsDegreesPerSecond": 86.51875594132729,
+          "peakJoint": "hand_r",
+          "peakAngularJoint": "thigh_l"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "connection/velocity-change",
+          "severity": "review",
+          "subject": "/phases/2",
+          "window": {
+            "start": 0.6166666706403096,
+            "end": 0.650000003973643
+          },
+          "evidence": {
+            "time": 0.6333333373069763,
+            "index": 2,
+            "before": "join-1",
+            "after": "m1-motion-0",
+            "kind": "join-end",
+            "window": {
+              "start": 0.6166666706403096,
+              "end": 0.650000003973643
+            },
+            "rootVelocityBefore": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityAfter": [
+              0,
+              0,
+              0
+            ],
+            "rootVelocityJumpMetersPerSecond": 0,
+            "bodyVelocityJumpMetersPerSecond": 0.3250602910064247,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0090361500859408,
+            "angularVelocityJumpRmsDegreesPerSecond": 86.51875594132729,
+            "peakJoint": "hand_r",
+            "peakAngularJoint": "thigh_l"
+          },
+          "supportedFixes": [
+            "Inspect this window in Studio",
+            "Select another source or revise the indicated connection/intent"
+          ]
+        }
+      ],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "b",
+      "to": "b-rec",
+      "transition": 0.016666666666666666,
+      "elapsedMs": 34.09212500000001,
+      "seams": [
+        {
+          "time": 0.5333333611488342,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.08063251711996569,
+          "jointVelocityJumpRmsMetersPerSecond": 0.24405190081529796,
+          "angularVelocityJumpRmsDegreesPerSecond": 37.367771496380776,
+          "peakJoint": "calf_l",
+          "peakAngularJoint": "calf_l"
+        },
+        {
+          "time": 0.550000027815501,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.5333333611488342,
+            "end": 0.5666666944821677
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.05723297099621537,
+          "jointVelocityJumpRmsMetersPerSecond": 0.14008220699571058,
+          "angularVelocityJumpRmsDegreesPerSecond": 22.493286576280074,
+          "peakJoint": "Head",
+          "peakAngularJoint": "thigh_l"
+        }
+      ],
+      "diagnostics": [],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "b",
+      "to": "b-rec",
+      "transition": 0.03333333333333333,
+      "elapsedMs": 38.82691699999998,
+      "seams": [
+        {
+          "time": 0.5333333611488342,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.08063251711996569,
+          "jointVelocityJumpRmsMetersPerSecond": 0.24405235660462943,
+          "angularVelocityJumpRmsDegreesPerSecond": 36.79060618219134,
+          "peakJoint": "calf_l",
+          "peakAngularJoint": "calf_l"
+        },
+        {
+          "time": 0.5666666944821676,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.550000027815501,
+            "end": 0.5833333611488343
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.05723297099621537,
+          "jointVelocityJumpRmsMetersPerSecond": 0.1400825014771492,
+          "angularVelocityJumpRmsDegreesPerSecond": 21.52643725223045,
+          "peakJoint": "Head",
+          "peakAngularJoint": "thigh_l"
+        }
+      ],
+      "diagnostics": [],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "b",
+      "to": "b-rec",
+      "transition": 0.06,
+      "elapsedMs": 40.33220899999992,
+      "seams": [
+        {
+          "time": 0.5333333611488342,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.08063251711996569,
+          "jointVelocityJumpRmsMetersPerSecond": 0.24405264045884917,
+          "angularVelocityJumpRmsDegreesPerSecond": 36.62392061263802,
+          "peakJoint": "calf_l",
+          "peakAngularJoint": "calf_l"
+        },
+        {
+          "time": 0.5933333611488343,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.5766666944821676,
+            "end": 0.610000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.05723297099621537,
+          "jointVelocityJumpRmsMetersPerSecond": 0.14008266889393478,
+          "angularVelocityJumpRmsDegreesPerSecond": 21.255730937950904,
+          "peakJoint": "Head",
+          "peakAngularJoint": "thigh_l"
+        }
+      ],
+      "diagnostics": [],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "b",
+      "to": "b-rec",
+      "transition": 0.12,
+      "elapsedMs": 42.2265000000001,
+      "seams": [
+        {
+          "time": 0.5333333611488342,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.08063251711996569,
+          "jointVelocityJumpRmsMetersPerSecond": 0.24405276452870514,
+          "angularVelocityJumpRmsDegreesPerSecond": 36.5983407419685,
+          "peakJoint": "calf_l",
+          "peakAngularJoint": "calf_l"
+        },
+        {
+          "time": 0.6533333611488342,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.6366666944821675,
+            "end": 0.6700000278155009
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.05723297099621537,
+          "jointVelocityJumpRmsMetersPerSecond": 0.14008275902987,
+          "angularVelocityJumpRmsDegreesPerSecond": 21.202258968323626,
+          "peakJoint": "Head",
+          "peakAngularJoint": "thigh_l"
+        }
+      ],
+      "diagnostics": [],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    {
+      "from": "b",
+      "to": "b-rec",
+      "transition": 0.2,
+      "elapsedMs": 44.16883299999995,
+      "seams": [
+        {
+          "time": 0.5333333611488342,
+          "index": 1,
+          "before": "m0-motion-0",
+          "after": "join-1",
+          "kind": "join-start",
+          "window": {
+            "start": 0.5166666944821675,
+            "end": 0.550000027815501
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.08063251711996569,
+          "jointVelocityJumpRmsMetersPerSecond": 0.2440527944618487,
+          "angularVelocityJumpRmsDegreesPerSecond": 36.596492105957125,
+          "peakJoint": "calf_l",
+          "peakAngularJoint": "calf_l"
+        },
+        {
+          "time": 0.7333333611488342,
+          "index": 2,
+          "before": "join-1",
+          "after": "m1-motion-0",
+          "kind": "join-end",
+          "window": {
+            "start": 0.7166666944821675,
+            "end": 0.7500000278155009
+          },
+          "rootVelocityBefore": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityAfter": [
+            0,
+            0,
+            0
+          ],
+          "rootVelocityJumpMetersPerSecond": 0,
+          "bodyVelocityJumpMetersPerSecond": 0.05723297099621138,
+          "jointVelocityJumpRmsMetersPerSecond": 0.14008278437984045,
+          "angularVelocityJumpRmsDegreesPerSecond": 21.198435027952545,
+          "peakJoint": "Head",
+          "peakAngularJoint": "thigh_l"
+        }
+      ],
+      "diagnostics": [],
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    }
+  ]
+}

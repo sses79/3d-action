@@ -1,0 +1,17 @@
+import {readFileSync,writeFileSync,mkdirSync,renameSync} from 'node:fs';
+import {dirname} from 'node:path';
+import {randomUUID} from 'node:crypto';
+export class RunLogs {
+ data:any={version:1,activeRunId:null,runs:[]};
+ constructor(public path:string){try{this.data=JSON.parse(readFileSync(path,'utf8'));if(this.data.version!==1||!Array.isArray(this.data.runs))throw Error('Invalid run log storage');let recovered=false;for(const run of this.data.runs)for(const event of run.events){if(event.source==='mcp'&&event.status==='running'){event.status='interrupted';event.error='Service restarted before the operation finished; duration unknown';recovered=true;}}if(recovered)this.save();}catch(e:any){if(e.code!=='ENOENT')throw e;}}
+ save(){mkdirSync(dirname(this.path),{recursive:true});writeFileSync(this.path+'.tmp',JSON.stringify(this.data));renameSync(this.path+'.tmp',this.path);}
+ run(id:string){const run=this.data.runs.find((r:any)=>r.id===id);if(!run)throw Error('Unknown run ID');return run;}
+ text(value:any,max:number){if(typeof value!=='string'||!value.trim()||value.length>max)throw Error('Invalid log text');return value;}
+ begin(prompt:string,actionId?:string){this.text(prompt,8000);if(actionId!==undefined&&!/^[-a-z0-9]{1,48}$/.test(actionId))throw Error('Invalid action ID');if(this.data.activeRunId)throw Error('Finish the active run before starting another');if(this.data.runs.length>=1000)throw Error('Run storage limit reached');const run={id:randomUUID(),prompt,actionId:actionId??null,status:'running',startedAt:new Date().toISOString(),finishedAt:null,events:[]};this.data.runs.push(run);this.data.activeRunId=run.id;this.event(run.id,{source:'llm',name:'prompt',phase:'prompt',status:'completed',note:prompt});return this.summary(run);}
+ event(id:string,value:any){const run=this.run(id);if(run.status!=='running')throw Error('Run is closed');if(run.events.length>=5000)throw Error('Run event limit reached');const timestamp=new Date().toISOString();const event={index:run.events.length+1,timestamp,relativeMs:Math.max(0,Date.parse(timestamp)-Date.parse(run.startedAt)),...value};run.events.push(event);this.save();return event;}
+ append(id:string,phase:string,note:string){this.text(phase,64);this.text(note,2000);return this.event(id,{source:'llm',name:phase,phase,status:'completed',note});}
+ finish(id:string,status:string,note:string,actionId?:string){const run=this.run(id);if(run.status!=='running'||!['completed','failed','cancelled'].includes(status))throw Error('Invalid run finish');this.text(note,2000);this.event(id,{source:'llm',name:'finish',phase:'finish',status,note});run.status=status;run.finishedAt=new Date().toISOString();if(actionId)run.actionId=actionId;this.data.activeRunId=null;this.save();return this.summary(run);}
+ summary(run:any){return {id:run.id,prompt:run.prompt,actionId:run.actionId,status:run.status,startedAt:run.startedAt,finishedAt:run.finishedAt,elapsedMs:Math.max(0,Date.parse(run.finishedAt||new Date().toISOString())-Date.parse(run.startedAt)),actionRevision:run.actionRevision??null,eventCount:run.events.length,toolCalls:run.events.filter((e:any)=>e.source==='mcp').length,toolElapsedMs:run.events.filter((e:any)=>e.source==='mcp').reduce((sum:number,e:any)=>sum+(e.elapsedMs||0),0)};}
+ list(actionId?:string){return this.data.runs.filter((r:any)=>!actionId||r.actionId===actionId).slice().reverse().map((r:any)=>this.summary(r));}
+ get(id:string){const run=this.run(id);return {...this.summary(run),events:structuredClone(run.events)};}
+}

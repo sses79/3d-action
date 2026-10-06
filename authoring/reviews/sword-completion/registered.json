@@ -1,0 +1,576 @@
+{
+  "at": "2026-10-04T21:40:52.961Z",
+  "runId": "956b69dd-8727-453a-9bf5-f2170e5ed67b",
+  "results": [
+    {
+      "operation": "review_movement_contacts",
+      "result": {
+        "schemaVersion": 1,
+        "movementId": "move-ual2-sword-regular-a-rec",
+        "sourceRevision": 1,
+        "motionHash": "6477c5f621b3b815e3077fa3c9615e07686d0b09a100b1b102444b92b4c26b19",
+        "intervals": [
+          {
+            "foot": "left",
+            "start": 0.75,
+            "end": 0.9666666388511658,
+            "decision": "supported",
+            "notes": "Near-ground stance in sampled Front/Side start/mid/end frames. Small measured stance drift retained; not strict planted-foot or physical balance validation.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.011484570342840374,
+              "pathMeters": 0.011486040478817815,
+              "maxSpeedMetersPerSecond": 0.13636889715865758,
+              "minHeightMeters": 0.014791114552503842,
+              "maxHeightMeters": 0.01481751209566054,
+              "sampleCount": 14
+            }
+          },
+          {
+            "foot": "right",
+            "start": 0.75,
+            "end": 0.9666666388511658,
+            "decision": "supported",
+            "notes": "Near-ground stance in sampled Front/Side start/mid/end frames. Small measured stance drift retained; not strict planted-foot or physical balance validation.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.0114694192349927,
+              "pathMeters": 0.011470421888835812,
+              "maxSpeedMetersPerSecond": 0.13555163721131872,
+              "minHeightMeters": 0.015326555778746614,
+              "maxHeightMeters": 0.01537545351162746,
+              "sampleCount": 14
+            }
+          }
+        ],
+        "reviewedAt": "2026-10-04T21:40:52.251Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T21:40:52.251Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM sampled review of every measured candidate plus source progression. Uncovered times remain unknown. Sword prop absent on mannequin; no weapon collision, physical support or balance validation.",
+        "artifacts": [
+          "authoring/reviews/sword-completion/all-contact-candidates.png",
+          "authoring/reviews/sword-completion/source-a-rec.png",
+          "authoring/reviews/sword-completion/frames/frames.json"
+        ],
+        "physicalValidation": "not-performed",
+        "uncoveredIntervals": "unknown",
+        "reviewRevision": 2
+      },
+      "clientElapsedMs": 58.41
+    },
+    {
+      "operation": "review_movement_contacts",
+      "result": {
+        "schemaVersion": 1,
+        "movementId": "move-ual2-sword-regular-c",
+        "sourceRevision": 1,
+        "motionHash": "40facb0220ac0f2c99188cb5aa1be89489ee9414b3bb35f3c7e2034eb60faad2",
+        "intervals": [
+          {
+            "foot": "left",
+            "start": 1.05,
+            "end": 1.1666666666666667,
+            "decision": "uncertain",
+            "notes": "Braced pose with opposite leg raised; elevated foot pivot and flat render do not establish true ground support. Keep uncertain; no anchor.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.0037634536994519377,
+              "pathMeters": 0.008243211403913906,
+              "maxSpeedMetersPerSecond": 0.12644997625758814,
+              "minHeightMeters": 0.040093741690510554,
+              "maxHeightMeters": 0.040197478895527855,
+              "sampleCount": 8
+            }
+          },
+          {
+            "foot": "left",
+            "start": 1.5833333333333333,
+            "end": 1.6833333333333333,
+            "decision": "supported",
+            "notes": "Near-ground stance in sampled Front/Side start/mid/end frames. Small measured stance drift retained; not strict planted-foot or physical balance validation.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.0059566384825801314,
+              "pathMeters": 0.006081101714890702,
+              "maxSpeedMetersPerSecond": 0.10911113566429693,
+              "minHeightMeters": 0.014621541393556259,
+              "maxHeightMeters": 0.014814722463292448,
+              "sampleCount": 7
+            }
+          },
+          {
+            "foot": "right",
+            "start": 1.45,
+            "end": 1.6833333333333333,
+            "decision": "supported",
+            "notes": "Near-ground stance in sampled Front/Side start/mid/end frames. Small measured stance drift retained; not strict planted-foot or physical balance validation.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.011605993796621146,
+              "pathMeters": 0.012029929148445,
+              "maxSpeedMetersPerSecond": 0.1104825545245531,
+              "minHeightMeters": 0.015339495834435654,
+              "maxHeightMeters": 0.015388041066382876,
+              "sampleCount": 15
+            }
+          }
+        ],
+        "reviewedAt": "2026-10-04T21:40:52.310Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T21:40:52.310Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM sampled review of every measured candidate plus source progression. Uncovered times remain unknown. Sword prop absent on mannequin; no weapon collision, physical support or balance validation.",
+        "artifacts": [
+          "authoring/reviews/sword-completion/all-contact-candidates.png",
+          "authoring/reviews/sword-completion/source-c.png",
+          "authoring/reviews/sword-completion/frames/frames.json"
+        ],
+        "physicalValidation": "not-performed",
+        "uncoveredIntervals": "unknown",
+        "reviewRevision": 1
+      },
+      "clientElapsedMs": 59.1
+    },
+    {
+      "operation": "review_movement_contacts",
+      "result": {
+        "schemaVersion": 1,
+        "movementId": "move-ual2-sword-regular-combo",
+        "sourceRevision": 1,
+        "motionHash": "ccf002d937d7a5a04eaa22d7f9ddfcfcfd98c09a156bce8522f5cede9f49e2f9",
+        "intervals": [
+          {
+            "foot": "left",
+            "start": 1.7166666666666666,
+            "end": 2.0833333333333335,
+            "decision": "uncertain",
+            "notes": "Braced pose with opposite leg raised; elevated foot pivot and flat render do not establish true ground support. Keep uncertain; no anchor.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.02492954931823295,
+              "pathMeters": 0.028523184215870908,
+              "maxSpeedMetersPerSecond": 0.1187996857799673,
+              "minHeightMeters": 0.03198051846484304,
+              "maxHeightMeters": 0.03214739460670435,
+              "sampleCount": 23
+            }
+          },
+          {
+            "foot": "left",
+            "start": 2.4833333333333334,
+            "end": 2.6166666666666667,
+            "decision": "supported",
+            "notes": "Near-ground stance in sampled Front/Side start/mid/end frames. Small measured stance drift retained; not strict planted-foot or physical balance validation.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.010377084697119322,
+              "pathMeters": 0.010512732222570504,
+              "maxSpeedMetersPerSecond": 0.14845173437308756,
+              "minHeightMeters": 0.014625867218154565,
+              "maxHeightMeters": 0.014816050730259878,
+              "sampleCount": 9
+            }
+          },
+          {
+            "foot": "left",
+            "start": 2.85,
+            "end": 3,
+            "decision": "supported",
+            "notes": "Near-ground stance in sampled Front/Side start/mid/end frames. Small measured stance drift retained; not strict planted-foot or physical balance validation.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.00913227107218023,
+              "pathMeters": 0.009132544972084624,
+              "maxSpeedMetersPerSecond": 0.1454500621975518,
+              "minHeightMeters": 0.014801332903470424,
+              "maxHeightMeters": 0.014809733640716388,
+              "sampleCount": 10
+            }
+          },
+          {
+            "foot": "right",
+            "start": 2.35,
+            "end": 2.6,
+            "decision": "supported",
+            "notes": "Near-ground stance in sampled Front/Side start/mid/end frames. Small measured stance drift retained; not strict planted-foot or physical balance validation.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.013580868289045712,
+              "pathMeters": 0.014001804914898757,
+              "maxSpeedMetersPerSecond": 0.11252511582490747,
+              "minHeightMeters": 0.015326766387099247,
+              "maxHeightMeters": 0.015398765331453415,
+              "sampleCount": 16
+            }
+          },
+          {
+            "foot": "right",
+            "start": 2.85,
+            "end": 3,
+            "decision": "supported",
+            "notes": "Near-ground stance in sampled Front/Side start/mid/end frames. Small measured stance drift retained; not strict planted-foot or physical balance validation.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0.0091179218851018,
+              "pathMeters": 0.00911882691675015,
+              "maxSpeedMetersPerSecond": 0.144672281305559,
+              "minHeightMeters": 0.015324494982092055,
+              "maxHeightMeters": 0.015376054799491334,
+              "sampleCount": 10
+            }
+          }
+        ],
+        "reviewedAt": "2026-10-04T21:40:52.397Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T21:40:52.397Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM sampled review of every measured candidate plus source progression. Uncovered times remain unknown. Sword prop absent on mannequin; no weapon collision, physical support or balance validation.",
+        "artifacts": [
+          "authoring/reviews/sword-completion/all-contact-candidates.png",
+          "authoring/reviews/sword-completion/source-combo.png",
+          "authoring/reviews/sword-completion/frames/frames.json"
+        ],
+        "physicalValidation": "not-performed",
+        "uncoveredIntervals": "unknown",
+        "reviewRevision": 2
+      },
+      "clientElapsedMs": 85.54
+    },
+    {
+      "operation": "review_connection_policy",
+      "result": {
+        "schemaVersion": 1,
+        "contractId": "regular-a-to-b",
+        "fromRevision": 1,
+        "toRevision": 1,
+        "fromHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad",
+        "toHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad",
+        "decision": "supported",
+        "configuration": {
+          "duration": 0.06,
+          "fromSpeed": 1,
+          "toSpeed": 1,
+          "anchor": "none"
+        },
+        "evidenceAction": {
+          "id": "sword-tight-join-review",
+          "revision": 1,
+          "motionHash": "0af4b353ab86d59168008f4059f4dc568bb0d4e17df981589f6014e3542713a4",
+          "step": 1
+        },
+        "seams": [
+          {
+            "time": 0.4333333373069763,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 0.42915891783533916,
+            "angularVelocityJumpRmsDegreesPerSecond": 78.32270627774716
+          },
+          {
+            "time": 0.4933333373069763,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 0.6173970501369583,
+            "angularVelocityJumpRmsDegreesPerSecond": 78.37932830373768
+          }
+        ],
+        "flagCodes": [],
+        "reviewedAt": "2026-10-04T21:40:52.589Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T21:40:52.589Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "0.06s blend: endpoint poses progress smoothly in sampled Front/Side renders; both measured boundary changes below configured thresholds. Supports this exact source/speed/timing only; no anchor or physical certification. Prior 0.12s flagged policy retained in history.",
+        "artifacts": [
+          "authoring/reviews/sword-completion/sword-tight-join-review.png",
+          "authoring/reviews/sword-completion/frames/frames.json",
+          "authoring/reviews/sword-completion/timing-sweep.json"
+        ],
+        "physicalValidation": "not-performed",
+        "reviewRevision": 2
+      },
+      "clientElapsedMs": 12.71
+    },
+    {
+      "operation": "review_connection_policy",
+      "result": {
+        "schemaVersion": 1,
+        "contractId": "regular-b-to-c",
+        "fromRevision": 1,
+        "toRevision": 1,
+        "fromHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad",
+        "toHash": "40facb0220ac0f2c99188cb5aa1be89489ee9414b3bb35f3c7e2034eb60faad2",
+        "decision": "needs-review",
+        "configuration": {
+          "duration": 0.12,
+          "fromSpeed": 1,
+          "toSpeed": 1,
+          "anchor": "none"
+        },
+        "evidenceAction": {
+          "id": "sword-tight-join-review",
+          "revision": 1,
+          "motionHash": "0af4b353ab86d59168008f4059f4dc568bb0d4e17df981589f6014e3542713a4",
+          "step": 2
+        },
+        "seams": [
+          {
+            "time": 1.0266666984558106,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 0.33393242777108423,
+            "angularVelocityJumpRmsDegreesPerSecond": 51.84576200806676
+          },
+          {
+            "time": 1.1466666984558107,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0906449550057327,
+            "angularVelocityJumpRmsDegreesPerSecond": 133.2362182482187
+          }
+        ],
+        "flagCodes": [
+          "connection/velocity-change"
+        ],
+        "reviewedAt": "2026-10-04T21:40:52.687Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T21:40:52.687Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "0.12s blend remains nearly static at closely matched source poses; outgoing velocity-change flag persists. All five tested durations retain flags. Prefer authored Combo for full attack chain; do not stretch the blend to claim approval.",
+        "artifacts": [
+          "authoring/reviews/sword-completion/sword-tight-join-review.png",
+          "authoring/reviews/sword-completion/frames/frames.json",
+          "authoring/reviews/sword-completion/timing-sweep.json"
+        ],
+        "physicalValidation": "not-performed",
+        "reviewRevision": 2
+      },
+      "clientElapsedMs": 22.79
+    },
+    {
+      "operation": "review_connection_policy",
+      "result": {
+        "schemaVersion": 1,
+        "contractId": "regular-a-to-a-rec",
+        "fromRevision": 1,
+        "toRevision": 1,
+        "fromHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad",
+        "toHash": "6477c5f621b3b815e3077fa3c9615e07686d0b09a100b1b102444b92b4c26b19",
+        "decision": "needs-review",
+        "configuration": {
+          "duration": 0.12,
+          "fromSpeed": 1,
+          "toSpeed": 1,
+          "anchor": "none"
+        },
+        "evidenceAction": {
+          "id": "sword-a-recovery-review",
+          "revision": 1,
+          "motionHash": "aecb1d149c5c2b61029ee42b35f49f3901799ec08a7016b3c114ec14b4c4ff2d",
+          "step": 1
+        },
+        "seams": [
+          {
+            "time": 0.4333333373069763,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 0.8298182182655269,
+            "angularVelocityJumpRmsDegreesPerSecond": 119.97129954796027
+          },
+          {
+            "time": 0.5533333373069763,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 1.0090175160751087,
+            "angularVelocityJumpRmsDegreesPerSecond": 86.538452610105
+          }
+        ],
+        "flagCodes": [
+          "connection/velocity-change"
+        ],
+        "reviewedAt": "2026-10-04T21:40:52.763Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T21:40:52.763Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "Sampled Front/Side endpoint poses match, but inserted hold then recovery retains a 1.009m/s RMS change. All five tested durations flag. Keep needs-review; no threshold relaxation.",
+        "artifacts": [
+          "authoring/reviews/sword-completion/sword-a-recovery-review.png",
+          "authoring/reviews/sword-completion/frames/frames.json",
+          "authoring/reviews/sword-completion/timing-sweep.json"
+        ],
+        "physicalValidation": "not-performed",
+        "reviewRevision": 1
+      },
+      "clientElapsedMs": 28.32
+    },
+    {
+      "operation": "review_connection_policy",
+      "result": {
+        "schemaVersion": 1,
+        "contractId": "regular-b-to-b-rec",
+        "fromRevision": 1,
+        "toRevision": 1,
+        "fromHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad",
+        "toHash": "0aef61d9473ceebef4c37ac40c9996b8695ae74afec47e19602508d86571e3e4",
+        "decision": "supported",
+        "configuration": {
+          "duration": 0.12,
+          "fromSpeed": 1,
+          "toSpeed": 1,
+          "anchor": "none"
+        },
+        "evidenceAction": {
+          "id": "sword-b-recovery-review",
+          "revision": 1,
+          "motionHash": "12e2993e586b0ecc00548287b391a3c8594aad7262882a77ac3ce0b8b75847c4",
+          "step": 1
+        },
+        "seams": [
+          {
+            "time": 0.5333333611488342,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 0.24405276452870514,
+            "angularVelocityJumpRmsDegreesPerSecond": 36.5983407419685
+          },
+          {
+            "time": 0.6533333611488342,
+            "rootVelocityJumpMetersPerSecond": 0,
+            "jointVelocityJumpRmsMetersPerSecond": 0.14008275902987,
+            "angularVelocityJumpRmsDegreesPerSecond": 21.202258968323626
+          }
+        ],
+        "flagCodes": [],
+        "reviewedAt": "2026-10-04T21:40:52.953Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-04T21:40:52.953Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "Sampled Front/Side poses remain coherent across 0.12s hold-like blend into authored recovery. Both measured boundary changes below thresholds. Exact 1×/0.12s/no-anchor configuration only; physical balance unverified.",
+        "artifacts": [
+          "authoring/reviews/sword-completion/sword-b-recovery-review.png",
+          "authoring/reviews/sword-completion/frames/frames.json",
+          "authoring/reviews/sword-completion/timing-sweep.json"
+        ],
+        "physicalValidation": "not-performed",
+        "reviewRevision": 1
+      },
+      "clientElapsedMs": 132.1
+    }
+  ]
+}

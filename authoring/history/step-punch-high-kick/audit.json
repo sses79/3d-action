@@ -1,0 +1,243 @@
+[
+  {
+    "revision": 1,
+    "name": "Pouch → Coil → Launch",
+    "duration": 2.85,
+    "trackCount": 17,
+    "changedTracks": [],
+    "measurements": []
+  },
+  {
+    "revision": 2,
+    "name": "Pouch → Coil → Launch",
+    "duration": 2.85,
+    "trackCount": 17,
+    "changedTracks": [
+      "upperarm_r:rotation",
+      "lowerarm_r:rotation"
+    ],
+    "measurements": []
+  },
+  {
+    "revision": 3,
+    "name": "Step → Punch → High Kick",
+    "duration": 2.45,
+    "trackCount": 47,
+    "changedTracks": [
+      "pelvis:rotation",
+      "spine_01:rotation",
+      "spine_02:rotation",
+      "spine_03:rotation",
+      "Head:rotation",
+      "upperarm_r:rotation",
+      "lowerarm_r:rotation",
+      "upperarm_l:rotation",
+      "lowerarm_l:rotation",
+      "thigh_r:rotation",
+      "calf_r:rotation",
+      "foot_r:rotation",
+      "thigh_l:rotation",
+      "calf_l:rotation",
+      "foot_l:rotation",
+      "pelvis:position",
+      "$root:position",
+      "index_01_l:rotation",
+      "index_02_l:rotation",
+      "index_03_l:rotation",
+      "middle_01_l:rotation",
+      "middle_02_l:rotation",
+      "middle_03_l:rotation",
+      "pinky_01_l:rotation",
+      "pinky_02_l:rotation",
+      "pinky_03_l:rotation",
+      "ring_01_l:rotation",
+      "ring_02_l:rotation",
+      "ring_03_l:rotation",
+      "thumb_01_l:rotation",
+      "thumb_02_l:rotation",
+      "thumb_03_l:rotation",
+      "index_01_r:rotation",
+      "index_02_r:rotation",
+      "index_03_r:rotation",
+      "middle_01_r:rotation",
+      "middle_02_r:rotation",
+      "middle_03_r:rotation",
+      "pinky_01_r:rotation",
+      "pinky_02_r:rotation",
+      "pinky_03_r:rotation",
+      "ring_01_r:rotation",
+      "ring_02_r:rotation",
+      "ring_03_r:rotation",
+      "thumb_01_r:rotation",
+      "thumb_02_r:rotation",
+      "thumb_03_r:rotation"
+    ],
+    "measurements": [
+      {
+        "time": 1.33,
+        "kneeBendDeg": 87.32,
+        "toeToShinDeg": 109.44,
+        "leftAnkleHeightM": 1.366,
+        "headBehindPelvisM": 0.017
+      },
+      {
+        "time": 1.42,
+        "kneeBendDeg": 43.03,
+        "toeToShinDeg": 109.85,
+        "leftAnkleHeightM": 1.58,
+        "headBehindPelvisM": 0.031
+      },
+      {
+        "time": 1.48,
+        "kneeBendDeg": 62.56,
+        "toeToShinDeg": 118.66,
+        "leftAnkleHeightM": 1.503,
+        "headBehindPelvisM": 0.031
+      },
+      {
+        "time": 1.68,
+        "kneeBendDeg": 143.14,
+        "toeToShinDeg": 109.2,
+        "leftAnkleHeightM": 0.91,
+        "headBehindPelvisM": -0.009
+      }
+    ]
+  },
+  {
+    "revision": 4,
+    "name": "Step → Punch → High Kick",
+    "duration": 2.45,
+    "trackCount": 47,
+    "changedTracks": [
+      "thigh_l:rotation",
+      "calf_l:rotation",
+      "foot_l:rotation"
+    ],
+    "measurements": [
+      {
+        "time": 1.33,
+        "kneeBendDeg": 84.09,
+        "toeToShinDeg": 105.69,
+        "leftAnkleHeightM": 1.336,
+        "headBehindPelvisM": 0.017
+      },
+      {
+        "time": 1.42,
+        "kneeBendDeg": 23.49,
+        "toeToShinDeg": 90.65,
+        "leftAnkleHeightM": 1.52,
+        "headBehindPelvisM": 0.031
+      },
+      {
+        "time": 1.48,
+        "kneeBendDeg": 42.02,
+        "toeToShinDeg": 98.43,
+        "leftAnkleHeightM": 1.471,
+        "headBehindPelvisM": 0.031
+      },
+      {
+        "time": 1.68,
+        "kneeBendDeg": 143.14,
+        "toeToShinDeg": 109.2,
+        "leftAnkleHeightM": 0.91,
+        "headBehindPelvisM": -0.009
+      }
+    ]
+  },
+  {
+    "revision": 5,
+    "name": "Step → Punch → High Kick",
+    "duration": 2.45,
+    "trackCount": 47,
+    "changedTracks": [
+      "thigh_l:rotation",
+      "calf_l:rotation",
+      "foot_l:rotation"
+    ],
+    "measurements": [
+      {
+        "time": 1.33,
+        "kneeBendDeg": 39.34,
+        "toeToShinDeg": 20.81,
+        "leftAnkleHeightM": 1.455,
+        "headBehindPelvisM": 0.017
+      },
+      {
+        "time": 1.42,
+        "kneeBendDeg": 1.25,
+        "toeToShinDeg": 0,
+        "leftAnkleHeightM": 1.533,
+        "headBehindPelvisM": 0.031
+      },
+      {
+        "time": 1.48,
+        "kneeBendDeg": 1.23,
+        "toeToShinDeg": 0,
+        "leftAnkleHeightM": 1.511,
+        "headBehindPelvisM": 0.031
+      },
+      {
+        "time": 1.68,
+        "kneeBendDeg": 143.14,
+        "toeToShinDeg": 109.2,
+        "leftAnkleHeightM": 0.91,
+        "headBehindPelvisM": -0.009
+      }
+    ]
+  },
+  {
+    "revision": 6,
+    "name": "Step → Punch → High Kick",
+    "duration": 2.45,
+    "trackCount": 47,
+    "changedTracks": [
+      "pelvis:rotation",
+      "spine_01:rotation",
+      "spine_02:rotation",
+      "spine_03:rotation",
+      "Head:rotation",
+      "upperarm_r:rotation",
+      "lowerarm_r:rotation",
+      "upperarm_l:rotation",
+      "lowerarm_l:rotation",
+      "thigh_r:rotation",
+      "calf_r:rotation",
+      "foot_r:rotation",
+      "thigh_l:rotation",
+      "calf_l:rotation",
+      "foot_l:rotation",
+      "pelvis:position",
+      "$root:position"
+    ],
+    "measurements": [
+      {
+        "time": 1.33,
+        "kneeBendDeg": 1.25,
+        "toeToShinDeg": 0,
+        "leftAnkleHeightM": 1.488,
+        "headBehindPelvisM": 0.079
+      },
+      {
+        "time": 1.42,
+        "kneeBendDeg": 1.25,
+        "toeToShinDeg": 0,
+        "leftAnkleHeightM": 1.533,
+        "headBehindPelvisM": 0.109
+      },
+      {
+        "time": 1.48,
+        "kneeBendDeg": 1.23,
+        "toeToShinDeg": 0,
+        "leftAnkleHeightM": 1.511,
+        "headBehindPelvisM": 0.111
+      },
+      {
+        "time": 1.68,
+        "kneeBendDeg": 143.14,
+        "toeToShinDeg": 109.2,
+        "leftAnkleHeightM": 0.91,
+        "headBehindPelvisM": -0.049
+      }
+    ]
+  }
+]

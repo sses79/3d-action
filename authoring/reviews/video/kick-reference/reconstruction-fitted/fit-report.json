@@ -1,0 +1,20 @@
+{
+  "algorithm": "orthographic-landmark-fit-v1",
+  "iterations": 400,
+  "cameraScale": 1.0050422549247742,
+  "fitSeconds": 0.5243842080235481,
+  "processWallSeconds": 3.0012496248818934,
+  "rightKneePeakDegrees": {
+    "before": 61.81264114379883,
+    "after": 179.9440460205078
+  },
+  "projectionRMS": 0.006841343827545643,
+  "segmentLengthRMS": 0.008349135518074036,
+  "limits": [
+    "Orthographic camera assumption",
+    "Soft segment lengths; runtime retarget preserves actual rig lengths",
+    "Occluded/misassigned observations may distort the fit",
+    "Near-straight 2D knees assumed near-straight in 3D for this side-view fixture only",
+    "Depth prior remains ambiguous; no contacts or joint-limit solver"
+  ]
+}

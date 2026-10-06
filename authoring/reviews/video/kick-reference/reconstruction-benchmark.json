@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "status": "benchmark-completed-quality-target-failed",
+  "inputWindow": [
+    11.45,
+    13.75
+  ],
+  "framesEstimated": 70,
+  "trials": [
+    {
+      "id": "reconstruction",
+      "poseTimingSeconds": {
+        "imports": 1.5999872500542551,
+        "modelLoad": 0.09181445790454745,
+        "warmup": 1.4287403330672532,
+        "predictions": 2.684135999996215,
+        "wall": 11.306294874986634
+      },
+      "liftTimingSeconds": {
+        "imports": 1.6077022079844028,
+        "preparation": 0.016389167169108987,
+        "modelLoad": 0.37558937491849065,
+        "firstInference": 0.26711954199709,
+        "warmInferences": [
+          0.2512407088652253,
+          0.2504590000025928,
+          0.2414561661425978
+        ],
+        "rawInputInference": 0.2645101670641452,
+        "processWall": 3.356643208069727
+      },
+      "warmMedianSeconds": 0.2504590000025928,
+      "retargetTimingMs": {
+        "assetLoad": 89.413542,
+        "retargetAndBake": 24.515333999999996,
+        "wall": 127.976042
+      },
+      "status": "failed-lateral-extension"
+    },
+    {
+      "id": "reconstruction-crop",
+      "poseTimingSeconds": {
+        "imports": 2.031976666999981,
+        "modelLoad": 0.12173391692340374,
+        "warmup": 1.3446729162242264,
+        "predictions": 4.147663916926831,
+        "wall": 13.484166125068441
+      },
+      "liftTimingSeconds": {
+        "imports": 1.1865521250292659,
+        "preparation": 0.012553249951452017,
+        "modelLoad": 0.38574120798148215,
+        "firstInference": 0.27047866699285805,
+        "warmInferences": [
+          0.2861630420666188,
+          0.30348612484522164,
+          0.2671647500246763
+        ],
+        "rawInputInference": 0.24853900005109608,
+        "processWall": 3.027440542122349
+      },
+      "warmMedianSeconds": 0.2861630420666188,
+      "retargetTimingMs": {
+        "assetLoad": 68.62645899999998,
+        "retargetAndBake": 18.59049999999999,
+        "wall": 94.564875
+      },
+      "status": "failed-lateral-extension"
+    },
+    {
+      "id": "reconstruction-small",
+      "poseTimingSeconds": {
+        "imports": 1.5080617498606443,
+        "modelLoad": 0.08226604200899601,
+        "warmup": 1.227505834074691,
+        "predictions": 4.307265171548352,
+        "wall": 12.102835707832128
+      },
+      "liftTimingSeconds": {
+        "imports": 1.1173335420899093,
+        "preparation": 0.012336417101323605,
+        "modelLoad": 0.36253575002774596,
+        "firstInference": 0.2566772501450032,
+        "warmInferences": [
+          0.22087749978527427,
+          0.21663050004281104,
+          0.21580241690389812
+        ],
+        "rawInputInference": 0.21575329103507102,
+        "processWall": 2.7101089591160417
+      },
+      "warmMedianSeconds": 0.21663050004281104,
+      "retargetTimingMs": {
+        "assetLoad": 61.87462500000001,
+        "retargetAndBake": 17.036208000000002,
+        "wall": 85.823666
+      },
+      "status": "failed-lateral-extension"
+    }
+  ],
+  "rigFlags": [
+    {
+      "code": "connection/velocity-change",
+      "severity": "review",
+      "subject": "/phases/3",
+      "window": {
+        "start": 1.3133333333333335,
+        "end": 1.3466666666666667
+      },
+      "evidence": {
+        "time": 1.33,
+        "index": 3,
+        "before": "video-2",
+        "after": "video-3",
+        "kind": "phase-boundary",
+        "window": {
+          "start": 1.3133333333333335,
+          "end": 1.3466666666666667
+        },
+        "rootVelocityBefore": [
+          -1.0032038209024687,
+          0.03956553885618705,
+          0
+        ],
+        "rootVelocityAfter": [
+          0.8487057198406885,
+          0.07182573822288815,
+          0
+        ],
+        "rootVelocityJumpMetersPerSecond": 1.8521905052015333,
+        "bodyVelocityJumpMetersPerSecond": 1.8521905052015333,
+        "jointVelocityJumpRmsMetersPerSecond": 0.3252236658099944,
+        "angularVelocityJumpRmsDegreesPerSecond": 53.15577637919095,
+        "peakJoint": "foot_r",
+        "peakAngularJoint": "calf_r"
+      },
+      "supportedFixes": [
+        "Inspect this window in Studio",
+        "Select another source or revise the indicated connection/intent"
+      ]
+    },
+    {
+      "code": "connection/velocity-change",
+      "severity": "review",
+      "subject": "/phases/4",
+      "window": {
+        "start": 1.4533333333333334,
+        "end": 1.4866666666666666
+      },
+      "evidence": {
+        "time": 1.47,
+        "index": 4,
+        "before": "video-3",
+        "after": "video-4",
+        "kind": "phase-boundary",
+        "window": {
+          "start": 1.4533333333333334,
+          "end": 1.4866666666666666
+        },
+        "rootVelocityBefore": [
+          -0.7845828520106118,
+          -0.13543930037261528,
+          0
+        ],
+        "rootVelocityAfter": [
+          2.0838201621304484,
+          -0.34044167168228123,
+          0
+        ],
+        "rootVelocityJumpMetersPerSecond": 2.875719357617517,
+        "bodyVelocityJumpMetersPerSecond": 2.875719357617517,
+        "jointVelocityJumpRmsMetersPerSecond": 0.710223956859227,
+        "angularVelocityJumpRmsDegreesPerSecond": 104.461921279427,
+        "peakJoint": "calf_r",
+        "peakAngularJoint": "calf_r"
+      },
+      "supportedFixes": [
+        "Inspect this window in Studio",
+        "Select another source or revise the indicated connection/intent"
+      ]
+    },
+    {
+      "code": "connection/velocity-change",
+      "severity": "review",
+      "subject": "/phases/5",
+      "window": {
+        "start": 1.6833333333333333,
+        "end": 1.7166666666666666
+      },
+      "evidence": {
+        "time": 1.7,
+        "index": 5,
+        "before": "video-4",
+        "after": "video-5",
+        "kind": "phase-boundary",
+        "window": {
+          "start": 1.6833333333333333,
+          "end": 1.7166666666666666
+        },
+        "rootVelocityBefore": [
+          0.02601526056407631,
+          -0.361961148385654,
+          0
+        ],
+        "rootVelocityAfter": [
+          -0.8365456288994263,
+          -0.3445534770849356,
+          0
+        ],
+        "rootVelocityJumpMetersPerSecond": 0.8627365270186389,
+        "bodyVelocityJumpMetersPerSecond": 0.862736527018639,
+        "jointVelocityJumpRmsMetersPerSecond": 0.1647715878578377,
+        "angularVelocityJumpRmsDegreesPerSecond": 34.314384476337956,
+        "peakJoint": "foot_r",
+        "peakAngularJoint": "calf_r"
+      },
+      "supportedFixes": [
+        "Inspect this window in Studio",
+        "Select another source or revise the indicated connection/intent"
+      ]
+    }
+  ],
+  "boneLengthChanges": 0,
+  "visualAssessment": "Step, chamber and return are recognizable; defining lateral knee extension is missing. Not approved movement.",
+  "endToEnd": "Developer setup and review not automated; stage measurements are not complete prompt-to-action latency."
+}

@@ -1,0 +1,340 @@
+# 3D project handoff
+
+Prepared: 3 October 2026
+
+## Context
+
+The user plans to start a new Codex session and project in `/Users/tim/Yun/codex-3d` after exploring https://github.com/TripoGrowthLab/awesome-astra-prompts.
+
+Current model: GPT-6.1 Sol. No specific example or project has been selected. No project code, dependencies, or assets have been created. The user has not requested a Tripo3D integration.
+
+Proposed starting approach: a browser experience using Three.js and procedural geometry, built and refined with Sol. This does not require Tripo3D. It is a recommendation, not a confirmed project choice.
+
+## Repository summary
+
+Awesome Astra Prompts is a community collection curated by TripoGrowthLab for creating 3D games, scenes, models, and interactive experiences with GPT-6 Astra.
+
+The README inspected on 3 October 2026 reports 310 examples in 14 languages, with 12 examples linking to source code. Entries include previews, prompts, creator attribution, and original-source links.
+
+Topics include browser games, Three.js worlds, Blender modeling, educational simulations, architecture, CAD, and animation. Examples include an interactive koi pond, reactor exhibit, anatomy explorer, and isometric fantasy scene.
+
+Detailed prompts specify visual appearance, interactions, camera controls, performance targets, and deliverables. Some are recommended starting prompts rather than the confirmed exact inputs used for the showcased results. Treat the collection as inspiration; it does not establish that every result is reproducible from its listed prompt alone.
+
+Content and translations live in a CMS. Node.js scripts generate catalogs and preview assets. GitHub Actions schedules synchronization twice daily with validation before publication. The repository is a curated catalog with publishing tooling; linked implementations have their own dependencies.
+
+The MIT license covers original tooling and editorial documentation. Third-party prompts, media, code, and assets retain their own rights. Check linked licenses before reuse. This is not an official OpenAI repository.
+
+Sources:
+
+- README: https://github.com/TripoGrowthLab/awesome-astra-prompts#readme
+- Contribution guide: https://github.com/TripoGrowthLab/awesome-astra-prompts/blob/main/CONTRIBUTING.md
+- Rights: https://github.com/TripoGrowthLab/awesome-astra-prompts/blob/main/RIGHTS.md
+
+## Can GPT-6.1 Sol do the same work?
+
+Yes: Sol can tackle Three.js scenes, browser games, interactive simulations, and Blender scripts. OpenAI describes it as offering near-Astra performance for complex coding and professional work.
+
+The prompts can be reused with Sol. Matching exact showcase quality or completing a project in one attempt is not guaranteed. No direct comparison on these examples was performed in this conversation.
+
+Recommended workflow:
+
+1. Start with Sol using high or extra-high reasoning for polished 3D work.
+2. Specify visuals, controls, performance targets, and concrete deliverables.
+3. Run the result, inspect screenshots and interactions, and refine it.
+4. Consider Astra for particularly ambitious work or repeated implementation difficulties.
+
+Official guidance positions Sol for complex technical work and polished deliverables, and Astra for the most demanding work. The model still needs appropriate tools and runtimes; Blender work requires Blender, for example.
+
+Sources:
+
+- Sol: https://developers.openai.com/api/docs/models/gpt-6.1-sol
+- Model selection: https://developers.openai.com/api/docs/guides/model-selection
+
+## Is Tripo3D required?
+
+Not for many examples. The collection mixes code-built projects and projects using Tripo-generated assets. A link to a Tripo3D detail page does not itself imply a dependency. Inspect the prompt and linked implementation.
+
+| Example | Tripo3D relationship |
+| --- | --- |
+| Isometric fantasy graphics demo | Explicitly forbids downloading assets; no Tripo requirement. |
+| Pitaya Jelly | Uses WebGPU/WGSL; forbids premade models and images. |
+| Super Heavy booster catch in Blender | Requests code-generated geometry without downloaded models, textures, or HDRIs. |
+| Monster Block | Uses Tripo-created animated characters. |
+| Battle City 3D | Has Tripo-model and code-built geometry versions. |
+| AKARI / Cyclops' Island | Starts with procedural models, then upgrades through Tripo Studio; no Tripo API key is required for that Studio workflow. |
+
+Sol plus Three.js procedural geometry can be used for the first project without Tripo. Replacing detailed Tripo characters with procedural models changes the appearance. Reusing exported assets and generating new assets are separate requirements; check the chosen example before assuming an ongoing service or API dependency.
+
+Sources:
+
+- Examples: https://github.com/TripoGrowthLab/awesome-astra-prompts#all-prompts
+- Isometric demo: https://github.com/achimala/dream-loop
+
+## Next session
+
+Read this document first. Help the user choose or describe the first 3D project, then implement it in this folder. Do not assume an example has been selected or paid services/Tripo integration requested. Distinguish a procedural recreation from exact reproduction of a showcase using external assets.
+
+Counts and model guidance reflect pages inspected on 3 October 2026. Verify again if current details matter.
+
+## Implementation update — 3 October 2026
+
+The user selected the Citrus Jelly direction after reviewing WebGPU examples. An original, self-contained implementation now lives in `index.html`, using native WebGPU/WGSL rendering and CPU volumetric XPBD physics. No Three.js, Blender, Tripo, downloaded assets, or paid integration is required.
+
+Run with `python3 -m http.server 5173 --bind 127.0.0.1`, then open `http://127.0.0.1:5173`. See `README.md` for controls, implementation details, and verification commands. The HTML is the artifact to continue editing. The optics and physical readings are illustrative; physics runs on the CPU and rendering on the GPU.
+
+The prior “no project selected” context describes the starting state and has been superseded by this update.
+
+## Second implementation — digital watch, 3 October 2026
+
+The user chose https://polyhaven.com/a/digital_wrist_watch (Adrian C, CC0) and authorized a functional watch demo with custom branding, live time, clickable physical buttons, time adjustment, and backlight.
+
+The implementation is in `watch/`. Open `http://127.0.0.1:5173/watch/` locally or `https://192.168.1.38:8443/watch/` with the previously trusted preview certificate. Citrus Jelly remains at `/`.
+
+Three.js 0.186.1 uses WebGPURenderer with WebGL2 fallback. esbuild bundles dependencies locally; run `npm run build` after changing `watch/main.js` or `watch/state.js`. `npm test` runs seven watch checks. `python3 tests/server.py` checks demo routes and source isolation.
+
+Original glTF components were split with `watch/prepare_asset.py`. Official portable Blender 4.5.9 LTS then ran `watch/prepare_blender.py`, filled the face opening, saved a packed editable scene in `watch/source/second-watch.blend`, and exported the self-contained `watch/assets/watch.glb` (about 2.17 MB). Blender was not installed system-wide. The original `.blend` and textures are also retained. Read `docs/watch/README.md` for controls and preparation details.
+
+The live face and button animations run in JavaScript. Branding, inscription, finish, time offset, and format persist in localStorage. Stopwatch elapsed time is monotonic and resets on reload. Physical side-button picking, WebGPU rendering, time/stopwatch controls, preference persistence, and phone viewport layout were checked in the in-app browser. The saved Blender scene was reopened and its packed textures/button objects verified. A physical iPhone run of the watch is still for the user to try.
+
+`serve_demo.py` now explicitly permits the watch's public HTML, CSS, bundled JS, and GLB. It continues to deny source files, package files, directory traversal, and keys.
+
+## Third project direction — animation editor, 3 October 2026
+
+The user selected a standalone animation editor inspired by supplied Kesar animation-workbench screenshots. The immediate scope is editor design and stack selection, with a central rigged 3D model that can play and replay actions. LLM iteration should revise structured poses and named timing phases: coil, rise, hang, follow, settle, recover, and guard for the initial jump template.
+
+Read `docs/ANIMATION_EDITOR_PLAN.md` for the proposed layout, Blender/GLB/Three.js pipeline, React/TypeScript/Vite UI, synchronized comparison, and validated LLM revision workflow. The earlier Harbor Run proposal in `docs/NEXT_PROJECT_PLAN.md` is superseded as the third project direction. Do not implement a game arena or combat system.
+
+The `jump/` folder is only an incomplete draft with HTML, CSS, and animation helpers. It has no complete renderer entry and is not a working editor. React/Vite and an LLM service have not been added. The next implementation milestone is the approved editor design plus reliable playback of one known rig and action.
+
+The user subsequently supplied an 11-second mobile-control gameplay video and clarified that the editor should be the first part of a future game platform. Read `docs/GAME_PLATFORM_REQUIREMENTS.md`: browser/Three.js runtime proposed, shared action schema and evaluator, Blender/GLB humanoid asset requirements, touch support, and an editor-first sequence. The original game's engine/model remain unidentified. Quaternius CC0 humanoids/animation libraries are researched candidates; their actual free archives and rigs have not been downloaded or validated. Build the editor asset/playback milestone first, not the full arena.
+
+A later creator-description/control-scheme screenshot and 4.46-second video establish the reference's emphasis on character feel and context-dependent tap/hold actions. The requirements now distinguish timeline editing from a minimal input test area, and include branching action states, movement/input response, cue preview, and recorded scenarios for comparison. Two primary buttons plus an optional separate leap/super are evidenced; exact chord rules, team size, engine, and assets remain unknown. Do not force indefinitely held actions into fixed-duration clips.
+
+## Third project implementation — first editor milestone
+
+Latest authoring direction: the user wants direct LLM prompt-to-action control, with the existing page primarily serving as the viewer. Manual pose sliders are not a prerequisite. Read `docs/LLM_ACTION_AUTHORING_PLAN.md`: next broaden the fixed-template schema to editable pose tracks and arbitrary supported phase sequences, then add a local revision service/MCP bridge and supporting skill. These remain planned, not implemented.
+
+The user authorized the first build. Animation Studio now runs at `http://127.0.0.1:5173/editor/` and `https://192.168.1.38:8443/editor/`. Read `docs/editor/README.md`. It has a React/TypeScript UI, Three.js WebGPU/WebGL2 viewport, real Quaternius CC0 skinned mannequin from the free Universal Animation Library Standard archive, jump/idle playback, cameras, scrub/replay/frame step, seven editable phase durations, A/B comparison, undo, and JSON/local saving. `runtime/action.ts` and `runtime/player.ts` hold the shared animation core. This build retains esbuild instead of introducing Vite; run `npm run build:editor`.
+
+The asset's license/README and inspection summary are in `editor/source/`; no paid assets or Blender source were obtained. Jump clips are composed with a separate visual height curve, not physics. LLM revisions, joint pose editing, pose-speed diagnostics, and input test mode are future milestones. `/jump/` remains unused draft code.
+
+Five editor tests, TypeScript checking, seven watch checks, and public-route/source-isolation tests pass. WebGPU, forced WebGL2, timing/reference separation, undo/replay, save/local load, and phone-sized layout were verified in the browser. Physical phone execution is unverified. `editor/preview.png` records the desktop editor. Both demo-only LAN servers were restarted with the editor's public HTML/CSS/bundle/GLB whitelist; source files remain denied.
+
+The editor now also has a separate eleven-phase Burst Attack action, preserving Jump and its edits. Phase kinds are explicit; authored arm/torso changes and squash/stretch overlay the source clips. `runtime/effects.ts` adds deterministic impact-ring/debris preview. The graph can show measured seven-joint RMS pose speed (root translation excluded) or height. Action switching keeps independent drafts/references, and Save project serializes the library; legacy Jump JSON still imports. Capture current is a full action-data snapshot in memory, persisted only by Save project. Prompt generation/LLM calls and live gameplay input remain unimplemented. Eight editor tests pass, including override non-accumulation and pose-speed sampling. Duration editing preserves phase-relative playhead position; moving gold highlight follows playback independently of inspector selection.
+
+## LLM authoring bridge implemented
+
+`docs/authoring/README.md` describes the working local service on 127.0.0.1:5174, MCP stdio adapter, installed animation-authoring skill and twelve tools. Version-2 custom actions support arbitrary valid phase sequences and all 65 rig joints via keyframed rotation/position/scale, root tracks, source clips and impact cues. The existing page connects on loopback; tool revisions update it without rebuilding. Version-1 Jump/Burst remain compatible. MCP is registered globally as animation-studio; an existing Codex conversation may need refresh to load its tools, with `authoring/call.mjs` available as a same-protocol fallback. No model-provider API/chat panel was added. The generated LLM Hammer Study baseline and revision were submitted via MCP; browser comparison visibly shows new arm poses. Nine editor and four authoring tests pass. Service state is in `.authoring/project.json`; tools save automatically, with undo history. Existing browser localStorage saves are separate and can be imported through Load saved on the original port.
+
+## Pouch–Coil–Launch action
+
+User supplied a right-foot step/right-hand check, clockwise hip coil, and left rear-leg kick. Authored `pouch-coil-launch` via the MCP bridge, with an assumed roundhouse-style kick, 8 phases (three primary beats plus readiness/follow/recovery), 2.85 s duration, 17 tracks and 99 keys/track over held A_TPose. Details and assumptions are in `docs/authoring/actions/POUCH_COIL_LAUNCH.md`; reproducible generator and action submission JSON are beside it. Right-lead/left-rear arrangement preserved; conventional stance name corrected rather than swapping limbs. Revision 2 raises the checking hand to face height. Actual-rig diagnostics verified right-hand and kicking/supporting ankle positions; original Jump/Burst unchanged.
+
+
+## Revised combination action — Step → Punch → High Kick
+
+The user superseded the prior Pouch/Coil/Launch description. The same `pouch-coil-launch` action is now named **Step → Punch → High Kick**, saved at revision 4. It lasts 2.45 s and advances the root 0.26 m: Ready, Step, Right Punch, Hip Turn, Chamber, High Kick, Follow, Recoil, Recover, Guard. Closed fist shapes reuse the asset’s Punch_Jab finger rotations; 47 tracks independently pose the body and hands. At 1.42 s, the left ankle is approximately 1.52 m high and the right supporting ankle remains at 0.105 m. MCP validation/diagnostics and browser punch/kick/replay checks passed. Read `docs/authoring/actions/STEP_PUNCH_HIGH_KICK.md`; generator and submission JSON sit beside it. Reference currently holds intermediate revision 3; older revisions remain in history. No runtime or game-engine code changed.
+
+
+Kick correction: Step → Punch → High Kick is now revision 5. The leg straightens by 1.37 s, remains straight through Follow until 1.54 s, and folds during Recoil. Airborne toes point along the shin; grounded foot rotations are retained outside extension. Diagnostics at 1.42 s: knee deviation 1.25°, toe deviation 0°, left ankle height 1.533 m. Browser High Kick/Follow/Recoil checks passed; reference holds revision 4.
+
+
+Balance correction: action revision 6 extends the knee fully by 1.32 s, distributes a modest backward lean over the lower/upper spine through High Kick and Follow, and returns the torso upright by Recoil midpoint (1.68 s). MCP diagnostics and browser checks passed; reference now holds revision 5.
+
+
+The user abandoned Step → Punch → High Kick and requested removal. Removed `pouch-coil-launch` from the live/saved action library and selected Jump. A recoverable record remains in `.authoring/removed-actions/pouch-coil-launch.json`; old authoring scripts/docs are historical and must not be resubmitted unless requested.
+
+
+## Authoring audit and direction — 4 October 2026
+
+Both local servers were stopped and were restarted on 5173 (serve_demo.py) and 5174 (authoring/server.mjs); HTTP checks returned 200. Browser automation blocked page access this session, so no fresh render check. The removed combination remains removed. Its full archive contains all six revisions; extracted exact action snapshots and reconstructed geometric audit are under `authoring/history/step-punch-high-kick/`. `authoring/history/audit-removed-action.mjs` reproduces the audit without submitting anything to the live library. Read `docs/ANIMATION_AUTHORING_REVIEW.md` for the revision-by-revision explanation, verification shortcomings, and proposed prompt-first workflow with a semantic plan/rig-aware compiler plus optional phase controls. The new architecture/controls are proposals, not implemented. The user wants an action tool rather than repeating Blender.
+
+## 2026-10-04 — authored kick baseline experiment
+
+Added `kick-study` using Mesh2Motion CC0 `Kick_Breach`, adapted offline to the existing Quaternius rig. The abandoned combination remains removed. Viewer has bounded height offset and release-speed controls; new MCP `revise_kick` compiles from an immutable baseline and keeps it as comparison reference. Save/Undo/import retain parameters. See `docs/KICK_STUDY.md` for source, limitations and reproduction. All 21 tests and TS checks pass. Local viewer 5173; authoring service 5174. The repository animation-authoring skill is updated; the separately installed global skill was not changed.
+
+## 2026-10-04 — movement library and action composition
+
+Studio sidebar now separates Movements from Actions. Four seed records: kick guard, adapted forward kick, source right cross and source walk cycle (last two contact-unverified). Added six MCP tools for library read/build/register, composition and reversible archive (19 tools total). `guard-kick-guard` is the first composed action with explicit join phases and a saved revision-pinned recipe. `runtime/movements.ts` bakes real-rig motion and pose-blend connections; no IK/contact/root alignment solver. Base edits do not mutate baked actions. Installed movement-building/action-composition skills and updated animation-authoring in both repo and `/Users/tim/.codex/skills`. See MOVEMENT_LIBRARY.md. All 23 tests and TS checks pass. Large-library exports tolerate browser storage quota and imports allow up to 64 MB. Service remains on 5174; viewer on 5173.
+
+## 2026-10-04 — distinct-source step/punch connection
+
+New move-step-forward (0.667 s, ~0.53 m travel) prepared from Walk_Loop across its cycle boundary. Source Punch_Cross reviewed and split into Load/Punch/Follow/Recover without joint changes (move-punch r2). New step-punch-study r2 joins these with a 0.3 s left-foot connection; optional recipe step contact left/right aligns the incoming motion and anchors one ball joint through whole-body translation. Rear foot unconstrained; no IK/balance/collision solver. Loop off; final actor position stays forward. Added regression for phase-sum endpoint roundoff. All 25 tests and TS pass. See docs/STEP_PUNCH_STUDY.md; skill updated locally and installed. Viewer/server remain 5173/5174.
+
+## 2026-10-04 — UAL2 Standard movement sync
+
+Imported all 43 clips from the free Quaternius UAL2 Standard GLB (CC0), adapted to current mannequin with target bone lengths retained. Source/license/hash retained in editor/source/ual2; offline importer authoring/source/import-ual2.mjs generates runtime/ual2-library.json. New sync_movement_library adds missing records without overwriting edits or archives; adapt_movement trims/retimes all tracks, phases and cues with source/destination revision checks. 21 MCP tools total. Studio adds search and collapsible UAL2 group; lightweight catalog state sends full tracks only for selected entry. Full exports remain complete; imports bounded at 128 MB and offline summary export blocked. Live examples: move-hook-quick variant and ual2-hook-recovery composed action. Installed movement-building/action-composition skills updated. All 27 tests and editor TS pass. See UAL2_LIBRARY.md. Contact/props/physical balance are not automatically solved; free Standard is 43 clips, not the entire advertised 130+ product. Viewer 5173; service 5174.
+
+## 2026-10-04 — movement selection performance fix
+
+User reported slow selection after UAL2 import. Measured set_preview at ~1975 ms because every click synchronously serialized the 161 MB project. Preview controls now persist atomically in .authoring/project.json.preview.json; reload uses the newer sequence and later full writes supersede old sidecars. Warm service selection measured 17–89 ms. /api/state?since=sequence returns 204 for unchanged state, removing repeated multi-MB transfers/parses. Browser requests immediate refresh after tool calls. Render loop compares action identities instead of serializing tracks every frame; pose-speed graphs calculate in yielding chunks and cache per action object. Track evaluation uses binary search and player node lookup is cached. 12 authoring + 9 editor tests and TS pass; browser checks verify long Sword Heavy Combo switching/replay. Existing motion/library data unchanged. Service restarted 5174, viewer reloaded 5173.
+
+## 2026-10-04 — prompt-to-action escape slide
+
+Created escape-slide r1 via MCP from UAL2 Slide_Start, trimmed Slide_Loop, Slide_Exit and a held source-exit standing pose. Four reusable move-escape-slide-* variants retain source joint motion and add +Z travel to 1.9 m. Action lasts 2.144 s with explicit joins; entry/glide fast, exit controlled, standing hold. Loop off, Side camera. Actual-rig diagnostics and browser glide/standing/replay checks performed. See docs/authoring/actions/ESCAPE_SLIDE.md and escape-slide-recipe.json. No game threat/controller logic or verified contact solver; originals preserved.
+
+Escape slide correction after visual inspection: original UAL2 Slide_Exit ends in a running stride, not neutral standing. Revised move-escape-slide-standing r2 to hold UAL1 Idle_Loop at +Z 1.9 m, then recomposed escape-slide r2 with a 0.3 s standing connection and 0.35 s hold. Final duration 2.434 s, reference r1 retained. Final endpoint and browser standing pose checked.
+
+## 2026-10-04 — movement endpoint profiles
+
+New runtime/movement-profile.ts measures entry/exit body pose, stationary-foot hints and separate root/body travel on actual normalized rig. Profiled all 53 active movements through MCP; motion and movement revisions unchanged. Added profile_movement_library, find_movement_connections and review_movement_profile (24 tools). Revision-bound profiles/reviews invalidate on movement edit or archive revision; exports include them, imports recompute rather than trust caches. Studio movement inspector displays current endpoint/support/travel profile. Composer emits mismatch/unreviewed endpoint warnings when profiles exist. Slide_Start exit ranks Slide_Exit/Slide_Loop near; unrelated LayToIdle needs transition. Hints are heuristic, not physical contact/balance verification or semantic action matching. Skills updated in repo and installed copies. 13 authoring +9 editor tests and TS pass. See MOVEMENT_PROFILES.md.
+
+## 2026-10-04 — prompt-to-action block/counter
+
+Created block-counter r1 (Block → Counter → Recover), 1.706 s in place, via MCP. Four move-counter-* variants preserve native UAL1 Idle/Punch_Cross poses and source strike coordination. Raised high boxing guard held 0.28 s, counter source trimmed 18%–100% at 1.25×, recovered guard held 0.25 s; explicit joins. Sword_Block inspected/rejected as low weapon parry. Guard-to-counter profile match near; ready-to-guard deliberately needs transition inspection. Actual-rig hold/strike/end diagnostics and browser inspection/replay checked. No collision/block gameplay logic. See docs/authoring/actions/BLOCK_COUNTER.md and block-counter-recipe.json.
+
+## 2026-10-04 — single-call recipe timing revisions
+
+Added revise_action_recipe (25 tools): zero-based step duration/speed/transition patches, pinned-source/action stale checks, complete recompile/reference/history preservation, and preview seek to affected section plus adjacent joins. Source movements unchanged. list_actions now includes compact recipes to avoid loading baked tracks for timing-only edits. Composition persists final action+recipe once. Action-composition skill updated locally/installed. Demo block-counter-timing-demo r2 increases hold .28→.4 s and counter speed1.2, elapsed service985ms; original block-counter untouched. 14 authoring tests and TS pass; first test attempt hit native Node assertion, complete rerun succeeded. See RECIPE_REVISIONS.md. Duration bounded by speed .5–1.5; no subphase edits or bounded-region looping added.
+
+
+## Knockback recovery prompt-to-action (2026-10-04)
+
+Added `knockback-recovery` r3 (2.26 s): standing chest recoil → backward catch step → balanced high guard. Four new source variants, step pinned at r2. Coordinated UAL1 sources, explicit backward travel and right/left foot-aligned joins. UAL2 full knockdown rejected. Viewer inspected and boundary diagnostics checked; no runtime code changed. See `docs/authoring/actions/KNOCKBACK_RECOVERY.md` and recipe JSON. Preview `editor/knockback-recovery-preview.png`.
+
+## Prompt-to-action timestamp logs (2026-10-04)
+
+Added independent persistent run storage (`project.json.runs.json`) and five MCP tools: begin_action_run, append_action_run_event, finish_action_run, list_action_runs, get_action_run. Active-run authoring calls automatically capture UTC start/end, service elapsed duration, errors and output revisions; nested internal operations count once. LLM notes cover decisions/browser checks. Studio header Run logs opens a live read-only timeline. Logging does not rewrite or poll the full animation project. Installed authoring/composition/movement skills now begin and finish tracking runs. See docs/ACTION_RUN_LOGS.md for timing boundaries, restart behavior and storage limits. Older Knockback work has no invented retrospective timestamps.
+
+Validation: 18 authoring tests, 9 editor tests and editor TypeScript pass. Final logging precision changes pass the 4 focused run-log tests. Live MCP verification run completed; Run logs shows UTC steps, successes/failures and millisecond service totals after reload. Screenshot: editor/run-log-preview.png. First sandboxed authoring run hit the previously observed Node native async assertion; the full loopback-enabled rerun passed. Skill metadata/workflow manually checked because the bundled skill validator lacks PyYAML.
+
+## Direct CLI and scripted action comparison (2026-10-04)
+
+Added `authoring/cli.mjs`, npm studio command, JSON batch plans with dependent result references, compact output, full/raw mode, file/stdin inputs, fail-fast partial-write reports and finish:false visual-review mode. Uses the existing service; MCP remains unchanged/available. Run logs distinguish CLI transport. Sample authoring/plans/block-counter.json. All skills gain CLI stage guidance. Six complete scripted action runs (11 operations each plus tracking) compare direct CLI and persistent MCP; baked motion hashes match. Timings ~1.6–2.6 s; no proven transport speed advantage, benefits primarily fewer agent/tool exchanges. First MCP compile cold-loads rig. See docs/CLI_AUTHORING.md and authoring/benchmarks/action-runs-2026-10-04.json. Benchmark copies will be archived after viewer check; originals preserved.
+
+CLI validation: 5 CLI tests, 18 authoring tests and editor TypeScript pass. Six live scripted builds hash-identical through CLI/MCP; CLI-built counter checked in viewer. Benchmark copies archived at r4, original Knockback preview restored. Original actions unchanged.
+
+## 2026-10-04 — semantic movement contracts and Regular Sword pilot
+
+Implemented `authoring/contracts.mjs`, compact `authoring/contracts/ual2-standard.json` (43 sources, no tracks), strict JSON schemas for source/movement/connection/catalog/action-spec/receipt, and shared `inspect_movement_library` / `build_action_spec` tools (32 total). Six Regular Sword clips have candidate semantics; other detailed semantics remain unknown. Four source-hash-pinned candidate links distinguish A→B/B→C continuation from A→A Rec/B→B Rec recovery. Current manifests expose revision-bound profiles and explicit missing support intervals/facing/seam velocity. Edited imported motions become unclassified; changed source hashes reject curated links.
+
+build_action_spec commit:false validates without writes, commit:true compiles through existing pose-blend-v1 and persists action+recipe+semanticSpec+receipt once. Receipts include sources/hashes, duration and join/step inspection ranges. Diagnostics identify code/subject/evidence; CLI returns nonzero/stops batches, MCP marks errors, run logger records failed checks. Specs/receipts retain in undo history/export; imported receipts are discarded for local regeneration. Existing timing revisions invalidate current semantic receipt. No new IK/contact solver, windows/overlaps, props or arbitrary retargeting; total4s,1–8steps,.5–1.5× remain.
+
+Viewer now shows movement role/family/purpose/equipment and continuation/recovery candidates, plus semantic action receipt summary. Repo and installed action-composition/movement-building skills updated. See docs/MOVEMENT_CONTRACTS.md and prior MOVEMENT_CONTRACT_ANALYSIS.md. Skill validator unavailable because PyYAML absent; metadata/references checked manually.
+
+Two new comparison actions: sword-source-study r1 (3s complete authored combo) and sword-joined-study r1 (3.2067s A→.12s blend→B→.12s blend→C). Original motion/library actions preserved. authoring/benchmarks/compare-sword-contracts.mjs reproduces via CLI; sword-contract-builds.json records first pair: 2661.5ms source build incl cold rig load,1378.59ms joined build; not a transport/performance winner claim. Run f8b96ec7-996f-448d-875d-2e91abecdff9 closed completed with limited visual evidence. Browser checked both connection midpoint poses, recovery poses, replay and inspector. Candidates/receipts remain pending formal visual/physical validation. Screenshot editor/movement-contract-preview.png. Viewer left on joined study; service restarted latest core on5174 (exec session41694),5173 remains running.
+
+Validation: 4 contract tests +18 authoring +5 CLI +9 editor tests pass (36). Additional focused MCP test verifies structured spec errors; editor TypeScript and both builds pass. No further tests required absent changes.
+
+## 2026-10-04 — common movement window discovery
+
+Added read-only `find_common_motion` (33 MCP tools, also CLI) with revision-checked active movement pairs. runtime/common-motion.ts samples 15 major body joints at30Hz, searches contiguous same-speed diagonal matches by pelvis-relative position and local quaternion RMS, reports source seconds/from-to, root AND pelvis displacement, motion excursion, hashes and errors. Stationary/near-stationary runs excluded unless includeHolds; upper/lower body subsets explicitly remain partial evidence. Limits:30s per source,1–10results,minDuration.1–10s,.001–.25m,.1–45deg,defaults.2s/.06m/12deg/5results. Cache holds six hash-keyed signatures, refreshes LRU before sampling second source; no project writes. Sampling avoids duplicate float-roundoff endpoints; off-grid tail under33ms is omitted. No retiming/mirroring/yaw alignment/contact guarantees; no automatic base extraction or contract creation.
+
+Live results: Regular A0–.433333 maps Combo0–.433333 (positionRMS.01313m/rotation1.35deg); B0–.533333 maps Combo.466667–1.0 (positionRMS.01498m/rotation1.70deg). Latest first client times139.12/7.74ms (firstcoldrig), cached2.24/1.49ms; benchmark evidence authoring/benchmarks/common-motion.json, reproducible common-motion.mjs. No sources/actions/preview changed. Read COMMON_MOTION.md. Repo+installed movement-building/action-composition skills route candidate extraction through adapt_movement only after full-body visual/travel review.
+
+Validation:4 new numerical/live-rig tests covering offsets/travel, held-vs-moving exclusion, partialbody, cache/revisions/read-only and LRU eviction;8 contract/common tests,23 authoring/CLI regression tests,editor TypeScript pass. Focused MCP end-to-end test confirms tool discovery and actual matching. Service finalupdated on5174,execsession58715; viewer remains available on5173.
+
+
+## 2026-10-04 — YOLO26 rendered-action pilot
+
+Added optional CLI capture/check scripts in authoring/vision, npm vision:capture / vision:check / test:vision. Read-only action copies, shared CharacterPlayer, front/side software-WebGL capture, 12 camera-projected rig landmarks; 34 normal +2 transient shin-length controls, no Studio preview/library mutation. Isolated .authoring/vision-venv (1.1GB disk), official yolo26n-pose.pt cached locally, CPU2threads, no background service; VoiceHelper remains running. Model/dependency hashes/versions and source revisions recorded.
+
+Repeat36-frame capture5.068s; Python imports/load/warmup/predict/annotation measured5.781s total, mean repeated prediction66.24ms/frame. All frames detected one person,10–12 confident body landmarks.30 normal agreements,4 normal disagreements,2 flawed disagreements under exploratory8% body-height threshold. Crucially distorted front kick scores BETTER than original (12.7% vs25.6%): left/right ambiguity and pivot/surface differences make this unsuitable as automatic naturalness validation. Exact rig control detects1.8× shin length. Existing cached3D common-motion matching1.49–2.24ms/pair serves a different task and stays preferred for discovery. No video matcher, physical solver or newMCPgate.
+
+See docs/VISION_POSE_EXPERIMENT.md and authoring/vision/results/pose-report.json plus kick-control-comparison.png; first-run reports preserved.4 metric tests and strict rendererTypeScript pass, capture ran twice, annotated controls visually inspected. Next recommended deterministic3D support/contact/seam checks, YOLO only optional visual-review signal.
+
+
+## 2026-10-04 — deterministic motion-quality inspection
+
+Added read-only inspect_motion_quality to shared CLI/MCP (34 tools), actionId+sourceRevision with optional start/end, declared contact intervals and bounded thresholds. runtime/motion-quality.ts samples actual normalized rig at60Hz plus exact endpoints, compares skeletal lengths/scales against imported rest, reports candidate foot intervals and declared intent drift/height, root/pelvis travel separately,15-joint peaks and finite-difference phase seam velocity changes with diagnostic review windows. Root-bone→pelvis is measured body-offset, excluded from anatomy flags after live pilot found normal crouch false alarms. No flags never certifies naturalness; no inferred facing/confirmed support/IK/balance. Recipe anchors add join-only intent; metadata support never becomes full-clip contact. No project or preview writes.
+
+Nine live reports in authoring/benchmarks/motion-quality: six Regular Sword sources, both studies, kick. Firstservice68.83ms, subsequent14.72–40.12ms. Joined197frames40.12ms flags two seam windows~.5533/1.2067s; kick one~.740s. Whole source Combo has no internal phase seams, so cannot compare seamflag counts as a quality score. Projectsequence231 unchanged. CLI window example saved cli-window.json; actualCLI and MCP integration verified. Sourceactions untouched. Read MOTION_QUALITY.md. Contract docs distinguish historical proposal/current operations. Repo+installed three Animation Studio skills updated and allthree pass skillvalidator using isolated Pythonvenv.
+
+Final 38 tests pass (seven focused numerical/live-rig plus authoring/CLI/contracts/common-motion regressions); original suitecount assertion updated33→34 and MCP test now exercises inspection/stale rejection. TypeScript/build pass. Finalservice on5174 execsession27292; viewer5173 unchanged.
+
+## 2026-10-04 — persisted contact reviews and seam policies
+
+Added shared CLI/MCP review_movement_contacts, review_connection_policy and get_contract_reviews (37 tools). Reviews live in the small atomic project.json.contracts.json sidecar, with bounded superseded history, expected review revisions, timestamps, source revision/hash pins, measured settings/metrics, visual notes and artifacts. Contact reviews become stale after source edits; seam policies require both current sources. Export/import preserves evidence without rebinding source revisions. No main motion project rewrite for review registration.
+
+Actual Regular Sword pilot: both feet visually supported in A Recovery r1 .75–.96s and source Combo r1 2.85–3.00s. Source-only sampled front/side evidence; remaining intervals unknown and physical balance unverified. A→B and B→C policies at .12s blend,1×→1×,anchor none are explicitly needs-review because outgoing velocity-change flags remain. Neither seam approved. Exact captured pins verified before registration. See docs/CONTRACT_REVIEWS.md and authoring/reviews/sword/{registered-reviews.json,frames/frames.json,frames/contact-review.png,frames/seam-review.png}.
+
+Semantic builds map supported contact times through playback speed and incoming blends into source-only receipt intervals. Exact seam configurations/decisions appear in receipts: rejected policies block; supported policies require matching timing/speeds; needs-review remains a warning. No automatic anchoring or whole-action contact certification. Existing compiled receipts are unchanged. Read-only live dry runs in authoring/reviews/sword/build-checks.json confirm source study receives two contact intervals and joined study two matching needs-review policies without committing or changing motion revisions.
+
+Studio movement inspector displays contact evidence and seam decisions; action receipt summary shows propagated evidence. Three repo and installed Animation Studio skills updated and validated. New schema/storage/live-rig tests cover independent persistence, retiming, stale pins, unsafe approval rejection, policy enforcement, history and import validation. Full relevant regression passed51 tests; final focused contract suite8 and MCP integration1 pass; editor TypeScript and both builds pass. Final local authoring service5174 execsession14240; viewer5173 remains running. No source/action motion changed.
+
+## 2026-10-04 — completed bounded Sword review and prompt test
+
+All six Regular Sword r1 sources remeasured and sampled visually in Front/Side; all ten measured contact candidates inspected at start/mid/end. Persisted eight supported source-only intervals and two uncertain braced left-foot intervals across A Recovery,C,Combo. A/B/B Recovery have no stationary candidates at current settings; unrecorded time remains unknown. No physical contact/balance or sword prop validation. Source movements unchanged. See docs/SWORD_PILOT.md and authoring/reviews/sword-completion.
+
+20 transient pair builds use production compiler and inspector at 1/60,1/30,.06,.12,.2s with1× speeds,no anchors, no Studio writes. A→B .06s improves max RMS boundary jump to .617m/s (no configured flags), versus1.002 at .12. B→C remains flagged at every duration; A→A Rec remains marginally flagged (~1.009); B→B Rec has no flags. Separate saved comparison actions sword-a-recovery-review,sword-b-recovery-review,sword-tight-join-review r1. Front/Side join sheets reviewed. Current policies A→B .06 supported(reviewr2),B→B Rec .12 supported(r1);B→C .12 needs-review(r2),A→A Rec .12 needs-review(r1). Supported means bounded sampled visual/configured numerical review, not production/physical certification. Old .12 A→B decision remains in history; typed recompile must adopt .06 or obtain new timing review. Original studies/receipts unchanged.
+
+Tracked review run956b69dd-8727-453a-9bf5-f2170e5ed67b completed9m14s,7.17s recordedservice; includes library preparation/experiments. Independent prompt test59e32fd1-78ac-46c8-9be1-bd343fc9f7c8 completed178.99s inclLLMreview. Prompt “Perform two linked sword attacks, then smoothly recover to standing.” compiled sword-two-hit-recover r1 (name Sword · Two attacks → Recover),2.18s A→B→B Rec with bothsupportedconfigs,onebuild,no retries/sourceedits;zero fullactionconfiguredflags. Automatedstage4.46s inclcompile/persist4.27s;30framecapture5.38s. Nine wholeaction progressionframes per camera reviewed, exact seam source/config evidence prior reviewed, browser replay verified standing finish. Sampled review logged separately; savedreceipt stillwholeactionvisualpending. Currentpreview thisactionSidecamera1×pausednearfinish; inapp tab3 markeddeliverable. Service5174 session14240 remains;5173viewer running.
+
+Docs docs/CONTRACT_REVIEWS.md marks initialpilot historical; docs/MOVEMENT_CONTRACTS.md updatescurrentpolicy/exampletiming. docs/SWORD_PILOT.md records exactintervals,seamsweep,timingbreakdown,reproduction andlimitations. Four pilot scripts node--checkpass; focusedcontract/review8tests pass. No runtime/API/UI code changes this turn; no need rerun unchangedfull51testregression. Next expand appropriateexistinglocomotionfamily aftersourceinventory: currentUAL2has SlideStart/Loop/Exit and specializedwalks, lacks genericrun/start/stopset. UnresolvedSwordjoins likely need velocity-awarebridge/overlap experiment rather thanfurtherduration-onlysweeps. No newtransportor tool required.
+
+## 2026-10-04 — second semantic family: locomotion Slide
+
+Expanded existing UAL2 catalog semantics to SlideStart/Loop/Exit (locomotion-slide), retaining original r1 tracks/hashes. Detailed semantics now9/43 movements; candidate connection catalog6 total. New slide-start-to-loop and slide-loop-to-exit hashes pinned; each endpoint match~.00227m/2.656deg. Sources are in place (rootzero;pelvis lowers/rises~.789m); controller supplies worldtravel. Exit is running stride, notstandingguard. Footcandidatesnone, low-poseballheights~.10–.11m; body/hand support notcovered by current foot-only tools. No contactapprovals/anchors invented.
+
+Created slide-contract-study (name Slide · Enter → Sustain → Exit),3.4533s,Start→.06sjoin→2sLoop→.06sjoin→Exit at1×. Bothjoin windows andfullactionzero configuredflags;Front/Side start/mid/end joins andnine whole-sourceframes per camera sampledreviewed. Persisted both exact no-anchor .06s/1× seam policies supported r1; immutablecataloglinks remaincandidates. Initialactionr1 thenreceipt-refresh recompile r2 withidenticalmotionhash, so r1captures show currentmotion. Bothpolicies inr2receipt;wholeactionreviewpending withsamplednotes inrunlog. Viewerreplay reachedrunningstrideExit;tab3 markeddeliverable. Alloldactions/sources preserved.
+
+Artifacts authoring/reviews/slide/{inputs.json,source-sheet.png,frames/frames.json,build.json,join-sheet.png,joined-frames/frames.json,registered.json,run.json};pilot scriptsprepare/curate/build/register. docs/SLIDE_CONTRACTS.md explains semantics/travel/support/recipe/reviewlimitations. docs/MOVEMENT_CONTRACTS.md updatedfamilycount. Repo+installedmovement-building/action-composition skills updated via skill-creator guidance andvalidatorspass. No new tool/schema/runtime/UI feature;same37MCPoperations andCLI.
+
+Run9608949a-49ed-47de-bd2a-e2069e29529d completed13m43.58s preparation/review,6.65sservice; initialbuild2.85sclient. This is familycuration,notwarm prompt-onlyspeedbenchmark. Service reloaded catalogon5174 execsession4000;5173viewer unchanged. Focusedcontract/review9tests pass (newSlide case coversdiscovery/compile/wrongpair/stalehash/nofabricatedcontacts). Testinitiallymutatedcacheobjectinplace; correctedfixturetoreplace actionobjectasactualservice does. Bothskillsvalidated;fourpilotsyntaxchecks pass;authoringbuildpasses. SandboxedfocusedMCPtestNode26nativeasyncassertcrashedbeforetestexecution; retry with local socket permissions passed the focused MCP integration test. Next controllertravel pluscompatible sourceforrunning/standingexit;body/handcontactinspection separatecapabilitygap.
+
+## 2026-10-05 — full active library contract coverage
+
+Completed sampled-review classification for all 61 active base movements: all43 UAL2 Standard sources plus18 local/adapted movements. Separate authoring/contracts/studio-local.json preserves per-movement source descriptions instead of attributing UAL1/Mesh2Motion/local variants to the UAL2 GLB. Shared manifest/typed-spec discovery resolves both catalogs and cross-catalog relationships; existing motion unchanged. Local source schema is validated separately with strict provenance. New sources still need curation; this is a pinned reviewed snapshot, not a generic mutable contract registry.
+
+Source inspection: all61 revision/hash pins verified, 60 Hz quality reports retained. Added34 UAL2 semantic reviews and18local reviews with seven progression poses in Front/Side. Every remaining measured foot candidate captured at exact start/middle/end in both views, checked and registered through shared review API: added69 UAL2 intervals (65supported/4uncertain) plus23local supported intervals. Current totals102 reviewed candidates,96supported/6uncertain. Uncovered intervals remain unknown. Candidate-free sources do not imply no contact; body/hand/knee support and prop interactions remain unverified. Local advancing step retains internal velocity-change flag. Name caveats: local move-guard is arms-down stance, not defensive guard; UAL2 Knockback ends lying down; LayToIdle gets up; SlideExit ends running.
+
+Added21 purposeful pairs and separate compiled contract-* review actions. All five boundary frames per Front/Side reviewed, exact policies saved:9supported/12needs-review new joins. Current totals27curated connections,13supported/14needs-review. Existing Sword/Slide policies preserved. Supported additions: Hook→Rec,NinjaStart→Hold,ZombieIdle↔Scratch,RailIdle↔Call (explicit1.5x),KickEntry/Return,CounterCross→Finish at .06blend. Needs-review configurations retain measured velocity flags; no fabricated physical approval or automatic foot anchors. Cross-catalog QuickHook→UAL2HookRec is reviewed needs-review. Review actions retained as evidence; receipts not silently rewritten after policies registered.
+
+Capture added opt-in --follow-root (world XZ target, recorded camera metadata; defaultfixed unchanged) after traveling local clips left fixed side camera. Recaptured local clips with full poses visible; no motion/world-coordinate changes. Evidence in authoring/reviews/catalog including inventory/local-inventory, allsource reports, semantic-review/local-semantic-review, frame manifests/sheets, built/registered pairs and contact reviews. coverage-audit.json confirms current all61classifications, all102 candidate decisions, all27 policies with valid sources/evidence; failures[]. Slide policies point to retainedr1 history after identical-motionr2 refresh, audit verifies historical hashes rather than rebinding. Reproduce read-only motion/source audit with node authoring/reviews/catalog/audit.mjs (writes report only).
+
+docs/LIBRARY_CONTRACT_REVIEW.md contains full movement/policy tables, selection workflow and limitations; docs/MOVEMENT_CONTRACTS.md and repo+installed movement-building/action-composition skills updated/validated. Regression41 Node authoring/MCP/CLI/contracts/reviews/motion-quality tests pass;4Python vision tests pass; actualroot-followcaptures exercise render feature; authoringbuildpass. Two new contract tests cover allUAL2semantics, local provenance validation, local typed composition, cross-catalog discovery and stale source hashes. Service reloaded port5174 execsession86112; viewer5173 retained. Next motion work is velocity-aware joins and travel continuity for14 reviewed flagged configurations, plus internal advancing-step seam; coverage completion does not certify all motion production-ready.
+
+## 2026-10-05 — velocity and travel continuity
+
+Implemented opt-in velocity-aware connection and root travel continuation in runtime/connection.ts and runtime/movements.ts, exposed through existing compose_action/build_action_spec, recipe v2, receipt/config schemas and exact mode-aware policy matching. Legacy defaults/actions unchanged; source tracks unchanged. Velocity/travel modes reject contact anchors. Source quaternion tangents and speed-corrected position velocities are baked at 60Hz; root continuation carries constant translation offsets, not facing or IK.
+
+Measured all14 formerly flagged joins, refined durations where needed, captured334 Front/Side frames and reviewed progression plus both boundaries. Registered13supported configurations and1needs-review (counter-guard-to-cross, .5s still incoming right-hand/forearm velocity flag). Current coverage audit:61classified sources,102reviewed foot candidates,27policies:26supported/1needs-review, failures[]. Advancing-step internal flag remains. Artifacts authoring/reviews/velocity/{results,policies,capture,run-id}.json plus frames and sheets. Review approval is bounded/configuration-specific, not physical validation.
+
+Encountered JavaScript string limit at510MB pretty project JSON; atomic persistence now compactJSON, same data/history about208MB. Failed save was not blindly retried: service reloaded persisted revision and refinement resumed. Whole-project growth remains future storage work. Refinement attempts file contains retained trials only.
+
+44Node tests passed including3new connection tests; authoring/editor builds pass. docs/LIBRARY_CONTRACT_REVIEW.md regenerated from audited policies; docs/VELOCITY_CONNECTIONS.md describes exact settings, math, limits and evidence. docs/MOVEMENT_CONTRACTS.md and composition/building skills updated. Service5174 runs execsession37593; viewer5173 retained. Next targeted motion work: counter cross source/transition, advancing-step internal boundary; storage partitioning separately.
+
+## 2026-10-05 — documentation organization and current architecture
+
+Moved35 project documents into docs/, preserving component/action/source-attribution subpaths; kept root README and executable skills/*/SKILL.md entry points in place. Added docs/CITRUS_JELLY.md for original root demo details and docs/CURRENT_STATE.md for current features,37operation inventory, source/library/spec/compiler/player/review/run-log flow, persistent file ownership and limits. README now explains all three demos, startup/code layout and links every documentation page. Historical plans/editor milestones explicitly point to current state; authoring README rewritten around current service rather than stale21/24tool counts. docs/document-locations.json records migration.
+
+Repaired local and absolute documentation links including repository skills; report generator writes docs/LIBRARY_CONTRACT_REVIEW.md. Original source code/assets, source license text files, runtime state and evidence artifacts remain at their existing paths. Executable skills remain operational entry points and are not moved into docs/. Current state remains61movements/102reviewed candidates/27curated policies (26supported/1needs-review); no new motion change. Verified all local Markdown link targets and README indexing.
+
+## 2026-10-05 — reference video to action investigation
+
+Investigated visual-only and YOLO26-assisted human-video analysis against actual current action spec/vision code and official Ultralytics pose/tracking documentation. docs/VIDEO_TO_ACTION.md records input specification, event screenshots/brief artifacts, timestamps/mirroring/confidence/unknowns, exact library-contract mapping, prototype gaps and golden-fixture comparison plan. Current check_pose.py requires projected rig ground truth; cannot ingest raw video unchanged. ffmpeg/ffprobe available, cached pose model/environment already exist. No video supplied, pipeline wrapper implemented or action generated in this investigation. Recommended first reference single right forward kick, full body, static front-oblique camera,5–8s with entry/exit stillness,1080p60fps preferred; optional side view is not synchronized3D reconstruction.
+
+Visual-only baseline should be frozen before YOLO additions. Observed phases/2D angles/support hints remain evidence, not compiler schema extensions, quaternion reconstruction or contact approval. Existing source selection plus actual revision/hash/configuration validation still required; four-second/eight-step composition and whole-source speed limits matter. README/current-state guide link the investigation.
+
+## 2026-10-05 — first actual human-video pilot
+
+Analyzed user Desktop screen recording23.416667s,1478x820,744actualframes/variable-rate. First overview extraction before tracking run, then trackedrun fbaa2585-32fd-46fa-974c-7625b2a3f6ae. Selected11.45–13.75s lateral snap-kick cycle; original untouched and re-encoded2.3s silent trim retained. Exact ffprobe timestamps matched decoded frame indices; original/overlay chronological keyframes and dense sheets retained. Frozen visual-only brief precedes YOLO; refined pose-assisted prompt uses denser frames and visually rejects detector peak, so no claim detectoraloneimprovedtiming.
+
+YOLO26n CPU2threads processed67unique timestampedframes,foregroundselectedinitialtallestthenIoU, no missingselections/all12bodylandmarksabove.5. Predictions2.684s,Pythonwall11.306s. Model/versions/sourcehash/rawdataretained. False179.57deg knee at13.017s (.796 minimum confidence) duringvisibleflexedrecoil rejected; truevisibleextension~12.85–12.883s. Contactpressure,3Dangles,footorientation/mirroring unknown.
+
+Currentlibrarykicksource move-kickr1 isforward/armsdown,notlateralsnap/raisedhands/gatheringtravel. baseline-spec dryrunvalid commitfalse only; no incompatible actioncommitted andviewer unchanged. source-fit.json requestscoordinatedsidekicksourcebeforefaithful actionbuild. docs/VIDEO_KICK_REFERENCE.md andREADMEindexed givekeyframes,prompts,sourcegap,evidencefolder authoring/reviews/video/kick-reference. Scriptsareclipspecificpilot,notgenericingestionAPI. Completedanalysisrun doesnotimplyfaithful3Dgeneration.
+
+
+## 2026-10-05 — bounded 3D estimation and retargeting benchmark
+
+Added docs/NEW_PLAN.md and VIDEO_RECONSTRUCTION_BENCHMARK.md. MotionBERT Lite official source/checkpoint cached under .authoring; no new Python packages. Three detector trials (full nano, crop nano, full small), 70 estimated frames, Quaternius direction retarget/bake, offline captures and actual-rig diagnostics retained. Small warm 3D median .217s; retarget17ms; 18 captures4.812s including browser startup. Draft video-side-kick-draft r1 saved/selected, explicitly labelled extension failed; no approved movement registered. Chamber/return recognizable but near-straight lateral extension absent in both filtered/raw-input 3D estimates. Rig check0 bone-length changes/3 motion flags. Three reconstruction tests pass. Scripts bounded to2.3s fixture; generic IR validation, ingestion orchestration, synced video viewer and reliable contact/root recovery remain future work. Next quality gate: verify input conventions and compare another backend or observation-constrained fitting. Tracking run4b6cc564-ca47-431f-b966-19e2eb054607.
+
+
+## 2026-10-05 — observation-constrained side-kick fitting
+
+Run320d7307-08ae-4927-9773-2c79468fec89. Verified official limb/flip indices and crop equation; axial synthesis/confidence/resampling remain approximations. Added bounded authoring/reconstruction/fit.py: orthographic weighted observations, depth prior, soft segment lengths/temporal regularizer. Unconstrained fit retained79.6degree knee; side-view near-straight-knee observation prior reaches179.9degrees and recognizable lateral extension. It is an explicit ambiguity assumption, not new3D ground truth/generalIK. Fit400steps0.524s (3.001s process), retarget19.7ms. Saved separate video-side-kick-fitted r1 and selectedFront1.4s; previous failed draft kept. Full70timestamps/two-camera captures, extension sheet and preview.mp4 retained under reconstruction-fitted. Actual-rig five velocity flags; not approved movement. Four reconstruction tests pass. Next: temporally consistent outlier/depth/root handling without erasing snap timing, then synced video/character review. NEW_PLAN and benchmark report updated.
+
+
+## 2026-10-05 — temporal stability follow-up
+
+Run a04d0295-76c5-4200-8edc-58f207b1d1b3. fit.py --stable: stronger depth acceleration, continuous straight-knee observation weight, conservative isolated excursion rule (none rejected here), root-only5sample binomial. Saved separate video-side-kick-stable r1 selectedFront1.4s. Original time grid/peak12.85s unchanged; normalized depth variation90%lower, image-rootvariation82%lower. Fit.570s/retarget20ms,5tests pass.70frames×2angles captures retained. Actualrig no bone changes and flags5→3 around1.33/1.47/1.7. Hypothetical left support1.05–1.7 has maxdrift.270→.345m (worse), path/speed lower; no contact approval/IK. Evidence under reconstruction-stable, report/NEW_PLAN updated. NextPhase2 explicitreference/motionbundle andPhase3sharedvideo/playerreview; foot/root correction requires reviewed support/camera assumptions.
+
+
+## 2026-10-05 — reference/motion bundle v1
+
+Phase2 implemented for stable side-kick fixture: authoring/reconstruction/contracts.mjs (JSON Schema definitions, strict structural/semantic checks, canonical digest and piecewise time mapping), bundle.mjs (pilot packager/read-only inspector), schemas/*.schema.json. Portable bundle under authoring/reviews/video/kick-reference/bundle contains67COCOobservations/70H36Mestimates/trim video/actual savedaction/quality/rawIR. SHA/bytes verify allfiles; source/time/actionrevision/hash/rig/rawestimate crosschecks. Contacts unconfirmed/mirroring unknown, onlydraftstatus. Stage fingerprints includecode/model/input/rig root-scale dependencies; no automaticcacheexecutor yet. CLI npm run reconstruction:bundle -- inspect bundle/bundle.json; build-pilot uses retained receipt, no liveprojectread/write. Five newbundle tests plusfive existingreconstructiontests pass. docs/VIDEO_MOTION_BUNDLE.md andNEW_PLAN/README updated. NextPhase3 synchronized video+characterreview usingexplicit timeanchors; no new motion/approved movement/MCP operation this milestone.
+
+
+## 2026-10-05 — synchronized Studio video review
+
+Added existing-page Video review button, ReviewVideo.tsx slave media player, runtime/review-sync.ts time mapping/drift rule, server fixed read-only video-review routes with ranges and bundle validation. Opens pinned stable action only if live revision matches; reference/action checksum verified. Shared timeline/replay/loop/speed/frame steps, three flagged windowbuttons, existingcameras with rootfollow/zoomout. No new action/MCP operation. Browser checkedseek1.47 both/video/source12.92, playbacknearclock, loopwrap, step1.3467.3sync tests/9editorregressionspass; buildpasses. Screenshot review-studio.jpg. Demo5173+service5174 were notrunning initially; restoredboth (VoiceHelperuntouched). UInewmode sessionlocal; closeviaVideo review/switchaction. Future: arbitrarybundlepicker, timingeditremap and calibratedshadowoverlay.

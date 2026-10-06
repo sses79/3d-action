@@ -1,0 +1,20 @@
+{
+  "adapter": "h36m17-quaternius-direction-v1",
+  "worldScale": 1.0116383552681136,
+  "rootTravel": "image-X normalized by initial bounding-box height; no calibrated world Z",
+  "floorPlacement": "lowest ball joint per frame, no confirmed support/contact",
+  "unknown": [
+    "twist",
+    "foot/finger articulation",
+    "calibrated root travel",
+    "mirroring"
+  ],
+  "boneLengths": "rest local translations/scales preserved",
+  "targetAssetSHA256": "69591853d817488edaa8fd9bf8fc1d821eaeaf789f8627b3cd23b41c4ed67997",
+  "timingsMs": {
+    "assetLoad": 61.87462500000001,
+    "retargetAndBake": 17.036208000000002,
+    "wall": 85.823666
+  },
+  "source": "authoring/reviews/video/kick-reference/reconstruction-small/motion-ir.json"
+}

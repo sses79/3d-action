@@ -1,0 +1,12 @@
+{
+  "publisher": "Mesh2Motion",
+  "repository": "https://github.com/Mesh2Motion/mesh2motion-app",
+  "source": "https://raw.githubusercontent.com/Mesh2Motion/mesh2motion-app/main/static/animations/human-mocap-animations.glb",
+  "retrieved": "2026-10-04",
+  "license": "CC0-1.0",
+  "sha256": "814593d62522f5be8d6bd32df2a8fa3c7feb90a8e1a1ba43f4aaf0048555280d",
+  "clip": "Kick_Breach",
+  "target": "Quaternius UAL1 mannequin",
+  "adapter": "authoring/source/import-kick.mjs",
+  "notes": "Source is retained byte-for-byte. Baked runtime baseline includes world-space rotation transfer, fixed target lengths and left ball contact correction."
+}

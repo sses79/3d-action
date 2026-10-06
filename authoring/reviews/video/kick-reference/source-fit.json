@@ -1,0 +1,39 @@
+{
+  "status": "reference recreation requires missing coordinated source",
+  "libraryScope": "61 current active classified movements; kick candidates read from current manifests",
+  "referenceMotion": "lateral snap kick with raised-hand wide stance and gathering/cross-step travel",
+  "closestExistingMovement": {
+    "id": "move-kick",
+    "revision": 1,
+    "fit": [
+      "Coordinated knee chamber, kick extension, recoil and recovery"
+    ],
+    "gaps": [
+      "Forward direction instead of lateral",
+      "Arms-down source stance instead of raised hands",
+      "No matching gathering/cross-step entry",
+      "Different stance width and torso coordination"
+    ]
+  },
+  "baselineSpec": "baseline-spec.json",
+  "baselineValidation": "baseline-validation.json",
+  "baselineCommitted": false,
+  "requiredMovement": {
+    "name": "Coordinated lateral snap kick with gathering step",
+    "rig": "quaternius-ual1",
+    "entry": "Wide upright stance with raised hands",
+    "sequence": [
+      "Gather/cross-step in kick direction",
+      "Shift onto opposite support leg",
+      "Raise flexed kicking knee",
+      "Extend leg laterally/up while torso inclines away",
+      "Recoil knee before lowering",
+      "Reset wide stance and return upright"
+    ],
+    "exit": "Wide upright stance with raised hands",
+    "travel": "Preserve authored source travel; metric reference travel unknown",
+    "contacts": "Inspect supporting foot interval after source preparation; reference video alone does not approve anchors",
+    "limb": "Resolve source anatomical side and reference mirroring before mapping"
+  },
+  "contractPolicy": "No invented source or connection ID. Prepare/adapt a coordinated side-kick source, inspect/register movement, curate exact hash/revision relationships if joining separate movements, validate/compile/review through existing workflow."
+}

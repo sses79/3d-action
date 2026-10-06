@@ -1,0 +1,217 @@
+{
+  "at": "2026-10-04T19:13:57.844Z",
+  "results": [
+    {
+      "arguments": {
+        "movementA": "move-ual2-sword-regular-a",
+        "revisionA": 1,
+        "movementB": "move-ual2-sword-regular-combo",
+        "revisionB": 1
+      },
+      "firstClientMs": 139.12,
+      "warmClientMs": 2.24,
+      "result": {
+        "schemaVersion": 1,
+        "sources": [
+          {
+            "id": "move-ual2-sword-regular-a",
+            "revision": 1,
+            "motionHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad"
+          },
+          {
+            "id": "move-ual2-sword-regular-combo",
+            "revision": 1,
+            "motionHash": "ccf002d937d7a5a04eaa22d7f9ddfcfcfd98c09a156bce8522f5cede9f49e2f9"
+          }
+        ],
+        "algorithm": "same-speed-diagonal-windows-v1",
+        "sampleRate": 30,
+        "bodyPart": "full",
+        "joints": [
+          "pelvis",
+          "spine_03",
+          "Head",
+          "upperarm_l",
+          "lowerarm_l",
+          "hand_l",
+          "upperarm_r",
+          "lowerarm_r",
+          "hand_r",
+          "thigh_l",
+          "calf_l",
+          "foot_l",
+          "thigh_r",
+          "calf_r",
+          "foot_r"
+        ],
+        "thresholds": {
+          "minDuration": 0.2,
+          "positionToleranceMeters": 0.06,
+          "rotationToleranceDegrees": 12,
+          "includeHolds": false
+        },
+        "matches": [
+          {
+            "a": {
+              "start": 0,
+              "end": 0.4333333373069763,
+              "from": 0,
+              "to": 1,
+              "rootDisplacement": [
+                0,
+                0,
+                0
+              ],
+              "bodyDisplacement": [
+                -0.04103742235825215,
+                -0.30317573547192467,
+                -0.02151492805870545
+              ]
+            },
+            "b": {
+              "start": 0,
+              "end": 0.43333333333333335,
+              "from": 0,
+              "to": 0.14444444444444446,
+              "rootDisplacement": [
+                0,
+                0,
+                0
+              ],
+              "bodyDisplacement": [
+                -0.04136888132180443,
+                -0.30321179385024843,
+                -0.021317902873114785
+              ]
+            },
+            "duration": 0.43333333333333335,
+            "positionRmsMeters": 0.013132621786677786,
+            "rotationRmsDegrees": 1.3495452787114872,
+            "classification": "shared-motion-candidate",
+            "motionExcursionMeters": 0.5232566261604361,
+            "motionExcursionDegrees": 71.87398968941406,
+            "otherMotionExcursionMeters": 0.5255180724123304,
+            "otherMotionExcursionDegrees": 71.81741827043122,
+            "samples": 14
+          }
+        ],
+        "holdRunsExcluded": 0,
+        "comparedFrames": 1274,
+        "notes": [
+          "Positions are pelvis-relative normalized meters; rotations are local joint quaternions. Root and pelvis travel are reported separately and not part of the similarity gate; fingers and joint scales are not compared.",
+          "Fixed playback speed and model facing; no retiming, mirroring or yaw alignment. Endpoints have at most one sample interval of resolution.",
+          "Similar motion is a reusable-source candidate, not proof of common provenance or safe blending. Partial-body matches cannot be extracted as whole-body shared movements without further authoring."
+        ],
+        "sampledMovements": 0,
+        "elapsedMs": 0,
+        "extraction": "For a reviewed full-body match, use adapt_movement with the returned from/to and pinned source revision; no automatic library writes."
+      }
+    },
+    {
+      "arguments": {
+        "movementA": "move-ual2-sword-regular-b",
+        "revisionA": 1,
+        "movementB": "move-ual2-sword-regular-combo",
+        "revisionB": 1
+      },
+      "firstClientMs": 7.74,
+      "warmClientMs": 1.49,
+      "result": {
+        "schemaVersion": 1,
+        "sources": [
+          {
+            "id": "move-ual2-sword-regular-b",
+            "revision": 1,
+            "motionHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad"
+          },
+          {
+            "id": "move-ual2-sword-regular-combo",
+            "revision": 1,
+            "motionHash": "ccf002d937d7a5a04eaa22d7f9ddfcfcfd98c09a156bce8522f5cede9f49e2f9"
+          }
+        ],
+        "algorithm": "same-speed-diagonal-windows-v1",
+        "sampleRate": 30,
+        "bodyPart": "full",
+        "joints": [
+          "pelvis",
+          "spine_03",
+          "Head",
+          "upperarm_l",
+          "lowerarm_l",
+          "hand_l",
+          "upperarm_r",
+          "lowerarm_r",
+          "hand_r",
+          "thigh_l",
+          "calf_l",
+          "foot_l",
+          "thigh_r",
+          "calf_r",
+          "foot_r"
+        ],
+        "thresholds": {
+          "minDuration": 0.2,
+          "positionToleranceMeters": 0.06,
+          "rotationToleranceDegrees": 12,
+          "includeHolds": false
+        },
+        "matches": [
+          {
+            "a": {
+              "start": 0,
+              "end": 0.5333333611488342,
+              "from": 0,
+              "to": 1,
+              "rootDisplacement": [
+                0,
+                0,
+                0
+              ],
+              "bodyDisplacement": [
+                0.031236242269576907,
+                -0.026947571140019,
+                -0.010154430620188344
+              ]
+            },
+            "b": {
+              "start": 0.4666666666666667,
+              "end": 1,
+              "from": 0.15555555555555556,
+              "to": 0.3333333333333333,
+              "rootDisplacement": [
+                0,
+                0,
+                0
+              ],
+              "bodyDisplacement": [
+                0.031236241081626107,
+                -0.026947571218006505,
+                -0.01015443092297861
+              ]
+            },
+            "duration": 0.5333333333333333,
+            "positionRmsMeters": 0.014984278418909393,
+            "rotationRmsDegrees": 1.6969318490997547,
+            "classification": "shared-motion-candidate",
+            "motionExcursionMeters": 0.6495333969573912,
+            "motionExcursionDegrees": 76.2334133714902,
+            "otherMotionExcursionMeters": 0.6495943869773788,
+            "otherMotionExcursionDegrees": 76.286362148,
+            "samples": 17
+          }
+        ],
+        "holdRunsExcluded": 0,
+        "comparedFrames": 1547,
+        "notes": [
+          "Positions are pelvis-relative normalized meters; rotations are local joint quaternions. Root and pelvis travel are reported separately and not part of the similarity gate; fingers and joint scales are not compared.",
+          "Fixed playback speed and model facing; no retiming, mirroring or yaw alignment. Endpoints have at most one sample interval of resolution.",
+          "Similar motion is a reusable-source candidate, not proof of common provenance or safe blending. Partial-body matches cannot be extracted as whole-body shared movements without further authoring."
+        ],
+        "sampledMovements": 0,
+        "elapsedMs": 0,
+        "extraction": "For a reviewed full-body match, use adapt_movement with the returned from/to and pinned source revision; no automatic library writes."
+      }
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "measuredAt": "2026-10-04T16:47:07.041Z",
+  "operation": "list_actions",
+  "samples": 12,
+  "paths": {
+    "oneShotMcpCli": {
+      "medianMs": 91.78,
+      "minMs": 88.37,
+      "maxMs": 107.89,
+      "samplesMs": [
+        98.57,
+        97.34,
+        90.59,
+        91.46,
+        98.83,
+        107.89,
+        91.78,
+        96.22,
+        90.11,
+        88.37,
+        89.54,
+        90.36
+      ]
+    },
+    "oneShotDirectHttpCli": {
+      "medianMs": 56.15,
+      "minMs": 53.27,
+      "maxMs": 73.83,
+      "samplesMs": [
+        56.82,
+        54.89,
+        56.15,
+        55.82,
+        73.83,
+        56.71,
+        61.09,
+        55.8,
+        53.27,
+        54.99,
+        54.79,
+        56.21
+      ]
+    },
+    "persistentMcp": {
+      "medianMs": 1.6,
+      "minMs": 1.05,
+      "maxMs": 2.81,
+      "samplesMs": [
+        2.02,
+        2.81,
+        1.39,
+        1.6,
+        1.72,
+        1.43,
+        2.14,
+        1.47,
+        2.33,
+        1.25,
+        1.05,
+        1.18
+      ]
+    },
+    "warmHttp": {
+      "medianMs": 0.9,
+      "minMs": 0.64,
+      "maxMs": 1.37,
+      "samplesMs": [
+        1.37,
+        1.01,
+        0.83,
+        0.9,
+        1.08,
+        0.79,
+        0.87,
+        0.92,
+        0.95,
+        0.67,
+        0.68,
+        0.64
+      ]
+    }
+  },
+  "coldStandaloneStudioMs": 1694.74,
+  "notes": "Read-only small result; 1 discarded warmup then 12 alternating samples per transport. Standalone Studio sampled once; includes bundle import, project load and seed checks. Excludes LLM and desktop tool dispatch."
+}

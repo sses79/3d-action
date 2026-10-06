@@ -1,0 +1,211 @@
+{
+  "reviewedAt": "2026-10-05T08:52:03.674Z",
+  "reviewer": "llm-visual",
+  "scope": "Seven evenly spaced source poses in Front and Side; classification only, not physical validation or seam approval",
+  "sources": [
+    {
+      "id": "move-ual2-a-tpose",
+      "revision": 1,
+      "motionHash": "88b0663055f3f5e7e09ed15246a62e4a15ca55045fdffad02d372bc894e41d73",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-a-tpose.png"
+    },
+    {
+      "id": "move-ual2-chest-open",
+      "revision": 1,
+      "motionHash": "0df69bdfb67d5eb874337ec7d285942fd4914a3d5a475103c43822f377afbd7f",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-chest-open.png"
+    },
+    {
+      "id": "move-ual2-climbup-1m",
+      "revision": 1,
+      "motionHash": "c37bfd22867153bbd1ab3feedb3cf21d05651feb9e6f033e20026514622befe8",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-climbup-1m.png"
+    },
+    {
+      "id": "move-ual2-consume",
+      "revision": 1,
+      "motionHash": "cd3d70842a569c2b01e44cf89a1db6d670efab6509958f331e2b9749f71ed945",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-consume.png"
+    },
+    {
+      "id": "move-ual2-farm-harvest",
+      "revision": 1,
+      "motionHash": "d406e34513d3fb91d19482eec08ac33601195e84c7675a664f08bc2884f15d80",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-farm-harvest.png"
+    },
+    {
+      "id": "move-ual2-farm-plantseed",
+      "revision": 1,
+      "motionHash": "2bc84e8bd633dfff87c074a0f7c8fcfaa55e0b3c25707435132e12f5acfdaa95",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-farm-plantseed.png"
+    },
+    {
+      "id": "move-ual2-farm-watering",
+      "revision": 1,
+      "motionHash": "c8b295c1e7cea9b011a336ed5a7b76c679fdd4d82a14d208256db1a382a26dec",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-farm-watering.png"
+    },
+    {
+      "id": "move-ual2-hit-knockback",
+      "revision": 1,
+      "motionHash": "65cd2360854dd58a027c77d953e5f3af58f1c297a4e20255d4319f5c9c4b59a3",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-hit-knockback.png"
+    },
+    {
+      "id": "move-ual2-idle-foldarms-loop",
+      "revision": 1,
+      "motionHash": "7c74e4edaefdb30749649b25b8b3abd2378e0dcfded3cef8bf8029f773f6a560",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-idle-foldarms-loop.png"
+    },
+    {
+      "id": "move-ual2-idle-lantern-loop",
+      "revision": 1,
+      "motionHash": "5855198abea48eb545c7d872d9d0b23b273b224fdb20df1f5357e1c30a0d2a83",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-idle-lantern-loop.png"
+    },
+    {
+      "id": "move-ual2-idle-no-loop",
+      "revision": 1,
+      "motionHash": "d172c193b95f4768e108e57ed9b6fa1b87f0f0d38c0fa7b4dd1f0f3e052d7baa",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-idle-no-loop.png"
+    },
+    {
+      "id": "move-ual2-idle-rail-call",
+      "revision": 1,
+      "motionHash": "532c71ad432dea935325499b0a73f0de7200f5e1f4a5a630cdbc00459adab563",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-idle-rail-call.png"
+    },
+    {
+      "id": "move-ual2-idle-rail-loop",
+      "revision": 1,
+      "motionHash": "409d367f808868f4ccb536ddfa19901ec59181a4e0e59c86fc1a8c6a620f3004",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-idle-rail-loop.png"
+    },
+    {
+      "id": "move-ual2-idle-shield-break",
+      "revision": 1,
+      "motionHash": "fcb1af7a14e0703c60e1334889f108b696f98c78766547132631db0f0f965f46",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-idle-shield-break.png"
+    },
+    {
+      "id": "move-ual2-idle-shield-loop",
+      "revision": 1,
+      "motionHash": "ba1d3354ad54fa35c595d1bb1bb7bb98695a44e90a5bcb6950b73fc8fe14dd66",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-idle-shield-loop.png"
+    },
+    {
+      "id": "move-ual2-idle-talkingphone-loop",
+      "revision": 1,
+      "motionHash": "c5230855b978f61724aa05dbd0d211e0280e613b8b36ab222ed37e2fd549a5af",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-idle-talkingphone-loop.png"
+    },
+    {
+      "id": "move-ual2-laytoidle",
+      "revision": 1,
+      "motionHash": "c0c0484f6d52c56c1b788263c3656957d7e3e4a303f8e91ec0dcc2e7af2155a1",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-laytoidle.png"
+    },
+    {
+      "id": "move-ual2-melee-hook",
+      "revision": 1,
+      "motionHash": "1d093d071087f86f757a5b76446d20e6b97cc4881737ef9e3ef716ab894bbf94",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-melee-hook.png"
+    },
+    {
+      "id": "move-ual2-melee-hook-rec",
+      "revision": 1,
+      "motionHash": "81ba1d22197638c00409e4eeb4fc373f1e545777c21a8a69039e9ee773e347bb",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-melee-hook-rec.png"
+    },
+    {
+      "id": "move-ual2-ninjajump-idle-loop",
+      "revision": 1,
+      "motionHash": "244ac0443dd08d5dfc2e346acd85dd8e689960d4a5e685e7715ab4d2127423f3",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-ninjajump-idle-loop.png"
+    },
+    {
+      "id": "move-ual2-ninjajump-land",
+      "revision": 1,
+      "motionHash": "46daac174af2edb09070d37325d71f352b3c95e1e54445068097ecfd951fc4c5",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-ninjajump-land.png"
+    },
+    {
+      "id": "move-ual2-ninjajump-start",
+      "revision": 1,
+      "motionHash": "b9e898e5939e6a09092e5679f47ec108db58e2541c4c4b7d3e167e9bae4dcab0",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-ninjajump-start.png"
+    },
+    {
+      "id": "move-ual2-overhandthrow",
+      "revision": 1,
+      "motionHash": "c0a8fb35b5002008407c4486445d5829ebf96382262fc8f5ce4daaf12b8cf904",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-overhandthrow.png"
+    },
+    {
+      "id": "move-ual2-shield-dash",
+      "revision": 1,
+      "motionHash": "2a1bcee90ba1e04b0123a740e1d87ecb695e0d0e7e4b69ce41b3ce9de9f61c24",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-shield-dash.png"
+    },
+    {
+      "id": "move-ual2-shield-oneshot",
+      "revision": 1,
+      "motionHash": "68e4844f485fb0f6c50ae8aadb8cfb704815302dcf60c15dbe42053f860e7a2d",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-shield-oneshot.png"
+    },
+    {
+      "id": "move-ual2-sword-block",
+      "revision": 1,
+      "motionHash": "189fdb9bd7958006e0d8d87bfa8a7afc01eb2ee7117ffd88d69bd44b07ff79b4",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-sword-block.png"
+    },
+    {
+      "id": "move-ual2-sword-dash",
+      "revision": 1,
+      "motionHash": "4c386be54f4c126a810ddc9b08c571cf61c3513947541c9f1576a41b299ebd70",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-sword-dash.png"
+    },
+    {
+      "id": "move-ual2-sword-heavy-combo",
+      "revision": 1,
+      "motionHash": "4872590589707e70fbfd1d446435357b9f628e084955e2140b3424a90d957f11",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-sword-heavy-combo.png"
+    },
+    {
+      "id": "move-ual2-treechopping-loop",
+      "revision": 1,
+      "motionHash": "b61017e469e3220ea026c38d224ec9c74b75ce8a387c1ea7147c1029b73b9b20",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-treechopping-loop.png"
+    },
+    {
+      "id": "move-ual2-walk-carry-loop",
+      "revision": 1,
+      "motionHash": "3ded087b30fd08504eb8c11c194c507eed2d5eec167f0a6d972738a2bfd7f246",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-walk-carry-loop.png"
+    },
+    {
+      "id": "move-ual2-yes",
+      "revision": 1,
+      "motionHash": "bb24118a3d24692525957841d114c3fefcfa7b816459fb5c5984cdc65231eafb",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-yes.png"
+    },
+    {
+      "id": "move-ual2-zombie-idle-loop",
+      "revision": 1,
+      "motionHash": "077dd7b301382d5feed829484e06a316414d66c5b9292e78053a128c0828a8fc",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-zombie-idle-loop.png"
+    },
+    {
+      "id": "move-ual2-zombie-scratch",
+      "revision": 1,
+      "motionHash": "93853420948b98350b4d2867ca8c652b87685597b9f217286c46df46af944275",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-zombie-scratch.png"
+    },
+    {
+      "id": "move-ual2-zombie-walk-fwd-loop",
+      "revision": 1,
+      "motionHash": "f029bd0b41ddf3cc69c6f2d79dafe75003ebc1fe7421e820dc3da3686ac70b2b",
+      "artifact": "authoring/reviews/catalog/sheets/move-ual2-zombie-walk-fwd-loop.png"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "kind": "video-motion-review-bundle",
+  "status": "draft-unreviewed",
+  "artifacts": {
+    "reference": {
+      "file": "reference.json",
+      "sha256": "dd3bc9f5a55fa384ee9fb59a60c6941e58371c87469d04532120d72b0e83429a",
+      "bytes": 140899
+    },
+    "motion": {
+      "file": "motion.json",
+      "sha256": "80003c0dd11d16f1d7ed8a50188ab33826d180ebff02fcfb07c413b9f9d93410",
+      "bytes": 128758
+    },
+    "video": {
+      "file": "reference.mp4",
+      "sha256": "dbc20e098231d1c01608588c1912b0b36444a34876a02c6abaee53f74343f6d3",
+      "bytes": 733706
+    },
+    "action": {
+      "file": "action.json",
+      "sha256": "e8e77d8d079325be05a998dcbe056f93bf1fda858be3b42747230f44c202c2e9",
+      "bytes": 1020444
+    },
+    "quality": {
+      "file": "quality.json",
+      "sha256": "79265b0fbf0f5b507a483174311f36e29cb55aa6c8b59b730780e8d6f4be074a",
+      "bytes": 41122
+    },
+    "rawEstimate": {
+      "file": "raw-estimate.json",
+      "sha256": "aae2ed62e10e82d515813e5947592d14caf70c1660e80649a0cc207f143187a7",
+      "bytes": 751800
+    }
+  },
+  "action": {
+    "id": "video-side-kick-stable",
+    "revision": 1,
+    "rig": "quaternius-ual1",
+    "motionHash": "4f4c47fd790650e5243ea686c1bb78fe394043da64574937c153116c66210436"
+  },
+  "sync": {
+    "actionDuration": 2.3000000000000007,
+    "sourceWindow": [
+      11.45,
+      13.75
+    ],
+    "anchors": [
+      {
+        "actionTime": 0,
+        "sourceTime": 11.45,
+        "videoTime": 0
+      },
+      {
+        "actionTime": 2.3000000000000007,
+        "sourceTime": 13.75,
+        "videoTime": 2.3000000000000007
+      }
+    ],
+    "mapping": "piecewise-linear"
+  },
+  "cacheKeys": {
+    "observation": "2498c84d51e6d30a003db35206e9232ee2380ece385cddd84d2594b4cd6ff57b",
+    "estimation": "783653b504e9acb933e1a3833e7f894f340ceed0ff0736d1dd9657a17d5ab694",
+    "fitting": "5a2d4d9738e77db42f7c02b85c278b5a9f59f9911108e5a66d1c38eab7078c0f",
+    "retarget": "a6ef99d5eb093ab9619df7938714e7961699600d2532d64ce2ffd2b8e6cfcfee"
+  },
+  "contactStatus": "unconfirmed",
+  "reviewWindows": [
+    [
+      1.3133333333333335,
+      1.3466666666666667
+    ],
+    [
+      1.4533333333333334,
+      1.4866666666666666
+    ],
+    [
+      1.6833333333333333,
+      1.7166666666666666
+    ]
+  ]
+}

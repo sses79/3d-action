@@ -1,0 +1,62 @@
+{
+  "valid": true,
+  "diagnostics": [
+    {
+      "code": "motion/unverified",
+      "severity": "warning",
+      "subject": "/steps",
+      "message": "Compilation does not verify equipment, contact or physical balance",
+      "evidence": null,
+      "supportedFixes": [
+        "Inspect this motion in Studio"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "movementId": "move-kick",
+      "revision": 1,
+      "speed": 1,
+      "transition": 0
+    }
+  ],
+  "receipt": {
+    "schemaVersion": 1,
+    "specHash": "3daadeca1155f7924bf734d165d41e5aee2484d5de54ad70ae685fea768f871c",
+    "compiler": "pose-blend-v1",
+    "sources": [
+      {
+        "id": "move-kick",
+        "revision": 1,
+        "motionHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c"
+      }
+    ],
+    "duration": 1.8333333730697634,
+    "inspection": [
+      {
+        "step": 0,
+        "joinStart": 0,
+        "start": 0,
+        "end": 1.8333333730697634
+      }
+    ],
+    "contactIntervals": [
+      {
+        "movementId": "move-kick",
+        "sourceRevision": 1,
+        "reviewRevision": 1,
+        "foot": "left",
+        "start": 0,
+        "end": 1.8333333730697634,
+        "sourceStart": 0,
+        "sourceEnd": 1.8333333730697634,
+        "review": "llm-visual-supported",
+        "reviewScope": "source-only"
+      }
+    ],
+    "seamPolicies": [],
+    "visualReview": "pending",
+    "physicalValidation": "not-performed"
+  },
+  "committed": false
+}

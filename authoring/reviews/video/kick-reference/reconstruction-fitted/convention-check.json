@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "705d3a95354db8bdb696b3492e47a3b5537174ff",
+  "files": [
+    "lib/data/dataset_wild.py:halpe2h36m",
+    "lib/utils/utils_data.py:crop_scale",
+    "lib/utils/utils_data.py:flip_data"
+  ],
+  "checks": {
+    "legIndices": "match",
+    "armIndices": "match",
+    "flipIndices": "match",
+    "cropEquation": "equivalent when valid point mask matches"
+  },
+  "differences": [
+    "COCO17 lacks measured Halpe26 head/neck/hip landmarks; these are synthesized",
+    "Confidence policies differ for synthesized joints",
+    "70 interpolated time-grid frames; actual source is variable rate",
+    "Median input filter is a pilot addition"
+  ],
+  "conclusion": "No leg-index reversal found. This check does not prove identical model input distribution or correct depth."
+}

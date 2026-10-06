@@ -1,0 +1,126 @@
+{
+  "prompt": "Raise a defensive block, hold briefly, then release into a counterattack and recover.",
+  "actionId": "cli-block-counter-example",
+  "steps": [
+    {
+      "name": "list_movements",
+      "arguments": {},
+      "as": "catalog"
+    },
+    {
+      "name": "get_movement",
+      "arguments": {
+        "movementId": "move-counter-ready"
+      },
+      "as": "source-0"
+    },
+    {
+      "name": "get_movement",
+      "arguments": {
+        "movementId": "move-counter-guard"
+      },
+      "as": "source-1"
+    },
+    {
+      "name": "get_movement",
+      "arguments": {
+        "movementId": "move-counter-right-cross"
+      },
+      "as": "source-2"
+    },
+    {
+      "name": "get_movement",
+      "arguments": {
+        "movementId": "move-counter-finish"
+      },
+      "as": "source-3"
+    },
+    {
+      "name": "compose_action",
+      "arguments": {
+        "actionId": "cli-block-counter-example",
+        "name": "CLI \u00b7 Block Counter Example",
+        "expectedRevision": 0,
+        "steps": [
+          {
+            "movementId": "move-counter-ready",
+            "revision": {
+              "$ref": "source-0.revision"
+            },
+            "speed": 1,
+            "transition": 0
+          },
+          {
+            "movementId": "move-counter-guard",
+            "revision": {
+              "$ref": "source-1.revision"
+            },
+            "speed": 1,
+            "transition": 0.24
+          },
+          {
+            "movementId": "move-counter-right-cross",
+            "revision": {
+              "$ref": "source-2.revision"
+            },
+            "speed": 1,
+            "transition": 0.04
+          },
+          {
+            "movementId": "move-counter-finish",
+            "revision": {
+              "$ref": "source-3.revision"
+            },
+            "speed": 1,
+            "transition": 0.08
+          }
+        ]
+      },
+      "as": "compiled"
+    },
+    {
+      "name": "get_diagnostics",
+      "arguments": {
+        "actionId": "cli-block-counter-example",
+        "time": 0.4
+      },
+      "as": "check-0"
+    },
+    {
+      "name": "get_diagnostics",
+      "arguments": {
+        "actionId": "cli-block-counter-example",
+        "time": 0.78
+      },
+      "as": "check-1"
+    },
+    {
+      "name": "get_diagnostics",
+      "arguments": {
+        "actionId": "cli-block-counter-example",
+        "time": 1.706
+      },
+      "as": "check-2"
+    },
+    {
+      "name": "set_preview",
+      "arguments": {
+        "actionId": "cli-block-counter-example",
+        "time": 0.78,
+        "playing": false,
+        "loop": false,
+        "view": "current",
+        "camera": "Front"
+      },
+      "as": "preview"
+    },
+    {
+      "name": "get_action",
+      "arguments": {
+        "actionId": "cli-block-counter-example"
+      },
+      "as": "baked"
+    }
+  ],
+  "finish": false
+}

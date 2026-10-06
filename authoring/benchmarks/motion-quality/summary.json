@@ -1,0 +1,253 @@
+{
+  "at": "2026-10-04T20:18:21.013Z",
+  "projectSequence": 231,
+  "results": [
+    {
+      "id": "move-ual2-sword-regular-a",
+      "revision": 1,
+      "report": "authoring/benchmarks/motion-quality/move-ual2-sword-regular-a.json",
+      "serviceMs": 68.83,
+      "clientMs": 70.85,
+      "sampledFrames": 27,
+      "candidateContacts": 0,
+      "seams": 0,
+      "flags": {},
+      "rootTravel": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0
+      },
+      "pelvisTravel": {
+        "delta": [
+          -0.04103742135991392,
+          -0.3031757354376087,
+          -0.021514927690049968
+        ],
+        "distance": 0.5303022822542808
+      }
+    },
+    {
+      "id": "move-ual2-sword-regular-a-rec",
+      "revision": 1,
+      "report": "authoring/benchmarks/motion-quality/move-ual2-sword-regular-a-rec.json",
+      "serviceMs": 30.88,
+      "clientMs": 33.23,
+      "sampledFrames": 59,
+      "candidateContacts": 2,
+      "seams": 0,
+      "flags": {},
+      "rootTravel": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0
+      },
+      "pelvisTravel": {
+        "delta": [
+          0.04296032644590711,
+          0.3083583178638317,
+          0.02285599263161428
+        ],
+        "distance": 0.3820691512415839
+      }
+    },
+    {
+      "id": "move-ual2-sword-regular-b",
+      "revision": 1,
+      "report": "authoring/benchmarks/motion-quality/move-ual2-sword-regular-b.json",
+      "serviceMs": 19.19,
+      "clientMs": 21.09,
+      "sampledFrames": 34,
+      "candidateContacts": 0,
+      "seams": 0,
+      "flags": {},
+      "rootTravel": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0
+      },
+      "pelvisTravel": {
+        "delta": [
+          0.031236242269576907,
+          -0.026947571140019,
+          -0.010154430620188344
+        ],
+        "distance": 0.3108647991135217
+      }
+    },
+    {
+      "id": "move-ual2-sword-regular-b-rec",
+      "revision": 1,
+      "report": "authoring/benchmarks/motion-quality/move-ual2-sword-regular-b-rec.json",
+      "serviceMs": 14.72,
+      "clientMs": 21.99,
+      "sampledFrames": 63,
+      "candidateContacts": 0,
+      "seams": 0,
+      "flags": {},
+      "rootTravel": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0
+      },
+      "pelvisTravel": {
+        "delta": [
+          0.03165459030152402,
+          0.3366143026148607,
+          0.03806337559900216
+        ],
+        "distance": 0.4012421234761868
+      }
+    },
+    {
+      "id": "move-ual2-sword-regular-c",
+      "revision": 1,
+      "report": "authoring/benchmarks/motion-quality/move-ual2-sword-regular-c.json",
+      "serviceMs": 24.1,
+      "clientMs": 25.68,
+      "sampledFrames": 121,
+      "candidateContacts": 3,
+      "seams": 0,
+      "flags": {},
+      "rootTravel": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0
+      },
+      "pelvisTravel": {
+        "delta": [
+          0.047222173414990354,
+          0.314363972877336,
+          0.01791625067713966
+        ],
+        "distance": 1.3278264019759312
+      }
+    },
+    {
+      "id": "move-ual2-sword-regular-combo",
+      "revision": 1,
+      "report": "authoring/benchmarks/motion-quality/move-ual2-sword-regular-combo.json",
+      "serviceMs": 32.31,
+      "clientMs": 33.79,
+      "sampledFrames": 181,
+      "candidateContacts": 5,
+      "seams": 0,
+      "flags": {},
+      "rootTravel": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0
+      },
+      "pelvisTravel": {
+        "delta": [
+          -0.00031201449182461684,
+          0.005146463679455149,
+          0.001455370448032069
+        ],
+        "distance": 2.3058417471272907
+      }
+    },
+    {
+      "id": "kick-study",
+      "revision": 3,
+      "report": "authoring/benchmarks/motion-quality/kick-study.json",
+      "serviceMs": 25.94,
+      "clientMs": 27.35,
+      "sampledFrames": 110,
+      "candidateContacts": 1,
+      "seams": 3,
+      "flags": {
+        "connection/velocity-change": 1
+      },
+      "rootTravel": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0
+      },
+      "pelvisTravel": {
+        "delta": [
+          2.4318616599627862e-9,
+          -4.460040115006336e-9,
+          8.600900852639981e-9
+        ],
+        "distance": 0.7958003809958081
+      }
+    },
+    {
+      "id": "sword-source-study",
+      "revision": 1,
+      "report": "authoring/benchmarks/motion-quality/sword-source-study.json",
+      "serviceMs": 36.92,
+      "clientMs": 38.08,
+      "sampledFrames": 181,
+      "candidateContacts": 5,
+      "seams": 0,
+      "flags": {},
+      "rootTravel": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0
+      },
+      "pelvisTravel": {
+        "delta": [
+          -0.00031201449182461684,
+          0.005146463679455149,
+          0.0014553704480320655
+        ],
+        "distance": 2.3058417471272814
+      }
+    },
+    {
+      "id": "sword-joined-study",
+      "revision": 1,
+      "report": "authoring/benchmarks/motion-quality/sword-joined-study.json",
+      "serviceMs": 40.12,
+      "clientMs": 41.28,
+      "sampledFrames": 197,
+      "candidateContacts": 5,
+      "seams": 4,
+      "flags": {
+        "connection/velocity-change": 2
+      },
+      "rootTravel": {
+        "delta": [
+          0,
+          0,
+          0
+        ],
+        "distance": 0
+      },
+      "pelvisTravel": {
+        "delta": [
+          0.0013435929218115158,
+          0.005146463634254972,
+          0.002775912678758272
+        ],
+        "distance": 2.217734588110783
+      }
+    }
+  ]
+}

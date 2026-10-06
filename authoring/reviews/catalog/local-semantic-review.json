@@ -1,0 +1,115 @@
+{
+  "reviewedAt": "2026-10-05T09:08:23.611Z",
+  "reviewer": "llm-visual",
+  "scope": "Seven sampled source poses per Front/Side; source classification, not physical validation",
+  "sources": [
+    {
+      "id": "move-guard",
+      "revision": 1,
+      "motionHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+      "artifact": "authoring/reviews/catalog/sheets/move-guard.png"
+    },
+    {
+      "id": "move-kick",
+      "revision": 1,
+      "motionHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+      "artifact": "authoring/reviews/catalog/sheets/move-kick.png"
+    },
+    {
+      "id": "move-punch",
+      "revision": 2,
+      "motionHash": "44e9e822a7a8c4e2562fdc2d457b0146a6c47b7e10795822dd8a61c9dccd05c7",
+      "artifact": "authoring/reviews/catalog/sheets/move-punch.png"
+    },
+    {
+      "id": "move-walk",
+      "revision": 3,
+      "motionHash": "135b90dad343a70a7e0052dbc7069429fe403c4e19173b592846d747588f8b06",
+      "artifact": "authoring/reviews/catalog/sheets/move-walk.png"
+    },
+    {
+      "id": "move-step-forward",
+      "revision": 1,
+      "motionHash": "f45dcfed8d47dd6f07982b9295348e3e328deb07d0d5e2f8d41eab4296201835",
+      "artifact": "authoring/reviews/catalog/sheets/move-step-forward.png"
+    },
+    {
+      "id": "move-hook-quick",
+      "revision": 1,
+      "motionHash": "ab69374fba83adeb7ed6d21a1a937fe2cccbd54886f03dd22d3f5d61c231e6ea",
+      "artifact": "authoring/reviews/catalog/sheets/move-hook-quick.png"
+    },
+    {
+      "id": "move-escape-slide-start",
+      "revision": 2,
+      "motionHash": "caefb8356541ce6da1dac81f1022a79f888a625f3072999a0642661cdee4b4ad",
+      "artifact": "authoring/reviews/catalog/sheets/move-escape-slide-start.png"
+    },
+    {
+      "id": "move-escape-slide-loop",
+      "revision": 2,
+      "motionHash": "1b9d15d650ef3ee35b5019f3d465fdf8dbc6c1a1d1c7fdcf1fed5f22ddddcaf7",
+      "artifact": "authoring/reviews/catalog/sheets/move-escape-slide-loop.png"
+    },
+    {
+      "id": "move-escape-slide-exit",
+      "revision": 2,
+      "motionHash": "e2e9c04ec6723c433aa8ffb8dad6148344222af8e07f05c0863b2fa48d2a5838",
+      "artifact": "authoring/reviews/catalog/sheets/move-escape-slide-exit.png"
+    },
+    {
+      "id": "move-escape-slide-standing",
+      "revision": 2,
+      "motionHash": "1b9aac3e632b9cdb1ef52507e219c1f8edf6e5ec0514852f94fd0b0cd28628c4",
+      "artifact": "authoring/reviews/catalog/sheets/move-escape-slide-standing.png"
+    },
+    {
+      "id": "move-counter-ready",
+      "revision": 1,
+      "motionHash": "212eeb816b048e755ee996871f2659fbcfce8b9423cd64f995a82f755a80fa13",
+      "artifact": "authoring/reviews/catalog/sheets/move-counter-ready.png"
+    },
+    {
+      "id": "move-counter-guard",
+      "revision": 1,
+      "motionHash": "d1908790ac84ac34da9a5f9acd544ff39f969d4c77e079f127e79633d128a8c6",
+      "artifact": "authoring/reviews/catalog/sheets/move-counter-guard.png"
+    },
+    {
+      "id": "move-counter-right-cross",
+      "revision": 1,
+      "motionHash": "48f475b3211f0c953e5bfd84b4df79a4942d847f13d3eba51e86a305a0888493",
+      "artifact": "authoring/reviews/catalog/sheets/move-counter-right-cross.png"
+    },
+    {
+      "id": "move-counter-finish",
+      "revision": 1,
+      "motionHash": "2e963d1980f14b763ccce626d6d128e56730fb0e7cbf1a8490b65a6696ccc222",
+      "artifact": "authoring/reviews/catalog/sheets/move-counter-finish.png"
+    },
+    {
+      "id": "move-knockback-standing",
+      "revision": 1,
+      "motionHash": "1711c57a987f9731d500a0d95bb3686e5b7d71b97cae7e17f0056eae3a5f5603",
+      "artifact": "authoring/reviews/catalog/sheets/move-knockback-standing.png"
+    },
+    {
+      "id": "move-knockback-step",
+      "revision": 2,
+      "motionHash": "a0d8a09955a0bf297fbdbd3343e373a94e63d6fbf20e651decd6621cde9138c7",
+      "artifact": "authoring/reviews/catalog/sheets/move-knockback-step.png"
+    },
+    {
+      "id": "move-knockback-guard",
+      "revision": 1,
+      "motionHash": "173ce434d03535c2296e9090fb5ab3d0a36527bfe8f59b7e4226b2cdcaaf4dda",
+      "artifact": "authoring/reviews/catalog/sheets/move-knockback-guard.png"
+    },
+    {
+      "id": "move-knockback-ready",
+      "revision": 1,
+      "motionHash": "8113137a44731756af91b6fdec103685d28c2c84b6eb7fbd13fb32fae5a4d51d",
+      "artifact": "authoring/reviews/catalog/sheets/move-knockback-ready.png"
+    }
+  ]
+}

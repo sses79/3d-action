@@ -1,0 +1,23 @@
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Live Studio state, model caches and Python venv (project.json exceeds GitHub's 100 MB limit)
+.authoring/
+
+# Generated bundles: npm run build / build:editor / build:authoring
+watch/app.js
+editor/app.js
+authoring/core.js
+
+# Machine-specific local CA certificate
+citrus-local-ca.cer
+
+# Third-party reference footage and frames derived from it (not ours to redistribute).
+# Pose/motion JSON and scripts in this folder are tracked.
+authoring/reviews/video/**/*.mp4
+authoring/reviews/video/**/*.jpg
+authoring/reviews/video/**/*.png
+
+.claude/settings.local.json

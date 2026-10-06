@@ -1,0 +1,1235 @@
+{
+  "schemaVersion": 1,
+  "conventions": {
+    "version": 1,
+    "rig": "quaternius-ual1",
+    "time": "seconds",
+    "distance": "normalized meters",
+    "rotation": "local quaternion xyzw",
+    "facing": "model +Z; anatomical facing unknown",
+    "support": "Revision/hash-pinned LLM visual contact intervals; uncovered times and physical support unknown"
+  },
+  "items": [
+    {
+      "name": "Kick guard",
+      "schemaVersion": 1,
+      "id": "move-guard",
+      "revision": 1,
+      "motionHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+      "roles": [
+        "primitive"
+      ],
+      "semantics": {
+        "family": "kick",
+        "purpose": "Upright arms-down hold used as kick entry/exit; despite its name, this is not a defensive guard",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "source": {
+        "library": "studio-local",
+        "sourceDescription": "Mesh2Motion Kick_Breach · adapted CC0",
+        "notes": "Starting stance of the kick; suitable for kick entry/exit.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1,
+        "clip": "Kick guard",
+        "originalDuration": 0.5,
+        "adaptedHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+        "matchesOriginal": true
+      },
+      "availableWindow": [
+        0,
+        0.5
+      ],
+      "measurements": {
+        "version": 1,
+        "sourceRevision": 1,
+        "entry": {
+          "pose": "upright",
+          "headHeight": 1.5874544197145926,
+          "root": [
+            0,
+            0,
+            0
+          ],
+          "forward": [
+            0,
+            0,
+            1
+          ],
+          "positions": [
+            [
+              0.01671349144493451,
+              0.9323512815709041,
+              -0.11008025703911829
+            ],
+            [
+              -0.012386588159332572,
+              1.33038661421443,
+              -0.04590524905599609
+            ],
+            [
+              -0.017603761750256137,
+              1.5874544197145926,
+              -0.037249919845109544
+            ],
+            [
+              0.17857163180747573,
+              1.4629781387424363,
+              -0.10620276179630833
+            ],
+            [
+              0.21535511250115055,
+              1.1943401492738324,
+              -0.04652558386190405
+            ],
+            [
+              0.2551252876257361,
+              0.9280714124877054,
+              0.013411207132445736
+            ],
+            [
+              -0.20955449137828736,
+              1.452680135390521,
+              -0.10795704353963521
+            ],
+            [
+              -0.24640453051901512,
+              1.1781664227016007,
+              -0.08885018088240071
+            ],
+            [
+              -0.2863167271927807,
+              0.9059351260686894,
+              -0.06960795139602363
+            ],
+            [
+              0.10543726459445305,
+              0.9544270426502208,
+              -0.05807779610114621
+            ],
+            [
+              0.12130453733341554,
+              0.553429322178421,
+              -0.11237992225800325
+            ],
+            [
+              0.12509951097342087,
+              0.11902705204444386,
+              -0.11956640620030638
+            ],
+            [
+              -0.07362712871644106,
+              0.935490749855223,
+              -0.05630090058635444
+            ],
+            [
+              -0.0850518240979878,
+              0.5325360285126266,
+              -0.09498659714430113
+            ],
+            [
+              -0.0823622266231912,
+              0.09816407275817546,
+              -0.08576177211864555
+            ]
+          ],
+          "rotations": [
+            [
+              0.8061124003575758,
+              -0.027088817343892634,
+              0.045420318830997404,
+              0.5893945949887456
+            ],
+            [
+              -0.007526614751705076,
+              -0.003093683404576468,
+              -0.010169442031409561,
+              0.999915177223619
+            ],
+            [
+              -0.11052337039350447,
+              0.024166332461974457,
+              -0.015250877626187136,
+              0.9934626232042295
+            ],
+            [
+              0.11367393254920466,
+              -0.6455961923882056,
+              0.7034284135089457,
+              -0.2747221514565906
+            ],
+            [
+              -0.001613760348947361,
+              0.00023526258134662774,
+              0.005851402218357898,
+              0.9999815505903762
+            ],
+            [
+              0.12101800865912475,
+              -0.160683479437297,
+              -0.0022543318605300483,
+              0.9795562153362954
+            ],
+            [
+              -0.17614076367702572,
+              -0.681382139074139,
+              0.6465558354470162,
+              0.29437792643375216
+            ],
+            [
+              -0.0016155248196186038,
+              -0.00023549462991281014,
+              -0.005851961799445306,
+              0.9999815444121629
+            ],
+            [
+              0.07095596393928053,
+              0.24181810886146318,
+              -0.01830015638290332,
+              0.9675507003172881
+            ],
+            [
+              0.985981040430433,
+              -0.01967588695041067,
+              0.13911348794828876,
+              0.09000935982050438
+            ],
+            [
+              -0.06090480046350571,
+              -0.00013103659163670096,
+              0.000008006210385780199,
+              0.9981435708583275
+            ],
+            [
+              -0.490571015551612,
+              -0.1219354544223254,
+              -0.06634027535169504,
+              0.8602736724564705
+            ],
+            [
+              0.9844924472373403,
+              -0.07895154843556287,
+              -0.12427122373702025,
+              0.09538310795504096
+            ],
+            [
+              -0.060906971142784774,
+              -0.0001310112202931009,
+              0.000007982783555706923,
+              0.9981434384088027
+            ],
+            [
+              -0.5241621840581162,
+              0.10192973370666576,
+              0.08426292873169933,
+              0.8412871644280984
+            ]
+          ],
+          "feet": {
+            "left": {
+              "height": 0.02718650168428645,
+              "speed": 0
+            },
+            "right": {
+              "height": 0.025046142498863486,
+              "speed": 0
+            }
+          },
+          "supportHint": "both"
+        },
+        "exit": {
+          "pose": "upright",
+          "headHeight": 1.5874544197145926,
+          "root": [
+            0,
+            0,
+            0
+          ],
+          "forward": [
+            0,
+            0,
+            1
+          ],
+          "positions": [
+            [
+              0.01671349144493451,
+              0.9323512815709041,
+              -0.11008025703911829
+            ],
+            [
+              -0.012386588159332572,
+              1.33038661421443,
+              -0.04590524905599609
+            ],
+            [
+              -0.017603761750256137,
+              1.5874544197145926,
+              -0.037249919845109544
+            ],
+            [
+              0.17857163180747573,
+              1.4629781387424363,
+              -0.10620276179630833
+            ],
+            [
+              0.21535511250115055,
+              1.1943401492738324,
+              -0.04652558386190405
+            ],
+            [
+              0.2551252876257361,
+              0.9280714124877054,
+              0.013411207132445736
+            ],
+            [
+              -0.20955449137828736,
+              1.452680135390521,
+              -0.10795704353963521
+            ],
+            [
+              -0.24640453051901512,
+              1.1781664227016007,
+              -0.08885018088240071
+            ],
+            [
+              -0.2863167271927807,
+              0.9059351260686894,
+              -0.06960795139602363
+            ],
+            [
+              0.10543726459445305,
+              0.9544270426502208,
+              -0.05807779610114621
+            ],
+            [
+              0.12130453733341554,
+              0.553429322178421,
+              -0.11237992225800325
+            ],
+            [
+              0.12509951097342087,
+              0.11902705204444386,
+              -0.11956640620030638
+            ],
+            [
+              -0.07362712871644106,
+              0.935490749855223,
+              -0.05630090058635444
+            ],
+            [
+              -0.0850518240979878,
+              0.5325360285126266,
+              -0.09498659714430113
+            ],
+            [
+              -0.0823622266231912,
+              0.09816407275817546,
+              -0.08576177211864555
+            ]
+          ],
+          "rotations": [
+            [
+              0.8061124003575758,
+              -0.027088817343892634,
+              0.045420318830997404,
+              0.5893945949887456
+            ],
+            [
+              -0.007526614751705076,
+              -0.003093683404576468,
+              -0.010169442031409561,
+              0.999915177223619
+            ],
+            [
+              -0.11052337039350447,
+              0.024166332461974457,
+              -0.015250877626187136,
+              0.9934626232042295
+            ],
+            [
+              0.11367393254920466,
+              -0.6455961923882056,
+              0.7034284135089457,
+              -0.2747221514565906
+            ],
+            [
+              -0.001613760348947361,
+              0.00023526258134662774,
+              0.005851402218357898,
+              0.9999815505903762
+            ],
+            [
+              0.12101800865912475,
+              -0.160683479437297,
+              -0.0022543318605300483,
+              0.9795562153362954
+            ],
+            [
+              -0.17614076367702572,
+              -0.681382139074139,
+              0.6465558354470162,
+              0.29437792643375216
+            ],
+            [
+              -0.0016155248196186038,
+              -0.00023549462991281014,
+              -0.005851961799445306,
+              0.9999815444121629
+            ],
+            [
+              0.07095596393928053,
+              0.24181810886146318,
+              -0.01830015638290332,
+              0.9675507003172881
+            ],
+            [
+              0.985981040430433,
+              -0.01967588695041067,
+              0.13911348794828876,
+              0.09000935982050438
+            ],
+            [
+              -0.06090480046350571,
+              -0.00013103659163670096,
+              0.000008006210385780199,
+              0.9981435708583275
+            ],
+            [
+              -0.490571015551612,
+              -0.1219354544223254,
+              -0.06634027535169504,
+              0.8602736724564705
+            ],
+            [
+              0.9844924472373403,
+              -0.07895154843556287,
+              -0.12427122373702025,
+              0.09538310795504096
+            ],
+            [
+              -0.060906971142784774,
+              -0.0001310112202931009,
+              0.000007982783555706923,
+              0.9981434384088027
+            ],
+            [
+              -0.5241621840581162,
+              0.10192973370666576,
+              0.08426292873169933,
+              0.8412871644280984
+            ]
+          ],
+          "feet": {
+            "left": {
+              "height": 0.02718650168428645,
+              "speed": 0
+            },
+            "right": {
+              "height": 0.025046142498863486,
+              "speed": 0
+            }
+          },
+          "supportHint": "both"
+        },
+        "travel": {
+          "rootDelta": [
+            0,
+            0,
+            0
+          ],
+          "bodyDelta": [
+            0,
+            0,
+            0
+          ],
+          "rootDistance": 0
+        }
+      },
+      "contactReview": {
+        "schemaVersion": 1,
+        "movementId": "move-guard",
+        "sourceRevision": 1,
+        "motionHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+        "intervals": [
+          {
+            "foot": "left",
+            "start": 0,
+            "end": 0.5,
+            "decision": "supported",
+            "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0,
+              "pathMeters": 0,
+              "maxSpeedMetersPerSecond": 0,
+              "minHeightMeters": 0.02718650168428645,
+              "maxHeightMeters": 0.02718650168428645,
+              "sampleCount": 31
+            }
+          },
+          {
+            "foot": "right",
+            "start": 0,
+            "end": 0.5,
+            "decision": "supported",
+            "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 0,
+              "pathMeters": 0,
+              "maxSpeedMetersPerSecond": 0,
+              "minHeightMeters": 0.025046142498863486,
+              "maxHeightMeters": 0.025046142498863486,
+              "sampleCount": 31
+            }
+          }
+        ],
+        "reviewedAt": "2026-10-05T09:11:34.660Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-05T09:11:34.659Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+        "artifacts": [
+          "authoring/reviews/catalog/sheets/move-guard-contacts.png",
+          "authoring/reviews/catalog/move-guard.json",
+          "authoring/reviews/catalog/local-frames-0/frames.json",
+          "authoring/reviews/catalog/local-frames-1/frames.json"
+        ],
+        "physicalValidation": "not-performed",
+        "uncoveredIntervals": "unknown",
+        "reviewRevision": 1
+      },
+      "contactReviewStatus": "current",
+      "unknowns": [
+        "contact outside reviewed intervals",
+        "anatomical facing",
+        "physical balance"
+      ],
+      "connections": [
+        {
+          "id": "kick-entry",
+          "from": "move-guard",
+          "to": "move-kick",
+          "fromHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+          "toHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+          "purpose": "continue",
+          "policy": "positive-pose-blend-no-anchor",
+          "review": "candidate",
+          "evidence": {
+            "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+            "positionRmsMeters": 0,
+            "rotationRmsDegrees": 8.817736302301881e-7,
+            "visualReview": "pending",
+            "trajectoryValidation": "not-performed"
+          },
+          "status": "candidate",
+          "seamPolicy": {
+            "schemaVersion": 1,
+            "contractId": "kick-entry",
+            "fromRevision": 1,
+            "toRevision": 1,
+            "fromHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+            "toHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+            "decision": "supported",
+            "configuration": {
+              "duration": 0.06,
+              "fromSpeed": 1,
+              "toSpeed": 1,
+              "anchor": "none"
+            },
+            "evidenceAction": {
+              "id": "contract-kick-entry",
+              "revision": 1,
+              "motionHash": "43602db7f787ca38629aa42cb14927e9184506a3bfdb85e769b32ffb6bcd8573",
+              "step": 1
+            },
+            "seams": [
+              {
+                "time": 0.5,
+                "rootVelocityJumpMetersPerSecond": 0,
+                "jointVelocityJumpRmsMetersPerSecond": 5.512884612084633e-15,
+                "angularVelocityJumpRmsDegreesPerSecond": 0
+              },
+              {
+                "time": 0.56,
+                "rootVelocityJumpMetersPerSecond": 0,
+                "jointVelocityJumpRmsMetersPerSecond": 0.6394041990196232,
+                "angularVelocityJumpRmsDegreesPerSecond": 75.8102114711285
+              }
+            ],
+            "flagCodes": [],
+            "reviewedAt": "2026-10-05T09:24:07.860Z",
+            "reviewer": "llm-visual",
+            "measurement": {
+              "algorithm": "rig-motion-quality-v1",
+              "sampleRate": 60,
+              "measuredAt": "2026-10-05T09:24:07.860Z",
+              "thresholds": {
+                "floorY": 0,
+                "footHeightTolerance": 0.05,
+                "footSpeedTolerance": 0.15,
+                "minContactDuration": 0.1,
+                "contactDriftTolerance": 0.03,
+                "boneLengthRelativeTolerance": 0.02,
+                "scaleRelativeTolerance": 0.02,
+                "rootVelocityJumpTolerance": 0.5,
+                "jointVelocityJumpTolerance": 1,
+                "angularVelocityJumpTolerance": 360
+              }
+            },
+            "views": [
+              "Front",
+              "Side"
+            ],
+            "notes": "Five sampled Front/Side frames across the actual compiled join show continuous body pose, without configured seam flags. Exact timing/speeds only; source contacts do not certify the blend, prop interaction or physical balance.",
+            "artifacts": [
+              "authoring/reviews/catalog/sheets/kick-entry-join.png",
+              "authoring/reviews/catalog/built-pairs.json",
+              "authoring/reviews/catalog/pairs-frames-0/frames.json",
+              "authoring/reviews/catalog/pairs-frames-1/frames.json"
+            ],
+            "physicalValidation": "not-performed",
+            "reviewRevision": 1
+          },
+          "policyStatus": "current"
+        }
+      ]
+    },
+    {
+      "name": "Forward kick",
+      "schemaVersion": 1,
+      "id": "move-kick",
+      "revision": 1,
+      "motionHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+      "roles": [
+        "source-sequence"
+      ],
+      "semantics": {
+        "family": "kick",
+        "purpose": "Coordinated forward kick with chamber, extension and recovery to upright arms-down stance",
+        "equipment": "none",
+        "review": "candidate"
+      },
+      "source": {
+        "library": "studio-local",
+        "sourceDescription": "Mesh2Motion Kick_Breach · adapted CC0",
+        "notes": "Right-leg forward kick with left-ball contact correction.",
+        "targetRig": "quaternius-ual1",
+        "reviewedRevision": 1,
+        "clip": "Forward kick",
+        "originalDuration": 1.8333333730697634,
+        "adaptedHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+        "matchesOriginal": true
+      },
+      "availableWindow": [
+        0,
+        1.8333333730697634
+      ],
+      "measurements": {
+        "version": 1,
+        "sourceRevision": 1,
+        "entry": {
+          "pose": "upright",
+          "headHeight": 1.5874544197145926,
+          "root": [
+            0,
+            0,
+            0
+          ],
+          "forward": [
+            0,
+            0,
+            1
+          ],
+          "positions": [
+            [
+              0.01671349144493451,
+              0.9323512815709041,
+              -0.11008025703911829
+            ],
+            [
+              -0.012386588159332572,
+              1.33038661421443,
+              -0.04590524905599609
+            ],
+            [
+              -0.017603761750256137,
+              1.5874544197145926,
+              -0.037249919845109544
+            ],
+            [
+              0.17857163180747573,
+              1.4629781387424363,
+              -0.10620276179630833
+            ],
+            [
+              0.21535511250115055,
+              1.1943401492738324,
+              -0.04652558386190405
+            ],
+            [
+              0.2551252876257361,
+              0.9280714124877054,
+              0.013411207132445736
+            ],
+            [
+              -0.20955449137828736,
+              1.452680135390521,
+              -0.10795704353963521
+            ],
+            [
+              -0.24640453051901512,
+              1.1781664227016007,
+              -0.08885018088240071
+            ],
+            [
+              -0.2863167271927807,
+              0.9059351260686894,
+              -0.06960795139602363
+            ],
+            [
+              0.10543726459445305,
+              0.9544270426502208,
+              -0.05807779610114621
+            ],
+            [
+              0.12130453733341554,
+              0.553429322178421,
+              -0.11237992225800325
+            ],
+            [
+              0.12509951097342087,
+              0.11902705204444386,
+              -0.11956640620030638
+            ],
+            [
+              -0.07362712871644106,
+              0.935490749855223,
+              -0.05630090058635444
+            ],
+            [
+              -0.0850518240979878,
+              0.5325360285126266,
+              -0.09498659714430113
+            ],
+            [
+              -0.0823622266231912,
+              0.09816407275817546,
+              -0.08576177211864555
+            ]
+          ],
+          "rotations": [
+            [
+              0.8061124003575758,
+              -0.027088817343892634,
+              0.045420318830997404,
+              0.5893945949887456
+            ],
+            [
+              -0.007526614751705076,
+              -0.003093683404576468,
+              -0.010169442031409561,
+              0.999915177223619
+            ],
+            [
+              -0.11052337039350447,
+              0.024166332461974457,
+              -0.015250877626187136,
+              0.9934626232042295
+            ],
+            [
+              0.11367393254920466,
+              -0.6455961923882056,
+              0.7034284135089457,
+              -0.2747221514565906
+            ],
+            [
+              -0.001613760348947361,
+              0.00023526258134662774,
+              0.005851402218357898,
+              0.9999815505903762
+            ],
+            [
+              0.12101800865912475,
+              -0.160683479437297,
+              -0.0022543318605300483,
+              0.9795562153362954
+            ],
+            [
+              -0.17614076367702572,
+              -0.681382139074139,
+              0.6465558354470162,
+              0.29437792643375216
+            ],
+            [
+              -0.0016155248196186038,
+              -0.00023549462991281014,
+              -0.005851961799445306,
+              0.9999815444121629
+            ],
+            [
+              0.07095596393928053,
+              0.24181810886146318,
+              -0.01830015638290332,
+              0.9675507003172881
+            ],
+            [
+              0.985981040430433,
+              -0.01967588695041067,
+              0.13911348794828876,
+              0.09000935982050438
+            ],
+            [
+              -0.06090480046350571,
+              -0.00013103659163670096,
+              0.000008006210385780199,
+              0.9981435708583275
+            ],
+            [
+              -0.490571015551612,
+              -0.1219354544223254,
+              -0.06634027535169504,
+              0.8602736724564705
+            ],
+            [
+              0.9844924472373403,
+              -0.07895154843556287,
+              -0.12427122373702025,
+              0.09538310795504096
+            ],
+            [
+              -0.060906971142784774,
+              -0.0001310112202931009,
+              0.000007982783555706923,
+              0.9981434384088027
+            ],
+            [
+              -0.5241621840581162,
+              0.10192973370666576,
+              0.08426292873169933,
+              0.8412871644280984
+            ]
+          ],
+          "feet": {
+            "left": {
+              "height": 0.02718650168428645,
+              "speed": 2.2021035415757963e-7
+            },
+            "right": {
+              "height": 0.025046142498863486,
+              "speed": 0.29645188588276483
+            }
+          },
+          "supportHint": "left"
+        },
+        "exit": {
+          "pose": "upright",
+          "headHeight": 1.5874544153621024,
+          "root": [
+            0,
+            0,
+            0
+          ],
+          "forward": [
+            0,
+            0,
+            1
+          ],
+          "positions": [
+            [
+              0.01671349387679617,
+              0.932351277110864,
+              -0.11008024843821744
+            ],
+            [
+              -0.012386585889744017,
+              1.330386609940445,
+              -0.04590524207375385
+            ],
+            [
+              -0.017603759614654598,
+              1.5874544153621024,
+              -0.03724991354526594
+            ],
+            [
+              0.17857163399307338,
+              1.4629781371102692,
+              -0.10620275295283652
+            ],
+            [
+              0.2153551164966654,
+              1.1943401450467457,
+              -0.04652558781511016
+            ],
+            [
+              0.2551252933612736,
+              0.9280714054391936,
+              0.013411189490503829
+            ],
+            [
+              -0.20955448735777016,
+              1.4526801311499815,
+              -0.10795704244393162
+            ],
+            [
+              -0.2464045267812666,
+              1.1781664179792453,
+              -0.08885018725444963
+            ],
+            [
+              -0.28631672374736317,
+              0.9059351208560722,
+              -0.06960796531045965
+            ],
+            [
+              0.10543726611385919,
+              0.9544270379423812,
+              -0.05807778583826899
+            ],
+            [
+              0.12130453898038775,
+              0.5534293182913432,
+              -0.11237991801882377
+            ],
+            [
+              0.12509951245863019,
+              0.11902704826521693,
+              -0.1195664085658258
+            ],
+            [
+              -0.07362712729516414,
+              0.9354907457580709,
+              -0.056300893704256755
+            ],
+            [
+              -0.08505182203472576,
+              0.5325360241146795,
+              -0.09498658731868223
+            ],
+            [
+              -0.08236222328762652,
+              0.09816406843187192,
+              -0.08576175929046158
+            ]
+          ],
+          "rotations": [
+            [
+              0.8061123998722791,
+              -0.02708882397230658,
+              0.045420311878332266,
+              0.5893945958836301
+            ],
+            [
+              -0.007526615355031125,
+              -0.003093684647085156,
+              -0.010169441457031178,
+              0.9999151772210749
+            ],
+            [
+              -0.11052337777454943,
+              0.024166335398876714,
+              -0.015250878772375432,
+              0.9934626222940467
+            ],
+            [
+              0.1136739483273183,
+              -0.6455962018598824,
+              0.7034284028235844,
+              -0.2747221500295036
+            ],
+            [
+              -0.0016137618794480548,
+              0.00023526205938018867,
+              0.005851401251218601,
+              0.9999815505936883
+            ],
+            [
+              0.12101799588536803,
+              -0.16068349902118667,
+              -0.002254334515960821,
+              0.9795562136958184
+            ],
+            [
+              -0.1761407746550992,
+              -0.681382144611037,
+              0.6465558276818021,
+              0.29437792410414393
+            ],
+            [
+              -0.0016155248195206925,
+              -0.00023549462993304395,
+              -0.005851961799417477,
+              0.9999815444121631
+            ],
+            [
+              0.07095596477684916,
+              0.24181810318477429,
+              -0.018300157597437763,
+              0.967550701651657
+            ],
+            [
+              0.9859810420357672,
+              -0.019675887888129438,
+              0.13911348193908893,
+              0.0900093513178457
+            ],
+            [
+              -0.06090480046194499,
+              -0.00013103659160511509,
+              0.000008006210372936305,
+              0.9981435708584226
+            ],
+            [
+              -0.4905710333684261,
+              -0.12193545392921604,
+              -0.06634027524151857,
+              0.8602736623748225
+            ],
+            [
+              0.9844924450230056,
+              -0.07895154888845016,
+              -0.12427123916746345,
+              0.09538311033155837
+            ],
+            [
+              -0.06090697114335194,
+              -0.00013101122028569018,
+              0.000007982783555431971,
+              0.9981434384087683
+            ],
+            [
+              -0.5241621743210455,
+              0.10192974152625617,
+              0.08426292948537045,
+              0.8412871694718566
+            ]
+          ],
+          "feet": {
+            "left": {
+              "height": 0.02718650168428645,
+              "speed": 9.343116799906072e-8
+            },
+            "right": {
+              "height": 0.025046135706949704,
+              "speed": 0.5531113504885218
+            }
+          },
+          "supportHint": "left"
+        },
+        "travel": {
+          "rootDelta": [
+            0,
+            0,
+            0
+          ],
+          "bodyDelta": [
+            2.4318616599627862e-9,
+            -4.460040115006336e-9,
+            8.600900852639981e-9
+          ],
+          "rootDistance": 0
+        }
+      },
+      "contactReview": {
+        "schemaVersion": 1,
+        "movementId": "move-kick",
+        "sourceRevision": 1,
+        "motionHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+        "intervals": [
+          {
+            "foot": "left",
+            "start": 0,
+            "end": 1.8333333730697634,
+            "decision": "supported",
+            "notes": "Foot/toe appears on the floor in sampled Front and Side start/middle/end poses; measured height, speed and drift meet bounds. Only this source interval is covered; no anchor or physical balance claim.",
+            "measurements": {
+              "maxHorizontalDriftMeters": 7.030818424402401e-8,
+              "pathMeters": 4.463629253586729e-7,
+              "maxSpeedMetersPerSecond": 7.919427584606116e-7,
+              "minHeightMeters": 0.027186487952290922,
+              "maxHeightMeters": 0.02718652716423671,
+              "sampleCount": 112
+            }
+          }
+        ],
+        "reviewedAt": "2026-10-05T09:11:34.732Z",
+        "reviewer": "llm-visual",
+        "measurement": {
+          "algorithm": "rig-motion-quality-v1",
+          "sampleRate": 60,
+          "measuredAt": "2026-10-05T09:11:34.732Z",
+          "thresholds": {
+            "floorY": 0,
+            "footHeightTolerance": 0.05,
+            "footSpeedTolerance": 0.15,
+            "minContactDuration": 0.1,
+            "contactDriftTolerance": 0.03,
+            "boneLengthRelativeTolerance": 0.02,
+            "scaleRelativeTolerance": 0.02,
+            "rootVelocityJumpTolerance": 0.5,
+            "jointVelocityJumpTolerance": 1,
+            "angularVelocityJumpTolerance": 360
+          }
+        },
+        "views": [
+          "Front",
+          "Side"
+        ],
+        "notes": "LLM sampled visual review of revision/hash-pinned source frames plus 60 Hz measured foot intervals. Additional hand/knee/body support and missing props remain unverified. Uncovered time unknown; source-only review, not whole-action approval.",
+        "artifacts": [
+          "authoring/reviews/catalog/sheets/move-kick-contacts.png",
+          "authoring/reviews/catalog/move-kick.json",
+          "authoring/reviews/catalog/local-frames-0/frames.json",
+          "authoring/reviews/catalog/local-frames-1/frames.json"
+        ],
+        "physicalValidation": "not-performed",
+        "uncoveredIntervals": "unknown",
+        "reviewRevision": 1
+      },
+      "contactReviewStatus": "current",
+      "unknowns": [
+        "contact outside reviewed intervals",
+        "anatomical facing",
+        "physical balance"
+      ],
+      "connections": [
+        {
+          "id": "kick-return",
+          "from": "move-kick",
+          "to": "move-guard",
+          "fromHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+          "toHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+          "purpose": "recover",
+          "policy": "positive-pose-blend-no-anchor",
+          "review": "candidate",
+          "evidence": {
+            "representation": "Revision-pinned normalized rig endpoints and sampled source review in authoring/reviews/catalog; source-only semantic selection, compiled seam review pending",
+            "positionRmsMeters": 1.0574611769349396e-8,
+            "rotationRmsDegrees": 0.0000010799477313527664,
+            "visualReview": "pending",
+            "trajectoryValidation": "not-performed"
+          },
+          "status": "candidate",
+          "seamPolicy": {
+            "schemaVersion": 1,
+            "contractId": "kick-return",
+            "fromRevision": 1,
+            "toRevision": 1,
+            "fromHash": "4e1ba14791015fc1d821b628f34bddaa95c421205c48c59a8a2dbc0f418d5d2c",
+            "toHash": "4563e497256337c4c9567cecd1853719e0dfdcef3483b3b7c355c2e9569cd637",
+            "decision": "supported",
+            "configuration": {
+              "duration": 0.06,
+              "fromSpeed": 1,
+              "toSpeed": 1,
+              "anchor": "none"
+            },
+            "evidenceAction": {
+              "id": "contract-kick-return",
+              "revision": 1,
+              "motionHash": "9f9aa9b15f76bad1f8eb2e099321dbfa96ed4fcc00f63b787834be26388ab2a0",
+              "step": 1
+            },
+            "seams": [
+              {
+                "time": 1.8333333730697634,
+                "rootVelocityJumpMetersPerSecond": 0,
+                "jointVelocityJumpRmsMetersPerSecond": 0.26232135794306444,
+                "angularVelocityJumpRmsDegreesPerSecond": 38.90671054102658
+              },
+              {
+                "time": 1.8933333730697635,
+                "rootVelocityJumpMetersPerSecond": 0,
+                "jointVelocityJumpRmsMetersPerSecond": 1.3403205068415366e-7,
+                "angularVelocityJumpRmsDegreesPerSecond": 0.000018336617741623525
+              }
+            ],
+            "flagCodes": [],
+            "reviewedAt": "2026-10-05T09:24:07.903Z",
+            "reviewer": "llm-visual",
+            "measurement": {
+              "algorithm": "rig-motion-quality-v1",
+              "sampleRate": 60,
+              "measuredAt": "2026-10-05T09:24:07.903Z",
+              "thresholds": {
+                "floorY": 0,
+                "footHeightTolerance": 0.05,
+                "footSpeedTolerance": 0.15,
+                "minContactDuration": 0.1,
+                "contactDriftTolerance": 0.03,
+                "boneLengthRelativeTolerance": 0.02,
+                "scaleRelativeTolerance": 0.02,
+                "rootVelocityJumpTolerance": 0.5,
+                "jointVelocityJumpTolerance": 1,
+                "angularVelocityJumpTolerance": 360
+              }
+            },
+            "views": [
+              "Front",
+              "Side"
+            ],
+            "notes": "Five sampled Front/Side frames across the actual compiled join show continuous body pose, without configured seam flags. Exact timing/speeds only; source contacts do not certify the blend, prop interaction or physical balance.",
+            "artifacts": [
+              "authoring/reviews/catalog/sheets/kick-return-join.png",
+              "authoring/reviews/catalog/built-pairs.json",
+              "authoring/reviews/catalog/pairs-frames-0/frames.json",
+              "authoring/reviews/catalog/pairs-frames-1/frames.json"
+            ],
+            "physicalValidation": "not-performed",
+            "reviewRevision": 1
+          },
+          "policyStatus": "current"
+        }
+      ]
+    }
+  ],
+  "totalMatches": 2,
+  "drafts": [
+    {
+      "schemaVersion": 1,
+      "rig": "quaternius-ual1",
+      "id": "study-guard",
+      "name": "Kick guard",
+      "intent": "Preview complete source motion",
+      "steps": [
+        {
+          "movementId": "move-guard",
+          "revision": 1,
+          "speed": 1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "rig": "quaternius-ual1",
+      "id": "study-kick",
+      "name": "Forward kick",
+      "intent": "Preview complete source motion",
+      "steps": [
+        {
+          "movementId": "move-kick",
+          "revision": 1,
+          "speed": 1
+        }
+      ]
+    }
+  ],
+  "limitations": "Contracts are curated candidates with measured endpoints, not visually approved or physical guarantees. Whole source sequences preserve original coordination."
+}

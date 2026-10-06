@@ -1,0 +1,970 @@
+[
+  {
+    "schemaVersion": 1,
+    "contractId": "regular-b-to-c",
+    "fromRevision": 1,
+    "toRevision": 1,
+    "fromHash": "399880f18d3e0c0582e706b9f34bff7ef3e0ac99e3936ebf659a4e6b4f39f8ad",
+    "toHash": "40facb0220ac0f2c99188cb5aa1be89489ee9414b3bb35f3c7e2034eb60faad2",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.12,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "source"
+    },
+    "evidenceAction": {
+      "id": "velocity-regular-b-to-c",
+      "revision": 1,
+      "motionHash": "80b894bf804a3dc2148f595a83b620ead559907b0976493ef3ac732b9fb814e3",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.5333333611488342,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.21762075866706637,
+        "angularVelocityJumpRmsDegreesPerSecond": 30.736798143375243
+      },
+      {
+        "time": 0.6533333611488342,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.3631522849240929,
+        "angularVelocityJumpRmsDegreesPerSecond": 47.70889670744243
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.360Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.359Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/regular-b-to-c.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 3
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "regular-a-to-a-rec",
+    "fromRevision": 1,
+    "toRevision": 1,
+    "fromHash": "f6a218c648f882e10e38c5075e6be538fc58b3a6df9e27aa8f23d0734d8b81ad",
+    "toHash": "6477c5f621b3b815e3077fa3c9615e07686d0b09a100b1b102444b92b4c26b19",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.12,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "source"
+    },
+    "evidenceAction": {
+      "id": "velocity-regular-a-to-a-rec",
+      "revision": 1,
+      "motionHash": "75da8c56d067c299f2551efed2844afea6868a81ac49612c2156a0f97d422d39",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.4333333373069763,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.22599935696438575,
+        "angularVelocityJumpRmsDegreesPerSecond": 28.42499048809004
+      },
+      {
+        "time": 0.5533333373069763,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.293233962822143,
+        "angularVelocityJumpRmsDegreesPerSecond": 24.083285991793787
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.502Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.502Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/regular-a-to-a-rec.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "knockback-to-getup",
+    "fromRevision": 1,
+    "toRevision": 1,
+    "fromHash": "65cd2360854dd58a027c77d953e5f3af58f1c297a4e20255d4319f5c9c4b59a3",
+    "toHash": "c0c0484f6d52c56c1b788263c3656957d7e3e4a303f8e91ec0dcc2e7af2155a1",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.12,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "source"
+    },
+    "evidenceAction": {
+      "id": "velocity-knockback-to-getup",
+      "revision": 2,
+      "motionHash": "3c211951fe500e3348378fc820309a756663db010a046d6b07d64107e0b0d6da",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.8333333134651184,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.2295728800878031,
+        "angularVelocityJumpRmsDegreesPerSecond": 88.92765336901189
+      },
+      {
+        "time": 0.9533333134651184,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.304419837508263,
+        "angularVelocityJumpRmsDegreesPerSecond": 114.49050831168289
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.533Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.533Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/knockback-to-getup.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "ninja-hold-to-land",
+    "fromRevision": 1,
+    "toRevision": 1,
+    "fromHash": "244ac0443dd08d5dfc2e346acd85dd8e689960d4a5e685e7715ab4d2127423f3",
+    "toHash": "46daac174af2edb09070d37325d71f352b3c95e1e54445068097ecfd951fc4c5",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.2,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "source"
+    },
+    "evidenceAction": {
+      "id": "velocity-ninja-hold-to-land",
+      "revision": 3,
+      "motionHash": "46c439f023e0defb308b2f3aea3e0d2d6d691e96a6a92b68a13fa4dc5e6076ed",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 2,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.2928626186722903,
+        "angularVelocityJumpRmsDegreesPerSecond": 30.897983213454566
+      },
+      {
+        "time": 2.2,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.7380200762017902,
+        "angularVelocityJumpRmsDegreesPerSecond": 63.67823570568009
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.572Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.572Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/ninja-hold-to-land.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "shield-hold-to-break",
+    "fromRevision": 1,
+    "toRevision": 1,
+    "fromHash": "ba1d3354ad54fa35c595d1bb1bb7bb98695a44e90a5bcb6950b73fc8fe14dd66",
+    "toHash": "fcb1af7a14e0703c60e1334889f108b696f98c78766547132631db0f0f965f46",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.12,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "source"
+    },
+    "evidenceAction": {
+      "id": "velocity-shield-hold-to-break",
+      "revision": 2,
+      "motionHash": "0585ea64ea1066bc554687640e7b0df13a310e36db6068e82bd50411adaccbd1",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 2.5,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.26747158037866536,
+        "angularVelocityJumpRmsDegreesPerSecond": 34.97747903856841
+      },
+      {
+        "time": 2.62,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.761929384230696,
+        "angularVelocityJumpRmsDegreesPerSecond": 87.28759400728919
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.600Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.600Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/shield-hold-to-break.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "quick-hook-recovery",
+    "fromRevision": 1,
+    "toRevision": 1,
+    "fromHash": "ab69374fba83adeb7ed6d21a1a937fe2cccbd54886f03dd22d3f5d61c231e6ea",
+    "toHash": "81ba1d22197638c00409e4eeb4fc373f1e545777c21a8a69039e9ee773e347bb",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.06,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "source"
+    },
+    "evidenceAction": {
+      "id": "velocity-quick-hook-recovery",
+      "revision": 1,
+      "motionHash": "bec406292485f2fc9897fcf5da0d4fd5b2dad3d1ea0a97e319e83ca5428a7be7",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.324637682541557,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.5211491332886345,
+        "angularVelocityJumpRmsDegreesPerSecond": 73.18021694541312
+      },
+      {
+        "time": 0.384637682541557,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.2778247994628258,
+        "angularVelocityJumpRmsDegreesPerSecond": 52.47879186313147
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.623Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.623Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/quick-hook-recovery.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "escape-start-to-loop",
+    "fromRevision": 2,
+    "toRevision": 2,
+    "fromHash": "caefb8356541ce6da1dac81f1022a79f888a625f3072999a0642661cdee4b4ad",
+    "toHash": "1b9d15d650ef3ee35b5019f3d465fdf8dbc6c1a1d1c7fdcf1fed5f22ddddcaf7",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.06,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "continue"
+    },
+    "evidenceAction": {
+      "id": "velocity-escape-start-to-loop",
+      "revision": 1,
+      "motionHash": "b447adcb61764d0c16caaea5ae8202aa180a1853405e3e79d87585878c1cf62a",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.555555542310079,
+        "rootVelocityJumpMetersPerSecond": 0.36296853325386347,
+        "jointVelocityJumpRmsMetersPerSecond": 0.07407097132250379,
+        "angularVelocityJumpRmsDegreesPerSecond": 37.48383363518973
+      },
+      {
+        "time": 0.6155555423100789,
+        "rootVelocityJumpMetersPerSecond": 0.32878130034449393,
+        "jointVelocityJumpRmsMetersPerSecond": 0.11496592724678277,
+        "angularVelocityJumpRmsDegreesPerSecond": 40.85669563521213
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.647Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.647Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/escape-start-to-loop.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "escape-loop-to-exit",
+    "fromRevision": 2,
+    "toRevision": 2,
+    "fromHash": "1b9d15d650ef3ee35b5019f3d465fdf8dbc6c1a1d1c7fdcf1fed5f22ddddcaf7",
+    "toHash": "e2e9c04ec6723c433aa8ffb8dad6148344222af8e07f05c0863b2fa48d2a5838",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.06,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "continue"
+    },
+    "evidenceAction": {
+      "id": "velocity-escape-loop-to-exit",
+      "revision": 1,
+      "motionHash": "a4bfad2d34f39f24f14fc9541422d223d9cd91fee9bd396fddb818dd9290573a",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.5,
+        "rootVelocityJumpMetersPerSecond": 0.31353733796293026,
+        "jointVelocityJumpRmsMetersPerSecond": 0.5590486842876112,
+        "angularVelocityJumpRmsDegreesPerSecond": 103.31722643459034
+      },
+      {
+        "time": 0.56,
+        "rootVelocityJumpMetersPerSecond": 0.3789325550740796,
+        "jointVelocityJumpRmsMetersPerSecond": 0.6213059981041595,
+        "angularVelocityJumpRmsDegreesPerSecond": 111.35725189498271
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.672Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.672Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/escape-loop-to-exit.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "escape-exit-to-standing",
+    "fromRevision": 2,
+    "toRevision": 2,
+    "fromHash": "e2e9c04ec6723c433aa8ffb8dad6148344222af8e07f05c0863b2fa48d2a5838",
+    "toHash": "1b9aac3e632b9cdb1ef52507e219c1f8edf6e5ec0514852f94fd0b0cd28628c4",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.2,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "continue"
+    },
+    "evidenceAction": {
+      "id": "velocity-escape-exit-to-standing",
+      "revision": 3,
+      "motionHash": "a4448bc1501b9b4b78a1a0201f44d413f7434f68ea84fc38df0f6f7686bfca0b",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.5882352941176471,
+        "rootVelocityJumpMetersPerSecond": 0.010700048611091938,
+        "jointVelocityJumpRmsMetersPerSecond": 0.7389315994742839,
+        "angularVelocityJumpRmsDegreesPerSecond": 96.66547599485278
+      },
+      {
+        "time": 0.7882352941176471,
+        "rootVelocityJumpMetersPerSecond": 0.0021400486111211527,
+        "jointVelocityJumpRmsMetersPerSecond": 0.5543007949162597,
+        "angularVelocityJumpRmsDegreesPerSecond": 65.45575579639019
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.740Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.740Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/escape-exit-to-standing.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "counter-ready-to-guard",
+    "fromRevision": 1,
+    "toRevision": 1,
+    "fromHash": "212eeb816b048e755ee996871f2659fbcfce8b9423cd64f995a82f755a80fa13",
+    "toHash": "d1908790ac84ac34da9a5f9acd544ff39f969d4c77e079f127e79633d128a8c6",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.2,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "source"
+    },
+    "evidenceAction": {
+      "id": "velocity-counter-ready-to-guard",
+      "revision": 3,
+      "motionHash": "b2884244f71976182f07b11c909363b82b3be31ff6935701a8fb2293db3cfd52",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.16,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.5127899262561689,
+        "angularVelocityJumpRmsDegreesPerSecond": 63.358985866911766
+      },
+      {
+        "time": 0.36,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.3144394576962288,
+        "angularVelocityJumpRmsDegreesPerSecond": 63.06452798342975
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.809Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.809Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/counter-ready-to-guard.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "counter-guard-to-cross",
+    "fromRevision": 1,
+    "toRevision": 1,
+    "fromHash": "d1908790ac84ac34da9a5f9acd544ff39f969d4c77e079f127e79633d128a8c6",
+    "toHash": "48f475b3211f0c953e5bfd84b4df79a4942d847f13d3eba51e86a305a0888493",
+    "decision": "needs-review",
+    "configuration": {
+      "duration": 0.5,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "source"
+    },
+    "evidenceAction": {
+      "id": "velocity-counter-guard-to-cross",
+      "revision": 5,
+      "motionHash": "f87d05b05d13442b42811a27c8e33037a43a7306e40b5d572d7ec3bd1ad0fc94",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.28,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 0.15919155221959813,
+        "angularVelocityJumpRmsDegreesPerSecond": 15.898163556706246
+      },
+      {
+        "time": 0.78,
+        "rootVelocityJumpMetersPerSecond": 0,
+        "jointVelocityJumpRmsMetersPerSecond": 1.8632117129709866,
+        "angularVelocityJumpRmsDegreesPerSecond": 559.2794089311886
+      }
+    ],
+    "flagCodes": [
+      "connection/velocity-change"
+    ],
+    "reviewedAt": "2026-10-05T10:04:28.892Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.892Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and boundaries reviewed. Guard-to-cross still has a configured velocity flag at 0.5s; longer duration alone is not accepted as a solution. Needs source-onset/transition review before automatic reuse.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/counter-guard-to-cross.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "standing-hit-entry",
+    "fromRevision": 1,
+    "toRevision": 1,
+    "fromHash": "8113137a44731756af91b6fdec103685d28c2c84b6eb7fbd13fb32fae5a4d51d",
+    "toHash": "1711c57a987f9731d500a0d95bb3686e5b7d71b97cae7e17f0056eae3a5f5603",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.12,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "continue"
+    },
+    "evidenceAction": {
+      "id": "velocity-standing-hit-entry",
+      "revision": 2,
+      "motionHash": "642df335e5b4819163faf1526f1c25e7ebd686a92f674dfeef8518d3af73fa1a",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.14,
+        "rootVelocityJumpMetersPerSecond": 0.021116235820092585,
+        "jointVelocityJumpRmsMetersPerSecond": 0.35088768920035635,
+        "angularVelocityJumpRmsDegreesPerSecond": 26.229999454765846
+      },
+      {
+        "time": 0.26,
+        "rootVelocityJumpMetersPerSecond": 0.07433436755062084,
+        "jointVelocityJumpRmsMetersPerSecond": 0.3581126325079643,
+        "angularVelocityJumpRmsDegreesPerSecond": 28.026464474901335
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.923Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.923Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/standing-hit-entry.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "standing-hit-to-step",
+    "fromRevision": 1,
+    "toRevision": 2,
+    "fromHash": "1711c57a987f9731d500a0d95bb3686e5b7d71b97cae7e17f0056eae3a5f5603",
+    "toHash": "a0d8a09955a0bf297fbdbd3343e373a94e63d6fbf20e651decd6621cde9138c7",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.12,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "continue"
+    },
+    "evidenceAction": {
+      "id": "velocity-standing-hit-to-step",
+      "revision": 2,
+      "motionHash": "e5de57b562e48e1bc5e487cb7510b149895e9bfdc7da7121f1f769ab081b0794",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.65,
+        "rootVelocityJumpMetersPerSecond": 0.04583105484625187,
+        "jointVelocityJumpRmsMetersPerSecond": 0.5969597560766718,
+        "angularVelocityJumpRmsDegreesPerSecond": 71.28860581473646
+      },
+      {
+        "time": 0.77,
+        "rootVelocityJumpMetersPerSecond": 0.05316402362164563,
+        "jointVelocityJumpRmsMetersPerSecond": 0.7018532329831199,
+        "angularVelocityJumpRmsDegreesPerSecond": 88.5135935245873
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.950Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.950Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/standing-hit-to-step.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  },
+  {
+    "schemaVersion": 1,
+    "contractId": "standing-step-to-guard",
+    "fromRevision": 2,
+    "toRevision": 1,
+    "fromHash": "a0d8a09955a0bf297fbdbd3343e373a94e63d6fbf20e651decd6621cde9138c7",
+    "toHash": "173ce434d03535c2296e9090fb5ab3d0a36527bfe8f59b7e4226b2cdcaaf4dda",
+    "decision": "supported",
+    "configuration": {
+      "duration": 0.2,
+      "fromSpeed": 1,
+      "toSpeed": 1,
+      "anchor": "none",
+      "blend": "velocity",
+      "travel": "continue"
+    },
+    "evidenceAction": {
+      "id": "velocity-standing-step-to-guard",
+      "revision": 3,
+      "motionHash": "a2051ae5fa7dba843443151590b472b4dc5b88b228d1a775b3b78ae70d067cce",
+      "step": 1
+    },
+    "seams": [
+      {
+        "time": 0.65,
+        "rootVelocityJumpMetersPerSecond": 0.028846153846149303,
+        "jointVelocityJumpRmsMetersPerSecond": 0.4468560512757045,
+        "angularVelocityJumpRmsDegreesPerSecond": 55.96137348987185
+      },
+      {
+        "time": 0.8500000000000001,
+        "rootVelocityJumpMetersPerSecond": 0.028846153846147186,
+        "jointVelocityJumpRmsMetersPerSecond": 0.3523968245336195,
+        "angularVelocityJumpRmsDegreesPerSecond": 53.82694622154328
+      }
+    ],
+    "flagCodes": [],
+    "reviewedAt": "2026-10-05T10:04:28.975Z",
+    "reviewer": "llm-visual",
+    "measurement": {
+      "algorithm": "rig-motion-quality-v1",
+      "sampleRate": 60,
+      "measuredAt": "2026-10-05T10:04:28.975Z",
+      "thresholds": {
+        "floorY": 0,
+        "footHeightTolerance": 0.05,
+        "footSpeedTolerance": 0.15,
+        "minContactDuration": 0.1,
+        "contactDriftTolerance": 0.03,
+        "boneLengthRelativeTolerance": 0.02,
+        "scaleRelativeTolerance": 0.02,
+        "rootVelocityJumpTolerance": 0.5,
+        "jointVelocityJumpTolerance": 1,
+        "angularVelocityJumpTolerance": 360
+      }
+    },
+    "views": [
+      "Front",
+      "Side"
+    ],
+    "notes": "Front/side sampled progression and both join boundaries reviewed. Velocity-aware bridge clears configured seam flags with no obvious sampled pose distortion. Root continuation only where explicitly configured. Source contact evidence does not certify blend support or physical balance.",
+    "artifacts": [
+      "authoring/reviews/velocity/sheets/standing-step-to-guard.png",
+      "authoring/reviews/velocity/results.json",
+      "authoring/reviews/velocity/frames/frames.json"
+    ],
+    "physicalValidation": "not-performed",
+    "reviewRevision": 2
+  }
+]

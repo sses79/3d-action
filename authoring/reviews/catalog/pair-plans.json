@@ -1,0 +1,170 @@
+[
+  {
+    "id": "knockback-to-getup",
+    "from": "move-ual2-hit-knockback",
+    "to": "move-ual2-laytoidle",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "hook-to-recovery",
+    "from": "move-ual2-melee-hook",
+    "to": "move-ual2-melee-hook-rec",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "ninja-start-to-hold",
+    "from": "move-ual2-ninjajump-start",
+    "to": "move-ual2-ninjajump-idle-loop",
+    "purpose": "continue",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "ninja-hold-to-land",
+    "from": "move-ual2-ninjajump-idle-loop",
+    "to": "move-ual2-ninjajump-land",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "shield-hold-to-break",
+    "from": "move-ual2-idle-shield-loop",
+    "to": "move-ual2-idle-shield-break",
+    "purpose": "continue",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "zombie-idle-to-scratch",
+    "from": "move-ual2-zombie-idle-loop",
+    "to": "move-ual2-zombie-scratch",
+    "purpose": "continue",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "zombie-scratch-to-idle",
+    "from": "move-ual2-zombie-scratch",
+    "to": "move-ual2-zombie-idle-loop",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "rail-idle-to-call",
+    "from": "move-ual2-idle-rail-loop",
+    "to": "move-ual2-idle-rail-call",
+    "purpose": "continue",
+    "speed": 1.5,
+    "transition": 0.06
+  },
+  {
+    "id": "rail-call-to-idle",
+    "from": "move-ual2-idle-rail-call",
+    "to": "move-ual2-idle-rail-loop",
+    "purpose": "recover",
+    "speed": 1.5,
+    "transition": 0.06
+  },
+  {
+    "id": "kick-entry",
+    "from": "move-guard",
+    "to": "move-kick",
+    "purpose": "continue",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "kick-return",
+    "from": "move-kick",
+    "to": "move-guard",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "quick-hook-recovery",
+    "from": "move-hook-quick",
+    "to": "move-ual2-melee-hook-rec",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "escape-start-to-loop",
+    "from": "move-escape-slide-start",
+    "to": "move-escape-slide-loop",
+    "purpose": "continue",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "escape-loop-to-exit",
+    "from": "move-escape-slide-loop",
+    "to": "move-escape-slide-exit",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "escape-exit-to-standing",
+    "from": "move-escape-slide-exit",
+    "to": "move-escape-slide-standing",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "counter-ready-to-guard",
+    "from": "move-counter-ready",
+    "to": "move-counter-guard",
+    "purpose": "continue",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "counter-guard-to-cross",
+    "from": "move-counter-guard",
+    "to": "move-counter-right-cross",
+    "purpose": "continue",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "counter-cross-to-finish",
+    "from": "move-counter-right-cross",
+    "to": "move-counter-finish",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "standing-hit-entry",
+    "from": "move-knockback-ready",
+    "to": "move-knockback-standing",
+    "purpose": "continue",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "standing-hit-to-step",
+    "from": "move-knockback-standing",
+    "to": "move-knockback-step",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  },
+  {
+    "id": "standing-step-to-guard",
+    "from": "move-knockback-step",
+    "to": "move-knockback-guard",
+    "purpose": "recover",
+    "speed": 1,
+    "transition": 0.06
+  }
+]

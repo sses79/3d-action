@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "video-motion-review-bundle"
+    },
+    "status": {
+      "const": "draft-unreviewed"
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "reference": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "file",
+            "sha256",
+            "bytes"
+          ],
+          "additionalProperties": false
+        },
+        "motion": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "file",
+            "sha256",
+            "bytes"
+          ],
+          "additionalProperties": false
+        },
+        "video": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "file",
+            "sha256",
+            "bytes"
+          ],
+          "additionalProperties": false
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "file",
+            "sha256",
+            "bytes"
+          ],
+          "additionalProperties": false
+        },
+        "quality": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "file",
+            "sha256",
+            "bytes"
+          ],
+          "additionalProperties": false
+        },
+        "rawEstimate": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "file",
+            "sha256",
+            "bytes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "reference",
+        "motion",
+        "video",
+        "action",
+        "quality",
+        "rawEstimate"
+      ],
+      "additionalProperties": false
+    },
+    "action": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rig": {
+          "type": "string",
+          "minLength": 1
+        },
+        "motionHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "rig",
+        "motionHash"
+      ],
+      "additionalProperties": false
+    },
+    "sync": {
+      "type": "object",
+      "properties": {
+        "actionDuration": {
+          "type": "number"
+        },
+        "sourceWindow": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "anchors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "actionTime": {
+                "type": "number"
+              },
+              "sourceTime": {
+                "type": "number"
+              },
+              "videoTime": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "actionTime",
+              "sourceTime",
+              "videoTime"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 2,
+          "maxItems": 32
+        },
+        "mapping": {
+          "const": "piecewise-linear"
+        }
+      },
+      "required": [
+        "actionDuration",
+        "sourceWindow",
+        "anchors",
+        "mapping"
+      ],
+      "additionalProperties": false
+    },
+    "cacheKeys": {
+      "type": "object",
+      "properties": {
+        "observation": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "estimation": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "fitting": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "retarget": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "observation",
+        "estimation",
+        "fitting",
+        "retarget"
+      ],
+      "additionalProperties": false
+    },
+    "contactStatus": {
+      "const": "unconfirmed"
+    },
+    "reviewWindows": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        },
+        "minItems": 2,
+        "maxItems": 2
+      },
+      "minItems": 0,
+      "maxItems": 128
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "kind",
+    "status",
+    "artifacts",
+    "action",
+    "sync",
+    "cacheKeys",
+    "contactStatus",
+    "reviewWindows"
+  ],
+  "additionalProperties": false
+}
