@@ -418,3 +418,8 @@ User supplied the original 720p 30 fps file (`~/Downloads/YTDown.com_YouTube_Med
 ## 2026-10-06 — tricking basics video: catalogue and pilot
 
 User supplied `~/Downloads/YTDown.com_YouTube_Media_ls9JjJzKFZo_60-Tricking-Basics-...720p.mp4` and suggested cutting it into clips for the library. Wrote `authoring/reviews/video/tricking-basics/catalog.json` (59 clips, names, windows, guessed upright/inverted groups) and added `sourceSpeed` to `reconstruct_motion` (action shortened to real time; `compare_video_action` and Video review map back to footage time). Piloted four clips at an assumed 0.4 speed (run 78495786): results in `docs/RECONSTRUCT_MOTION.md`. Saved drafts `trick-01-hook-kick`, `trick-04-cartwheel`, `trick-16-tornado-kick`; frontflip failed. Asked the user about the speed factor and whether to batch the upright subset. 87 Node tests pass. Service running on 5174.
+
+
+## 2026-10-06 — tricking basics: batch of 20 upright clips
+
+Footage speed estimated at 0.5 from free fall. `observe.py` now tracks the performer as the longest overlap-linked chain of boxes (fixes wrong-figure selection during crossfades; earlier clips reproduce exactly). All 20 upright clips reconstructed as `trick-NN-…` drafts; grades and notes in `authoring/reviews/video/tricking-basics/batch-upright.json`, review strips beside it (local only). Four good, three fair, eight partial, three poor, two misgrouped. Common failure: high near-vertical kicks are not reproduced. `trick-27-j-step-swing-540` is selected. 87 Node tests pass. Service running on 5174.

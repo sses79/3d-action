@@ -198,6 +198,26 @@ What this means for a library built from this video:
 - The other 39 go inverted or put hands on the floor. The pipeline cannot do these yet: floor placement uses the feet only, the head rule assumes an upright head, the detector loses tucked inverted bodies, and the 3D lift is untested upside down.
 - None of the pilot drafts is good enough to register as a movement.
 
+## Tricking basics: batch of 20 upright clips (6 October 2026)
+
+**Footage speed.** During the tornado kick's jump the trunk centre falls freely; a parabola fitted to its image height gives a footage speed of 0.50–0.53 for a performer 1.65–1.85 m tall, and the hang time implied by the rise agrees at 0.53. The batch used 0.5. The pilot's 0.4 was wrong.
+
+**Performer tracking.** The first batch failed on 9 of 20 clips: the detector stage picked the tallest figure in the first frame, which during a crossfade is the fading previous performer, and then lost the real one. `observe.py` now chains boxes frame to frame by overlap, takes the longest chain as the performer, and continues past broken overlaps by overlap or height. The karate, flying-kick and triple-kick clips reproduce their earlier repairs and projection errors exactly. The second batch ran all 20 with no lost frames, about 56 s per clip.
+
+**Results** (`authoring/reviews/video/tricking-basics/batch-upright.json`; six sampled poses per clip, front view against the video, judged by the LLM only):
+
+| Grade | Clips |
+| --- | --- |
+| Good (4) | Pop 360 (crescent), Pop 360 hyper, J-step swing 540, Pop 720 |
+| Fair (3) | Front sweep, (Cheat) 540 kick, Cheat 900 |
+| Partial (8) | Hook kick, Tornado kick, Cheat 360 crescent, Feilong, Swing 720, Cheat 720, Backside 900, Cheat 720 double |
+| Poor (3) | Round(house) kick, Outside crescent kick, Back sweep |
+| Not upright after all (2) | Scoot, Palm kick |
+
+The pattern across the partial and poor clips is one failure: a high kick, with the leg near vertical beside the head, is not reproduced. The character stays standing or airborne with the leg down. Wind-ups, spins, jumps, tucks and landings carry over. Jump heights were not checked against the footage; 1.87 m for Backside 900 looks too high. Scoot and Palm kick were grouped as upright from their names but put the hands on the floor.
+
+None of these has been watched in motion or seen by the user, and none is registered as a movement.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

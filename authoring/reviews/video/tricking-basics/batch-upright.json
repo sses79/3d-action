@@ -1,0 +1,395 @@
+{
+ "run": "a08b4e00-6833-4b75-97b9-cac990684457",
+ "sourceSpeed": 0.5,
+ "sourceSpeedBasis": "free-fall fit to the trunk centre during the tornado kick jump: 0.50-0.53 for a performer 1.65-1.85 m tall; hang-time cross-check 0.53",
+ "review": "Six sampled poses per clip, front view against the video, judged by the LLM. Not watched in motion and not reviewed by the user.",
+ "gradeCounts": {
+  "good": 4,
+  "fair": 3,
+  "partial": 8,
+  "poor": 3,
+  "not-upright": 2
+ },
+ "clips": [
+  {
+   "index": 1,
+   "slug": "trick-01-hook-kick",
+   "name": "Hook kick",
+   "window": [
+    0.2,
+    2.65
+   ],
+   "revision": 3,
+   "duration": 1.225,
+   "frames": 74,
+   "weak": 1,
+   "repaired": 1,
+   "swapped": 0,
+   "lift": 0,
+   "projection": 0.0191,
+   "grade": "partial",
+   "note": "wind-up and first kick follow; the high kick is missed"
+  },
+  {
+   "index": 2,
+   "slug": "trick-02-round-house-kick",
+   "name": "Round(house) kick",
+   "window": [
+    3.6,
+    5.76
+   ],
+   "revision": 2,
+   "duration": 1.08,
+   "frames": 66,
+   "weak": 3,
+   "repaired": 3,
+   "swapped": 0,
+   "lift": 0,
+   "projection": 0.0193,
+   "grade": "poor",
+   "note": "both the low and the high kick are missing"
+  },
+  {
+   "index": 3,
+   "slug": "trick-03-outside-crescent-kick",
+   "name": "Outside crescent kick",
+   "window": [
+    6.71,
+    8.46
+   ],
+   "revision": 2,
+   "duration": 0.875,
+   "frames": 54,
+   "weak": 1,
+   "repaired": 4,
+   "swapped": 0,
+   "lift": 0,
+   "projection": 0.01756,
+   "grade": "poor",
+   "note": "the crescent kick is mostly missing"
+  },
+  {
+   "index": 8,
+   "slug": "trick-08-scoot",
+   "name": "Scoot",
+   "window": [
+    25.62,
+    27.68
+   ],
+   "revision": 1,
+   "duration": 1.03,
+   "frames": 63,
+   "weak": 2,
+   "repaired": 0,
+   "swapped": 7,
+   "lift": 0,
+   "projection": 0.01713,
+   "grade": "not-upright",
+   "note": "hands on the floor and inverted; collapses"
+  },
+  {
+   "index": 9,
+   "slug": "trick-09-front-sweep",
+   "name": "Front sweep",
+   "window": [
+    28.63,
+    30.88
+   ],
+   "revision": 1,
+   "duration": 1.125,
+   "frames": 69,
+   "weak": 10,
+   "repaired": 0,
+   "swapped": 0,
+   "lift": 0,
+   "projection": 0.01899,
+   "grade": "fair",
+   "note": "low sweep recognisable"
+  },
+  {
+   "index": 10,
+   "slug": "trick-10-back-sweep",
+   "name": "Back sweep",
+   "window": [
+    31.83,
+    33.78
+   ],
+   "revision": 1,
+   "duration": 0.975,
+   "frames": 60,
+   "weak": 10,
+   "repaired": 0,
+   "swapped": 11,
+   "lift": 0,
+   "projection": 0.02176,
+   "grade": "poor",
+   "note": "sinks into the floor when the hands go down"
+  },
+  {
+   "index": 12,
+   "slug": "trick-12-palm-kick",
+   "name": "Palm kick",
+   "window": [
+    38.54,
+    40.09
+   ],
+   "revision": 1,
+   "duration": 0.775,
+   "frames": 48,
+   "weak": 3,
+   "repaired": 2,
+   "swapped": 1,
+   "lift": 0,
+   "projection": 0.02539,
+   "grade": "not-upright",
+   "note": "hand-supported inverted kick; collapses"
+  },
+  {
+   "index": 16,
+   "slug": "trick-16-tornado-kick",
+   "name": "Tornado kick",
+   "window": [
+    52.45,
+    54.9
+   ],
+   "revision": 3,
+   "duration": 1.225,
+   "frames": 74,
+   "weak": 5,
+   "repaired": 0,
+   "swapped": 0,
+   "lift": 1.257,
+   "projection": 0.01935,
+   "grade": "partial",
+   "note": "first kick, jump and landing follow; the high kick is missed"
+  },
+  {
+   "index": 18,
+   "slug": "trick-18-pop-360-crescent",
+   "name": "Pop 360 (crescent)",
+   "window": [
+    59.06,
+    61.91
+   ],
+   "revision": 1,
+   "duration": 1.425,
+   "frames": 86,
+   "weak": 4,
+   "repaired": 0,
+   "swapped": 1,
+   "lift": 0.721,
+   "projection": 0.01201,
+   "grade": "good",
+   "note": "all six sampled poses follow the clip"
+  },
+  {
+   "index": 19,
+   "slug": "trick-19-cheat-360-crescent",
+   "name": "Cheat 360 crescent",
+   "window": [
+    62.86,
+    65.42
+   ],
+   "revision": 2,
+   "duration": 1.28,
+   "frames": 78,
+   "weak": 7,
+   "repaired": 3,
+   "swapped": 1,
+   "lift": 1.337,
+   "projection": 0.01892,
+   "grade": "partial",
+   "note": "first kick follows; airborne pose and the high kick are missed"
+  },
+  {
+   "index": 20,
+   "slug": "trick-20-feilong",
+   "name": "Feilong",
+   "window": [
+    66.37,
+    69.12
+   ],
+   "revision": 1,
+   "duration": 1.375,
+   "frames": 83,
+   "weak": 6,
+   "repaired": 2,
+   "swapped": 0,
+   "lift": 1.366,
+   "projection": 0.01892,
+   "grade": "partial",
+   "note": "first kick and jump follow; the high kick is missed"
+  },
+  {
+   "index": 21,
+   "slug": "trick-21-pop-360-hyper",
+   "name": "Pop 360 hyper",
+   "window": [
+    70.07,
+    73.02
+   ],
+   "revision": 2,
+   "duration": 1.475,
+   "frames": 90,
+   "weak": 2,
+   "repaired": 5,
+   "swapped": 4,
+   "lift": 1.319,
+   "projection": 0.00743,
+   "grade": "good",
+   "note": "all six sampled poses follow the clip"
+  },
+  {
+   "index": 27,
+   "slug": "trick-27-j-step-swing-540",
+   "name": "J-step swing 540",
+   "window": [
+    92.49,
+    95.24
+   ],
+   "revision": 2,
+   "duration": 1.375,
+   "frames": 83,
+   "weak": 9,
+   "repaired": 0,
+   "swapped": 14,
+   "lift": 1.016,
+   "projection": 0.01579,
+   "grade": "good",
+   "note": "all six sampled poses follow the clip"
+  },
+  {
+   "index": 28,
+   "slug": "trick-28-swing-720",
+   "name": "Swing 720",
+   "window": [
+    96.19,
+    98.95
+   ],
+   "revision": 2,
+   "duration": 1.38,
+   "frames": 84,
+   "weak": 8,
+   "repaired": 4,
+   "swapped": 0,
+   "lift": 0.893,
+   "projection": 0.02029,
+   "grade": "partial",
+   "note": "first kick and jump follow; the high kick is missed"
+  },
+  {
+   "index": 33,
+   "slug": "trick-33-cheat-540-kick",
+   "name": "(Cheat) 540 kick",
+   "window": [
+    115.11,
+    117.97
+   ],
+   "revision": 1,
+   "duration": 1.43,
+   "frames": 87,
+   "weak": 4,
+   "repaired": 5,
+   "swapped": 4,
+   "lift": 1.19,
+   "projection": 0.01497,
+   "grade": "fair",
+   "note": "kick lower than the clip; jump and landing follow"
+  },
+  {
+   "index": 34,
+   "slug": "trick-34-cheat-720",
+   "name": "Cheat 720",
+   "window": [
+    118.92,
+    121.47
+   ],
+   "revision": 2,
+   "duration": 1.275,
+   "frames": 77,
+   "weak": 8,
+   "repaired": 3,
+   "swapped": 0,
+   "lift": 1.091,
+   "projection": 0.01882,
+   "grade": "partial",
+   "note": "jump follows; the airborne kick is missed"
+  },
+  {
+   "index": 35,
+   "slug": "trick-35-backside-900",
+   "name": "Backside 900",
+   "window": [
+    122.42,
+    125.27
+   ],
+   "revision": 2,
+   "duration": 1.425,
+   "frames": 86,
+   "weak": 9,
+   "repaired": 0,
+   "swapped": 1,
+   "lift": 1.866,
+   "projection": 0.0176,
+   "grade": "partial",
+   "note": "jump follows; the high kick is missed; lift of 1.87 m looks too high"
+  },
+  {
+   "index": 36,
+   "slug": "trick-36-cheat-900",
+   "name": "Cheat 900",
+   "window": [
+    126.22,
+    129.58
+   ],
+   "revision": 1,
+   "duration": 1.68,
+   "frames": 102,
+   "weak": 13,
+   "repaired": 6,
+   "swapped": 21,
+   "lift": 1.203,
+   "projection": 0.01825,
+   "grade": "fair",
+   "note": "spin, tuck and landing follow; kick weak"
+  },
+  {
+   "index": 37,
+   "slug": "trick-37-pop-720",
+   "name": "Pop 720",
+   "window": [
+    130.53,
+    133.28
+   ],
+   "revision": 2,
+   "duration": 1.375,
+   "frames": 83,
+   "weak": 20,
+   "repaired": 4,
+   "swapped": 21,
+   "lift": 0.624,
+   "projection": 0.01141,
+   "grade": "good",
+   "note": "all six sampled poses follow the clip"
+  },
+  {
+   "index": 38,
+   "slug": "trick-38-cheat-720-double",
+   "name": "Cheat 720 double",
+   "window": [
+    134.23,
+    137.09
+   ],
+   "revision": 1,
+   "duration": 1.43,
+   "frames": 87,
+   "weak": 9,
+   "repaired": 3,
+   "swapped": 0,
+   "lift": 1.179,
+   "projection": 0.01785,
+   "grade": "partial",
+   "note": "first kick and jump follow; the high kick is missed"
+  }
+ ]
+}

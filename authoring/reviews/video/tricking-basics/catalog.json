@@ -122,7 +122,7 @@
     25.62,
     27.68
    ],
-   "group": "upright"
+   "group": "inverted-or-hand-supported"
   },
   {
    "index": 9,
@@ -178,7 +178,7 @@
     38.54,
     40.09
    ],
-   "group": "upright"
+   "group": "inverted-or-hand-supported"
   },
   {
    "index": 13,
@@ -848,6 +848,7 @@
    "trick-04-cartwheel": "entry and exit match; the inverted middle collapses onto the floor",
    "trick-16-tornado-kick": "wind-up, first kick, jump and landing match; the second, high kick is missed",
    "trick-26-frontflip": "failed: subject lost in 45 of 81 frames"
-  }
+  },
+  "superseded": "See batch-upright.json; the pilot used an assumed speed of 0.4."
  }
 }

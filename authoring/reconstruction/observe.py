@@ -22,18 +22,28 @@ modelpath=Path(args.model);a=time.perf_counter();model=YOLO(str(modelpath));load
 def area(b):return max(0,b[2]-b[0])*max(0,b[3]-b[1])
 def iou(b,c):
  x=max(0,min(b[2],c[2])-max(b[0],c[0]));y=max(0,min(b[3],c[3])-max(b[1],c[1]));return x*y/max(1,area(b)+area(c)-x*y)
-rows=[];previous=None;prediction=0
+rows=[];prediction=0;detections=[];tracks=[]
 for index,t,f in frames:
- a=time.perf_counter();r=model.predict(f,device='cpu',imgsz=640,verbose=False)[0];elapsed=time.perf_counter()-a;prediction+=elapsed;boxes=r.boxes.xyxy.cpu().tolist()
- # Foreground performer: tallest detected person initially; then best overlap.
- selected=None
- if boxes:
-  if previous is None:selected=max(range(len(boxes)),key=lambda n:boxes[n][3]-boxes[n][1])
-  else:
-   scores=[iou(b,previous) for b in boxes];selected=max(range(len(boxes)),key=lambda n:scores[n])
-   if scores[selected]<.2:selected=None
+ a=time.perf_counter();r=model.predict(f,device='cpu',imgsz=640,verbose=False)[0];elapsed=time.perf_counter()-a;prediction+=elapsed;detections.append((r.boxes.xyxy.cpu().tolist(),r.keypoints.data.cpu().tolist() if len(r.boxes) else [],elapsed))
+# The performer is the person who stays: boxes are chained frame to frame by overlap, bridging gaps of up to six frames, and the
+# longest chain wins (taller on a tie). A figure that fades out, such as the previous clip in a crossfade, forms a short chain.
+for n,(boxes,_,_) in enumerate(detections):
+ taken=set()
+ for d in sorted(range(len(boxes)),key=lambda d:boxes[d][1]-boxes[d][3]):
+  best=max((k for k in range(len(tracks)) if k not in taken and n-tracks[k]['frame']<=6),key=lambda k:iou(boxes[d],tracks[k]['box']),default=None)
+  if best is not None and iou(boxes[d],tracks[best]['box'])>=.2:tracks[best].update(box=boxes[d],frame=n);tracks[best]['members'][n]=d;taken.add(best)
+  else:tracks.append({'box':boxes[d],'frame':n,'members':{n:d}});taken.add(len(tracks)-1)
+chosen=max(tracks,key=lambda k:(len(k['members']),float(sorted(detections[n][0][d][3]-detections[n][0][d][1] for n,d in k['members'].items())[len(k['members'])//2])))['members'] if tracks else {}
+heights=sorted(detections[n][0][d][3]-detections[n][0][d][1] for n,d in chosen.items());usual=heights[len(heights)//2] if heights else 0;previous=None
+for n,(index,t,f) in enumerate(frames):
+ boxes,keypoints,elapsed=detections[n];selected=chosen.get(n)
+ # Outside the chain (a fast pose change can break the overlap), continue by overlap with the last accepted box, or take the
+ # tallest figure when it is at least 60% of the performer's usual height.
+ if selected is None and boxes:
+  near=max(range(len(boxes)),key=lambda d:iou(boxes[d],previous)) if previous else None;tall=max(range(len(boxes)),key=lambda d:boxes[d][3]-boxes[d][1])
+  selected=near if near is not None and iou(boxes[near],previous)>=.2 else tall if boxes[tall][3]-boxes[tall][1]>=.6*usual else None
  if selected is not None:previous=boxes[selected]
- k=[] if selected is None else r.keypoints.data[selected].cpu().tolist()
- rows.append({'frameIndex':index,'time':t,'clipTime':t-args.start,'detections':len(boxes),'selection':'tallest foreground initially then IoU continuity; not identity certification','bbox':None if selected is None else boxes[selected],'keypoints':k,'missingOrAmbiguousSubject':selected is None,'predictWallSeconds':elapsed})
+ k=[] if selected is None else keypoints[selected]
+ rows.append({'frameIndex':index,'time':t,'clipTime':t-args.start,'detections':len(boxes),'selection':'longest overlap-linked chain of boxes, continued by overlap or height; not identity certification','bbox':None if selected is None else boxes[selected],'keypoints':k,'missingOrAmbiguousSubject':selected is None,'predictWallSeconds':elapsed})
 report={'status':'observational 2D pose evidence; no rig ground truth','model':modelpath.name,'modelSHA256':hashlib.sha256(modelpath.read_bytes()).hexdigest(),'versions':{n:version(n) for n in ['ultralytics','torch','opencv-python']},'sourceSHA256':args.sha256,'interval':[args.start,args.end],'frameSize':[int(frames[0][2].shape[1]),int(frames[0][2].shape[0])],'confidenceThreshold':.5,'keypointOrder':'COCO17; anatomical labels are model estimates and may swap','timingsSeconds':{'imports':imports,'modelLoad':load,'warmup':warmup,'predictions':prediction,'wall':time.perf_counter()-start},'frames':rows}
 out=Path(args.out);out.mkdir(parents=True,exist_ok=True);(out/'pose-report.json').write_text(json.dumps(report));print(json.dumps({'frames':len(rows),'missing':sum(x['missingOrAmbiguousSubject'] for x in rows),'timings':report['timingsSeconds']}))
