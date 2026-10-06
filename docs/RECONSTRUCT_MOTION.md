@@ -268,6 +268,14 @@ J-step swing 540 r8: the leg rises steadily from 0.58 to 0.74 s with no dip. Hoo
 
 Not fixed: the second high kick in Tornado kick (the bridge exists but one end is foreshortened, so it is a straight line), Feilong and Backside 900 (no lost run is detected there).
 
+## Which leg is lost in an overlapped stretch (6 October 2026)
+
+Tornado kick, Feilong and Backside 900 each missed a high kick. In all three the detector drew both legs together down the hanging leg for 10–15 frames while the kicking leg was vertical beside the head. The forward rules either flagged the wrong leg (the one that happened to be drawn as a stub just before) or flagged nothing.
+
+New rule in `lift.py`, applied before the forward pass: for an unbroken stretch of at least three overlapped frames, look at the first clear frame after it where a leg has moved more than 0.3 body heights from where the pair was drawn. That leg (it must have moved at least twice as far as the other, with a one-frame snap over 0.25 on the way in or out) is lost for the whole stretch, plus stub frames just before; the other leg is trusted. The run ends exactly where the leg reappears. Feet that are simply together arrive and leave gradually and are not affected. Related changes: whether a bridge is a straight line is decided by the leg's image length (thigh plus shank under 60% of usual), not its hip-to-ankle reach, so a tucked leg still swings on an arc; and the long way round is taken only when the other leg lies in the middle half of the short sweep.
+
+Results on eight-pose sheets: Tornado kick r10 and Feilong r8 now show the second kick vertical beside the head at the right time. The triple kick keeps its second and third kicks, and its first kick, previously absent, is now a low swing. Backside 900 is still wrong: the frames before its overlapped stretch have both legs tucked and mislabelled, so the bridge starts from a bad pose and takes the low way round. Karate kick: recoil bridge is an arc again (folded leg, full image length).
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

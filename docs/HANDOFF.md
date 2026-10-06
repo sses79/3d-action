@@ -443,3 +443,8 @@ User reported J-step swing 540 swapping the swinging right leg to the support le
 ## 2026-10-06 — smooth swings; Hook kick high kick
 
 User reported J-step swing 540 dipping between 0.58 and 0.74 s and asked for a smoothness rule, then the remaining high-kick misses. `lift.py`: reversal rule, lost while overlapped or a stub (60% length), 20-frame runs, straight-line bridge for foreshortened legs. `trick-27-j-step-swing-540` r8 and `trick-01-hook-kick` r8 saved and checked on sheets. Tornado kick, Feilong and Backside 900 second kicks still missed. Batch rerun started afterwards. 87 Node tests pass.
+
+
+## 2026-10-06 — lost leg chosen by where it reappears
+
+User asked for the Tornado kick, Feilong and Backside 900 high kicks. Added a pre-pass in `lift.py` that, for an unbroken overlapped stretch, marks as lost the leg that reappears far away (details in `docs/RECONSTRUCT_MOTION.md`), switched the straight-line test to image leg length and narrowed the long-way test. Tornado kick r10 and Feilong fixed on sheets; `video-triple-kick-v4` r4 keeps kicks 2 and 3; Backside 900 still wrong. Batch rerun started afterwards. 87 Node tests pass. Pushed through a8b5fea before this work.
