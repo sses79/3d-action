@@ -22,7 +22,8 @@ if not args.no_leg_repair:
  for i in range(1,len(raw)):
   if together(i):continue
   keep=sum(apart(raw[i,j],raw[ref,j]) for j in (13,14,15,16));swap=sum(apart(raw[i,a],raw[ref,b]) for a,b in ((13,14),(14,13),(15,16),(16,15)))
-  if not together(ref) and keep>.5 and swap<.5*keep:raw[i,[13,14,15,16]]=raw[i,[14,13,16,15]];swapped.append({'frame':i,'time':float(times[i]),'jumpBodyHeights':keep})
+  # Across a gap of overlapped frames a leg may really have moved far, so identity is only corrected between adjacent frames.
+  if ref==i-1 and keep>.5 and swap<.5*keep:raw[i,[13,14,15,16]]=raw[i,[14,13,16,15]];swapped.append({'frame':i,'time':float(times[i]),'jumpBodyHeights':keep})
   ref=i
  # A lost leg starts either merged onto the other leg at reduced confidence after a jump, or with a one-frame jump no real leg
  # makes (0.45 body heights). It stays lost, for at most twelve frames, while it is merged or its knee or ankle is below 0.9.
