@@ -218,6 +218,21 @@ The pattern across the partial and poor clips is one failure: a high kick, with 
 
 None of these has been watched in motion or seen by the user, and none is registered as a movement.
 
+## High kicks: lost-leg detection and arc bridging (6 October 2026)
+
+The user pointed out that Pop 360 (crescent) had the high-kick fault too: from 0.68 s the left leg should swing up to nearly vertical beside the head at 0.76 s and be back out by 0.89 s.
+
+Cause, from the detector overlay: as the leg crosses the body the detector redraws it straight down on the other leg for about ten frames. The first such frame missed the "merged" test by a hair (ankles 0.21 body heights apart against a 0.2 limit), was accepted as trusted, and made every later frame look consistent. Frames that were flagged were bridged in a straight line, which pulls the leg through the body.
+
+Changes in `lift.py`:
+
+- A leg is also lost when its ankle jumps more than 0.45 body heights in one frame. It stays lost, for at most twelve frames, while it is merged or its knee or ankle is below 0.9 confidence, and a run ends only when the next frame looks good too.
+- Lost runs with trusted frames on both sides are bridged by swinging knee and ankle about the hip. Of the two ways round, the one that does not pass through the other leg is taken. The summary lists these as `legArcBridges`.
+
+Pop 360 (crescent): one bridge, 176° over the top, 1.37–1.73 s of footage. On eight poses from 0.62 to 0.94 s the leg is out left at 0.68, near vertical beside the head at 0.76–0.80 and out right at 0.89, as in the clip. The path inside the bridge is inferred from its two ends, not observed.
+
+Batch rerun (eight poses per clip): good 9, fair 5, partial 3, poor 1, not upright 2 (was 4, 3, 8, 3, 2). Still missed: the high part of the Hook kick, and the second high kick in Tornado kick, Feilong and Backside 900, where the detector's error did not trip either rule. Earlier clips: the karate kick's four lost frames are now bridged along arcs (projection 0.0096 → 0.0098); the triple kick gains five repairs but its first kick is still missing; the flying kicks are unchanged.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

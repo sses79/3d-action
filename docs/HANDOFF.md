@@ -423,3 +423,8 @@ User supplied `~/Downloads/YTDown.com_YouTube_Media_ls9JjJzKFZo_60-Tricking-Basi
 ## 2026-10-06 — tricking basics: batch of 20 upright clips
 
 Footage speed estimated at 0.5 from free fall. `observe.py` now tracks the performer as the longest overlap-linked chain of boxes (fixes wrong-figure selection during crossfades; earlier clips reproduce exactly). All 20 upright clips reconstructed as `trick-NN-…` drafts; grades and notes in `authoring/reviews/video/tricking-basics/batch-upright.json`, review strips beside it (local only). Four good, three fair, eight partial, three poor, two misgrouped. Common failure: high near-vertical kicks are not reproduced. `trick-27-j-step-swing-540` is selected. 87 Node tests pass. Service running on 5174.
+
+
+## 2026-10-06 — high kicks: arc bridging
+
+User reported Pop 360 (crescent) missing its high kick (0.68–0.89 s). `lift.py` now detects a lost leg by an impossible one-frame jump as well as by merging, keeps it lost until two good frames, and bridges lost runs along an arc about the hip that avoids the other leg (`legArcBridges`). Pop 360 now matches on a dense sheet. Reran the 20 clips: 9 good, 5 fair, 3 partial, 1 poor, 2 not upright; grades in `batch-upright.json`. `trick-18-pop-360-crescent` r3 selected at 0.76 s. 87 Node tests pass. Service running on 5174.
