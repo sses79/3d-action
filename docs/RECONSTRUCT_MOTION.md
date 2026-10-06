@@ -57,6 +57,15 @@ A second window of the same recording (16.5–21.5 s, 151 samples, no prior) com
 
 About 3 KB: stage keys, cached flags and timings; observation counts with clip times where the subject was not selected, where body landmarks fell below 0.5 confidence, and where the subject's box touches the frame edge; sample count and bridged frames; fit residuals; the action's phases and track count; paths to the pose report, motion estimate and action; and the standing limits. With `commit:true` it adds the saved revision and the motion-quality status and inspection windows.
 
+## Quality fixes after reviewing the side kick (6 October 2026)
+
+Reviewing the first draft against the video found two defects, both now handled in the stages:
+
+- **Leg lost during recoil.** Motion blur made the detector drop the kicking leg in four frames (clip 1.367, 1.5, 1.567, 1.6 s) and redraw it on top of the standing leg, so the character's leg dropped to the floor in the middle of the recoil. `lift.py` now detects this pattern (one leg's knee and ankle both land within 0.2 body heights of the other leg's, confidence below 0.9, ankle jump above 0.3 body heights from the last trusted frame), bridges those frames by interpolation and marks them low-confidence. The summary lists them as `repairedLegObservations`. `--no-leg-repair` restores the old behavior.
+- **Knees locked or crouched.** The straight-knee assumption was all-or-nothing: with it, the standing knee sat at exactly 180° for the whole clip; without it, the standing leg folded to about 110°. It now pulls only a raised leg to fully straight. A planted leg is merely kept from folding below 160°.
+
+On the fixture this gives a held-high recoil (knee 96° → 68° → 79° instead of a straight dropped leg), a standing knee near 160°, a 180° kick extension, and a lower projection error (0.0067 against 0.0091). The result is saved as `video-side-kick-v2`; the comparison sheet is `authoring/reviews/video/kick-reference/reconstruction-v2/kick-comparison.png` (local only). The three velocity review windows remain, the kick is lower than in the video, and the 160° floor and the repair thresholds were chosen on this one clip. Because of these changes the operation no longer reproduces the pilot bit-for-bit; the pilot files are kept as they were.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

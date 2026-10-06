@@ -7,14 +7,14 @@ const fixture=()=>{const dir=mkdtempSync(join(tmpdir(),'reconstruct-'));for(cons
  const env={python:join(dir,'python'),models:{yolo26s:join(dir,'model.pt'),yolo26n:join(dir,'model.pt')},checkpoint:join(dir,'checkpoint.bin'),vendor:join(dir,'vendor'),vendorCommit:'abc',lock:join(dir,'lock.txt'),asset:join(dir,'asset.glb'),cache:join(dir,'cache'),failStage:null,
   run:async(_python,a)=>{const stage=a[0].split('/').at(-1).replace('.py','');calls.push(stage);if(env.failStage===stage)throw Error('boom');const out=arg(a,'--out');
    if(stage==='observe'){const start=+arg(a,'--start');writeFileSync(join(out,'pose-report.json'),JSON.stringify({model:'fake',confidenceThreshold:.5,frames:[0,1,2].map(i=>({clipTime:i/30,time:start+i/30,detections:1,missingOrAmbiguousSubject:i===1,keypoints:i===1?[]:Array.from({length:17},(_,j)=>[0,0,i===2&&j===16?.2:.9])}))}));}
-   else{const fit=stage==='fit';writeFileSync(join(out,'motion-ir.json'),JSON.stringify({times:[0,1],backend:'fake',bridgedFrames:1,...(fit?{fitting:{algorithm:a.includes('--stable')?'stable':'fitted',straightKneePrior:!a.includes('--no-straight-knee-prior'),projectionRMS:.01,segmentLengthRMS:.02,rejectedObservations:[]}}:{})}));}},
+   else{const fit=stage==='fit';writeFileSync(join(out,'motion-ir.json'),JSON.stringify({times:[0,1],backend:'fake',bridgedFrames:1,repairedLegObservations:[{side:'right',time:1.5}],...(fit?{fitting:{algorithm:a.includes('--stable')?'stable':'fitted',straightKneePrior:!a.includes('--no-straight-knee-prior'),projectionRMS:.01,segmentLengthRMS:.02,rejectedObservations:[]}}:{})}));}},
   retarget:(_ir,r)=>{calls.push('retarget');return {action:{id:r.actionId,name:r.name,phases:(r.phases||[{name:'Estimated motion',end:2}]).map(p=>({name:p.name,duration:1,kind:p.kind||'move'})),tracks:[1,2]},metadata:{}};}};
  return {dir,env,calls,request:{video:join(dir,'video.mp4'),start:1,end:3}};};
 const ran=async(f,request)=>{f.calls.length=0;const {summary}=await reconstruct(process.cwd(),request,f.env);return [f.calls.join(','),summary];};
 
 test('repeat requests reuse every stage and changed options rerun only downstream stages',async()=>{const f=fixture();try{
  let [calls,summary]=await ran(f,f.request);assert.equal(calls,'observe,lift,fit,retarget');assert.equal(summary.cachedStages,0);assert.equal(summary.status,'estimated-draft-unreviewed');
- assert.deepEqual([summary.observations.missingSubjectFrames,summary.observations.lowConfidenceBodyFrames,summary.estimate.bridgedFrames],[1,1,1]);assert.equal(summary.fitting.straightKneePrior,false);
+ assert.deepEqual([summary.observations.missingSubjectFrames,summary.observations.lowConfidenceBodyFrames,summary.estimate.bridgedFrames],[1,1,1]);assert.equal(summary.fitting.straightKneePrior,false);assert.deepEqual(summary.estimate.repairedLegObservations,[{side:'right',clipTime:.5}]);
  [calls,summary]=await ran(f,f.request);assert.equal(calls,'');assert.equal(summary.cachedStages,4);assert.ok(existsSync(summary.artifacts.action));
  assert.equal((await ran(f,{...f.request,phases:[{name:'A',end:1},{name:'B',end:2,kind:'fast'}]}))[0],'retarget');
  assert.equal((await ran(f,{...f.request,fit:'fitted'}))[0],'fit,retarget');
