@@ -40,4 +40,4 @@ node authoring/cli.mjs tools   # operation schemas (service must be running)
 - Never hand-edit `.authoring/project.json` or its sidecars; go through the service (MCP `animation-studio` or `authoring/cli.mjs`). Back up the index, blobs folder and sidecars together.
 - Every write pins revisions (`expectedRevision`, `sourceRevision`); fetch current values instead of assuming them.
 - "Supported" contact/seam reviews are bounded, configuration-specific visual and numeric checks, not physical validation. Do not claim more than the evidence in `authoring/reviews/` shows.
-- Not a git repository; there is no undo beyond the service's own revision history.
+- Git tracks code, docs and review evidence (public repo `sses79/3d-action`); `.authoring/` live state is not tracked, so its only undo is the service's revision history.
