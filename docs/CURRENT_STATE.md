@@ -8,7 +8,7 @@ Animation Studio is a local movement library, action compiler and review viewer.
 
 The active library contains 61 classified movements: 43 free UAL2 Standard sources and 18 local/adapted movements. All 102 detected stationary near-floor foot intervals have bounded review decisions (96 supported, six uncertain). There are 27 curated source-pair connections: 26 exact configurations supported, one needs review. These are coverage counts, not approval of every possible pair or physical certification.
 
-Still unresolved: guard-to-counterattack connection velocity and an internal advancing-step velocity flag. Source foot evidence does not establish hand/body support or balance. Generic retargeting, IK, collision, game-controller state machines, multiplayer and deployment are not implemented. Compact project persistence removes whitespace overhead but still rewrites the whole motion/history project.
+Still unresolved: guard-to-counterattack connection velocity and an internal advancing-step velocity flag. Source foot evidence does not establish hand/body support or balance. Generic retargeting, IK, collision, game-controller state machines, multiplayer and deployment are not implemented. Project storage is partitioned (6 October 2026); each save still serializes every action in memory to detect changes, but writes only what changed.
 
 ## Three demos
 
@@ -70,14 +70,14 @@ Skills define preparation and composition workflows; they are not another motion
 | Source assets | `editor/assets/`, `editor/source/`, `watch/assets/`, `watch/source/` | GLB, source files and licenses; runtime uses the included rig/model |
 | Bundled source index | `runtime/ual2-library.json` | Adapted UAL2 source metadata used by sync |
 | Curated source facts | `authoring/contracts/ual2-standard.json`, `authoring/contracts/studio-local.json` | Pinned semantic/provenance snapshot and purposeful candidate relationships; not all pairs |
-| Active motion library | `.authoring/project.json` | Movements/actions, revisions, references, profiles, recipes/specs/receipts and retained history; compact atomic JSON saves |
+| Active motion library | `.authoring/project.json` + `.authoring/project.json.blobs/` | Small index (revisions, metadata, profiles, recipes/specs/receipts) plus one immutable content-addressed file per unique action body (current, reference, history). Saves write only new bodies and the index; see `authoring/project-store.mjs` |
 | Preview | `.authoring/project.json.preview.json` | Selected action, time, camera and playback; small writes separate from motion saves |
 | Contact and seam reviews | `.authoring/project.json.contracts.json` | Current policies plus superseded history, source/output revision/hash pins, exact configuration and artifacts |
 | Run tracking | `.authoring/project.json.runs.json` | Original prompt, timestamps, tool outcomes, notes and elapsed/service durations; shared single active run |
 | Evidence artifacts | `authoring/reviews/`, `authoring/vision/results/`, `authoring/benchmarks/` | Reports, receipts, render manifests/sheets and recorded experiments |
 | Operational instructions | `skills/*/SKILL.md` | Repo skill entry points; installed copies live under `~/.codex/skills/` |
 
-Back up all four project/sidecar files together, plus referenced source assets and review artifacts. Motion exports are portable JSON for the supported rig/player, not standalone GLB animation exports. Portable imports are validated and bounded; supplied semantic receipts are discarded and must be regenerated against local sources. Review applicability is rechecked from pins.
+Back up the index, its `.blobs/` folder and the three sidecar files together, plus referenced source assets and review artifacts. Motion exports are portable JSON for the supported rig/player, not standalone GLB animation exports. Portable imports are validated and bounded; supplied semantic receipts are discarded and must be regenerated against local sources. Review applicability is rechecked from pins.
 
 ## API surface
 
@@ -99,7 +99,6 @@ A later game client can use the shared `runtime/player.ts` and baked action data
 ## Next focused work
 
 - Resolve the remaining guard-to-counterattack source/transition and internal advancing-step boundary.
-- Partition project/history storage to avoid whole-project memory and save costs.
 - Test complete prompt-to-action runs using the new policies; use recorded timings to locate remaining bottlenecks.
 - Add game-controller integration when the reusable authoring loop is stable.
 
