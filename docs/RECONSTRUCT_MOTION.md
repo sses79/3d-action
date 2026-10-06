@@ -233,6 +233,15 @@ Pop 360 (crescent): one bridge, 176° over the top, 1.37–1.73 s of footage. On
 
 Batch rerun (eight poses per clip): good 9, fair 5, partial 3, poor 1, not upright 2 (was 4, 3, 8, 3, 2). Still missed: the high part of the Hook kick, and the second high kick in Tornado kick, Feilong and Backside 900, where the detector's error did not trip either rule. Earlier clips: the karate kick's four lost frames are now bridged along arcs (projection 0.0096 → 0.0098); the triple kick gains five repairs but its first kick is still missing; the flying kicks are unchanged.
 
+## Spins: limbs turn with the body, and a bridged kick passes in front (6 October 2026)
+
+User review of Pop 360 (crescent): from 0.22 s the upper body turned while the lower body kept facing front, and at 0.8 s the kicking leg swung through the back of the body. The user asked for a rule that a high spinning kick always passes in front of the body.
+
+- **Limb twist.** The estimate's hips and shoulders turned together (within about 55°). The fault was in `retarget.ts`: each limb was swung onto its target direction starting from the rest pose in world space, so its twist never followed the body and knees and feet kept facing the camera through a spin. `localForDirection` now first carries the limb with its parent bone's rotation and then swings the shortest way onto the target (operation path only). On the rig, toes are within about 10° of the pelvis facing at 0.3–1.2 s; the right foot lags 39° at 0.15–0.22 s while still planted.
+- **Front of the trunk.** A bridged leg has no observed depth and the lift had placed it behind. `fit.py` now keeps the knee and ankle of a bridged leg on the chest side of the pelvis (at least 0.5 and 1.0 hip widths, fading in from the bridge ends). The chest direction comes from the lifted shoulders and spine.
+
+Pop 360 (crescent) r4: the leg crosses in front of the chest at 0.76–0.80 s on the comparison sheet. The rule applies only inside bridges; a leg tracked throughout keeps the estimate's depth. Batch rerun: grades unchanged (9 good, 5 fair, 3 partial, 1 poor, 2 not upright); Cheat 360 crescent and Feilong each look slightly worse at one sampled pose, where a bridged leg pushed forward reads lower from the front. Earlier clips: karate kick clearance 10.2 cm and hold steady; flying and triple kicks unchanged in outcome.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.
