@@ -373,3 +373,8 @@ User asked for kick height and lean fixes on `video-side-kick-v2`. Causes measur
 ## 2026-10-06 — legs crossing through each other in Gather
 
 User reported the knees passing through each other from about 0.53 to 0.74 s and back at 0.94 s. Rig measurement confirmed it (legs within 0.6 cm from 0.60–0.93 s, knee depth order flipping at 0.63 and 0.90 s). Added a leg non-penetration term to `fit.py`; see `docs/RECONSTRUCT_MOTION.md`. Saved `video-side-kick-v4` r1 (minimum leg distance 11.3 cm, no flips) and selected it at 0.7 s, Front camera. 85 Node tests pass. Service running on 5174.
+
+
+## 2026-10-06 — left-leg wobble in the ready hold
+
+User reported a left-leg wobble at 1.98–2.00 s. Cause: the planted-knee floor in `fit.py` was gated by 2D straightness and toggled for single frames near its threshold. It now follows the observed 2D angle below 160° with no gate; see `docs/RECONSTRUCT_MOTION.md`. Saved `video-side-kick-v5` r1 (left knee jerk at 1.97 s 5.4 → 0.8 cm/frame² on the rig) and selected it at 1.97 s. 85 Node tests pass. Service running on 5174.

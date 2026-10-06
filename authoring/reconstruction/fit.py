@@ -23,10 +23,11 @@ lengths=[max(float(np.median(np.linalg.norm(prior[:,a]-prior[:,b],axis=1))),floa
 prior_t=torch.tensor(prior);target_t=torch.tensor(target);conf=torch.tensor(np.minimum(obs[:,:,2],obs[:,0:1,2]));conf[:,0]=1
 # A side view supports a near-straight-knee prior only where the observed 2D knee is near straight. Other camera angles must disable it.
 # A raised (kicking) leg is pulled to fully straight. A planted leg is only kept from folding below 160 degrees: seen from
-# the front it looks straight in 2D even when slightly flexed, and a locked 180-degree standing knee is not natural.
+# the front it looks straight in 2D even when slightly flexed, and a locked 180-degree standing knee is not natural. The
+# floor follows the observed 2D angle when that is below 160, so it never switches on and off as a bent knee nears straight.
 straight=[];knee_weight=0 if args.no_straight_knee_prior else 3
 for h,k,f in [(1,2,3),(4,5,6)]:
- other=6 if f==3 else 3;leg=lengths[edges.index((h,k))]+lengths[edges.index((k,f))];raised=torch.clamp(((target_t[:,other,1]-target_t[:,f,1])/leg-.25)/.25,0,1);u=target_t[:,h]-target_t[:,k];v=target_t[:,f]-target_t[:,k];cos=(u*v).sum(-1)/(torch.linalg.vector_norm(u,dim=-1)*torch.linalg.vector_norm(v,dim=-1)).clamp_min(1e-6);straight.append((h,k,f,(torch.clamp((-cos-.90)/.09,0,1) if args.stable else (cos<-.96).float())*torch.minimum(conf[:,k],conf[:,f]),raised))
+ other=6 if f==3 else 3;leg=lengths[edges.index((h,k))]+lengths[edges.index((k,f))];raised=torch.clamp(((target_t[:,other,1]-target_t[:,f,1])/leg-.25)/.25,0,1);u=target_t[:,h]-target_t[:,k];v=target_t[:,f]-target_t[:,k];cos=(u*v).sum(-1)/(torch.linalg.vector_norm(u,dim=-1)*torch.linalg.vector_norm(v,dim=-1)).clamp_min(1e-6);straight.append((h,k,f,(torch.clamp((-cos-.90)/.09,0,1) if args.stable else (cos<-.96).float())*torch.minimum(conf[:,k],conf[:,f]),raised,torch.minimum(conf[:,k],conf[:,f]),cos.clamp(min=-.94)))
 unit=lambda v:torch.nn.functional.normalize(v,dim=-1)
 # Legs are solid: points along one leg must stay at least their combined radii from points along the other. Where the legs
 # overlap in the image this can only be met in depth, and the starting estimate decides which leg is in front.
@@ -35,7 +36,7 @@ def leg_points(v,h,k,f):return [(v[:,h]+(v[:,k]-v[:,h])*u,r*hip_width) for u,r i
 def leg_gap(v):return torch.stack([torch.relu(ra+rb-torch.linalg.vector_norm(a-b+1e-9,dim=-1)) for a,ra in leg_points(v,1,2,3) for b,rb in leg_points(v,4,5,6)])
 x=torch.tensor(prior,requires_grad=True);optim=torch.optim.Adam([x],lr=.025);a=time.perf_counter()
 for step in range(400):
- optim.zero_grad();projection=((x[:,:,:2]-target_t).square().sum(-1)*conf).mean();bone=torch.stack([(torch.linalg.vector_norm(x[:,b]-x[:,a],dim=-1)-lengths[i]).square().mean() for i,(a,b) in enumerate(edges)]).mean();depth=(x[:,:,2]-prior_t[:,:,2]).square().mean();acc=(x[2:]-2*x[1:-1]+x[:-2]).square().mean();root=x[:,0].square().mean();collinear=torch.stack([(((unit(x[:,h]-x[:,k])+unit(x[:,f]-x[:,k])).square().sum(-1)*raised+4*torch.relu((unit(x[:,h]-x[:,k])*unit(x[:,f]-x[:,k])).sum(-1)+.94).square()*(1-raised))*weight).mean() for h,k,f,weight,raised in straight]).mean();depth_acc=(x[2:,:,2]-2*x[1:-1,:,2]+x[:-2,:,2]).square().mean();overlap=leg_gap(x).square().mean();loss=(6*depth_acc if args.stable else 0)+400*overlap+knee_weight*collinear+12*projection+8*bone+.12*depth+(.8 if args.stable else .015)*acc+30*root;loss.backward();optim.step()
+ optim.zero_grad();projection=((x[:,:,:2]-target_t).square().sum(-1)*conf).mean();bone=torch.stack([(torch.linalg.vector_norm(x[:,b]-x[:,a],dim=-1)-lengths[i]).square().mean() for i,(a,b) in enumerate(edges)]).mean();depth=(x[:,:,2]-prior_t[:,:,2]).square().mean();acc=(x[2:]-2*x[1:-1]+x[:-2]).square().mean();root=x[:,0].square().mean();collinear=torch.stack([((unit(x[:,h]-x[:,k])+unit(x[:,f]-x[:,k])).square().sum(-1)*raised*weight+4*torch.relu((unit(x[:,h]-x[:,k])*unit(x[:,f]-x[:,k])).sum(-1)-floor).square()*(1-raised)*seen).mean() for h,k,f,weight,raised,seen,floor in straight]).mean();depth_acc=(x[2:,:,2]-2*x[1:-1,:,2]+x[:-2,:,2]).square().mean();overlap=leg_gap(x).square().mean();loss=(6*depth_acc if args.stable else 0)+400*overlap+knee_weight*collinear+12*projection+8*bone+.12*depth+(.8 if args.stable else .015)*acc+30*root;loss.backward();optim.step()
 elapsed=time.perf_counter()-a;fitted=x.detach().numpy();fitted-=fitted[:,0:1]
 def angles(v):
  a=v[:,1]-v[:,2];b=v[:,3]-v[:,2];return np.degrees(np.arccos(np.clip((a*b).sum(-1)/np.linalg.norm(a,axis=-1)/np.linalg.norm(b,axis=-1),-1,1)))

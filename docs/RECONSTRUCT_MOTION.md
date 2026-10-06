@@ -83,6 +83,12 @@ In the Gather phase of `video-side-kick-v3` the legs cross for the step-over, an
 
 Result, saved as `video-side-kick-v4`: minimum leg-to-leg distance on the rig is 11.3 cm over the whole clip, with no depth-order flips; kick extension, elevation and lean are unchanged and projection error is 0.0071. Only leg against leg is covered: arms, torso and the floor are not, and the radii are estimates rather than measurements of the character mesh.
 
+## Left-leg wobble in the ready hold (6 October 2026)
+
+In `video-side-kick-v4` the left knee twitched at about 1.97 s while the pose should be still. The observations there are steady (knee x 0.284, 0.285, 0.288), but the fitted knee jumped 0.286 → 0.273 → 0.288 and its angle 148° → 155° → 147°. The planted-knee floor was weighted by how straight the knee looks in 2D, with a ramp between 154° and 172°. In the final wide stance the knee sits right at that threshold, so the floor switched on for single frames.
+
+The floor is now always active on a planted leg and follows the observed 2D angle when that is below 160°, so there is no switch. Result, saved as `video-side-kick-v5`: the left knee holds 152–155° through the hold and eases to 160°; on the rig its frame-to-frame jerk at 1.97 s drops from 5.4 to 0.8 cm per frame², and the maximum over the ready hold from 5.4 to 1.6. Leg clearance (11.3 cm) and the kick are unchanged. The fitted knee now sits about 0.014 normalized units inside the observed position throughout the hold, a steady offset rather than a wobble. Projection error is 0.0076.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.
