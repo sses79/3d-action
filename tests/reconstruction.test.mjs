@@ -42,10 +42,11 @@ test('torso frame keeps a sideways lean that squaring to level shoulders would r
 });
 
 test('airborne retargeting lifts the root only when the lowest ankle is well above its ground line',async()=>{
- globalThis.ProgressEvent=class{};const b=readFileSync('editor/assets/character.glb'),g=await new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'');
- const ir=JSON.parse(readFileSync('authoring/reviews/video/kick-reference/reconstruction-small/motion-ir.json','utf8')),n=ir.times.length,rootY=o=>retarget(g.scene,ir.rootRelativePositions,ir.times,ir.imagePelvis,.004,'air-test',o).action.tracks.at(-1).keys.map(k=>k.value[1]);
+ globalThis.ProgressEvent=class{};const b=readFileSync('editor/assets/character.glb'),rig=async()=>(await new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'')).scene;
+ // retarget reads the rest pose from the model it is given, so each call gets a fresh rig.
+ const ir=JSON.parse(readFileSync('authoring/reviews/video/kick-reference/reconstruction-small/motion-ir.json','utf8')),n=ir.times.length,rootY=async o=>retarget(await rig(),ir.rootRelativePositions,ir.times,ir.imagePelvis,.004,'air-test',o).action.tracks.at(-1).keys.map(k=>k.value[1]);
  // 500 px is the ground line; 20 px (8 cm) is within the tiptoe allowance, 250 px (1 m) is a jump.
- const y=ir.times.map((_,i)=>i<n/3?500:i<2*n/3?480:250),ground=rootY({name:'Ground'}),air=rootY({name:'Air',airborne:true,lowestAnkleImageY:y});
+ const y=ir.times.map((_,i)=>i<n/3?500:i<2*n/3?480:250),ground=await rootY({name:'Ground'}),air=await rootY({name:'Air',airborne:true,lowestAnkleImageY:y});
  for(let i=0;i<n;i++){const lift=air[i]-ground[i];if(i<2*n/3-1)assert.ok(Math.abs(lift)<1e-9);else if(i>=2*n/3)assert.ok(Math.abs(lift-1)<1e-9);}
- assert.throws(()=>rootY({name:'Air',airborne:true}),/ankle image heights/);
+ await assert.rejects(rootY({name:'Air',airborne:true}),/ankle image heights/);
 });
