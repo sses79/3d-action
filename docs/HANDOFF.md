@@ -363,3 +363,8 @@ Verified against the original recording: keypoints, lifted and stabilized positi
 ## 2026-10-06 — side-kick review: leg repair and knee prior
 
 User reported a knee problem and an unnatural end to the kick in the reconstructed side kick. Frame comparison showed the detector merging the blurred kicking leg onto the standing leg in four frames, and the straight-knee prior locking the standing knee at 180° (or, disabled, letting it fold to ~110°). `lift.py` now bridges merged-leg frames; `fit.py` straightens only a raised leg and keeps a planted knee above 160°. Details and numbers are in `docs/RECONSTRUCT_MOTION.md`. Saved `video-side-kick-v2` r1 in the live library (earlier drafts untouched) and selected it in the viewer. Thresholds were set on this single clip. The pilot bundle's original stage fingerprints were restored; its test now asserts repeatable packaging rather than equality with current code. 84 Node tests pass. Authoring service left running on 5174 for review.
+
+
+## 2026-10-06 — side-kick height and lean
+
+User asked for kick height and lean fixes on `video-side-kick-v2`. Causes measured at the peak: the torso retarget frame squared the spine to the shoulder line (rig lean 35° against 48° estimated), and the ankle keypoint slid up the blurred shin, which the fit read as a leg pointing toward the camera. Added `torsoFrame` (operation path only) and straight-leg reach restoration in `lift.py`; see `docs/RECONSTRUCT_MOTION.md`. Saved `video-side-kick-v3` r1 and selected it; v2 and earlier drafts untouched. 85 Node tests pass. Service running on 5174.

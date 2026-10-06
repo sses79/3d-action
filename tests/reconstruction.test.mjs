@@ -9,7 +9,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 const dir=mkdtempSync(join(tmpdir(),'reconstruction-'));
 buildSync({entryPoints:['authoring/reconstruction/retarget.ts'],bundle:true,platform:'node',format:'esm',packages:'external',outfile:join(dir,'retarget.mjs')});
 writeFileSync(join(dir,'retarget.mjs'),readFileSync(join(dir,'retarget.mjs'),'utf8').replaceAll('"three/webgpu"',JSON.stringify(new URL('../node_modules/three/build/three.webgpu.js',import.meta.url).href)));
-const {bodyFrame,localForDirection,retarget}=await import(join(dir,'retarget.mjs'));rmSync(dir,{recursive:true,force:true});
+const {bodyFrame,localForDirection,retarget,torsoFrame}=await import(join(dir,'retarget.mjs'));rmSync(dir,{recursive:true,force:true});
 test('direction retarget respects rotated parent and preserves desired world direction',()=>{
  const rest=new T.Quaternion().setFromAxisAngle(new T.Vector3(0,0,1),.4),parent=new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),.8),localAxis=new T.Vector3(0,-1,0),restDirection=localAxis.clone().applyQuaternion(rest),target=new T.Vector3(1,2,3).normalize();
  const q=localForDirection(parent,rest,restDirection,target);assert.ok(localAxis.applyQuaternion(parent.clone().multiply(q)).distanceTo(target)<1e-10);assert.ok(Math.abs(q.length()-1)<1e-10);
@@ -33,4 +33,10 @@ test('fitted fixture retains timing/provenance and improves the observed extensi
 test('stability fixture preserves source timing and peak extension while reducing temporal variation',()=>{
  const a=JSON.parse(readFileSync('authoring/reviews/video/kick-reference/reconstruction-fitted/motion-ir.json'));const b=JSON.parse(readFileSync('authoring/reviews/video/kick-reference/reconstruction-stable/motion-ir.json'));const m=JSON.parse(readFileSync('authoring/reviews/video/kick-reference/reconstruction-stable/comparison.json'));
  assert.deepEqual(b.times,a.times);assert.equal(b.sourceSHA256,a.sourceSHA256);assert.deepEqual(b.imagePelvis[0],a.imagePelvis[0]);assert.deepEqual(b.imagePelvis.at(-1),a.imagePelvis.at(-1));assert.ok(b.fitting.rightKneePeakDegrees.after>165);assert.ok(m['reconstruction-stable'].depthSecondDifferenceRMS<m['reconstruction-fitted'].depthSecondDifferenceRMS);assert.ok(b.rootRelativePositions.flat(2).every(Number.isFinite));
+});
+
+test('torso frame keeps a sideways lean that squaring to level shoulders would remove',()=>{
+ const up=new T.Vector3(1,1,0),left=new T.Vector3(1,0,0),right=new T.Vector3(-1,0,0),spine=q=>new T.Vector3(0,1,0).applyQuaternion(q);
+ assert.ok(spine(torsoFrame(left,right,up)).angleTo(up.clone().normalize())<1e-6);assert.ok(spine(bodyFrame(left,right,up)).angleTo(new T.Vector3(0,1,0))<1e-6);
+ assert.throws(()=>torsoFrame(left,right,new T.Vector3(1,0,0)));
 });

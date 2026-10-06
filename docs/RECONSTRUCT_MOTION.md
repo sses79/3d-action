@@ -66,6 +66,15 @@ Reviewing the first draft against the video found two defects, both now handled 
 
 On the fixture this gives a held-high recoil (knee 96° → 68° → 79° instead of a straight dropped leg), a standing knee near 160°, a 180° kick extension, and a lower projection error (0.0067 against 0.0091). The result is saved as `video-side-kick-v2`; the comparison sheet is `authoring/reviews/video/kick-reference/reconstruction-v2/kick-comparison.png` (local only). The three velocity review windows remain, the kick is lower than in the video, and the 160° floor and the repair thresholds were chosen on this one clip. Because of these changes the operation no longer reproduces the pilot bit-for-bit; the pilot files are kept as they were.
 
+## Kick height and lean (6 October 2026)
+
+`video-side-kick-v2` still kicked lower than the video and leaned less. Measuring the estimate against the rig at the peak found two causes:
+
+- **Lean lost in retargeting.** The spine bones were oriented from a frame built on the shoulder line, with the spine direction squared to it. With level shoulders that removes sideways lean: the estimate leaned 48° from vertical, the rig only 35°. For this operation the torso frame now keeps the pelvis-to-neck direction exactly and squares the shoulder line to it (`torsoFrame` in `retarget.ts`). The pilot code path is unchanged.
+- **Kick shortened at the peak.** On the extended leg the blurred ankle point slid up the shin (shank 109 px, then 61 and 58 px in the next two frames). The fit read the shorter leg as pointing about 37° toward the camera, which lowered it. `lift.py` now restores the hip-to-ankle reach of a raised, straight leg to its largest value within two neighbouring straight frames, keeping the observed direction. Two frames were extended (by 34% and 16%); the summary lists them as `extendedLegReach`.
+
+Result, saved as `video-side-kick-v3`: kick-leg elevation at the peak rises from 24° to 30°, and in the front view the lean and the foot at head height match the video (`reconstruction-v3/kick-comparison.png`, local only). Still open: the leg remains about 27° toward the camera, which a single view cannot confirm; the head follows the torso instead of staying upright; and the three velocity windows remain.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.
