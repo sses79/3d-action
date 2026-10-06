@@ -2,6 +2,9 @@ import * as T from 'three/webgpu';
 import {Action,validateAction} from '../../runtime/action';
 // Specific H36M17 -> Quaternius adapter. No joint positions/scales are authored.
 export function bodyFrame(left:T.Vector3,right:T.Vector3,up:T.Vector3){const x=left.clone().sub(right).normalize(),y=up.clone().addScaledVector(x,-up.dot(x)).normalize();if(x.lengthSq()<.9||y.lengthSq()<.9)throw Error('Degenerate body frame');const z=new T.Vector3().crossVectors(x,y).normalize();return new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(x,y,z));}
+// Torso frame: the pelvis-to-neck direction is kept exactly and the shoulder line is squared to it. Squaring the spine to
+// the shoulders instead would remove any sideways lean whenever the shoulders stay level.
+export function torsoFrame(left:T.Vector3,right:T.Vector3,up:T.Vector3){const y=up.clone().normalize(),across=left.clone().sub(right),x=across.addScaledVector(y,-across.dot(y)).normalize();if(y.lengthSq()<.9||x.lengthSq()<.9)throw Error('Degenerate torso frame');const z=new T.Vector3().crossVectors(x,y).normalize();return new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(x,y,z));}
 export function localForDirection(parentWorld:T.Quaternion,restWorld:T.Quaternion,restDirection:T.Vector3,direction:T.Vector3){if(direction.lengthSq()<1e-10)throw Error('Degenerate limb direction');const world=new T.Quaternion().setFromUnitVectors(restDirection.clone().normalize(),direction.clone().normalize()).multiply(restWorld);return parentWorld.clone().invert().multiply(world).normalize();}
 export function retarget(model:T.Object3D,positions:number[][][],times:number[],imagePelvis:number[][],pixelScale:number,id='video-side-kick-draft',options?:{name:string,phases?:{name:string,end:number,kind?:'move'|'fast'|'hold'}[]}){
  if(positions.length!==times.length||times.length<2||times.length>256||positions.some(f=>f.length!==17||f.some(p=>p.length!==3||p.some(x=>!Number.isFinite(x)))))throw Error('Invalid estimated motion');
@@ -10,18 +13,18 @@ export function retarget(model:T.Object3D,positions:number[][][],times:number[],
  if(!options&&Math.abs(total-2.3)>1e-6)throw Error('Pilot adapter requires the 2.3-second side-kick window');
  const bones:T.Object3D[]=[];model.traverse(b=>{if((b as T.Bone).isBone)bones.push(b)});const depth=(b:T.Object3D):number=>b.parent?1+depth(b.parent):0;bones.sort((a,b)=>depth(a)-depth(b));model.updateMatrixWorld(true);
  const get=(n:string)=>{const b=model.getObjectByName(n);if(!b)throw Error('Missing bone '+n);return b;},point=(n:string)=>get(n).getWorldPosition(new T.Vector3());
- const restFrame=bodyFrame(point('thigh_l'),point('thigh_r'),point('neck_01').sub(point('pelvis')));
+ const restFrame=bodyFrame(point('thigh_l'),point('thigh_r'),point('neck_01').sub(point('pelvis'))),restTorso=options?torsoFrame(point('upperarm_l'),point('upperarm_r'),point('neck_01').sub(point('pelvis'))):restFrame;
  const limbMap:Record<string,[number,number,string]>={thigh_r:[1,2,'calf_r'],calf_r:[2,3,'foot_r'],thigh_l:[4,5,'calf_l'],calf_l:[5,6,'foot_l'],upperarm_l:[11,12,'lowerarm_l'],lowerarm_l:[12,13,'hand_l'],upperarm_r:[14,15,'lowerarm_r'],lowerarm_r:[15,16,'hand_r']};
  const rest=bones.map(b=>({b,q:b.quaternion.clone(),world:b.getWorldQuaternion(new T.Quaternion()),direction:limbMap[b.name]?point(limbMap[b.name][2]).sub(b.getWorldPosition(new T.Vector3())):null}));
  const tracks:Action['tracks']=bones.map(b=>({target:b.name,property:'rotation',mode:'absolute',interpolation:'linear',keys:[]}));const rootTrack:NonNullable<Action['tracks']>[number]={target:'$root',property:'position',mode:'absolute',interpolation:'linear',keys:[]};
  const scale=new T.Vector3();model.getWorldScale(scale);const worldScale=scale.x;
  positions.forEach((frame,i)=>{
   // Camera x-right/y-down/z-away -> Three x-right/y-up/z-toward camera.
-  const p=frame.map(v=>new T.Vector3(v[0],-v[1],-v[2]));const hipFrame=bodyFrame(p[4],p[1],p[8].clone().sub(p[0])),torsoFrame=bodyFrame(p[11],p[14],p[8].clone().sub(p[0]));
+  const p=frame.map(v=>new T.Vector3(v[0],-v[1],-v[2]));const hipFrame=bodyFrame(p[4],p[1],p[8].clone().sub(p[0])),torso=options?torsoFrame(p[11],p[14],p[8].clone().sub(p[0])):bodyFrame(p[11],p[14],p[8].clone().sub(p[0]));
   model.position.set(0,0,0);model.updateMatrixWorld(true);
   for(let j=0;j<rest.length;j++){
    const r=rest[j],b=r.b,parent=b.parent!.getWorldQuaternion(new T.Quaternion());let q=r.q.clone();
-   if(b.name==='pelvis'||['spine_01','spine_02','spine_03'].includes(b.name))q=parent.clone().invert().multiply((b.name==='pelvis'?hipFrame:torsoFrame).clone().multiply(restFrame.clone().invert()).multiply(r.world)).normalize();
+   if(b.name==='pelvis'||['spine_01','spine_02','spine_03'].includes(b.name))q=parent.clone().invert().multiply((b.name==='pelvis'?hipFrame.clone().multiply(restFrame.clone().invert()):torso.clone().multiply(restTorso.clone().invert())).multiply(r.world)).normalize();
    else if(limbMap[b.name]){const [a,c]=limbMap[b.name];q=localForDirection(parent,r.world,r.direction!,p[c].clone().sub(p[a]));}
    b.quaternion.copy(q);b.updateWorldMatrix(false,true);
    const prior=tracks![j].keys.at(-1)?.value;if(prior&&q.dot(new T.Quaternion().fromArray(prior))<0)q.set(-q.x,-q.y,-q.z,-q.w);tracks![j].keys.push({time:times[i]-start,value:q.toArray()});
