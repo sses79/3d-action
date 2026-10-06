@@ -388,3 +388,8 @@ User supplied `~/Desktop/Screen Recording 2026-10-06 at 12.06.46.mov` and said o
 ## 2026-10-06 — Video review follows the selected action
 
 User reported that Video review did not show the source for the flying side kick and that every action made from a video should. The button was hard-wired to the pinned side-kick bundle. Added `pair.videoSource`, `link_video_source` (39 operations), automatic linking on `reconstruct_motion` commit, `/api/video-source` streaming in `server.mjs`, and a review mode in `editor/main.tsx` derived from the selected action. Linked all eight `video-*` actions. Checked in the in-app browser: flying kick at 1.9 s shows the source at 35.75 s; switching to `video-side-kick-v5` keeps review on and shows 12.85 s with its three review buttons. 86 Node tests pass; editor TypeScript and build pass. Service running on 5174.
+
+
+## 2026-10-06 — flying kick leg level
+
+User asked for the flying kick leg to be horizontal like the clip and for a better lower leg. Cause and changes are in `docs/RECONSTRUCT_MOTION.md` (segment-length slack and wider straightening ramp for a raised leg, airborne-aware raised test). Saved `video-flying-side-kick-v2` r1 and `video-side-kick-v6` r1; earlier versions untouched; both linked to their source videos automatically. It is unclear whether "lower leg" meant the kicking leg's shin (now straight) or the tucked leg (unchanged); asked the user. 86 Node tests pass. Service running on 5174.

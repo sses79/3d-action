@@ -109,6 +109,20 @@ Studio's **Video review** button used to open one pinned side-kick bundle regard
 
 All eight existing video-derived actions were linked. The older `/api/video-review/` bundle routes remain but the editor no longer uses them.
 
+## Flying kick leg level with the clip (6 October 2026)
+
+In `video-flying-side-kick` the kicking leg looked lower and shorter than in the clip. Its image direction was right (about 10° above horizontal), but the fit tilted it about 45° away from the camera. The 3D lift had it nearly in the image plane (about 11°). The tilt came from the segment-length term: the raised leg measures about a quarter shorter in the image than a standing leg (hip and ankle points drift inward on a raised leg), and fixed lengths can only explain that as depth.
+
+Three changes in `fit.py`, all under the straight-knee option:
+
+- Segment lengths are relaxed on a raised leg that looks straight, so it keeps the depth of the lift.
+- A leg also counts as raised when its ankle is no more than half a leg length below its own hip, which holds when both feet are off the floor.
+- A raised leg is pulled straight from a 2D knee angle of about 150° up (was 160°): the knee point sits on the kneecap, so a straight raised leg can read that low. This removed a dip to 154° in the last frames.
+
+Result, `video-flying-side-kick-v2`: depth tilt at the kick 13–17° (was 42–46°), elevation +10°, knee 180° from 1.53 s to the end. On the comparison sheet the leg is level and full length as in the clip. The tucked leg is unchanged: its shin is estimated pointing about 50° away from the camera, which matches the lift and the body orientation but cannot be confirmed from one view.
+
+The same change moves the karate side kick: elevation 30.2° → 33.6° and tilt toward the camera 28° → 13°, with snap timing, leg clearance (11.3 cm) and the steady ready hold unchanged. Saved separately as `video-side-kick-v6`; v5 is untouched.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.
