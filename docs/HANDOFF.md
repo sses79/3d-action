@@ -433,3 +433,8 @@ User reported Pop 360 (crescent) missing its high kick (0.68–0.89 s). `lift.py
 ## 2026-10-06 — spins: limb twist and front-of-trunk rule
 
 User reported on Pop 360 (crescent) that the lower body did not turn with the upper body from 0.22 s and that the kicking leg passed behind the body at 0.8 s, and asked for a rule that a high spinning kick passes in front. `retarget.ts` now carries each limb with its parent's rotation before swinging it onto its direction; `fit.py` keeps a bridged leg on the chest side of the pelvis. See `docs/RECONSTRUCT_MOTION.md`. Reran the 20 tricking clips (new revisions); grades unchanged, two slightly worse at one pose. `trick-18-pop-360-crescent` r5 selected at 0.22 s. 87 Node tests pass. Service running on 5174.
+
+
+## 2026-10-06 — leg identity across overlapped frames
+
+User reported J-step swing 540 swapping the swinging right leg to the support leg after 0.56 s. The leg-swap repair in `lift.py` was comparing against frames where the detector had both legs overlapped; it now judges identity only between frames with the legs apart. Also: long-way arcs only for swings over 90°, and the lost-leg jump limit scales with `sourceSpeed` (lift stage now receives `--speed`). `trick-27-j-step-swing-540` r5 selected; `video-triple-kick-v4` saved. Batch of 20 rerun started afterwards. 87 Node tests pass. Service running on 5174.

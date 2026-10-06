@@ -242,6 +242,16 @@ User review of Pop 360 (crescent): from 0.22 s the upper body turned while the l
 
 Pop 360 (crescent) r4: the leg crosses in front of the chest at 0.76–0.80 s on the comparison sheet. The rule applies only inside bridges; a leg tracked throughout keeps the estimate's depth. Batch rerun: grades unchanged (9 good, 5 fair, 3 partial, 1 poor, 2 not upright); Cheat 360 crescent and Feilong each look slightly worse at one sampled pose, where a bridged leg pushed forward reads lower from the front. Earlier clips: karate kick clearance 10.2 cm and hold steady; flying and triple kicks unchanged in outcome.
 
+## Leg identity when the legs overlap (6 October 2026)
+
+User review of J-step swing 540: correct at 0.56 s, then the swinging right leg suddenly became the support leg.
+
+Cause: my own leg-swap repair. As the right leg comes down beside the left, the detector draws both legs on top of each other for a few frames. Comparing the next clear frame with such an overlapped frame, either labelling fits equally well, and the repair exchanged left and right for the next 14 frames. The raw detections were right throughout.
+
+Changes in `lift.py`: leg identity is now judged only between frames where the legs are apart; overlapped frames are neither tested nor used as the reference. Two further guards came out of re-checking the triple kick: a bridged leg takes the long way round only for a swing wider than 90°, and the "impossible one-frame jump" limit now scales with footage speed (0.7 body heights in real time, 0.5 at half speed), since a real-time kick does cover that much between frames.
+
+J-step swing 540 r5: no swaps; on the rig the right foot is the raised one from 0.50 to 0.90 s and the left takes over at 1.0 s for the final kick, as in the clip. Pop 360 (crescent) and the karate kick keep their bridges; the triple kick's third kick is intact (`video-triple-kick-v4`), its first kick still missing.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

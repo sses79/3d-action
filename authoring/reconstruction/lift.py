@@ -1,7 +1,7 @@
 """Bounded MotionBERT-Lite pilot. Estimated 3D joints, not rotation/contact truth."""
 import argparse,time,json,sys,hashlib,subprocess
 from pathlib import Path
-started=time.perf_counter();parser=argparse.ArgumentParser();parser.add_argument('--pose',default='authoring/reviews/video/kick-reference/pose-report.json');parser.add_argument('--out',default='authoring/reviews/video/kick-reference/reconstruction');parser.add_argument('--benchmark',action='store_true');parser.add_argument('--no-leg-repair',action='store_true');args=parser.parse_args()
+started=time.perf_counter();parser=argparse.ArgumentParser();parser.add_argument('--pose',default='authoring/reviews/video/kick-reference/pose-report.json');parser.add_argument('--out',default='authoring/reviews/video/kick-reference/reconstruction');parser.add_argument('--benchmark',action='store_true');parser.add_argument('--no-leg-repair',action='store_true');parser.add_argument('--speed',type=float,default=1);args=parser.parse_args()
 import numpy as np,torch
 imports=time.perf_counter()-started;torch.set_num_threads(2);torch.set_num_interop_threads(1)
 vendor=Path('.authoring/vendor/MotionBERT');sys.path.insert(0,str(vendor.resolve()));from lib.model.DSTformer import DSTformer
@@ -16,17 +16,24 @@ if not args.no_leg_repair:
  height=float(np.median([r['bbox'][3]-r['bbox'][1] for r in rows]));apart=lambda a,b:float(np.linalg.norm(a[:2]-b[:2]))/height;sides={'left':(13,15,14,16),'right':(14,16,13,15)};trusted={s:[] for s in sides}
  # Blur can also make the detector exchange the two legs for a frame. Legs move continuously in the image, so when swapping
  # the labels back removes most of a large frame-to-frame jump, the frame's left and right knee and ankle are exchanged.
+ # Which leg is which can only be judged between frames where the legs are apart. When the detector has drawn them on top of
+ # each other, either labelling fits equally well, so such frames are neither tested nor used as the reference.
+ together=lambda f:apart(raw[f,13],raw[f,14])<.2 and apart(raw[f,15],raw[f,16])<.2;ref=0
  for i in range(1,len(raw)):
-  keep=sum(apart(raw[i,j],raw[i-1,j]) for j in (13,14,15,16));swap=sum(apart(raw[i,a],raw[i-1,b]) for a,b in ((13,14),(14,13),(15,16),(16,15)))
-  if keep>.5 and swap<.5*keep:raw[i,[13,14,15,16]]=raw[i,[14,13,16,15]];swapped.append({'frame':i,'time':float(times[i]),'jumpBodyHeights':keep})
+  if together(i):continue
+  keep=sum(apart(raw[i,j],raw[ref,j]) for j in (13,14,15,16));swap=sum(apart(raw[i,a],raw[ref,b]) for a,b in ((13,14),(14,13),(15,16),(16,15)))
+  if not together(ref) and keep>.5 and swap<.5*keep:raw[i,[13,14,15,16]]=raw[i,[14,13,16,15]];swapped.append({'frame':i,'time':float(times[i]),'jumpBodyHeights':keep})
+  ref=i
  # A lost leg starts either merged onto the other leg at reduced confidence after a jump, or with a one-frame jump no real leg
  # makes (0.45 body heights). It stays lost, for at most twelve frames, while it is merged or its knee or ankle is below 0.9.
- lost={s:False for s in sides}
+ # The jump limit depends on how fast the footage plays: 0.7 body heights a frame in real time, where a fast kick really
+ # does cover a lot of ground between frames, down to 0.5 at half speed.
+ lost={s:False for s in sides};limit=.3+.4*args.speed
  for i in range(len(raw)):
   merged=apart(raw[i,13],raw[i,14])<.2 and apart(raw[i,15],raw[i,16])<.2;jump={s:(apart(raw[i,sides[s][1]],raw[trusted[s][-1],sides[s][1]]) if trusted[s] else 0) for s in sides};sure=min(raw[i,j,2] for j in (13,14,15,16))>=.9;weak=max(sides,key=lambda s:jump[s]) if sure else min(sides,key=lambda s:min(raw[i,sides[s][0],2],raw[i,sides[s][1],2]))
   for side,(knee,ankle,_,_) in sides.items():
    last=trusted[side][-1] if trusted[side] else None;low=min(raw[i,knee,2],raw[i,ankle,2])<.9
-   start=last is not None and (merged and side==weak and (low and jump[side]>.3 or jump[side]>.45 and i-last<=4) or i-last==1 and jump[side]>.45 and side==max(sides,key=lambda s:jump[s]))
+   start=last is not None and (merged and side==weak and (low and jump[side]>.3 or jump[side]>limit and i-last<=4) or i-last==1 and jump[side]>limit and side==max(sides,key=lambda s:jump[s]))
    # One good-looking frame does not end a lost run; the next frame must look good too.
    ahead=i+1<len(raw) and (min(raw[i+1,knee,2],raw[i+1,ankle,2])<.9 or apart(raw[i+1,13],raw[i+1,14])<.2 and apart(raw[i+1,15],raw[i+1,16])<.2)
    lost[side]=start or lost[side] and i-last<=12 and (merged and side==weak or low or ahead)
@@ -46,7 +53,8 @@ if not args.no_leg_repair:
    if a<0 or b>=len(raw) or a not in good or b not in good:continue
    polar=lambda f,j:(np.arctan2(raw[f,j,1]-raw[f,hip,1],raw[f,j,0]-raw[f,hip,0]),float(np.linalg.norm(raw[f,j,:2]-raw[f,hip,:2])))
    (ta,ra),(tb,rb)=polar(a,ankle),polar(b,ankle);sweep=wrap(tb-ta);blocker=wrap(np.arctan2(np.mean(raw[run,other,1]-raw[run,hip,1]),np.mean(raw[run,other,0]-raw[run,hip,0]))-ta)
-   if sweep!=0 and 0<blocker/sweep<1:sweep-=2*np.pi*np.sign(sweep)
+   # Going the long way round is only considered for a wide swing; a short one cannot be dodging the other leg.
+   if abs(sweep)>np.pi/2 and 0<blocker/sweep<1:sweep-=2*np.pi*np.sign(sweep)
    for j in (knee,ankle):
     (ja,qa),(jb,qb)=polar(a,j),polar(b,j);turn=wrap(jb-ja)
     if j==ankle:turn=sweep
