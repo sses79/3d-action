@@ -383,3 +383,8 @@ User reported a left-leg wobble at 1.98–2.00 s. Cause: the planted-knee floor 
 ## 2026-10-06 — second clip: flying side kick
 
 User supplied `~/Desktop/Screen Recording 2026-10-06 at 12.06.46.mov` and said only one take of the repeated jump kick is needed. Used 33.85–36.0 s. Added `airborne` to `reconstruct_motion` (ankle-height-based root lift in `retarget.ts`, `lowestAnkleImageY` emitted by `lift.py`); see `docs/RECONSTRUCT_MOTION.md`. Saved `video-flying-side-kick` r1 with five phases and selected it. Depth direction of the kicking leg is unresolved. 86 Node tests pass. Service running on 5174. The new video and frames derived from it are not in the repository.
+
+
+## 2026-10-06 — Video review follows the selected action
+
+User reported that Video review did not show the source for the flying side kick and that every action made from a video should. The button was hard-wired to the pinned side-kick bundle. Added `pair.videoSource`, `link_video_source` (39 operations), automatic linking on `reconstruct_motion` commit, `/api/video-source` streaming in `server.mjs`, and a review mode in `editor/main.tsx` derived from the selected action. Linked all eight `video-*` actions. Checked in the in-app browser: flying kick at 1.9 s shows the source at 35.75 s; switching to `video-side-kick-v5` keeps review on and shows 12.85 s with its three review buttons. 86 Node tests pass; editor TypeScript and build pass. Service running on 5174.

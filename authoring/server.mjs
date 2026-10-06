@@ -1,5 +1,6 @@
 import {createServer} from 'node:http';
-import {readFile} from 'node:fs/promises';
+import {readFile,stat} from 'node:fs/promises';
+import {createReadStream} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
 import {inspectBundle} from './reconstruction/bundle.mjs';
@@ -26,6 +27,15 @@ const server=createServer(async(req,res)=>{
    const type=file.endsWith('.mp4')?'video/mp4':'application/json';res.setHeader('Content-Type',type);
    if(file.endsWith('.mp4')&&req.headers.range){const match=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range);if(!match)return json(416,{error:'Invalid range'});const start=Number(match[1]),end=Math.min(bytes.length-1,match[2]?Number(match[2]):bytes.length-1);if(start>end||start>=bytes.length){res.writeHead(416,{'Content-Range':`bytes */${bytes.length}`});return res.end();}res.writeHead(206,{'Accept-Ranges':'bytes','Content-Range':`bytes ${start}-${end}/${bytes.length}`,'Content-Length':end-start+1});return res.end(bytes.subarray(start,end+1));}
    res.writeHead(200,{'Accept-Ranges':'bytes','Content-Length':bytes.length});return res.end(bytes);
+  }
+  if(req.method==='GET'&&path==='/api/video-source'){
+   // Streams only a file the service itself linked to an action, and only while that file is unchanged.
+   const id=url.searchParams.get('actionId'),source=Object.hasOwn(studio.state.actions,id)?studio.state.actions[id].videoSource:null;if(!source)return json(404,{error:'No source video is linked to this action'});
+   let info;try{info=await stat(source.file);}catch{return json(404,{error:'The linked source video is no longer at '+source.file});}
+   if(info.size!==source.bytes||info.mtimeMs!==source.modifiedMs)return json(409,{error:'The linked source video has changed since it was linked'});
+   const match=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||''),first=match?Number(match[1]):0,last=Math.min(info.size-1,match&&match[2]?Number(match[2]):info.size-1);if(first>last||first>=info.size){res.writeHead(416,{'Content-Range':`bytes */${info.size}`});return res.end();}
+   res.writeHead(match?206:200,{'Content-Type':/\.webm$/i.test(source.file)?'video/webm':'video/mp4','Accept-Ranges':'bytes','Content-Length':last-first+1,...(match?{'Content-Range':`bytes ${first}-${last}/${info.size}`}:{})});
+   return createReadStream(source.file,{start:first,end:last}).on('error',()=>res.destroy()).pipe(res);
   }
   if(req.method==='GET'&&path==='/api/tools')return json(200,toolDefinitions);
   if(req.method==='POST'&&path==='/api/tool'){

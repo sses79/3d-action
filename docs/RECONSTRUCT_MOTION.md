@@ -98,6 +98,17 @@ The clip needed one new capability. Retargeting pinned the lowest foot to the fl
 
 Saved as `video-flying-side-kick`. Compared with the video on a 12-frame sheet, the run-in, chamber, takeoff, tucked leg and arms follow the performer. Open points: the kicking leg appears about a third shorter in the image than a standing leg, which the fit reads as roughly 45° away from the camera; one view cannot say whether that is real, exaggerated, or toward the camera instead. Purple effects are composited over the legs around takeoff. Heights assume a level camera and constant subject distance, and root travel is still image-X only.
 
+## Video review for every video-derived action (6 October 2026)
+
+Studio's **Video review** button used to open one pinned side-kick bundle regardless of the selected action. It now follows the selected action: any action with a current linked source video shows that video beside the character on the shared timeline, and review stays on while switching between such actions.
+
+- `reconstruct_motion` with `commit: true` links the source automatically. `link_video_source` (`actionId`, `expectedRevision`, `video`, `start`, `end`) attaches a window to an existing action; its length must equal the action duration.
+- The link stores the file path, checksum, size, modified time, window, action revision and the motion-quality windows (shown as review buttons). It is bound to that revision, so a revised action needs relinking.
+- The service streams the original file from `/api/video-source?actionId=…` with range requests. It serves only files it linked itself and refuses one whose size or modified time has changed.
+- The video is not copied: moving or deleting the original breaks review for that action, and exported projects carry the local path.
+
+All eight existing video-derived actions were linked. The older `/api/video-review/` bundle routes remain but the editor no longer uses them.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.
