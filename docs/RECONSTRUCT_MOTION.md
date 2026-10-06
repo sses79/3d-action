@@ -149,6 +149,22 @@ Trial, following the skill with tools only, on a different take of the flying-ki
 
 No joint angle was edited by hand. What the trial does not show: a different performer, camera angle or movement type; whether `hold` is useful in practice (only unit-tested); and the user's own judgement of the motion in playback.
 
+## Clip 3: triple spinning kick, a different performer and camera (6 October 2026)
+
+Source: a 17 s screen recording of a taekwondo combination (three kicks with two full turns), landscape, recorded at about 18 frames per second, then a paused frame. Window 2.30–5.15 s, `straightKneePrior` and `airborne` on, seven phases. Run 120af2fd, following the `video-to-action` skill.
+
+- **v1** got the ready stance, landings and recovery, but the kicks were bent or absent. The cause is blur: at 18 fps a fast kick is a smear, and the detector either exchanged the two legs between frames or drew the kicking leg on top of the standing one.
+- **Leg-swap repair (new, in `lift.py`).** When exchanging a frame's left and right knee and ankle removes most of a large frame-to-frame jump (over 0.5 body heights in total, at least halved), the labels are exchanged. Nine frames were exchanged in this clip, none in the other three clips. A confidently drawn merged leg is now also rejected after a jump over 0.45 body heights within four frames.
+- **v2** (`video-triple-kick-v2`): on a 12-frame dense sheet, kicks 2 and 3 are extended and level at the right times (1.3–1.4 s and 2.2–2.3 s), with chamber before and lowering after.
+
+Still wrong in v2, and not fixable by options or corrections:
+
+- **Kick 1 is missing** (0.47–0.67 s). For seven frames the detector draws both legs straight down with confidence above 0.9 and identical positions. The extended leg is never observed, so there is nothing to repair from; bridging would only give a low leg.
+- **First turn goes the wrong way round.** The trunk turns to back-facing (about 170°) and returns the same way instead of continuing through the spin. The second turn completes a full 360°. From 2D points the two directions look the same.
+- The contact sheet for landscape video was unreadable as one strip; comparison sheets now wrap into blocks of four columns (six for portrait).
+
+What this says about generality: the pipeline carried over to a new performer, camera and movement without retuning for the parts the detector saw. Its ceiling here is the 2D detector on blurred, low-frame-rate footage. A source recorded at 30 fps or more, or the original video file instead of a screen recording, is the most direct fix.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

@@ -43,5 +43,12 @@ else:
    if img is None:raise SystemExit(f'Missing rendered frame for {t:.3f} {view}')
    rows[row].append(label(fit(img,300),f'{view} {t:.2f} s'))
  width=max(i.shape[1] for r in rows for i in r);pad=lambda i:cv2.copyMakeBorder(i,0,0,(width-i.shape[1])//2,width-i.shape[1]-(width-i.shape[1])//2,cv2.BORDER_CONSTANT,value=(20,16,12))
- cv2.imwrite(str(out),np.vstack([np.hstack([pad(i) for i in r]) for r in rows]))
+ # Wide sheets are unreadable, so columns wrap into blocks of at most six (four for landscape video).
+ per=4 if size[0]>size[1] else 6;blocks=[]
+ for c in range(0,len(times),per):
+  block=[[pad(i) for i in r[c:c+per]] for r in rows]
+  for r in block:
+   while len(r)<per:r.append(np.full((r[0].shape[0],width,3),(20,16,12),np.uint8))
+  blocks.append(np.vstack([np.hstack(r) for r in block]))
+ cv2.imwrite(str(out),np.vstack(blocks))
 print(json.dumps({'file':str(out),'times':[round(t,3) for t in times],'videoDuration':round(duration,3),'frameSize':size,'frameRate':round(fps,3)}))

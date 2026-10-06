@@ -403,3 +403,8 @@ User reported the upper body turning left after 1.74 s in the flying kick, where
 ## 2026-10-06 — Phase 5 first version
 
 Added `skills/video-to-action/SKILL.md`, `inspect_video`, `compare_video_action` (41 operations), `authoring/reconstruction/sheets.py`, and bounded `corrections` (a cached `correct` stage in `pipeline.mjs`). The capture camera for follow-root renders stands back 8 m at 1.4 m height so jumps stay in frame. Trial run 85993fdf on take 22.75–26.05 s of the flying-kick recording: see `docs/RECONSTRUCT_MOTION.md`. Found and fixed variable-frame-rate timestamp errors in the contact sheet. Saved `video-flying-kick-landing-v2` (selected) and `-v3` (correction demo); archived the mistimed `video-flying-kick-landing`. Review sheets are written to `.authoring/review-sheets/` (untracked). `compare_video_action` depends on Playwright from the Codex runtime folder and local Chrome, as `capture-draft.mjs` already did. 87 Node tests pass. Service running on 5174.
+
+
+## 2026-10-06 — clip 3 (triple spinning kick)
+
+User supplied `~/Desktop/Screen Recording 2026-10-06 at 15.03.36.mov`. Followed the `video-to-action` skill (run 120af2fd). Added leg-swap repair and a confident-miss rule to `lift.py` (`swappedLegObservations` in the summary) and wrapped comparison sheets into blocks. Saved `video-triple-kick` (v1) and `video-triple-kick-v2` (selected). v2 has kicks 2 and 3 right; kick 1 is missing and the first turn reverses, both detector limits on 18 fps blurred footage; see `docs/RECONSTRUCT_MOTION.md`. Other clips' repairs are unchanged by the new rules. 87 Node tests pass. Service running on 5174.
