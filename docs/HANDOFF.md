@@ -349,3 +349,12 @@ Project storage is partitioned. `authoring/project-store.mjs` writes `.authoring
 The live project was migrated: 119 entries, 153 blobs, 117 MB on disk (was 221 MB), largest file 3.7 MB; reloaded state is identical to the legacy file. Measured on this machine: unchanged save 0.76 s (legacy stringify+write 1.08 s); load ~2.1 s either way. Each save still serializes every action to hash it; an identity cache would remove that but needs proof that stored actions are never mutated in place. The 221 MB `project.json.legacy.json` backup is retained until the user approves deleting it. `authoring/reviews/catalog/audit.mjs` now reads history through the store and still reports failures [].
 
 81 Node tests pass (four new in `tests/project-store.test.mjs`); authoring build passes; live service smoke-checked through the CLI and then stopped. Neither server is left running.
+
+
+## 2026-10-06 — Phase 4: reconstruct_motion
+
+Added `reconstruct_motion` (38 operations) with orchestration in `authoring/reconstruction/pipeline.mjs` and a generalized `observe.py`. `lift.py`, `fit.py` and `retarget.ts` lost their fixture constants (70 samples, 12.85 s peak, 2.3 s window, fixed phases) behind backward-compatible options; `fit.py --no-straight-knee-prior` makes the side-view assumption optional and the operation defaults it off. Stages cache separately under `.authoring/reconstruction-cache/`. See `docs/RECONSTRUCT_MOTION.md`.
+
+Verified against the original recording: keypoints, lifted and stabilized positions and all 66 tracks differ from the pilot by exactly 0. Uncached 17.1 s (observe 12.2), repeat 0.02 s; fit changes rerun fit+retarget, phase changes retarget only. Ran through the live service and CLI on a second window (16.5–21.5 s, 23 s) without committing; that draft was not reviewed in detail. The live library was not modified (sequence 428). Because stage scripts changed, `bundle/bundle.json` stage fingerprints were regenerated with `build-pilot`; data files are unchanged.
+
+84 Node tests pass (three new in `tests/reconstruction-pipeline.test.mjs`, using fake stage runners); editor TypeScript passes. Open: resident Python models, cache eviction, subject choice, and Phase 5 skills. Installed Codex skill copies under `~/.codex/skills` were not updated. Neither server is running.

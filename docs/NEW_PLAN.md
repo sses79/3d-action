@@ -22,7 +22,9 @@ Show reference video beside generated character with a shared timeline, play/pau
 
 Delivered: existing Studio Video review mode, validated pinned side-kick snapshot, shared video/character transport, time-anchor seeking, loop/replay/frame-step/speed and free camera with root following. Browser seek/play/loop/step checks pass; three sync tests and nine editor regressions pass. Arbitrary bundle selection, calibrated shadow overlay and automatic remapping after timing edits remain future work.
 
-## Phase4 — reusable reconstruction tools
+## Phase4 — reusable reconstruction tools (implemented)
+
+Delivered 6 October 2026: [`reconstruct_motion`](RECONSTRUCT_MOTION.md), one service operation shared by MCP and CLI, with separately cached observe/lift/fit/retarget stages and a compact summary. It reproduces the pilot bit-for-bit (17.1 s uncached, 0.02 s repeated). Not done: resident models, cache eviction, choosing a person other than the tallest.
 
 One CLI reconstruct operation orchestrates deterministic stages; MCP calls the same implementation. Cache 2D inference,3D inference and retarget separately. Reuse estimates for timing edits; rerun retarget when the character changes. Log actual stage timestamps and cold/warm measurements. Model residency must fit available memory.
 

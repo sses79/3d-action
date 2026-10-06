@@ -1,7 +1,7 @@
 """Bounded orthographic landmark fit, with depth prior and soft segment constraints."""
 import argparse,json,time
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('--input',required=True);p.add_argument('--out',required=True);p.add_argument('--stable',action='store_true');args=p.parse_args();started=time.perf_counter()
+p=argparse.ArgumentParser();p.add_argument('--input',required=True);p.add_argument('--out',required=True);p.add_argument('--stable',action='store_true');p.add_argument('--no-straight-knee-prior',action='store_true');p.add_argument('--peak-time',type=float,default=12.85);args=p.parse_args();started=time.perf_counter()
 import numpy as np,torch
 torch.set_num_threads(2);ir=json.loads(Path(args.input).read_text());prior=np.array(ir['rootRelativePositions'],np.float32);obs=np.array(ir['preparedInput'],np.float32);xy=obs[:,:,:2]-obs[:,0:1,:2]
 raw_obs=obs.copy();rejected=[]
@@ -21,18 +21,20 @@ for a,b in [(0,8),(1,4),(11,14)]:
 scale=float(np.median(ratios));target=xy*scale
 lengths=[max(float(np.median(np.linalg.norm(prior[:,a]-prior[:,b],axis=1))),float(np.quantile(np.linalg.norm(target[:,a]-target[:,b],axis=1),.95))) for a,b in edges]
 prior_t=torch.tensor(prior);target_t=torch.tensor(target);conf=torch.tensor(np.minimum(obs[:,:,2],obs[:,0:1,2]));conf[:,0]=1
-# This side-view fixture supports a near-straight-knee prior only where the observed 2D knee is near straight.
-straight=[]
+# A side view supports a near-straight-knee prior only where the observed 2D knee is near straight. Other camera angles must disable it.
+straight=[];knee_weight=0 if args.no_straight_knee_prior else 3
 for h,k,f in [(1,2,3),(4,5,6)]:
  u=target_t[:,h]-target_t[:,k];v=target_t[:,f]-target_t[:,k];cos=(u*v).sum(-1)/(torch.linalg.vector_norm(u,dim=-1)*torch.linalg.vector_norm(v,dim=-1)).clamp_min(1e-6);straight.append((h,k,f,(torch.clamp((-cos-.90)/.09,0,1) if args.stable else (cos<-.96).float())*torch.minimum(conf[:,k],conf[:,f])))
 x=torch.tensor(prior,requires_grad=True);optim=torch.optim.Adam([x],lr=.025);a=time.perf_counter()
 for step in range(400):
- optim.zero_grad();projection=((x[:,:,:2]-target_t).square().sum(-1)*conf).mean();bone=torch.stack([(torch.linalg.vector_norm(x[:,b]-x[:,a],dim=-1)-lengths[i]).square().mean() for i,(a,b) in enumerate(edges)]).mean();depth=(x[:,:,2]-prior_t[:,:,2]).square().mean();acc=(x[2:]-2*x[1:-1]+x[:-2]).square().mean();root=x[:,0].square().mean();collinear=torch.stack([((torch.nn.functional.normalize(x[:,h]-x[:,k],dim=-1)+torch.nn.functional.normalize(x[:,f]-x[:,k],dim=-1)).square().sum(-1)*weight).mean() for h,k,f,weight in straight]).mean();depth_acc=(x[2:,:,2]-2*x[1:-1,:,2]+x[:-2,:,2]).square().mean();loss=(6*depth_acc if args.stable else 0)+3*collinear+12*projection+8*bone+.12*depth+(.8 if args.stable else .015)*acc+30*root;loss.backward();optim.step()
+ optim.zero_grad();projection=((x[:,:,:2]-target_t).square().sum(-1)*conf).mean();bone=torch.stack([(torch.linalg.vector_norm(x[:,b]-x[:,a],dim=-1)-lengths[i]).square().mean() for i,(a,b) in enumerate(edges)]).mean();depth=(x[:,:,2]-prior_t[:,:,2]).square().mean();acc=(x[2:]-2*x[1:-1]+x[:-2]).square().mean();root=x[:,0].square().mean();collinear=torch.stack([((torch.nn.functional.normalize(x[:,h]-x[:,k],dim=-1)+torch.nn.functional.normalize(x[:,f]-x[:,k],dim=-1)).square().sum(-1)*weight).mean() for h,k,f,weight in straight]).mean();depth_acc=(x[2:,:,2]-2*x[1:-1,:,2]+x[:-2,:,2]).square().mean();loss=(6*depth_acc if args.stable else 0)+knee_weight*collinear+12*projection+8*bone+.12*depth+(.8 if args.stable else .015)*acc+30*root;loss.backward();optim.step()
 elapsed=time.perf_counter()-a;fitted=x.detach().numpy();fitted-=fitted[:,0:1]
 def angles(v):
  a=v[:,1]-v[:,2];b=v[:,3]-v[:,2];return np.degrees(np.arccos(np.clip((a*b).sum(-1)/np.linalg.norm(a,axis=-1)/np.linalg.norm(b,axis=-1),-1,1)))
-peak=int(np.argmin(abs(np.array(ir['times'])-12.85)));out=Path(args.out);out.mkdir(parents=True,exist_ok=True)
-report={'algorithm':'orthographic-landmark-fit-stable-v2' if args.stable else 'orthographic-landmark-fit-v1','rejectedObservations':rejected,'iterations':400,'cameraScale':scale,'fitSeconds':elapsed,'processWallSeconds':time.perf_counter()-started,'rightKneePeakDegrees':{'before':float(angles(prior)[peak]),'after':float(angles(fitted)[peak])},'projectionRMS':float(np.sqrt(((fitted[:,:,:2]-target)**2).mean())),'segmentLengthRMS':float(np.sqrt(np.mean([(np.linalg.norm(fitted[:,b]-fitted[:,a],axis=-1)-lengths[i])**2 for i,(a,b) in enumerate(edges)]))),'limits':['Orthographic camera assumption','Soft segment lengths; runtime retarget preserves actual rig lengths','Occluded/misassigned observations may distort the fit','Near-straight 2D knees assumed near-straight in 3D for this side-view fixture only','Depth prior remains ambiguous; no contacts or joint-limit solver']}
+peak=int(np.argmin(abs(np.array(ir['times'])-args.peak_time)))
+def left(v):return v[:,[0,4,5,6]]
+extension={side:{'time':float(ir['times'][int(np.argmax(a))]),'degrees':float(a.max()),'before':float(b[int(np.argmax(a))])} for side,a,b in [('right',angles(fitted),angles(prior)),('left',angles(left(fitted)),angles(left(prior)))]};out=Path(args.out);out.mkdir(parents=True,exist_ok=True)
+report={'algorithm':'orthographic-landmark-fit-stable-v2' if args.stable else 'orthographic-landmark-fit-v1','rejectedObservations':rejected,'iterations':400,'cameraScale':scale,'fitSeconds':elapsed,'processWallSeconds':time.perf_counter()-started,'straightKneePrior':not args.no_straight_knee_prior,'maximumKneeExtension':extension,'rightKneePeakDegrees':{'before':float(angles(prior)[peak]),'after':float(angles(fitted)[peak])},'projectionRMS':float(np.sqrt(((fitted[:,:,:2]-target)**2).mean())),'segmentLengthRMS':float(np.sqrt(np.mean([(np.linalg.norm(fitted[:,b]-fitted[:,a],axis=-1)-lengths[i])**2 for i,(a,b) in enumerate(edges)]))),'limits':['Orthographic camera assumption','Soft segment lengths; runtime retarget preserves actual rig lengths','Occluded/misassigned observations may distort the fit',*([] if args.no_straight_knee_prior else ['Near-straight 2D knees assumed near-straight in 3D for this side-view fixture only']),'Depth prior remains ambiguous; no contacts or joint-limit solver']}
 if args.stable:
  ir['preStabilityInput']=ir['preparedInput'];ir['preparedInput']=obs.tolist();original_root=np.array(ir['imagePelvis']);smoothed=original_root.copy()
  # Five-sample symmetric root-only filter; joint snap timing is not resampled.

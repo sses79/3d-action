@@ -1,0 +1,18 @@
+{
+  "video": "authoring/reviews/video/kick-reference/reference-trim.mp4",
+  "start": 0,
+  "end": 2.3,
+  "fit": "stable",
+  "straightKneePrior": true,
+  "actionId": "video-reconstruction-draft",
+  "name": "Video · Reconstruction draft",
+  "phases": [
+    {"name": "Ready", "end": 0.25, "kind": "hold"},
+    {"name": "Gather", "end": 1.05},
+    {"name": "Chamber", "end": 1.33},
+    {"name": "Lateral snap", "end": 1.47, "kind": "fast"},
+    {"name": "Recoil", "end": 1.7},
+    {"name": "Return", "end": 1.95},
+    {"name": "Ready hold", "end": 2.3, "kind": "hold"}
+  ]
+}

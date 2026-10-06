@@ -81,7 +81,7 @@ Back up the index, its `.blobs/` folder and the three sidecar files together, pl
 
 ## API surface
 
-There are 37 shared operations in `authoring/core.ts`; discover schemas with `get_capabilities` or `node authoring/cli.mjs tools`.
+There are 38 shared operations in `authoring/core.ts`; discover schemas with `get_capabilities` or `node authoring/cli.mjs tools`.
 
 | Group | Operations |
 | --- | --- |
@@ -89,6 +89,7 @@ There are 37 shared operations in `authoring/core.ts`; discover schemas with `ge
 | Movement library | `sync_movement_library`, `adapt_movement`, `list_movements`, `get_movement`, `register_movement`, `build_movement`, `archive_entry`, `revise_kick` |
 | Composition | `compose_action`, `build_action_spec`, `revise_action_recipe` |
 | Selection / measurement | `inspect_movement_library`, `profile_movement_library`, `find_movement_connections`, `review_movement_profile`, `find_common_motion`, `inspect_motion_quality` |
+| Video reconstruction | `reconstruct_motion` ([details](RECONSTRUCT_MOTION.md)) |
 | Review storage | `get_contract_reviews`, `review_movement_contacts`, `review_connection_policy` |
 | Run tracking | `begin_action_run`, `append_action_run_event`, `finish_action_run`, `list_action_runs`, `get_action_run` |
 
@@ -106,4 +107,4 @@ See [the complete contract review](LIBRARY_CONTRACT_REVIEW.md), [velocity connec
 
 ## Reference-video investigation
 
-[VIDEO_TO_ACTION.md](VIDEO_TO_ACTION.md) specifies a visual-keyframe path and a YOLO26-assisted path that converge on an evidence-backed motion brief and existing typed specs. Raw-video ingestion is proposed, not implemented. The current pose checker expects rendered rig projections. First reference recommendation: a single controlled forward kick with visible full-body entry and recovery.
+[VIDEO_TO_ACTION.md](VIDEO_TO_ACTION.md) specifies a visual-keyframe path and a YOLO26-assisted path that converge on an evidence-backed motion brief and existing typed specs. Raw-video ingestion now exists as `reconstruct_motion` (see [RECONSTRUCT_MOTION.md](RECONSTRUCT_MOTION.md)); its output is an unreviewed estimate. The current pose checker expects rendered rig projections. First reference recommendation: a single controlled forward kick with visible full-body entry and recovery.
