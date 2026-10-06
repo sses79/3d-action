@@ -75,6 +75,14 @@ On the fixture this gives a held-high recoil (knee 96° → 68° → 79° instea
 
 Result, saved as `video-side-kick-v3`: kick-leg elevation at the peak rises from 24° to 30°, and in the front view the lean and the foot at head height match the video (`reconstruction-v3/kick-comparison.png`, local only). Still open: the leg remains about 27° toward the camera, which a single view cannot confirm; the head follows the torso instead of staying upright; and the three velocity windows remain.
 
+## Legs passing through each other (6 October 2026)
+
+In the Gather phase of `video-side-kick-v3` the legs cross for the step-over, and the two knees passed through each other. Measured on the rig, the legs came within 0.6 cm from 0.60 to 0.93 s and the knee depth order flipped at 0.63 s and back at 0.90 s. The lift had kept the left knee in front throughout; the fit collapsed that depth gap because nothing told it legs are solid.
+
+`fit.py` now samples six points along each leg and penalizes any pair closer than their combined radii (0.30 of hip width at the thigh and knee, tapering to 0.17 at the ankle). Where the legs overlap in the image the only way to satisfy this is in depth, and the starting estimate decides which leg is in front. The fit report and summary give `legOverlap` before and after.
+
+Result, saved as `video-side-kick-v4`: minimum leg-to-leg distance on the rig is 11.3 cm over the whole clip, with no depth-order flips; kick extension, elevation and lean are unchanged and projection error is 0.0071. Only leg against leg is covered: arms, torso and the floor are not, and the radii are estimates rather than measurements of the character mesh.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

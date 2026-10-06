@@ -368,3 +368,8 @@ User reported a knee problem and an unnatural end to the kick in the reconstruct
 ## 2026-10-06 — side-kick height and lean
 
 User asked for kick height and lean fixes on `video-side-kick-v2`. Causes measured at the peak: the torso retarget frame squared the spine to the shoulder line (rig lean 35° against 48° estimated), and the ankle keypoint slid up the blurred shin, which the fit read as a leg pointing toward the camera. Added `torsoFrame` (operation path only) and straight-leg reach restoration in `lift.py`; see `docs/RECONSTRUCT_MOTION.md`. Saved `video-side-kick-v3` r1 and selected it; v2 and earlier drafts untouched. 85 Node tests pass. Service running on 5174.
+
+
+## 2026-10-06 — legs crossing through each other in Gather
+
+User reported the knees passing through each other from about 0.53 to 0.74 s and back at 0.94 s. Rig measurement confirmed it (legs within 0.6 cm from 0.60–0.93 s, knee depth order flipping at 0.63 and 0.90 s). Added a leg non-penetration term to `fit.py`; see `docs/RECONSTRUCT_MOTION.md`. Saved `video-side-kick-v4` r1 (minimum leg distance 11.3 cm, no flips) and selected it at 0.7 s, Front camera. 85 Node tests pass. Service running on 5174.
