@@ -413,3 +413,8 @@ User supplied `~/Desktop/Screen Recording 2026-10-06 at 15.03.36.mov`. Followed 
 ## 2026-10-06 — clip 3 from the original video
 
 User supplied the original 720p 30 fps file (`~/Downloads/YTDown.com_YouTube_Media_XL9dbg6xQrM_..._720p.mp4`) and said the triple kick is its second combo. Run ef369e51, window 38.85–41.70 s, saved `video-triple-kick-v3` (selected). Kicks 2 and 3 are recognisable; kick 1 is still missing because the footage itself blurs the leg and both cached detectors miss it at 640 and 1280 px. This corrects the earlier claim that frame rate was the cause. No code changed in this step. Service running on 5174.
+
+
+## 2026-10-06 — tricking basics video: catalogue and pilot
+
+User supplied `~/Downloads/YTDown.com_YouTube_Media_ls9JjJzKFZo_60-Tricking-Basics-...720p.mp4` and suggested cutting it into clips for the library. Wrote `authoring/reviews/video/tricking-basics/catalog.json` (59 clips, names, windows, guessed upright/inverted groups) and added `sourceSpeed` to `reconstruct_motion` (action shortened to real time; `compare_video_action` and Video review map back to footage time). Piloted four clips at an assumed 0.4 speed (run 78495786): results in `docs/RECONSTRUCT_MOTION.md`. Saved drafts `trick-01-hook-kick`, `trick-04-cartwheel`, `trick-16-tornado-kick`; frontflip failed. Asked the user about the speed factor and whether to batch the upright subset. 87 Node tests pass. Service running on 5174.

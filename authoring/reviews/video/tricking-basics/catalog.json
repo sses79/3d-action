@@ -1,0 +1,853 @@
+{
+ "source": {
+  "file": "/Users/tim/Downloads/YTDown.com_YouTube_Media_ls9JjJzKFZo_60-Tricking-Basics-Easiest-to-Hardest-Slow-Motion_001_720p.mp4",
+  "title": "60 Tricking Basics (Easiest to Hardest) - Slow Motion",
+  "frameRate": 59.94,
+  "frameSize": [
+   1280,
+   720
+  ],
+  "duration": 232.5
+ },
+ "method": "Title-band brightness sampled at 10 Hz splits the video into title-visible runs; names read from the on-screen titles. Window = 0.5 s before the title appears, but not earlier than 1.1 s after the previous title ends (the crossfade shows two performers until then), to 0.15 s after the title disappears. Windows are proposals and have not been checked clip by clip.",
+ "note": "59 titled segments were found; the video title says 60.",
+ "clips": [
+  {
+   "index": 1,
+   "name": "Hook kick",
+   "slug": "trick-01-hook-kick",
+   "titleVisible": [
+    0.7,
+    2.5
+   ],
+   "window": [
+    0.2,
+    2.65
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 2,
+   "name": "Round(house) kick",
+   "slug": "trick-02-round-house-kick",
+   "titleVisible": [
+    3.5,
+    5.61
+   ],
+   "window": [
+    3.6,
+    5.76
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 3,
+   "name": "Outside crescent kick",
+   "slug": "trick-03-outside-crescent-kick",
+   "titleVisible": [
+    6.91,
+    8.31
+   ],
+   "window": [
+    6.71,
+    8.46
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 4,
+   "name": "Cartwheel",
+   "slug": "trick-04-cartwheel",
+   "titleVisible": [
+    9.61,
+    11.61
+   ],
+   "window": [
+    9.41,
+    11.76
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 5,
+   "name": "Dive roll",
+   "slug": "trick-05-dive-roll",
+   "titleVisible": [
+    12.91,
+    14.71
+   ],
+   "window": [
+    12.71,
+    14.86
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 6,
+   "name": "One handed CW (both hands)",
+   "slug": "trick-06-one-handed-cw-both-hands",
+   "titleVisible": [
+    16.02,
+    20.12
+   ],
+   "window": [
+    15.81,
+    20.27
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 7,
+   "name": "Compasso",
+   "slug": "trick-07-compasso",
+   "titleVisible": [
+    21.52,
+    24.52
+   ],
+   "window": [
+    21.22,
+    24.67
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 8,
+   "name": "Scoot",
+   "slug": "trick-08-scoot",
+   "titleVisible": [
+    25.63,
+    27.53
+   ],
+   "window": [
+    25.62,
+    27.68
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 9,
+   "name": "Front sweep",
+   "slug": "trick-09-front-sweep",
+   "titleVisible": [
+    28.73,
+    30.73
+   ],
+   "window": [
+    28.63,
+    30.88
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 10,
+   "name": "Back sweep",
+   "slug": "trick-10-back-sweep",
+   "titleVisible": [
+    31.73,
+    33.63
+   ],
+   "window": [
+    31.83,
+    33.78
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 11,
+   "name": "Pocket knife",
+   "slug": "trick-11-pocket-knife",
+   "titleVisible": [
+    34.83,
+    37.44
+   ],
+   "window": [
+    34.73,
+    37.59
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 12,
+   "name": "Palm kick",
+   "slug": "trick-12-palm-kick",
+   "titleVisible": [
+    38.44,
+    39.94
+   ],
+   "window": [
+    38.54,
+    40.09
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 13,
+   "name": "Roundoff",
+   "slug": "trick-13-roundoff",
+   "titleVisible": [
+    41.14,
+    44.64
+   ],
+   "window": [
+    41.04,
+    44.79
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 14,
+   "name": "Blaster",
+   "slug": "trick-14-blaster",
+   "titleVisible": [
+    45.75,
+    47.55
+   ],
+   "window": [
+    45.74,
+    47.7
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 15,
+   "name": "Machine",
+   "slug": "trick-15-machine",
+   "titleVisible": [
+    48.75,
+    51.35
+   ],
+   "window": [
+    48.65,
+    51.5
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 16,
+   "name": "Tornado kick",
+   "slug": "trick-16-tornado-kick",
+   "titleVisible": [
+    52.55,
+    54.75
+   ],
+   "window": [
+    52.45,
+    54.9
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 17,
+   "name": "Butterfly (B) kick",
+   "slug": "trick-17-butterfly-b-kick",
+   "titleVisible": [
+    55.76,
+    57.96
+   ],
+   "window": [
+    55.85,
+    58.11
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 18,
+   "name": "Pop 360 (crescent)",
+   "slug": "trick-18-pop-360-crescent",
+   "titleVisible": [
+    59.16,
+    61.76
+   ],
+   "window": [
+    59.06,
+    61.91
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 19,
+   "name": "Cheat 360 crescent",
+   "slug": "trick-19-cheat-360-crescent",
+   "titleVisible": [
+    62.76,
+    65.27
+   ],
+   "window": [
+    62.86,
+    65.42
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 20,
+   "name": "Feilong",
+   "slug": "trick-20-feilong",
+   "titleVisible": [
+    66.57,
+    68.97
+   ],
+   "window": [
+    66.37,
+    69.12
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 21,
+   "name": "Pop 360 hyper",
+   "slug": "trick-21-pop-360-hyper",
+   "titleVisible": [
+    69.97,
+    72.87
+   ],
+   "window": [
+    70.07,
+    73.02
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 22,
+   "name": "Axe cartwheel",
+   "slug": "trick-22-axe-cartwheel",
+   "titleVisible": [
+    74.17,
+    76.28
+   ],
+   "window": [
+    73.97,
+    76.43
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 23,
+   "name": "Scoot pop one hand CW",
+   "slug": "trick-23-scoot-pop-one-hand-cw",
+   "titleVisible": [
+    77.58,
+    80.98
+   ],
+   "window": [
+    77.38,
+    81.13
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 24,
+   "name": "Other hand",
+   "slug": "trick-24-other-hand",
+   "titleVisible": [
+    82.18,
+    84.58
+   ],
+   "window": [
+    82.08,
+    84.73
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 25,
+   "name": "Aerial",
+   "slug": "trick-25-aerial",
+   "titleVisible": [
+    85.89,
+    87.89
+   ],
+   "window": [
+    85.68,
+    88.04
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 26,
+   "name": "Frontflip",
+   "slug": "trick-26-frontflip",
+   "titleVisible": [
+    89.39,
+    91.39
+   ],
+   "window": [
+    88.99,
+    91.54
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 27,
+   "name": "J-step swing 540",
+   "slug": "trick-27-j-step-swing-540",
+   "titleVisible": [
+    92.39,
+    95.09
+   ],
+   "window": [
+    92.49,
+    95.24
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 28,
+   "name": "Swing 720",
+   "slug": "trick-28-swing-720",
+   "titleVisible": [
+    96.4,
+    98.8
+   ],
+   "window": [
+    96.19,
+    98.95
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 29,
+   "name": "Slant gainer",
+   "slug": "trick-29-slant-gainer",
+   "titleVisible": [
+    100.1,
+    102.6
+   ],
+   "window": [
+    99.9,
+    102.75
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 30,
+   "name": "(Hook) masterscoot",
+   "slug": "trick-30-hook-masterscoot",
+   "titleVisible": [
+    103.7,
+    106.11
+   ],
+   "window": [
+    103.7,
+    106.26
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 31,
+   "name": "Gumbi",
+   "slug": "trick-31-gumbi",
+   "titleVisible": [
+    107.51,
+    110.41
+   ],
+   "window": [
+    107.21,
+    110.56
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 32,
+   "name": "Back handspring",
+   "slug": "trick-32-back-handspring",
+   "titleVisible": [
+    111.71,
+    114.01
+   ],
+   "window": [
+    111.51,
+    114.16
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 33,
+   "name": "(Cheat) 540 kick",
+   "slug": "trick-33-cheat-540-kick",
+   "titleVisible": [
+    115.22,
+    117.82
+   ],
+   "window": [
+    115.11,
+    117.97
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 34,
+   "name": "Cheat 720",
+   "slug": "trick-34-cheat-720",
+   "titleVisible": [
+    119.12,
+    121.32
+   ],
+   "window": [
+    118.92,
+    121.47
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 35,
+   "name": "Backside 900",
+   "slug": "trick-35-backside-900",
+   "titleVisible": [
+    122.62,
+    125.12
+   ],
+   "window": [
+    122.42,
+    125.27
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 36,
+   "name": "Cheat 900",
+   "slug": "trick-36-cheat-900",
+   "titleVisible": [
+    126.43,
+    129.43
+   ],
+   "window": [
+    126.22,
+    129.58
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 37,
+   "name": "Pop 720",
+   "slug": "trick-37-pop-720",
+   "titleVisible": [
+    130.63,
+    133.13
+   ],
+   "window": [
+    130.53,
+    133.28
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 38,
+   "name": "Cheat 720 double",
+   "slug": "trick-38-cheat-720-double",
+   "titleVisible": [
+    134.43,
+    136.94
+   ],
+   "window": [
+    134.23,
+    137.09
+   ],
+   "group": "upright"
+  },
+  {
+   "index": 39,
+   "name": "Butterfly (B)-twist",
+   "slug": "trick-39-butterfly-b-twist",
+   "titleVisible": [
+    138.34,
+    139.84
+   ],
+   "window": [
+    138.04,
+    139.99
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 40,
+   "name": "B-twist round",
+   "slug": "trick-40-b-twist-round",
+   "titleVisible": [
+    141.14,
+    143.34
+   ],
+   "window": [
+    140.94,
+    143.49
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 41,
+   "name": "Btwist shuriken",
+   "slug": "trick-41-btwist-shuriken",
+   "titleVisible": [
+    144.54,
+    147.15
+   ],
+   "window": [
+    144.44,
+    147.3
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 42,
+   "name": "Webster",
+   "slug": "trick-42-webster",
+   "titleVisible": [
+    148.45,
+    150.05
+   ],
+   "window": [
+    148.25,
+    150.2
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 43,
+   "name": "Backflip (overtuck)",
+   "slug": "trick-43-backflip-overtuck",
+   "titleVisible": [
+    151.25,
+    153.45
+   ],
+   "window": [
+    151.15,
+    153.6
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 44,
+   "name": "Backflip (undertuck)",
+   "slug": "trick-44-backflip-undertuck",
+   "titleVisible": [
+    154.85,
+    156.06
+   ],
+   "window": [
+    154.55,
+    156.21
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 45,
+   "name": "Roundoff backflip",
+   "slug": "trick-45-roundoff-backflip",
+   "titleVisible": [
+    157.26,
+    159.96
+   ],
+   "window": [
+    157.16,
+    160.11
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 46,
+   "name": "CW americano / arabian",
+   "slug": "trick-46-cw-americano-arabian",
+   "titleVisible": [
+    161.06,
+    165.06
+   ],
+   "window": [
+    161.06,
+    165.21
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 47,
+   "name": "Gainer flash",
+   "slug": "trick-47-gainer-flash",
+   "titleVisible": [
+    166.17,
+    168.57
+   ],
+   "window": [
+    166.16,
+    168.72
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 48,
+   "name": "Standing flashkick",
+   "slug": "trick-48-standing-flashkick",
+   "titleVisible": [
+    169.97,
+    171.07
+   ],
+   "window": [
+    169.67,
+    171.22
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 49,
+   "name": "(Scoot) popflash",
+   "slug": "trick-49-scoot-popflash",
+   "titleVisible": [
+    172.37,
+    175.28
+   ],
+   "window": [
+    172.17,
+    175.43
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 50,
+   "name": "Webster axe",
+   "slug": "trick-50-webster-axe",
+   "titleVisible": [
+    176.78,
+    178.88
+   ],
+   "window": [
+    176.38,
+    179.03
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 51,
+   "name": "Raiz",
+   "slug": "trick-51-raiz",
+   "titleVisible": [
+    180.08,
+    182.48
+   ],
+   "window": [
+    179.98,
+    182.63
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 52,
+   "name": "Sideswipe",
+   "slug": "trick-52-sideswipe",
+   "titleVisible": [
+    183.78,
+    186.09
+   ],
+   "window": [
+    183.58,
+    186.24
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 53,
+   "name": "(Scoot) valdez",
+   "slug": "trick-53-scoot-valdez",
+   "titleVisible": [
+    187.39,
+    190.39
+   ],
+   "window": [
+    187.19,
+    190.54
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 54,
+   "name": "TD raiz",
+   "slug": "trick-54-td-raiz",
+   "titleVisible": [
+    191.79,
+    194.69
+   ],
+   "window": [
+    191.49,
+    194.84
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 55,
+   "name": "Moonkick / gainer hook",
+   "slug": "trick-55-moonkick-gainer-hook",
+   "titleVisible": [
+    196.1,
+    199.4
+   ],
+   "window": [
+    195.79,
+    199.55
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 56,
+   "name": "CW full",
+   "slug": "trick-56-cw-full",
+   "titleVisible": [
+    200.7,
+    203.4
+   ],
+   "window": [
+    200.5,
+    203.55
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 57,
+   "name": "Scoot full",
+   "slug": "trick-57-scoot-full",
+   "titleVisible": [
+    204.9,
+    208.71
+   ],
+   "window": [
+    204.5,
+    208.86
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 58,
+   "name": "Gainer switch",
+   "slug": "trick-58-gainer-switch",
+   "titleVisible": [
+    210.11,
+    213.21
+   ],
+   "window": [
+    209.81,
+    213.36
+   ],
+   "group": "inverted-or-hand-supported"
+  },
+  {
+   "index": 59,
+   "name": "Cork",
+   "slug": "trick-59-cork",
+   "titleVisible": [
+    214.41,
+    218.12
+   ],
+   "window": [
+    214.31,
+    218.27
+   ],
+   "group": "inverted-or-hand-supported"
+  }
+ ],
+ "groups": "Guessed from the trick names, not from the footage: upright = kicks, sweeps and spins that stay on the feet; the rest go inverted or put hands on the floor.",
+ "pilot": {
+  "sourceSpeed": 0.4,
+  "sourceSpeedBasis": "assumed from a hook kick lasting 2.2 s of footage; not measured",
+  "results": {
+   "trick-01-hook-kick": "wind-up, turn and recovery match; the high kick itself is not reproduced",
+   "trick-04-cartwheel": "entry and exit match; the inverted middle collapses onto the floor",
+   "trick-16-tornado-kick": "wind-up, first kick, jump and landing match; the second, high kick is missed",
+   "trick-26-frontflip": "failed: subject lost in 45 of 81 frames"
+  }
+ }
+}

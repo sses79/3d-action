@@ -18,6 +18,7 @@ node authoring/cli.mjs call reconstruct_motion --args authoring/examples/reconst
 | `detector` | `yolo26s` | `yolo26s` or `yolo26n` 2D pose model |
 | `fit` | `stable` | `stable`, `fitted` or `none` (lift only) |
 | `straightKneePrior` | `false` | Side-view assumption: a confidently straight 2D knee is treated as straight in 3D. Leave off for other camera angles |
+| `sourceSpeed` | `1` | Speed of the footage relative to real time (0.1–1). `0.4` turns slow motion at 40% into a real-time action. Phases and corrections stay in footage seconds |
 | `airborne` | `false` | Let the character leave the floor, using the lowest ankle's height in the image. For jumps filmed with a level camera at roughly constant distance |
 | `corrections` | none | Up to 8 bounded corrections: `smooth` (strength 1–5) or `hold` on one body part in one clip-time window |
 | `phases` | one phase | `[{name, end, kind?}]`, ends in clip seconds; the last must equal the window length |
@@ -175,6 +176,27 @@ The user supplied the original 720p, 30 fps file; the triple kick is its second 
 - The first turn still goes to back-facing (about 170°) and returns the same way; the second completes 360°.
 
 So the limit on this clip is the 2D pose detector on blurred footage, not the capture. Options not yet tried: a larger or blur-tolerant pose model (needs a download), or a second estimate of the kicking leg from image evidence other than keypoints.
+
+## Tricking basics video: catalogue and pilot (6 October 2026)
+
+Source: a 232 s, 60 fps slow-motion compilation with one performer, a fixed camera and an on-screen title per trick. `authoring/reviews/video/tricking-basics/catalog.json` lists 59 titled clips (the video's title says 60) with names read from the titles and a proposed window each. The split comes from the brightness of the title band; tricks are separated by crossfades that briefly show two performers, so windows start at least 1.1 s after the previous title ends.
+
+`reconstruct_motion` gained `sourceSpeed` so slow-motion footage becomes a real-time action; Video review and comparison sheets map action time back to footage time. The pilot assumed 0.4, from a hook kick lasting 2.2 s of footage. That factor is a guess.
+
+Four clips were run (run 78495786), each about 44 s uncached because the detector stage reads a long 60 fps file:
+
+| Clip | Result against the video |
+| --- | --- |
+| Hook kick | Wind-up, turn and recovery match. The high kick, seen from behind, is not reproduced |
+| Tornado kick | Wind-up, first kick, jump (1.13 m) and landing match. The second, high kick is missed |
+| Cartwheel | Entry and exit match. The inverted middle collapses into a heap on the floor |
+| Frontflip | Failed: the tucked, inverted body is lost by the detector in 45 of 81 frames |
+
+What this means for a library built from this video:
+
+- About 20 of the 59 clips stay on the feet (kicks, sweeps, spins), judged from their names only. These are within reach, with the known weakness on very high or back-facing kicks.
+- The other 39 go inverted or put hands on the floor. The pipeline cannot do these yet: floor placement uses the feet only, the head rule assumes an upright head, the detector loses tucked inverted bodies, and the 3D lift is untested upside down.
+- None of the pilot drafts is good enough to register as a movement.
 
 ## Limits
 

@@ -1,7 +1,7 @@
 """Labelled review sheets: an overview of a video window, or video frames above rendered character frames."""
 import argparse,json
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('mode',choices=['overview','compare']);p.add_argument('--video',required=True);p.add_argument('--out',required=True);p.add_argument('--start',type=float,default=0);p.add_argument('--end',type=float);p.add_argument('--count',type=int,default=24);p.add_argument('--times');p.add_argument('--frames');p.add_argument('--id');args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('mode',choices=['overview','compare']);p.add_argument('--video',required=True);p.add_argument('--out',required=True);p.add_argument('--start',type=float,default=0);p.add_argument('--end',type=float);p.add_argument('--count',type=int,default=24);p.add_argument('--times');p.add_argument('--frames');p.add_argument('--id');p.add_argument('--scale',type=float,default=1);args=p.parse_args()
 import cv2,numpy as np,subprocess
 # Screen recordings have a variable frame rate, so seeking by time is unreliable. Frames are matched to their real timestamps
 # from ffprobe, the same way the reconstruction reads them, and decoded in order.
@@ -35,9 +35,9 @@ if args.mode=='overview':
  cv2.imwrite(str(out),tile([label(fit(frame(t),240),f'{t:.2f} s') for t in times],cols))
 else:
  # Rows: source video, character from the front, character from the side. Times are clip seconds from --start.
- times=[float(t) for t in args.times.split(',')];load([args.start+t for t in times]);rows=[[],[],[]]
+ times=[float(t) for t in args.times.split(',')];source=lambda t:args.start+t*args.scale;load([source(t) for t in times]);rows=[[],[],[]]
  for t in times:
-  rows[0].append(label(fit(frame(args.start+t),300),f'clip {t:.2f} s  (video {args.start+t:.2f})'))
+  rows[0].append(label(fit(frame(source(t)),300),f'action {t:.2f} s  (video {source(t):.2f})'))
   for row,view in ((1,'front'),(2,'side')):
    img=cv2.imread(str(Path(args.frames)/f'{args.id}-{t:.3f}-{view}.png'))
    if img is None:raise SystemExit(f'Missing rendered frame for {t:.3f} {view}')
