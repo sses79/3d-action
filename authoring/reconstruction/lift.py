@@ -29,20 +29,24 @@ if not args.no_leg_repair:
  # makes (0.45 body heights). It stays lost, for at most twelve frames, while it is merged or its knee or ankle is below 0.9.
  # The jump limit depends on how fast the footage plays: 0.7 body heights a frame in real time, where a fast kick really
  # does cover a lot of ground between frames, down to 0.5 at half speed.
- lost={s:False for s in sides};limit=.3+.4*args.speed
+ hips={'left':11,'right':12};usual={s:float(np.median([apart(raw[f,hips[s]],raw[f,sides[s][0]])+apart(raw[f,sides[s][0]],raw[f,sides[s][1]]) for f in range(len(raw))])) for s in sides};lost={s:False for s in sides};limit=.3+.4*args.speed
  for i in range(len(raw)):
   merged=apart(raw[i,13],raw[i,14])<.2 and apart(raw[i,15],raw[i,16])<.2;jump={s:(apart(raw[i,sides[s][1]],raw[trusted[s][-1],sides[s][1]]) if trusted[s] else 0) for s in sides};sure=min(raw[i,j,2] for j in (13,14,15,16))>=.9;weak=max(sides,key=lambda s:jump[s]) if sure else min(sides,key=lambda s:min(raw[i,sides[s][0],2],raw[i,sides[s][1],2]))
   for side,(knee,ankle,_,_) in sides.items():
    last=trusted[side][-1] if trusted[side] else None;low=min(raw[i,knee,2],raw[i,ankle,2])<.9
-   start=last is not None and (merged and side==weak and (low and jump[side]>.3 or jump[side]>limit and i-last<=4) or i-last==1 and jump[side]>limit and side==max(sides,key=lambda s:jump[s]))
+   # A swing does not reverse in one frame: a leg that snaps onto the other leg against the way it was moving is lost too.
+   back=trusted[side][-3] if len(trusted[side])>=3 else None;reverse=back is not None and i-last==1 and jump[side]>.15 and float(np.dot(raw[i,ankle,:2]-raw[last,ankle,:2],raw[last,ankle,:2]-raw[back,ankle,:2]))<0
+   start=last is not None and (merged and side==weak and (low and (jump[side]>.3 or reverse) or jump[side]>limit and i-last<=4) or i-last==1 and jump[side]>limit and side==max(sides,key=lambda s:jump[s]))
    # One good-looking frame does not end a lost run; the next frame must look good too.
    ahead=i+1<len(raw) and (min(raw[i+1,knee,2],raw[i+1,ankle,2])<.9 or apart(raw[i+1,13],raw[i+1,14])<.2 and apart(raw[i+1,15],raw[i+1,16])<.2)
-   lost[side]=start or lost[side] and i-last<=12 and (merged and side==weak or low or ahead)
+   # A lost leg is not found again while it is drawn as a stub: thigh plus shank under 60% of that leg's usual image length.
+   short=lambda f:apart(raw[f,hips[side]],raw[f,knee])+apart(raw[f,knee],raw[f,ankle])<.6*usual[side];stub=short(i);ahead=ahead or i+1<len(raw) and short(i+1)
+   lost[side]=start or lost[side] and i-last<=20 and (merged or low or ahead or stub)
    if lost[side]:repaired.append({'side':side,'frame':i,'time':float(times[i]),'confidence':float(min(raw[i,knee,2],raw[i,ankle,2])),'jumpBodyHeights':jump[side]})
    else:trusted[side].append(i)
  # Lost frames are bridged between the trusted frames on either side. The knee and ankle swing about the hip rather than moving in
  # a straight line, and of the two ways round they take the one that does not pass through the other leg.
- wrap=lambda a:(a+np.pi)%(2*np.pi)-np.pi
+ wrap=lambda a:(a+np.pi)%(2*np.pi)-np.pi;reach_max={s:float(max(np.linalg.norm(raw[f,sides[s][1],:2]-raw[f,11 if s=='left' else 12,:2]) for f in trusted[s])) if trusted[s] else 0 for s in sides}
  for side,(knee,ankle,_,other) in sides.items():
   bad=[x['frame'] for x in repaired if x['side']==side];good=trusted[side];hip=11 if side=='left' else 12
   for j in (knee,ankle):
@@ -53,6 +57,9 @@ if not args.no_leg_repair:
    a=run[0]-1;b=run[-1]+1
    if a<0 or b>=len(raw) or a not in good or b not in good:continue
    polar=lambda f,j:(np.arctan2(raw[f,j,1]-raw[f,hip,1],raw[f,j,0]-raw[f,hip,0]),float(np.linalg.norm(raw[f,j,:2]-raw[f,hip,:2])))
+   # A leg pointing toward or away from the camera looks short. Its bridge is a straight line in the image (already filled in
+   # above); swinging such a short leg round the hip would invent a dip or a high arc that was never there.
+   if min(polar(a,ankle)[1],polar(b,ankle)[1])<.5*reach_max[side]:bridged.append({'side':side,'from':float(times[a]),'to':float(times[b]),'sweepDegrees':0.0});continue
    (ta,ra),(tb,rb)=polar(a,ankle),polar(b,ankle);sweep=wrap(tb-ta);blocker=wrap(np.arctan2(np.mean(raw[run,other,1]-raw[run,hip,1]),np.mean(raw[run,other,0]-raw[run,hip,0]))-ta)
    # Going the long way round is only considered for a wide swing; a short one cannot be dodging the other leg.
    if abs(sweep)>np.pi/2 and 0<blocker/sweep<1:sweep-=2*np.pi*np.sign(sweep)

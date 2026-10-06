@@ -252,6 +252,22 @@ Changes in `lift.py`: leg identity is now judged only between frames where the l
 
 J-step swing 540 r5: no swaps; on the rig the right foot is the raised one from 0.50 to 0.90 s and the left takes over at 1.0 s for the final kick, as in the clip. Pop 360 (crescent) and the karate kick keep their bridges; the triple kick's third kick is intact (`video-triple-kick-v4`), its first kick still missing.
 
+## Swings must be smooth: reversal, stub and straight-line rules (6 October 2026)
+
+User review of J-step swing 540: good at 0.58 s, then the swinging leg suddenly dropped and came back up to the correct pose at 0.74 s. The user asked for a rule that three positions along a swing must be smooth. The remaining high-kick misses were to be fixed too.
+
+Cause: as the right leg swung across behind the body it pointed away from the camera, and for six frames the detector drew it straight down on the left leg. The jump (0.23 body heights) was under the lost-leg limit, so those frames were trusted.
+
+Changes in `lift.py`:
+
+- **Reversal.** A leg that snaps onto the other leg against the direction it was moving over the previous trusted frames (jump over 0.15 body heights, reduced confidence) is lost.
+- **Stays lost while overlapped or a stub.** A lost leg stays lost while the legs overlap, and while its thigh plus shank is under 60% of its usual image length; runs may last 20 frames (was 12).
+- **Straight line for a foreshortened leg.** If the leg's hip-to-ankle reach at either end of the bridge is under half its maximum, the bridge is a straight line in the image instead of an arc about the hip.
+
+J-step swing 540 r8: the leg rises steadily from 0.58 to 0.74 s with no dip. Hook kick r8: the detector had drawn the kicking leg as a stub for four frames after losing it; the run now extends to where the leg reappears and the bridge is a 171° arc over the top, matching the clip on eight poses. Karate kick: its recoil bridge is now a straight line (folded leg), as it was in the version the user accepted. Flying kick unchanged.
+
+Not fixed: the second high kick in Tornado kick (the bridge exists but one end is foreshortened, so it is a straight line), Feilong and Backside 900 (no lost run is detected there).
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.
