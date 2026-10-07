@@ -453,3 +453,8 @@ User asked for the Tornado kick, Feilong and Backside 900 high kicks. Added a pr
 ## 2026-10-07 — limb roll continuity
 
 User reported Cheat 720 legs appearing to swap at 0.82 s. Positions were right; the kicking leg's roll flipped ~160° in 0.04 s when it pointed straight up (opposite its rest direction). `retarget.ts` now carries each limb's orientation frame to frame and eases roll back toward the rest-anchored value. `trick-34-cheat-720` r10 selected at 0.75 s; Pop 360 (crescent) rebuilt. Batch rerun started afterwards. 87 Node tests pass.
+
+
+## 2026-10-07 — Cheat 720: legs exchanged in depth, knees backward
+
+User sent Studio screenshots (0.54–0.66 s) and said the legs look swapped at 0.54 and wrong at 0.57. Rig measurement: right foot on the far side at 0.54, knees bent backward at 0.61–0.70. Added knee-direction and own-side terms to `fit.py` (see `docs/RECONSTRUCT_MOTION.md`). `trick-34-cheat-720` r13 selected at 0.54 s. Batch rerun started afterwards. 87 Node tests pass.

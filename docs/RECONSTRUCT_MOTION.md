@@ -284,6 +284,22 @@ The joint positions were right. The fault was the kicking leg's roll about its o
 
 Now, after the first frame, a limb is carried by its parent's turn since the previous frame and swung the short way from where it last pointed, so the roll is continuous. To stop roll drifting over a spin it is eased back toward the rest-anchored roll by up to 20% a frame, fading to nothing when the limb points opposite its rest direction. Cheat 720 r10: toe turn per step is at most 33° and never exceeds the shin's by much; toes stay within about 55° of the pelvis facing and return to within 20° by the end. This applies to every limb in every clip, so all video-derived actions change slightly on their next rebuild.
 
+## Legs on the right side, knees the right way (7 October 2026)
+
+User screenshots of Cheat 720 at 0.54–0.66 s: legs look swapped at 0.54 s and the pose at 0.57 s looks wrong.
+
+Measured on the rig for those times:
+
+- **0.54 s, legs exchanged in depth.** He is side-on, facing image-right, so his right side is nearer the camera. The estimate had the right foot 0.31 m on the far side and the left foot nearer than the right. Side-on, the legs overlap in the image and the lift gets their depths exchanged.
+- **0.61–0.70 s, knees bent backward.** In the back view the tucked right leg was placed in front of the body with its knee pointing behind the pelvis (knee-forward measure −0.7 to −0.8).
+
+Two anatomical terms in `fit.py` (weight 400 each, `--no-knee-direction` disables both), with left, right and front taken from the hips and spine of the lift:
+
+- **Knee direction.** The knee stays on the front side of the hip-to-ankle line, scaled by how bent the leg is.
+- **Own side.** A knee may cross the body's midline by 0.3 hip widths and an ankle by 0.8, no further.
+
+Cheat 720 r13: right foot depth at 0.54 s −0.31 → −0.02 m; knee-forward measure positive for every bent leg from 0.50 to 0.70 s; tucked foot behind him in the back view. Both measures are reported in the fit report (`backwardKnee`, `crossedLegs`). Other clips: karate cross-step keeps 10.2 cm clearance with no depth-order flips; projection error rises slightly everywhere (for example triple kick 0.0128 → 0.0153). The body turning about 80° between 0.54 and 0.57 s is in the footage (shoulder order reverses over three frames) and was left alone.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.
