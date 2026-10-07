@@ -20,6 +20,11 @@ if not args.no_leg_repair:
  # Which leg is which can only be judged between frames where the legs are apart. When the detector has drawn them on top of
  # each other, either labelling fits equally well, so such frames are neither tested nor used as the reference.
  together=lambda f:apart(raw[f,13],raw[f,14])<.2 and apart(raw[f,15],raw[f,16])<.2;ref=0
+ def island(i):
+  # Length of the clear run ending just before frame i, if an overlapped frame comes right before that run; otherwise 0.
+  n=0
+  while i-1-n>=0 and not together(i-1-n):n+=1
+  return n if i-1-n>=0 and n<i else 0
  # Vision decisions: where the model is confident which of the performer's legs is raised and the detector has the other leg
  # clearly higher, the labels are exchanged there and in the neighbouring frames that continue the same legs.
  exchange=lambda f:raw.__setitem__((f,[13,14,15,16]),raw[f,[14,13,16,15]])
@@ -50,6 +55,10 @@ if not args.no_leg_repair:
   keep=sum(apart(raw[i,j],raw[ref,j]) for j in (13,14,15,16));swap=sum(apart(raw[i,a],raw[ref,b]) for a,b in ((13,14),(14,13),(15,16),(16,15)))
   # Across a gap of overlapped frames a leg may really have moved far, so identity is only corrected between adjacent frames.
   if ref==i-1 and keep>.5 and swap<.5*keep and blocked(i):vetoed.append(float(times[i]))
+  elif ref==i-1 and keep>.5 and swap<.5*keep and 0<island(i)<=4 and not any(blocked(q) for q in range(i-island(i),i)):
+   # The frames just before are a short clear run straight after an overlapped stretch. A few frames with exchanged labels
+   # are far likelier than everything from here on being exchanged, so that short run is relabelled and this frame is kept.
+   for q in range(i-island(i),i):raw[q,[13,14,15,16]]=raw[q,[14,13,16,15]];swapped.append({'frame':q,'time':float(times[q]),'jumpBodyHeights':keep})
   elif ref==i-1 and keep>.5 and swap<.5*keep:raw[i,[13,14,15,16]]=raw[i,[14,13,16,15]];swapped.append({'frame':i,'time':float(times[i]),'jumpBodyHeights':keep})
   ref=i
  # A lost leg starts either merged onto the other leg at reduced confidence after a jump, or with a one-frame jump no real leg
@@ -88,6 +97,15 @@ if not args.no_leg_repair:
     while first>0 and f-first<6 and length(away,first-1)<.6*usual[away]:first-=1
     forced[away].update(range(first,after));forced[away].add(-after-1);forced[stay].update(-g-1 for g in range(f,after))
   f=e+1
+ # Last check on the labels: a clear run of at most four frames that starts right after an overlapped stretch and whose
+ # labels are the exchange of the frame that follows it is relabelled to match that frame.
+ for i in range(2,len(raw)):
+  n=island(i)
+  if together(i) or not 0<n<=4:continue
+  keep=sum(apart(raw[i,j],raw[i-1,j]) for j in (13,14,15,16));swap=sum(apart(raw[i,a],raw[i-1,b]) for a,b in ((13,14),(14,13),(15,16),(16,15)))
+  if keep>1 and swap<.6*keep:
+   for q in range(i-n,i):raw[q,[13,14,15,16]]=raw[q,[14,13,16,15]];swapped.append({'frame':q,'time':float(times[q]),'jumpBodyHeights':keep})
+   for side in sides:forced[side]={g for g in forced[side] if not (i-n<=g<i or i-n<=-g-1<i)}
  for i in range(len(raw)):
   merged=apart(raw[i,13],raw[i,14])<.2 and apart(raw[i,15],raw[i,16])<.2;jump={s:(apart(raw[i,sides[s][1]],raw[trusted[s][-1],sides[s][1]]) if trusted[s] else 0) for s in sides};sure=min(raw[i,j,2] for j in (13,14,15,16))>=.9;weak=max(sides,key=lambda s:jump[s]) if sure else min(sides,key=lambda s:min(raw[i,sides[s][0],2],raw[i,sides[s][1],2]))
   for side,(knee,ankle,_,_) in sides.items():
@@ -128,12 +146,13 @@ if not args.no_leg_repair:
    spin=lambda x,y:wrap(polar(y,ankle)[0]-polar(x,ankle)[0])/max(1,y-x) if x is not None and y is not None else 0.0
    before=next((q for q in range(a-1,max(-1,a-4),-1) if q in good),None);later=next((q for q in range(b+1,min(len(raw),b+4)) if q in good),None);entry=spin(before,a);leaving=spin(b,later)
    if abs(entry)>np.radians(3) and entry*sweep<0 and leaving*entry>=0 and abs(sweep)>np.pi/3:sweep+=2*np.pi*np.sign(entry)
-   for j in (knee,ankle):
-    (ja,qa),(jb,qb)=polar(a,j),polar(b,j);turn=wrap(jb-ja)
-    if j==ankle:turn=sweep
-    elif turn*sweep<0 and abs(sweep)>np.pi/2:turn-=2*np.pi*np.sign(turn)
-    for f in run:
-     u=(times[f]-times[a])/(times[b]-times[a]);angle=ja+turn*u;radius=qa+(qb-qa)*u;raw[f,j,0]=raw[f,hip,0]+radius*np.cos(angle);raw[f,j,1]=raw[f,hip,1]+radius*np.sin(angle)
+   # The leg keeps its shape across the gap: the thigh turns about the hip by about the same amount as the whole leg, and the
+   # knee bend and segment lengths ease from their value going in to their value coming out. Bridging knee and ankle as two
+   # separate arcs let them turn by different amounts, which folded a straight kicking leg in the middle of the gap.
+   seg=lambda f,p,q:(np.arctan2(raw[f,q,1]-raw[f,p,1],raw[f,q,0]-raw[f,p,0]),float(np.linalg.norm(raw[f,q,:2]-raw[f,p,:2])))
+   (ta_,la_),(tb_,lb_)=seg(a,hip,knee),seg(b,hip,knee);(sa_,ma_),(sb_,mb_)=seg(a,knee,ankle),seg(b,knee,ankle);turn=min((wrap(tb_-ta_)+2*np.pi*k for k in (-1,0,1)),key=lambda c:abs(c-sweep));bend_a=wrap(sa_-ta_);bend=wrap(wrap(sb_-tb_)-bend_a)
+   for f in run:
+    u=(times[f]-times[a])/(times[b]-times[a]);thigh=ta_+turn*u;shank=thigh+bend_a+bend*u;raw[f,knee,:2]=raw[f,hip,:2]+(la_+(lb_-la_)*u)*np.array([np.cos(thigh),np.sin(thigh)]);raw[f,ankle,:2]=raw[f,knee,:2]+(ma_+(mb_-ma_)*u)*np.array([np.cos(shank),np.sin(shank)])
    bridged.append({'side':side,'from':float(times[a]),'to':float(times[b]),'sweepDegrees':float(np.degrees(sweep))})
 # On a raised, straight leg the blurred ankle point slides up the shin, which only ever shortens the hip-to-ankle reach.
 # The reach is therefore restored to its largest value within two neighbouring straight frames; the observed direction is kept.

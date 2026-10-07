@@ -17,7 +17,7 @@ def compare(before,after):
  print(f"run {after['id']} ({after['commit']}) against run {before['id']} ({before['commit']}): {after['rule']}")
  look=[]
  for index,now in after['clips'].items():
-  was=before['clips'].get(index)
+  was=next((r['clips'][index] for r in reversed(history['runs']) if r['id']<after['id'] and index in r['clips']),None)  # the latest earlier run that has this clip
   if not was:continue
   if not now['ok'] or not was['ok']:
    if now['ok']!=was['ok']:look.append((index,now['name'],'now runs' if now['ok'] else 'NOW FAILS: '+str(now.get('error'))[-80:]))
