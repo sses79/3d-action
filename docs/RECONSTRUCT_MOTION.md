@@ -276,6 +276,14 @@ New rule in `lift.py`, applied before the forward pass: for an unbroken stretch 
 
 Results on eight-pose sheets: Tornado kick r10 and Feilong r8 now show the second kick vertical beside the head at the right time. The triple kick keeps its second and third kicks, and its first kick, previously absent, is now a low swing. Backside 900 is still wrong: the frames before its overlapped stretch have both legs tucked and mislabelled, so the bridge starts from a bad pose and takes the low way round. Karate kick: recoil bridge is an arc again (folded leg, full image length).
 
+## Limb roll must be continuous (7 October 2026)
+
+User review of Cheat 720: fine at 0.75 s, but at 0.82 s the legs appeared to swap, with a leg spinning against the body's spin.
+
+The joint positions were right. The fault was the kicking leg's roll about its own axis: on the rig its toe direction turned 83° and then 80° in two 0.02 s steps while the shin itself moved 20–30°. `retarget.ts` swung each limb the short way from its (parent-carried) rest direction every frame; when a leg is kicked straight up it points opposite its rest direction, the short way switches sides, and the roll flips by about 180°.
+
+Now, after the first frame, a limb is carried by its parent's turn since the previous frame and swung the short way from where it last pointed, so the roll is continuous. To stop roll drifting over a spin it is eased back toward the rest-anchored roll by up to 20% a frame, fading to nothing when the limb points opposite its rest direction. Cheat 720 r10: toe turn per step is at most 33° and never exceeds the shin's by much; toes stay within about 55° of the pelvis facing and return to within 20° by the end. This applies to every limb in every clip, so all video-derived actions change slightly on their next rebuild.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

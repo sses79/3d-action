@@ -18,7 +18,7 @@ export function retarget(model:T.Object3D,positions:number[][][],times:number[],
  const restFrame=bodyFrame(point('thigh_l'),point('thigh_r'),point('neck_01').sub(point('pelvis'))),restTorso=options?torsoFrame(point('upperarm_l'),point('upperarm_r'),point('neck_01').sub(point('pelvis'))):restFrame;
  const limbMap:Record<string,[number,number,string]>={thigh_r:[1,2,'calf_r'],calf_r:[2,3,'foot_r'],thigh_l:[4,5,'calf_l'],calf_l:[5,6,'foot_l'],upperarm_l:[11,12,'lowerarm_l'],lowerarm_l:[12,13,'hand_l'],upperarm_r:[14,15,'lowerarm_r'],lowerarm_r:[15,16,'hand_r']};
  const rest=bones.map(b=>({b,q:b.quaternion.clone(),world:b.getWorldQuaternion(new T.Quaternion()),direction:limbMap[b.name]?point(limbMap[b.name][2]).sub(b.getWorldPosition(new T.Vector3())):null}));
- const restWorlds=new Map<T.Object3D,T.Quaternion>();model.traverse(o=>{restWorlds.set(o,o.getWorldQuaternion(new T.Quaternion()));});const tracks:Action['tracks']=bones.map(b=>({target:b.name,property:'rotation',mode:'absolute',interpolation:'linear',keys:[]}));const rootTrack:NonNullable<Action['tracks']>[number]={target:'$root',property:'position',mode:'absolute',interpolation:'linear',keys:[]};
+ const carry=new Map<T.Object3D,{parent:T.Quaternion,world:T.Quaternion,direction:T.Vector3}>();const restWorlds=new Map<T.Object3D,T.Quaternion>();model.traverse(o=>{restWorlds.set(o,o.getWorldQuaternion(new T.Quaternion()));});const tracks:Action['tracks']=bones.map(b=>({target:b.name,property:'rotation',mode:'absolute',interpolation:'linear',keys:[]}));const rootTrack:NonNullable<Action['tracks']>[number]={target:'$root',property:'position',mode:'absolute',interpolation:'linear',keys:[]};
  const scale=new T.Vector3();model.getWorldScale(scale);const worldScale=scale.x;
  positions.forEach((frame,i)=>{
   // Camera x-right/y-down/z-away -> Three x-right/y-up/z-toward camera.
@@ -33,7 +33,17 @@ export function retarget(model:T.Object3D,positions:number[][][],times:number[],
     const [fx,fy]=options.faceDirection[i],sideways=Math.max(-1,Math.min(1,fx)),down=Math.max(-.6,Math.min(.6,fy-.25)),up=p[8].clone().sub(p[0]).normalize().add(new T.Vector3(0,1,0)).normalize(),face=new T.Vector3(sideways,-down,Math.sqrt(Math.max(0,1-sideways*sideways-down*down))),forward=face.addScaledVector(up,-face.dot(up));
     if(forward.lengthSq()>1e-6){forward.normalize();const target=new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(new T.Vector3().crossVectors(up,forward).normalize(),up,forward)),turn=torso.angleTo(target),head=turn>1.4?torso.clone().slerp(target,1.4/turn):target;q=parent.clone().invert().multiply(head.multiply(restTorso.clone().invert()).multiply(r.world)).normalize();}
    }
-   else if(limbMap[b.name]){const [a,c]=limbMap[b.name];q=localForDirection(parent,r.world,r.direction!,p[c].clone().sub(p[a]),options?restWorlds.get(b.parent!):undefined);}
+   else if(limbMap[b.name]){const [a,c]=limbMap[b.name],direction=p[c].clone().sub(p[a]);
+    // After the first frame the limb is carried by its parent's turn since the previous frame and then swung the short way from
+    // where it pointed. Swinging from the rest pose each frame flips the limb's roll when it passes opposite its rest direction,
+    // for example a leg kicked straight up.
+    const before=options?carry.get(b):undefined;
+    if(before&&direction.lengthSq()>1e-10){const turn=parent.clone().multiply(before.parent.clone().invert()),world=new T.Quaternion().setFromUnitVectors(before.direction.clone().applyQuaternion(turn).normalize(),direction.clone().normalize()).multiply(turn).multiply(before.world);q=parent.clone().invert().multiply(world).normalize();
+     // Carrying alone lets the roll drift over a spin, so it is eased back toward the roll the rest pose implies: 20% a frame when
+     // the limb points along its rest direction, fading to nothing when it points opposite (where that roll is undefined).
+     const anchored=localForDirection(parent,r.world,r.direction!,direction,restWorlds.get(b.parent!)),along=r.direction!.clone().normalize().applyQuaternion(parent.clone().multiply(restWorlds.get(b.parent!)!.clone().invert())).dot(direction.clone().normalize());q.slerp(anchored,.2*(1+along)/2).normalize();}
+    else q=localForDirection(parent,r.world,r.direction!,direction,options?restWorlds.get(b.parent!):undefined);
+    if(options)carry.set(b,{parent:parent.clone(),world:parent.clone().multiply(q),direction:direction.clone().normalize()});}
    b.quaternion.copy(q);b.updateWorldMatrix(false,true);
    const prior=tracks![j].keys.at(-1)?.value;if(prior&&q.dot(new T.Quaternion().fromArray(prior))<0)q.set(-q.x,-q.y,-q.z,-q.w);tracks![j].keys.push({time:times[i]-start,value:q.toArray()});
   }
