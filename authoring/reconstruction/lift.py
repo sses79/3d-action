@@ -1,7 +1,7 @@
 """Bounded MotionBERT-Lite pilot. Estimated 3D joints, not rotation/contact truth."""
 import argparse,time,json,sys,hashlib,subprocess
 from pathlib import Path
-started=time.perf_counter();parser=argparse.ArgumentParser();parser.add_argument('--pose',default='authoring/reviews/video/kick-reference/pose-report.json');parser.add_argument('--out',default='authoring/reviews/video/kick-reference/reconstruction');parser.add_argument('--benchmark',action='store_true');parser.add_argument('--no-leg-repair',action='store_true');parser.add_argument('--speed',type=float,default=1);parser.add_argument('--decisions');parser.add_argument('--exchange-legs-on-decisions',action='store_true');args=parser.parse_args()
+started=time.perf_counter();parser=argparse.ArgumentParser();parser.add_argument('--pose',default='authoring/reviews/video/kick-reference/pose-report.json');parser.add_argument('--out',default='authoring/reviews/video/kick-reference/reconstruction');parser.add_argument('--benchmark',action='store_true');parser.add_argument('--no-leg-repair',action='store_true');parser.add_argument('--speed',type=float,default=1);parser.add_argument('--decisions');parser.add_argument('--exchange-legs-on-decisions',action='store_true');parser.add_argument('--video');parser.add_argument('--model');args=parser.parse_args()
 import numpy as np,torch
 imports=time.perf_counter()-started;torch.set_num_threads(2);torch.set_num_interop_threads(1)
 vendor=Path('.authoring/vendor/MotionBERT');sys.path.insert(0,str(vendor.resolve()));from lib.model.DSTformer import DSTformer
@@ -11,7 +11,7 @@ assert raw.shape[1:]==(17,3) and len(raw)>2 and np.all(np.diff(times)>0)
 samples=round((report['interval'][1]-report['interval'][0])*30)+1
 # Motion blur can make the detector drop a fast leg and redraw it on top of the other leg: both knee and ankle land on the
 # other side's joints, with reduced confidence, a large jump from the last trusted frame. Such frames are bridged, not trusted.
-repaired=[];swapped=[];bridged=[];vetoed=[];relabelled_after=[]
+repaired=[];swapped=[];bridged=[];vetoed=[];relabelled_after=[];reobserved=[];looks=None
 decision_file=json.loads(Path(args.decisions).read_text()) if args.decisions else None;decisions=decision_file['decisions'] if decision_file else [];decision_summary={'model':decision_file['model'],'frames':len(decisions),'costUSD':decision_file['costUSD'],'legAgreed':0,'legDisagreed':[],'legExchanged':[]} if decision_file else None
 if not args.no_leg_repair:
  height=float(np.median([r['bbox'][3]-r['bbox'][1] for r in rows]));apart=lambda a,b:float(np.linalg.norm(a[:2]-b[:2]))/height;sides={'left':(13,15,14,16),'right':(14,16,13,15)};trusted={s:[] for s in sides}
@@ -121,7 +121,7 @@ if not args.no_leg_repair:
  # Lost frames are bridged between the trusted frames on either side. The knee and ankle swing about the hip rather than moving in
  # a straight line, and of the two ways round they take the one that does not pass through the other leg.
  wrap=lambda a:(a+np.pi)%(2*np.pi)-np.pi;reach_max={s:float(max(np.linalg.norm(raw[f,sides[s][1],:2]-raw[f,11 if s=='left' else 12,:2]) for f in trusted[s])) if trusted[s] else 0 for s in sides}
- for side,(knee,ankle,_,other) in sides.items():
+ for side,(knee,ankle,other_knee,other) in sides.items():
   bad=[x['frame'] for x in repaired if x['side']==side];good=trusted[side];hip=11 if side=='left' else 12
   for j in (knee,ankle):
    for k in range(2):raw[bad,j,k]=np.interp(times[bad],times[good],raw[good,j,k])
@@ -142,13 +142,42 @@ if not args.no_leg_repair:
    spin=lambda x,y:wrap(polar(y,ankle)[0]-polar(x,ankle)[0])/max(1,y-x) if x is not None and y is not None else 0.0
    before=next((q for q in range(a-1,max(-1,a-4),-1) if q in good),None);later=next((q for q in range(b+1,min(len(raw),b+4)) if q in good),None);entry=spin(before,a);leaving=spin(b,later)
    if abs(entry)>np.radians(3) and entry*sweep<0 and leaving*entry>=0 and abs(sweep)>np.pi/3:sweep+=2*np.pi*np.sign(entry)
+   shape=lambda P,h,k,n:(float(np.arctan2(P[k,1]-P[h,1],P[k,0]-P[h,0])),float(np.linalg.norm(P[k,:2]-P[h,:2])),float(np.arctan2(P[n,1]-P[k,1],P[n,0]-P[k,0])),float(np.linalg.norm(P[n,:2]-P[k,:2])))
+   marks=[(a,0.0,shape(raw[a],hip,knee,ankle))]
+   # A wide swing is not assumed to turn at an even rate. The unseen frames are looked at again on turned copies of the picture
+   # (reobserve.py). A second look counts when it shows two separate legs, one of them on the leg already being tracked; the
+   # other is then the lost leg, provided it points somewhere inside the swing. Accepted looks must progress round the swing
+   # in order (the longest such sequence is kept), and the bridge passes through them.
+   if args.video and args.model and abs(sweep)>np.pi/3:
+    if looks is None:
+     from reobserve import turned
+     looks=turned(args.video,args.model,[rows[f] for s_ in sides for f in sorted({x['frame'] for x in repaired if x['side']==s_})])
+    seenlegs=[]
+    for f in run:
+     best=None
+     for k in looks.get(rows[f]['frameIndex'],[]):
+      for h,kn,an,okn,oan in ((11,13,15,14,16),(12,14,16,13,15)):
+       if not (apart(k[oan],raw[f,other])<.15 and apart(k[okn],raw[f,other_knee])<.15 and apart(k[an],raw[f,other])>.2 and min(k[kn,2],k[an,2])>=.5 and apart(k[h],k[kn])+apart(k[kn],k[an])>.4*usual[side]):continue
+       d=wrap(np.arctan2(k[an,1]-k[h,1],k[an,0]-k[h,0])-ta)
+       if d*sweep<0 and abs(d)>np.radians(15):d+=2*np.pi*np.sign(sweep)
+       v=d/sweep;score=float(min(k[kn,2],k[an,2]))
+       if -.1<=v<=1.1 and (best is None or score>best[0]):best=(score,(f,float(np.clip(v,0,1)),shape(k,h,kn,an)))
+     if best:seenlegs.append(best[1])
+    chain=[[x] for x in seenlegs]
+    for i in range(len(seenlegs)):
+     for j in range(i):
+      if seenlegs[j][1]<=seenlegs[i][1] and len(chain[j])+1>len(chain[i]):chain[i]=chain[j]+[seenlegs[i]]
+    kept=max(chain,key=len,default=[]);marks+=kept;reobserved+=[{'side':side,'frame':int(f),'time':float(times[f])} for f,_,_ in kept]
+    # Where the leg points was seen on these frames, so they count for more than a plain bridge, though less than a clean detection.
+    for f,_,_ in kept:raw[f,[knee,ankle],2]=.5
+   marks.append((b,1.0,shape(raw[b],hip,knee,ankle)))
    # The leg keeps its shape across the gap: the thigh turns about the hip by about the same amount as the whole leg, and the
    # knee bend and segment lengths ease from their value going in to their value coming out. Bridging knee and ankle as two
-   # separate arcs let them turn by different amounts, which folded a straight kicking leg in the middle of the gap.
-   seg=lambda f,p,q:(np.arctan2(raw[f,q,1]-raw[f,p,1],raw[f,q,0]-raw[f,p,0]),float(np.linalg.norm(raw[f,q,:2]-raw[f,p,:2])))
-   (ta_,la_),(tb_,lb_)=seg(a,hip,knee),seg(b,hip,knee);(sa_,ma_),(sb_,mb_)=seg(a,knee,ankle),seg(b,knee,ankle);turn=min((wrap(tb_-ta_)+2*np.pi*k for k in (-1,0,1)),key=lambda c:abs(c-sweep));bend_a=wrap(sa_-ta_);bend=wrap(wrap(sb_-tb_)-bend_a)
+   # separate arcs let them turn by different amounts, which folded a straight kicking leg in the middle of the gap. A second
+   # look says how far round the leg is at that moment, not its shape: its knee and length are too rough to use.
+   (_,_,(t1,l1,s1,m1)),(_,_,(t2,l2,s2,m2))=marks[0],marks[-1];turn=min((wrap(t2-t1)+2*np.pi*k for k in (-1,0,1)),key=lambda c:abs(c-sweep));bend_a=wrap(s1-t1);bend=wrap(wrap(s2-t2)-bend_a)
    for f in run:
-    u=(times[f]-times[a])/(times[b]-times[a]);thigh=ta_+turn*u;shank=thigh+bend_a+bend*u;raw[f,knee,:2]=raw[f,hip,:2]+(la_+(lb_-la_)*u)*np.array([np.cos(thigh),np.sin(thigh)]);raw[f,ankle,:2]=raw[f,knee,:2]+(ma_+(mb_-ma_)*u)*np.array([np.cos(shank),np.sin(shank)])
+    u=(times[f]-times[a])/(times[b]-times[a]);thigh=t1+turn*float(np.interp(times[f],[times[m[0]] for m in marks],[m[1] for m in marks]));shank=thigh+bend_a+bend*u;raw[f,knee,:2]=raw[f,hip,:2]+(l1+(l2-l1)*u)*np.array([np.cos(thigh),np.sin(thigh)]);raw[f,ankle,:2]=raw[f,knee,:2]+(m1+(m2-m1)*u)*np.array([np.cos(shank),np.sin(shank)])
    bridged.append({'side':side,'from':float(times[a]),'to':float(times[b]),'sweepDegrees':float(np.degrees(sweep))})
 # On a raised, straight leg the blurred ankle point slides up the shin, which only ever shortens the hip-to-ankle reach.
 # The reach is therefore restored to its largest value within two neighbouring straight frames; the observed direction is kept.
@@ -194,5 +223,5 @@ a=time.perf_counter();raw3d=predict(raw_input);raw_infer=time.perf_counter()-a
 # Camera-space x right, y down, depth is learned. Keep root-relative estimates separate from image root.
 root=draft[:,0:1].copy();relative=draft-root
 names=['pelvis','right_hip','right_knee','right_ankle','left_hip','left_knee','left_ankle','spine','neck','nose','head','left_shoulder','left_elbow','left_wrist','right_shoulder','right_elbow','right_wrist']
-result={'schemaVersion':1,'status':'estimated-draft-unreviewed','backend':'MotionBERT-Lite H36M global pose','modelSHA256':hashlib.sha256(path.read_bytes()).hexdigest(),'sourceCodeCommit':subprocess.check_output(['git','-C',str(vendor),'rev-parse','HEAD'],text=True).strip(),'checkpointURL':'https://huggingface.co/walterzhu/MotionBERT/resolve/main/checkpoint/pose3d/FT_MB_lite_MB_ft_h36m_global_lite/best_epoch.bin','sourceSHA256':report['sourceSHA256'],'sourcePose':args.pose,'frameRate':30,'recordingInterval':report['interval'],'times':uniform.tolist(),'jointNames':names,'coordinates':'learned camera-space normalized x-right/y-down/z-depth; relative scale, not metric','rootRelativePositions':relative.tolist(),'rawModelPositions':draft.tolist(),'raw2DModelPositions':raw3d.tolist(),'preparedInput':prepared.tolist(),'synthesizedJoints':['pelvis midpoint','neck shoulder midpoint','spine midpoint','head extrapolated from nose/neck'],'rootTravel':'Not reconstructed in world space; image pelvis movement retained for explicit screen-space trajectory approximation','imagePelvis':((coco[:,11,:2]+coco[:,12,:2])/2).tolist(),'faceDirection':face.tolist(),'lowestAnkleImageY':np.maximum(coco[:,15,1],coco[:,16,1]).tolist(),'inputNormalization':{'centerPixels':center.tolist(),'scalePixels':scale,'resampling':'linear interpolation on uniform30Hz grid, endpoint clamp; not new observed frames','filter':'3-sample median xy; confidence retained'},'observedFrames':observed,'repairedLegObservations':repaired,'swappedLegObservations':swapped,'legArcBridges':bridged,'decisions':decisions,'decisionSummary':{**decision_summary,'repairsVetoed':len(vetoed),'relabelledAfterOverlap':relabelled_after} if decision_summary else None,'extendedLegReach':extended,'bridgedFrames':observed-len(rows),'firstBoxHeightPixels':rows[0]['bbox'][3]-rows[0]['bbox'][1],'timingsSeconds':{'imports':imports,'preparation':prep,'modelLoad':load,'firstInference':first,'warmInferences':runs,'rawInputInference':raw_infer,'processWall':time.perf_counter()-started},'limits':['No3D ground truth','COCO-to-H36M includes estimated axial joints','Single-view depth/twist/foot contact uncertain','No mirrored-side resolution','World root/metric scale absent']}
+result={'schemaVersion':1,'status':'estimated-draft-unreviewed','backend':'MotionBERT-Lite H36M global pose','modelSHA256':hashlib.sha256(path.read_bytes()).hexdigest(),'sourceCodeCommit':subprocess.check_output(['git','-C',str(vendor),'rev-parse','HEAD'],text=True).strip(),'checkpointURL':'https://huggingface.co/walterzhu/MotionBERT/resolve/main/checkpoint/pose3d/FT_MB_lite_MB_ft_h36m_global_lite/best_epoch.bin','sourceSHA256':report['sourceSHA256'],'sourcePose':args.pose,'frameRate':30,'recordingInterval':report['interval'],'times':uniform.tolist(),'jointNames':names,'coordinates':'learned camera-space normalized x-right/y-down/z-depth; relative scale, not metric','rootRelativePositions':relative.tolist(),'rawModelPositions':draft.tolist(),'raw2DModelPositions':raw3d.tolist(),'preparedInput':prepared.tolist(),'synthesizedJoints':['pelvis midpoint','neck shoulder midpoint','spine midpoint','head extrapolated from nose/neck'],'rootTravel':'Not reconstructed in world space; image pelvis movement retained for explicit screen-space trajectory approximation','imagePelvis':((coco[:,11,:2]+coco[:,12,:2])/2).tolist(),'faceDirection':face.tolist(),'lowestAnkleImageY':np.maximum(coco[:,15,1],coco[:,16,1]).tolist(),'inputNormalization':{'centerPixels':center.tolist(),'scalePixels':scale,'resampling':'linear interpolation on uniform30Hz grid, endpoint clamp; not new observed frames','filter':'3-sample median xy; confidence retained'},'observedFrames':observed,'repairedLegObservations':repaired,'swappedLegObservations':swapped,'reobservedLegFrames':reobserved,'legArcBridges':bridged,'decisions':decisions,'decisionSummary':{**decision_summary,'repairsVetoed':len(vetoed),'relabelledAfterOverlap':relabelled_after} if decision_summary else None,'extendedLegReach':extended,'bridgedFrames':observed-len(rows),'firstBoxHeightPixels':rows[0]['bbox'][3]-rows[0]['bbox'][1],'timingsSeconds':{'imports':imports,'preparation':prep,'modelLoad':load,'firstInference':first,'warmInferences':runs,'rawInputInference':raw_infer,'processWall':time.perf_counter()-started},'limits':['No3D ground truth','COCO-to-H36M includes estimated axial joints','Single-view depth/twist/foot contact uncertain','No mirrored-side resolution','World root/metric scale absent']}
 (out/'motion-ir.json').write_text(json.dumps(result));np.save(out/'positions.npy',relative);print(json.dumps({'shape':list(relative.shape),'timings':result['timingsSeconds'],'finite':bool(np.isfinite(relative).all())}))

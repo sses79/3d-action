@@ -488,3 +488,8 @@ User asked why rules made Cheat 360 crescent worse and whether and how to roll b
 ## 2026-10-07 — R24, R25; runs 14 and 15
 
 User reviewed Cheat 360 crescent at 0.72–0.97 s: legs should keep their shape and only rotate. R24 (bridged leg keeps its shape) and R25 (short exchanged island after an overlap relabelled, final pass only) in `lift.py`. Run 14 broke (Cheat) 540 kick through an in-loop copy of R25; removed; run 15 is the current state. `batch.py compare --runs A,B` now compares exactly those two runs. Grades 13 good, 4 fair, 1 poor, 2 not upright. Open: right leg at 0.97 s of Cheat 360 crescent. Service running on 5174 (Node 26, OpenRouter key file set).
+
+
+## 2026-10-07 — R26 second look on turned frames; run 16
+
+User asked to fix the right leg at 0.97 s of Cheat 360 crescent. The detector draws both legs on one limb from 0.89 to 1.09 s; turning the frame lets it find the other leg. New `authoring/reconstruction/reobserve.py`; `lift.py` uses the looks for how far round a wide bridge is (shape still from R24) and writes `reobservedLegFrames`; `fit.py` switches the front-of-trunk term off on those frames; `pipeline.mjs` passes `--video` and `--model` to lift and reports `estimate.reobservedLegFrames`. Run 16: grades unchanged (13 good, 4 fair, 1 poor, 2 not upright); three other clips' fit error fell. Still open on that clip: the leg is bent and short from 0.89 to 1.04 s. The service must be restarted after editing `pipeline.mjs` (a first batch attempt ran on the old pipeline and was stopped before it recorded anything; it left one extra revision on the first clips). 87 Node tests pass.

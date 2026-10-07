@@ -76,7 +76,12 @@ def leg_gap(v):return torch.stack([torch.relu(ra+rb-torch.linalg.vector_norm(a-b
 # back of it, so inside each bridge the knee and ankle are kept on the chest side of the pelvis (fading in from the bridge ends).
 front=[]
 for bridge in ir.get('legArcBridges',[]):
- knee,ankle=(5,6) if bridge['side']=='left' else (2,3);u=np.clip((np.array(ir['times'])-bridge['from'])/max(bridge['to']-bridge['from'],1e-6),0,1);weight=torch.tensor(np.sin(np.pi*u).astype(np.float32))
+ knee,ankle=(5,6) if bridge['side']=='left' else (2,3);u=np.clip((np.array(ir['times'])-bridge['from'])/max(bridge['to']-bridge['from'],1e-6),0,1);weight=np.sin(np.pi*u)
+ # Where a second look found the leg (lift.py), its place in the picture is an observation and outranks this assumption: a leg
+ # held out to the side can sit level with the back, and pulling it forward folded it against the body.
+ for look in ir.get('reobservedLegFrames',[]):
+  if look['side']==bridge['side']:at=int(np.argmin(np.abs(np.array(ir['times'])-look['time'])));weight[max(0,at-1):at+2]=0
+ weight=torch.tensor(weight.astype(np.float32))
  if float(weight.max())>0:front.append((knee,ankle,weight))
 facing=unit(torch.linalg.cross(prior_t[:,11]-prior_t[:,14],prior_t[:,8]-prior_t[:,0],dim=-1))
 def behind(v):return torch.stack([(torch.relu(m*hip_width-((v[:,j]-v[:,0])*facing).sum(-1)).square()*weight).mean() for knee,ankle,weight in front for j,m in ((knee,.5),(ankle,1.0))]).mean() if front else torch.zeros(())
