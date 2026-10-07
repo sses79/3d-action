@@ -40,7 +40,7 @@ for c in catalog['clips']:
  if c['index'] not in wanted:continue
  reply=call('reconstruct_motion',dict(video=catalog['source']['file'],start=c['window'][0],end=c['window'][1],fit='stable',sourceSpeed=args.speed,decisions=args.decisions,straightKneePrior=True,airborne=c.get('airborne',True),actionId=c['slug'],name='Trick · '+c['name'],commit=True,expectedRevision=revisions.get(c['slug'],0)));row={'name':c['name'],'ok':'result' in reply}
  if row['ok']:
-  r=reply['result'];e=r['estimate'];d=r.get('decisions') or {};row.update(revision=r['revision'],weak=r['observations']['lowConfidenceBodyFrames'],repaired=len(e['repairedLegObservations']),swapped=len(e['swappedLegObservations']),bridges=len(e.get('legArcBridges',[])),repairsVetoed=d.get('repairsVetoed'),lift=r['action']['peakLiftMeters'],projection=r['fitting']['projectionRMS'],flags=len(r['quality']['inspectionWindows']))
+  r=reply['result'];e=r['estimate'];d=r.get('decisions') or {};row.update(beyondNormalRange=len(r['action'].get('jointRangesBeyondNormal',[])),revision=r['revision'],weak=r['observations']['lowConfidenceBodyFrames'],repaired=len(e['repairedLegObservations']),swapped=len(e['swappedLegObservations']),bridges=len(e.get('legArcBridges',[])),repairsVetoed=d.get('repairsVetoed'),lift=r['action']['peakLiftMeters'],projection=r['fitting']['projectionRMS'],flags=len(r['quality']['inspectionWindows']))
   sheet=call('compare_video_action',{'actionId':c['slug'],'sourceRevision':r['revision'],'count':args.poses});row['sheet']=sheet.get('result',{}).get('file')
  else:row['error']=reply.get('error')
  record['clips'][str(c['index'])]=row;print(c['index'],c['name'],'ok' if row['ok'] else 'FAILED',flush=True)
