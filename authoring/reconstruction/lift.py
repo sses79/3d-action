@@ -24,15 +24,18 @@ if not args.no_leg_repair:
  # clearly higher, the labels are exchanged there and in the neighbouring frames that continue the same legs.
  exchange=lambda f:raw.__setitem__((f,[13,14,15,16]),raw[f,[14,13,16,15]])
  # Where a firm answer agrees with the detector's own labels, those labels are pinned: the swap repairs below may not
- # exchange legs within three frames of such a frame. The answers veto repairs; they do not relabel anything themselves.
- pinned=set();blocked=lambda f:any(g in pinned for g in range(f-3,f+4))
+ # exchange legs at such a frame or the one either side of it. The answers veto repairs; they do not relabel anything themselves.
+ pinned=set();blocked=lambda f:any(g in pinned for g in range(f-1,f+2))
  # A single answer is not trusted: the same leg must be named, with confidence, in a neighbouring answer within 0.25 s.
  firm=lambda d:d['raisedLeg'] in ('left','right') and d['confidence']!='low'
  for n,d in enumerate(decisions):
   if not firm(d) or not any(firm(o) and o['raisedLeg']==d['raisedLeg'] and abs(o['time']-d['time'])<=.25 for o in decisions[max(0,n-1):n]+decisions[n+1:n+2]):continue
   i=int(np.argmin(np.abs(times-d['time'])));higher='left' if raw[i,15,1]<raw[i,16,1] else 'right'
   if abs(times[i]-d['time'])>.03 or together(i) or abs(raw[i,15,1]-raw[i,16,1])/height<.15 or higher==d['raisedLeg']:
-   if abs(times[i]-d['time'])<=.03 and not together(i) and higher==d['raisedLeg'] and abs(raw[i,15,1]-raw[i,16,1])/height>=.15:decision_summary['legAgreed']+=1;pinned.add(i)
+   if abs(times[i]-d['time'])<=.03 and not together(i) and higher==d['raisedLeg'] and abs(raw[i,15,1]-raw[i,16,1])/height>=.15:
+    decision_summary['legAgreed']+=1
+    # Only a detection the detector itself is sure of is worth pinning; a blurred, half-lost leg can agree by chance.
+    if min(raw[i,j,2] for j in (13,14,15,16))>=.9:pinned.add(i)
    continue
   decision_summary['legDisagreed'].append(round(float(d['clipTime']),2))
   # Exchanging on these answers is off by default: in trials the model's left/right answers were not consistent enough.
