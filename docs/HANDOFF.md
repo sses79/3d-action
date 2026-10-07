@@ -478,3 +478,8 @@ Reran the 20 tricking clips with `decisions: true` ($0.14, 514 frames). First ve
 ## 2026-10-07 — rule log and batch tool
 
 User asked for a recorded report after each rule change and rerun, to learn which rules help. Added `docs/RULE_LOG.md` (21 rules, scoreboard of 12 runs, lessons), `authoring/reconstruction/batch.py` (tracked replacement for the scratch batch script; writes `runs.json` and prints a per-clip comparison) and `authoring/reviews/video/tricking-basics/runs.json` (12 runs rebuilt from session logs; dates approximate). The `video-to-action` skill has a rule-change protocol. `batch.py run` was smoke-tested on two clips against a scratch copy of the history (no change reported, as expected); it has not yet recorded a real run.
+
+
+## 2026-10-07 — Cheat 360 crescent bisect; R22, R23; run 13
+
+User asked why rules made Cheat 360 crescent worse and whether and how to roll back. Bisected with ten git worktrees (removed afterwards): no earlier version had the whole kick. Added R22 (relabel after a pinned overlap) and R23 (bridge keeps rotation direction) in `lift.py`; first real `batch.py run` recorded run 13 with decisions on. Grades 13 good, 4 fair, 1 poor, 2 not upright. `docs/RULE_LOG.md` has the entries and a rolling-back section. Session restarted mid-task: scratch helpers were lost and the shell defaulted to Node 18, which cannot load the project (use `/Users/tim/.nvm/versions/node/v26.7.0/bin`). Service running on 5174 under Node 26 with `OPENROUTER_ENV_FILE` set.

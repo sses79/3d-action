@@ -37,6 +37,8 @@ node authoring/cli.mjs tools   # operation schemas (service must be running)
 
 ## Conventions
 
+- Use Node 26 (`/Users/tim/.nvm/versions/node/v26.7.0/bin`); the default shell may give Node 18, which fails on JSON import attributes.
+
 - Source is written very densely (multi-thousand-character lines, few comments). Match it when making small edits; grep by symbol rather than reading whole files.
 - Never hand-edit `.authoring/project.json` or its sidecars; go through the service (MCP `animation-studio` or `authoring/cli.mjs`). Back up the index, blobs folder and sidecars together.
 - Every write pins revisions (`expectedRevision`, `sourceRevision`); fetch current values instead of assuming them.

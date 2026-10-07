@@ -34,6 +34,7 @@ Twenty clips from the tricking-basics video, graded by the LLM from eight front-
 | 10 | Turn continuity; relabel before overlap (R19, R20) | 20 | 12 | 4 | 1 | 1 | 2 | 95 | 0.024 |
 | 11 | Vision veto, wide (R21 first version) | 20 | not graded; Pop 360 broke | | | | | 47 | 0.023 |
 | 12 | Vision veto, narrowed (R21) | 20 | 12 | 5 | 0 | 1 | 2 | 63 | 0.023 |
+| 13 | Relabel after a pinned overlap; swing keeps its rotation (R22, R23) | 20 | 13 | 4 | 0 | 1 | 2 | 97 | 0.023 |
 
 Run 10 kept the same counts but two clips got worse and one better; counts hide that, which is why the per-clip comparison exists.
 
@@ -81,6 +82,16 @@ Status: **kept**, **kept with a known cost**, **replaced**, or **off**.
 
 **R21. Vision decisions veto repairs** (runs 11–12; user proposal: add a vision-model decision check). *What was tried:* (a) facing answers steering the turn: agreed with R19 already, no change; (b) leg answers relabelling legs: made things worse, answers flip between frames, **off**; (c) a confident, repeated leg answer that agrees with the detector pins those labels against the swap repairs. *Result of (c):* Cheat 360 crescent swapped 9 → 1 and its first kick is the left leg again; Outside crescent kick fit error 0.055 → 0.028; Cheat 900 and Pop 720 fewer swaps. *Mistake on the way:* the first veto pinned a label on a blurred, half-lost leg and broke Pop 360 (crescent), a clip the user had confirmed; narrowed to detections with all four leg points at 0.9 confidence or more, and the frame plus its neighbours. **Kept, opt-in** (`decisions: true`; $0.14 for the 20 clips).
 
+**R22. If the labels before an overlap are pinned, relabel after it** (run 13; user: why did Cheat 360 crescent get worse, can we roll back). *Found by* rebuilding the clip with the pipeline at ten earlier commits: no version had the whole kick. The detector names the kicking leg left before the gap and right after it. R20 renamed the frames before (run 10: high part present, first kick lost, wrong leg); R21's veto undid that (first kick back, high part lost). *Rule:* when R21 pins the labels before the stretch, the frames from the stretch to the end of the next clear run are relabelled instead, unless they are pinned too. *Result:* Cheat 360 crescent is the left leg throughout, fit error 0.046 → 0.026. Outside crescent kick rises to vertical at 0.54–0.58 s but comes down early and its fit error rose 0.028 → 0.046. **Kept; needs `decisions`.** Without decisions R20 still acts alone.
+
+**R23. A bridged swing keeps its direction of rotation** (run 13). *Cause:* the bridge took the short way round, which reversed the leg's rotation about the hip. *Rule:* if the leg was rotating one way going into the gap by more than 3° a frame, and not the other way coming out, the bridge continues that way even when it is the long way. *Result:* Cheat 360 crescent's bridge is 227° over the top, vertical beside the head at 0.64–0.67 s as in the clip. No other clip's bridges changed. **Kept.** This is R15's principle applied to the bridge itself.
+
+## Rolling back
+
+- **One action:** each rebuild keeps the previous revision (up to 100). `restore_revision` with the action id, its current revision and the revision wanted.
+- **One rule:** `git revert` the rule's commit (the scoreboard and `runs.json` give the commit of each run), rebuild core, run `batch.py`. This also removes what the rule fixed elsewhere.
+- **Finding which rule changed a clip, without changing anything:** `git worktree add <dir> <commit>`, link `node_modules` and `.authoring` into it, build `authoring/core.js` there and rebuild the clip into a temporary project. Stage caches are keyed by script content, so versions do not collide. Remove the worktrees afterwards.
+
 ## What the log teaches
 
 1. **Most faults were in my repairs, not in the detector.** R14, the first R16, R20 and the first R21 each broke a clip that was right. A repair that relabels evidence needs an independent check before it acts, which is what the veto in R21 is.
@@ -90,11 +101,12 @@ Status: **kept**, **kept with a known cost**, **replaced**, or **off**.
 5. **Rules that state what a body cannot do last longer than rules that guess what the detector did.** R5, R12, R13, R15, R17, R18 and R19 (solid legs, limbs follow parents, kicks pass in front, swings do not reverse, roll is continuous, knees bend one way, a spin keeps its direction) needed little rework. Detector-pattern rules (R1, R11, R16, R20) needed several rounds.
 6. **The user's eye in playback found what sheets could not:** leg roll (R17), depth exchange (R18), swing dips (R15), turn direction (R19). Still sheets confirm poses; they do not confirm motion.
 7. **Each constraint costs fit to the image.** Median fit error rose from 0.018 to 0.025 as constraints were added. That is intended, but a rise on one clip of more than about half (0.027 → 0.055) has so far always meant a wrong repair.
-8. **A vision model is useful as a second opinion, not as a labeller.** Its facing answers were steady; its left/right leg answers were not reliable enough to act on directly.
+8. **Bisect before blaming a rule.** Cheat 360 crescent looked like a regression to roll back; rebuilding it at ten commits showed that no version had been right and that two rules were each half right. The fix was a third rule, not a rollback.
+9. **A vision model is useful as a second opinion, not as a labeller.** Its facing answers were steady; its left/right leg answers were not reliable enough to act on directly.
 
 ## Open
 
-- Cheat 360 crescent: high part of the kick at 0.62–0.66 s takes the low way round.
+- Outside crescent kick comes down about 0.06 s early after R22.
 - R20 is wrong on two clips when decisions are off; it should require decisions or be reworked.
 - R13's front margin shortens vertical kicks seen from the front.
 - R7 jump heights are unverified.
