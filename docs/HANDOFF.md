@@ -483,3 +483,8 @@ User asked for a recorded report after each rule change and rerun, to learn whic
 ## 2026-10-07 — Cheat 360 crescent bisect; R22, R23; run 13
 
 User asked why rules made Cheat 360 crescent worse and whether and how to roll back. Bisected with ten git worktrees (removed afterwards): no earlier version had the whole kick. Added R22 (relabel after a pinned overlap) and R23 (bridge keeps rotation direction) in `lift.py`; first real `batch.py run` recorded run 13 with decisions on. Grades 13 good, 4 fair, 1 poor, 2 not upright. `docs/RULE_LOG.md` has the entries and a rolling-back section. Session restarted mid-task: scratch helpers were lost and the shell defaulted to Node 18, which cannot load the project (use `/Users/tim/.nvm/versions/node/v26.7.0/bin`). Service running on 5174 under Node 26 with `OPENROUTER_ENV_FILE` set.
+
+
+## 2026-10-07 — R24, R25; runs 14 and 15
+
+User reviewed Cheat 360 crescent at 0.72–0.97 s: legs should keep their shape and only rotate. R24 (bridged leg keeps its shape) and R25 (short exchanged island after an overlap relabelled, final pass only) in `lift.py`. Run 14 broke (Cheat) 540 kick through an in-loop copy of R25; removed; run 15 is the current state. `batch.py compare --runs A,B` now compares exactly those two runs. Grades 13 good, 4 fair, 1 poor, 2 not upright. Open: right leg at 0.97 s of Cheat 360 crescent. Service running on 5174 (Node 26, OpenRouter key file set).

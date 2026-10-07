@@ -35,6 +35,8 @@ Twenty clips from the tricking-basics video, graded by the LLM from eight front-
 | 11 | Vision veto, wide (R21 first version) | 20 | not graded; Pop 360 broke | | | | | 47 | 0.023 |
 | 12 | Vision veto, narrowed (R21) | 20 | 12 | 5 | 0 | 1 | 2 | 63 | 0.023 |
 | 13 | Relabel after a pinned overlap; swing keeps its rotation (R22, R23) | 20 | 13 | 4 | 0 | 1 | 2 | 97 | 0.023 |
+| 14 | Bridged leg keeps its shape; island relabel, in-loop and final (R24, R25 first version) | 20 | not graded; 540 kick broke | | | | | 113 | 0.023 |
+| 15 | Island relabel, final pass only (R25) | 20 | 13 | 4 | 0 | 1 | 2 | 105 | 0.023 |
 
 Run 10 kept the same counts but two clips got worse and one better; counts hide that, which is why the per-clip comparison exists.
 
@@ -86,6 +88,10 @@ Status: **kept**, **kept with a known cost**, **replaced**, or **off**.
 
 **R23. A bridged swing keeps its direction of rotation** (run 13). *Cause:* the bridge took the short way round, which reversed the leg's rotation about the hip. *Rule:* if the leg was rotating one way going into the gap by more than 3° a frame, and not the other way coming out, the bridge continues that way even when it is the long way. *Result:* Cheat 360 crescent's bridge is 227° over the top, vertical beside the head at 0.64–0.67 s as in the clip. No other clip's bridges changed. **Kept.** This is R15's principle applied to the bridge itself.
 
+**R24. A bridged leg keeps its shape** (runs 14–15; user review of Cheat 360 crescent at 0.72–0.97 s: in the video the two legs keep nearly the same angles and shape and only rotate). *Cause:* knee and ankle were bridged as two separate arcs about the hip and turned by different amounts, folding a straight kicking leg mid-gap (left knee 95° at 0.72 s). *Rule:* the thigh turns by the amount closest to the whole leg's sweep; knee bend and segment lengths ease from their entry value to their exit value. *Result:* left knee 180° from 0.64 to 0.89 s; the angle between the legs no longer collapses (28° → 108° at 0.76 s). Pop 360 (crescent) kick intact; its fit error rose 0.010 → 0.015. **Kept.** A bridge now carries whatever shape its end frames have: the right leg enters its 0.87–1.10 s gap bent about 80° and stays bent through it.
+
+**R25. A short run of exchanged labels after an overlap is relabelled on its own** (runs 14–15). *Cause:* in Cheat 360 crescent the detector exchanges the legs for three frames straight after an overlapped stretch; R22 then flipped them together with the frames after. *Rule:* after all other label rules, a clear run of at most four frames that starts right after an overlap and is the exchange of the frame that follows (swap cost under 0.6 of keep cost, keep over 1 body height) is relabelled. *Result:* Cheat 360 crescent's four bridges become two. *Mistake on the way (run 14):* a second copy of the rule inside the adjacent-swap loop cascaded 36 swaps through the landing of (Cheat) 540 kick (fit error 0.018 → 0.048). The comparison flagged it; removed. That copy had also improved Back sweep (swapped 11 → 1), which is lost again. **Kept, final pass only.**
+
 ## Rolling back
 
 - **One action:** each rebuild keeps the previous revision (up to 100). `restore_revision` with the action id, its current revision and the revision wanted.
@@ -107,6 +113,8 @@ Status: **kept**, **kept with a known cost**, **replaced**, or **off**.
 ## Open
 
 - Outside crescent kick comes down about 0.06 s early after R22.
+- Cheat 360 crescent: the right leg is unseen from 0.89 to 1.09 s (both legs drawn together); its bridge starts from a sharply bent frame that may itself be a bad detection, and at 0.97 s it is vertical where the video has it wider to the left.
+- Back sweep improved under the in-loop island rule that had to be removed; worth finding a version that helps it without breaking the 540 kick.
 - R20 is wrong on two clips when decisions are off; it should require decisions or be reworked.
 - R13's front margin shortens vertical kicks seen from the front.
 - R7 jump heights are unverified.

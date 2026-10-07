@@ -13,11 +13,11 @@ def call(tool,arguments):
  scratch=folder/'.batch-args.json';scratch.write_text(json.dumps(arguments));out=subprocess.run(['node','authoring/cli.mjs','call',tool,'--args',str(scratch)],capture_output=True,text=True);scratch.unlink()
  try:return json.loads(out.stdout)
  except Exception:return {'error':(out.stdout+out.stderr)[-400:]}
-def compare(before,after):
+def compare(before,after,exact=False):
  print(f"run {after['id']} ({after['commit']}) against run {before['id']} ({before['commit']}): {after['rule']}")
  look=[]
  for index,now in after['clips'].items():
-  was=next((r['clips'][index] for r in reversed(history['runs']) if r['id']<after['id'] and index in r['clips']),None)  # the latest earlier run that has this clip
+  was=before['clips'].get(index) if exact else next((r['clips'][index] for r in reversed(history['runs']) if r['id']<after['id'] and index in r['clips']),None)  # the latest earlier run that has this clip
   if not was:continue
   if not now['ok'] or not was['ok']:
    if now['ok']!=was['ok']:look.append((index,now['name'],'now runs' if now['ok'] else 'NOW FAILS: '+str(now.get('error'))[-80:]))
@@ -30,7 +30,7 @@ def compare(before,after):
  print(f"  {len(look)} of {len(after['clips'])} clips changed in the numbers; the rest have identical repairs and fit error within 15%.")
  return [int(index) for index,_,_ in look]
 if args.command=='compare':
- a,b=([int(x) for x in args.runs.split(',')] if args.runs else [history['runs'][-2]['id'],history['runs'][-1]['id']]);by={r['id']:r for r in history['runs']};compare(by[a],by[b]);sys.exit()
+ a,b=([int(x) for x in args.runs.split(',')] if args.runs else [history['runs'][-2]['id'],history['runs'][-1]['id']]);by={r['id']:r for r in history['runs']};compare(by[a],by[b],exact=True);sys.exit()
 if not args.rule:sys.exit('--rule is required: one sentence on what changed and what prompted it')
 catalog=json.loads((folder/'catalog.json').read_text());wanted=[int(x) for x in args.clips.split(',')] if args.clips else [c['index'] for c in catalog['clips'] if c.get('group')=='upright' or 'airborne' in c]
 commit=subprocess.run(['git','rev-parse','--short','HEAD'],capture_output=True,text=True).stdout.strip()+('+uncommitted' if subprocess.run(['git','status','--porcelain','--','authoring','runtime'],capture_output=True,text=True).stdout.strip() else '')
