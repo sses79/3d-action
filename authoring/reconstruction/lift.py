@@ -55,10 +55,6 @@ if not args.no_leg_repair:
   keep=sum(apart(raw[i,j],raw[ref,j]) for j in (13,14,15,16));swap=sum(apart(raw[i,a],raw[ref,b]) for a,b in ((13,14),(14,13),(15,16),(16,15)))
   # Across a gap of overlapped frames a leg may really have moved far, so identity is only corrected between adjacent frames.
   if ref==i-1 and keep>.5 and swap<.5*keep and blocked(i):vetoed.append(float(times[i]))
-  elif ref==i-1 and keep>.5 and swap<.5*keep and 0<island(i)<=4 and not any(blocked(q) for q in range(i-island(i),i)):
-   # The frames just before are a short clear run straight after an overlapped stretch. A few frames with exchanged labels
-   # are far likelier than everything from here on being exchanged, so that short run is relabelled and this frame is kept.
-   for q in range(i-island(i),i):raw[q,[13,14,15,16]]=raw[q,[14,13,16,15]];swapped.append({'frame':q,'time':float(times[q]),'jumpBodyHeights':keep})
   elif ref==i-1 and keep>.5 and swap<.5*keep:raw[i,[13,14,15,16]]=raw[i,[14,13,16,15]];swapped.append({'frame':i,'time':float(times[i]),'jumpBodyHeights':keep})
   ref=i
  # A lost leg starts either merged onto the other leg at reduced confidence after a jump, or with a one-frame jump no real leg
