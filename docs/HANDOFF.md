@@ -468,3 +468,8 @@ User sent Studio screenshots of Backside 900 (0.54 right, 0.60 upper body wrong,
 ## 2026-10-07 — vision decisions stage
 
 User reported Cheat 360 crescent wrong from 0.55 s (right leg up instead of left at 0.58) and asked for a vision-model decision check via OpenRouter with the voice-helper key. Added `authoring/reconstruction/decide.py` and the `decisions` option (stage `decide`, model `openai/gpt-6-luna`; the id the user named does not exist). Facing answers penalize turn candidates in `fit.py`; raised-leg answers only veto swap repairs in `lift.py`. See `docs/RECONSTRUCT_MOTION.md`. The service was started with `OPENROUTER_ENV_FILE=/Users/tim/Yun/voice-helper/.env.local`; the key itself was never printed or copied. `trick-19-cheat-360-crescent` r12 (selected at 0.55 s) and `trick-03-outside-crescent-kick` r12 rebuilt with decisions; the other clips were not. 87 Node tests pass.
+
+
+## 2026-10-07 — batch with vision decisions
+
+Reran the 20 tricking clips with `decisions: true` ($0.14, 514 frames). First veto version regressed Pop 360 (crescent); narrowed to confident detections and adjacent frames, then reran (answers cached). Final: four clips changed (3, 19, 36, 37); grades 12 good, 5 fair, 0 partial, 1 poor, 2 not upright. Service is running with `OPENROUTER_ENV_FILE` set. Pushed through 42d41f8 before this.

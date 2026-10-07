@@ -327,6 +327,8 @@ What the answers turned out to be good for, on four clips:
 - **Raised leg** is not reliable enough to relabel legs. Acting on it directly (exchanging labels wherever a confident, repeated answer disagreed with the detector) caused repeated 20-frame exchanges and raised projection error (Cheat 720 0.026 → 0.041). That path is off (`--exchange-legs-on-decisions`).
 - **Veto.** Where a confident, repeated answer agrees with the detector's own labels, those labels are pinned and the swap repairs may not exchange legs within three frames. This is what fixed the reported fault: the detector had the left leg kicking at 0.48–0.60 s, and the "relabel before an overlapped stretch" rule added earlier that day had exchanged it. With the veto, swapped frames fall from 9 to 1 and the kick is the left leg to image-left at 0.50–0.58 s. Outside crescent kick recovers the same way (projection 0.055 → 0.028).
 
+Batch of 20 with decisions on: 514 frames, $0.14. A first version of the veto (any agreeing answer, three frames each way) broke Pop 360 (crescent) by pinning a label on a blurred, half-lost leg; the veto now requires the detector to be at least 0.9 confident in all four leg points and covers the frame and its neighbours. With that, repairs differ from the run without decisions on four clips only: Outside crescent kick, Cheat 360 crescent, Cheat 900 and Pop 720 (fewer swaps, lower or equal projection error).
+
 Still wrong in Cheat 360 crescent: the high part of the kick at 0.62–0.66 s takes the low way round. Without `decisions` the pipeline behaves as before.
 
 ## Limits
