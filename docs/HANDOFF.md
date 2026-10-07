@@ -503,3 +503,8 @@ User asked for a knee-rotation rule and for normal joint ranges from the interne
 ## 2026-10-07 — Leg through the trunk on Cheat 360 crescent: diagnosed, not fixed; runs 18–20
 
 User saw the right leg pass through the body from 0.89 to 1.04 s and asked whether it is a hip issue. It is: the thigh rises behind the back and crosses the spine. The fitted pelvis faces the opposite way from the starting estimate over those frames while R18's side and knee-direction references come from the starting estimate. Five fit-side attempts were rejected (details in `docs/RULE_LOG.md` after R27); `fit.py` is unchanged from commit adfe5f9 and run 20 equals run 17. Next: settle the pelvis facing for those frames before touching the leg.
+
+
+## 2026-10-07 — R28 chest-and-face decisions, R29 mirrored limb depth; runs 21 and 22
+
+User suggested asking the vision model for face and chest; `decide.py` now does, and `fit.py` uses face agreement, drops opposite neighbouring answers and steadies the hip turn. It did not settle the facing on Cheat 360 crescent. The leg-through-trunk fault was R19 rewriting hip and shoulder depth without the limbs; `fit.py` `keep_turning` now mirrors limb depth in those frames (R29) and the right thigh stays clear of the trunk. Grades carried over; ten clips touched by R29 were not re-read. 87 Node tests pass.

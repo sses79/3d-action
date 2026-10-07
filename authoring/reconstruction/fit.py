@@ -28,23 +28,34 @@ turn_report={}
 # Vision decisions give the facing in four coarse classes. A candidate turn more than 60 degrees from the class seen at that
 # time is penalized, which settles front-or-back where the shoulders alone cannot.
 facing_yaw={'toward_camera':0.0,'image_right':np.pi/2,'away_from_camera':np.pi,'image_left':-np.pi/2};clock=np.array(ir['times']);seen_at={}
-for d in ir.get('decisions') or []:
- if d['confidence']!='low':seen_at[int(np.argmin(np.abs(clock-d['time'])))]=facing_yaw[d['facing']]
+# A body does not turn half a circle between two answers a tenth of a second apart. Two neighbouring answers that point opposite
+# ways cannot both be right and there is no telling which is, so neither is used.
+answers=sorted(ir.get('decisions') or [],key=lambda d:d['time']);opposite=lambda a,b:abs(abs(facing_yaw[a['facing']]-facing_yaw[b['facing']])-np.pi)<1e-6;contradicted={i for i in range(len(answers)) for j in (i-1,i+1) if 0<=j<len(answers) and abs(answers[i]['time']-answers[j]['time'])<.25*max(args.speed,.4)/.5 and opposite(answers[i],answers[j])}
+for d in [a for i,a in enumerate(answers) if i not in contradicted]:
+# Face and chest point the same way most of the time, and catch up with each other quickly when they do not. So a chest answer
+# given with low confidence still counts when the face, judged separately, points the same way.
+ if d['confidence']!='low' or d.get('faceFacing')==d['facing']:seen_at[int(np.argmin(np.abs(clock-d['time'])))]=facing_yaw[d['facing']]
 def seen(i,c):
  near=[j for j in (i,i-1,i+1) if j in seen_at]
  return 0.0 if not near else 3*max(0.0,abs((c-seen_at[near[0]]+np.pi)%(2*np.pi)-np.pi)-np.radians(60))
-def keep_turning(left,right,name,follow=None):
+def keep_turning(left,right,name,follow=None,limbs=()):
  d=prior[:,left]-prior[:,right];width=float(np.median(np.linalg.norm(d,axis=1)));dx=target[:,left,0]-target[:,right,0];dy=target[:,left,1]-target[:,right,1];flat=np.sqrt(np.maximum(width**2-dy**2,(.3*width)**2));angle=np.arccos(np.clip(dx/flat,-1,1))
  lift=np.unwrap(np.arctan2(d[:,2],d[:,0]));yaw=np.zeros(len(lift));yaw[0]=min((sign*angle[0]+2*np.pi*k for sign in (1,-1) for k in range(-3,4)),key=lambda c:abs(c-(lift[0] if follow is None else follow[0]))+seen(0,c));speed=float(np.median(np.diff(lift[:6]))) if len(lift)>6 else 0
  for i in range(1,len(lift)):
   step=(lift[i]-lift[i-1]+np.pi)%(2*np.pi)-np.pi
   # The lift's own step is believed unless it turns too far in one frame (100 degrees at half-speed footage, scaled with
   # footage speed); then the turn under way continues.
-  guess=follow[i] if follow is not None else yaw[i-1]+(step if abs(step)<np.radians(min(170,200*args.speed)) else speed);options=[sign*angle[i]+2*np.pi*k for sign in (1,-1) for k in range(-6,7)];yaw[i]=min(options,key=lambda c:abs(c-guess)+.15*abs((c-lift[i]+np.pi)%(2*np.pi)-np.pi)+seen(i,c));speed=.7*speed+.3*(yaw[i]-yaw[i-1])
- middle=(prior[:,left,2]+prior[:,right,2])/2;depth=flat*np.sin(yaw)/2;changed=float(np.degrees(np.abs((yaw-lift+np.pi)%(2*np.pi)-np.pi)).max());prior[:,left,2]=middle+depth;prior[:,right,2]=middle-depth
- turn_report[name]={'maxDegreesFromLift':changed,'totalTurnDegrees':float(np.degrees(yaw[-1]-yaw[0])),'yawDegrees':[round(float(v)) for v in np.degrees(yaw)],'liftDegrees':[round(float(v)) for v in np.degrees(lift)]};return yaw
+  guess=follow[i] if follow is not None else yaw[i-1]+(step if abs(step)<np.radians(min(170,200*args.speed)) else speed);options=[sign*angle[i]+2*np.pi*k for sign in (1,-1) for k in range(-6,7)];yaw[i]=min(options,key=lambda c:abs(c-guess)+(.5*abs(c-yaw[i-1]) if follow is not None else 0)+.15*abs((c-lift[i]+np.pi)%(2*np.pi)-np.pi)+seen(i,c));speed=.7*speed+.3*(yaw[i]-yaw[i-1])
+ middle=(prior[:,left,2]+prior[:,right,2])/2;depth=flat*np.sin(yaw)/2
+ # Where the turn chosen here puts the other shoulder (or hip) nearer the camera than the lift did, the lift's limbs belong to
+ # the mirror-image body. Their depths are mirrored about the joint pair too, which leaves the picture unchanged. Otherwise a
+ # leg keeps the depth it had for the opposite facing and ends up on the wrong side of the body, through the trunk.
+ mirrored=(np.sin(yaw)*np.sin(lift)<0)&(np.abs(np.sin(yaw))>.3)&(np.abs(np.sin(lift))>.3)
+ for j in limbs:prior[mirrored,j,2]=2*middle[mirrored]-prior[mirrored,j,2]
+ changed=float(np.degrees(np.abs((yaw-lift+np.pi)%(2*np.pi)-np.pi)).max());prior[:,left,2]=middle+depth;prior[:,right,2]=middle-depth
+ turn_report[name]={'maxDegreesFromLift':changed,'totalTurnDegrees':float(np.degrees(yaw[-1]-yaw[0])),'mirroredLimbFrames':int(mirrored.sum()),'yawDegrees':[round(float(v)) for v in np.degrees(yaw)],'liftDegrees':[round(float(v)) for v in np.degrees(lift)]};return yaw
 # The hips are narrow in the image and carry little signal, so they take the shoulder turn as their guide.
-if not args.no_turn_continuity:keep_turning(4,1,'hips',keep_turning(11,14,'shoulders'))
+if not args.no_turn_continuity:keep_turning(4,1,'hips',keep_turning(11,14,'shoulders',limbs=(12,13,15,16)),limbs=(2,3,5,6))
 prior_t=torch.tensor(prior);target_t=torch.tensor(target);conf=torch.tensor(np.minimum(obs[:,:,2],obs[:,0:1,2]));conf[:,0]=1
 # A side view supports a near-straight-knee prior only where the observed 2D knee is near straight. Other camera angles must disable it.
 # A leg counts as raised when its ankle is well above the other ankle, or no more than half a leg length below its own hip
