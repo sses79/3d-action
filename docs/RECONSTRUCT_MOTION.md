@@ -300,6 +300,20 @@ Two anatomical terms in `fit.py` (weight 400 each, `--no-knee-direction` disable
 
 Cheat 720 r13: right foot depth at 0.54 s −0.31 → −0.02 m; knee-forward measure positive for every bent leg from 0.50 to 0.70 s; tucked foot behind him in the back view. Both measures are reported in the fit report (`backwardKnee`, `crossedLegs`). Other clips: karate cross-step keeps 10.2 cm clearance with no depth-order flips; projection error rises slightly everywhere (for example triple kick 0.0128 → 0.0153). The body turning about 80° between 0.54 and 0.57 s is in the footage (shoulder order reverses over three frames) and was left alone.
 
+## A spinning body keeps turning the same way (7 October 2026)
+
+User review of Backside 900: right at 0.54 s, upper body wrong at 0.60 s, both legs wrong at 0.63 s; the user asked that the upper body and legs turn the same way, smoothly.
+
+Measured in the lift: shoulder yaw jumped 144° in one frame at 0.60 s (side-on, where the shoulders have no width in the image) while the hips stayed back-facing until 0.65 s and then jumped too. Over the clip the lift turned 447°; the trick is 900°.
+
+`fit.py` now rebuilds the depth of the shoulders and hips before fitting. The turn angle's size is read from how wide the pair looks in the image (full width facing or away, zero side-on). Its sign follows the lift frame to frame unless the lift turns too far in one frame (100° at half-speed footage, scaled with footage speed), in which case the turn under way continues. The hips take the shoulder turn as their guide. `--no-turn-continuity` disables it; the fit report gives `turnContinuity` with both tracks.
+
+Backside 900 r13: shoulders turn 810° and hips 747°, monotonically; pelvis and chest facing agree within 20° from 0.50 to 0.70 s and the tucked poses match the video on sixteen poses. Tornado kick gains the same correction (639° against the lift's 276°). Real-time clips follow the lift as before (triple kick 387° against 399°).
+
+The Backside 900 high kick also needed one more leg rule in `lift.py`: when a leg reappears after an overlapped stretch but the labels say the other leg was the one that was out beforehand, the clear frames just before the stretch are relabelled. The kick now goes up and over (bridge 135° over the top) and comes down to the right. During the vertical part the leg is kept in front of the trunk by the bridge rule and reads short from the front.
+
+Side effect: the karate cross-step's minimum leg clearance drops from 10.2 cm to 6.0 cm at one frame (1.10 s), because the hips now follow the shoulders there.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

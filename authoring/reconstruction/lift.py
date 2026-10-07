@@ -44,6 +44,11 @@ if not args.no_leg_repair:
    # Feet that are simply together arrive and leave gradually; a dropout shows as a one-frame jump on the way in or out.
    snap=max(apart(raw[after,sides[away][1]],raw[after-1,sides[away][1]]),apart(raw[f,sides[away][1]],raw[f-1,sides[away][1]]) if f else 0)
    if away!=stay and gap[away]>.3 and gap[away]>2*gap[stay] and snap>.25:
+    # The leg that reappears must be the one that was out before the stretch. If the labels say it was the other one (the leg
+    # farther from where the pair was drawn), the two were exchanged on the way in, and the clear frames just before are relabelled.
+    g=f-1
+    if g>=0 and not together(g) and apart(raw[g,sides[stay][1]],raw[e,sides[stay][1]])>apart(raw[g,sides[away][1]],raw[e,sides[away][1]])+.15:
+     while g>=0 and f-g<=8 and not together(g):raw[g,[13,14,15,16]]=raw[g,[14,13,16,15]];swapped.append({'frame':g,'time':float(times[g]),'jumpBodyHeights':0.0});g-=1
     first=f
     while first>0 and f-first<6 and length(away,first-1)<.6*usual[away]:first-=1
     forced[away].update(range(first,after));forced[away].add(-after-1);forced[stay].update(-g-1 for g in range(f,after))

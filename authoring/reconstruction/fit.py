@@ -1,7 +1,7 @@
 """Bounded orthographic landmark fit, with depth prior and soft segment constraints."""
 import argparse,json,time
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('--input',required=True);p.add_argument('--out',required=True);p.add_argument('--stable',action='store_true');p.add_argument('--no-straight-knee-prior',action='store_true');p.add_argument('--no-knee-direction',action='store_true');p.add_argument('--peak-time',type=float,default=12.85);args=p.parse_args();started=time.perf_counter()
+p=argparse.ArgumentParser();p.add_argument('--input',required=True);p.add_argument('--out',required=True);p.add_argument('--stable',action='store_true');p.add_argument('--no-straight-knee-prior',action='store_true');p.add_argument('--no-knee-direction',action='store_true');p.add_argument('--no-turn-continuity',action='store_true');p.add_argument('--speed',type=float,default=1);p.add_argument('--peak-time',type=float,default=12.85);args=p.parse_args();started=time.perf_counter()
 import numpy as np,torch
 torch.set_num_threads(2);ir=json.loads(Path(args.input).read_text());prior=np.array(ir['rootRelativePositions'],np.float32);obs=np.array(ir['preparedInput'],np.float32);xy=obs[:,:,:2]-obs[:,0:1,:2]
 raw_obs=obs.copy();rejected=[]
@@ -20,6 +20,23 @@ for a,b in [(0,8),(1,4),(11,14)]:
  d=np.linalg.norm(xy[:,a]-xy[:,b],axis=1);m=np.linalg.norm(prior[:,a,:2]-prior[:,b,:2],axis=1);valid=d>.05;ratios.extend((m[valid]/d[valid]).tolist())
 scale=float(np.median(ratios));target=xy*scale
 lengths=[max(float(np.median(np.linalg.norm(prior[:,a]-prior[:,b],axis=1))),float(np.quantile(np.linalg.norm(target[:,a]-target[:,b],axis=1),.95))) for a,b in edges]
+# A body turns smoothly and keeps turning the same way. How far the shoulders (or hips) are turned from the camera is read
+# from how wide they look: full width facing the camera or away, zero width side-on. That gives the turn angle up to its sign;
+# the sign follows the lift from frame to frame, except where the lift jumps, and there the turn under way continues.
+# The lift on its own can flip a side-on body front to back in one frame. Only the depth of the two joints is rewritten.
+turn_report={}
+def keep_turning(left,right,name,follow=None):
+ d=prior[:,left]-prior[:,right];width=float(np.median(np.linalg.norm(d,axis=1)));dx=target[:,left,0]-target[:,right,0];dy=target[:,left,1]-target[:,right,1];flat=np.sqrt(np.maximum(width**2-dy**2,(.3*width)**2));angle=np.arccos(np.clip(dx/flat,-1,1))
+ lift=np.unwrap(np.arctan2(d[:,2],d[:,0]));yaw=np.zeros(len(lift));yaw[0]=lift[0] if follow is None else min((lift[0]+2*np.pi*k for k in range(-3,4)),key=lambda c:abs(c-follow[0]));speed=float(np.median(np.diff(lift[:6]))) if len(lift)>6 else 0
+ for i in range(1,len(lift)):
+  step=(lift[i]-lift[i-1]+np.pi)%(2*np.pi)-np.pi
+  # The lift's own step is believed unless it turns too far in one frame (100 degrees at half-speed footage, scaled with
+  # footage speed); then the turn under way continues.
+  guess=follow[i] if follow is not None else yaw[i-1]+(step if abs(step)<np.radians(min(170,200*args.speed)) else speed);options=[sign*angle[i]+2*np.pi*k for sign in (1,-1) for k in range(-6,7)];yaw[i]=min(options,key=lambda c:abs(c-guess)+.15*abs((c-lift[i]+np.pi)%(2*np.pi)-np.pi));speed=.7*speed+.3*(yaw[i]-yaw[i-1])
+ middle=(prior[:,left,2]+prior[:,right,2])/2;depth=flat*np.sin(yaw)/2;changed=float(np.degrees(np.abs((yaw-lift+np.pi)%(2*np.pi)-np.pi)).max());prior[:,left,2]=middle+depth;prior[:,right,2]=middle-depth
+ turn_report[name]={'maxDegreesFromLift':changed,'totalTurnDegrees':float(np.degrees(yaw[-1]-yaw[0])),'yawDegrees':[round(float(v)) for v in np.degrees(yaw)],'liftDegrees':[round(float(v)) for v in np.degrees(lift)]};return yaw
+# The hips are narrow in the image and carry little signal, so they take the shoulder turn as their guide.
+if not args.no_turn_continuity:keep_turning(4,1,'hips',keep_turning(11,14,'shoulders'))
 prior_t=torch.tensor(prior);target_t=torch.tensor(target);conf=torch.tensor(np.minimum(obs[:,:,2],obs[:,0:1,2]));conf[:,0]=1
 # A side view supports a near-straight-knee prior only where the observed 2D knee is near straight. Other camera angles must disable it.
 # A leg counts as raised when its ankle is well above the other ankle, or no more than half a leg length below its own hip
@@ -78,7 +95,7 @@ def angles(v):
 peak=int(np.argmin(abs(np.array(ir['times'])-args.peak_time)))
 def left(v):return v[:,[0,4,5,6]]
 extension={side:{'time':float(ir['times'][int(np.argmax(a))]),'degrees':float(a.max()),'before':float(b[int(np.argmax(a))])} for side,a,b in [('right',angles(fitted),angles(prior)),('left',angles(left(fitted)),angles(left(prior)))]};out=Path(args.out);out.mkdir(parents=True,exist_ok=True)
-report={'algorithm':'orthographic-landmark-fit-stable-v2' if args.stable else 'orthographic-landmark-fit-v1','rejectedObservations':rejected,'iterations':400,'cameraScale':scale,'fitSeconds':elapsed,'processWallSeconds':time.perf_counter()-started,'straightKneePrior':not args.no_straight_knee_prior,'maximumKneeExtension':extension,'rightKneePeakDegrees':{'before':float(angles(prior)[peak]),'after':float(angles(fitted)[peak])},'projectionRMS':float(np.sqrt(((fitted[:,:,:2]-target)**2).mean())),'segmentLengthRMS':float(np.sqrt(np.mean([(np.linalg.norm(fitted[:,b]-fitted[:,a],axis=-1)-lengths[i])**2 for i,(a,b) in enumerate(edges)]))),'crossedLegs':{'before':float(crossed(prior_t)),'after':float(crossed(torch.tensor(fitted)))},'backwardKnee':{'before':float(backward(prior_t)),'after':float(backward(torch.tensor(fitted)))},'legOverlap':{'before':float(leg_gap(prior_t).max()),'after':float(leg_gap(torch.tensor(fitted)).max()),'units':'normalized estimate; 0 means no sampled leg points closer than their radii'},'limits':['Orthographic camera assumption','Soft segment lengths; runtime retarget preserves actual rig lengths','Occluded/misassigned observations may distort the fit',*([] if args.no_straight_knee_prior else ['Near-straight 2D knees assumed near-straight in 3D for this side-view fixture only']),'Depth prior remains ambiguous; no contacts or joint-limit solver']}
+report={'algorithm':'orthographic-landmark-fit-stable-v2' if args.stable else 'orthographic-landmark-fit-v1','rejectedObservations':rejected,'iterations':400,'cameraScale':scale,'fitSeconds':elapsed,'processWallSeconds':time.perf_counter()-started,'straightKneePrior':not args.no_straight_knee_prior,'maximumKneeExtension':extension,'rightKneePeakDegrees':{'before':float(angles(prior)[peak]),'after':float(angles(fitted)[peak])},'projectionRMS':float(np.sqrt(((fitted[:,:,:2]-target)**2).mean())),'segmentLengthRMS':float(np.sqrt(np.mean([(np.linalg.norm(fitted[:,b]-fitted[:,a],axis=-1)-lengths[i])**2 for i,(a,b) in enumerate(edges)]))),'turnContinuity':turn_report,'crossedLegs':{'before':float(crossed(prior_t)),'after':float(crossed(torch.tensor(fitted)))},'backwardKnee':{'before':float(backward(prior_t)),'after':float(backward(torch.tensor(fitted)))},'legOverlap':{'before':float(leg_gap(prior_t).max()),'after':float(leg_gap(torch.tensor(fitted)).max()),'units':'normalized estimate; 0 means no sampled leg points closer than their radii'},'limits':['Orthographic camera assumption','Soft segment lengths; runtime retarget preserves actual rig lengths','Occluded/misassigned observations may distort the fit',*([] if args.no_straight_knee_prior else ['Near-straight 2D knees assumed near-straight in 3D for this side-view fixture only']),'Depth prior remains ambiguous; no contacts or joint-limit solver']}
 if args.stable:
  ir['preStabilityInput']=ir['preparedInput'];ir['preparedInput']=obs.tolist();original_root=np.array(ir['imagePelvis']);smoothed=original_root.copy()
  # Five-sample symmetric root-only filter; joint snap timing is not resampled.

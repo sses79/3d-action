@@ -458,3 +458,8 @@ User reported Cheat 720 legs appearing to swap at 0.82 s. Positions were right; 
 ## 2026-10-07 — Cheat 720: legs exchanged in depth, knees backward
 
 User sent Studio screenshots (0.54–0.66 s) and said the legs look swapped at 0.54 and wrong at 0.57. Rig measurement: right foot on the far side at 0.54, knees bent backward at 0.61–0.70. Added knee-direction and own-side terms to `fit.py` (see `docs/RECONSTRUCT_MOTION.md`). `trick-34-cheat-720` r13 selected at 0.54 s. Batch rerun started afterwards. 87 Node tests pass.
+
+
+## 2026-10-07 — turn continuity; Backside 900
+
+User sent Studio screenshots of Backside 900 (0.54 right, 0.60 upper body wrong, 0.63 legs wrong) and asked that body and legs turn the same way smoothly. `fit.py`: `keep_turning` rebuilds shoulder and hip depth from image width with turn continuity (fit stage now receives `--speed`). `lift.py`: relabel legs before an overlapped stretch when the reappearing leg was the other one. `trick-35-backside-900` r13 selected at 0.6 s; turn is 810° and the high kick goes over the top. Karate clearance fell to 6.0 cm at one frame. Batch rerun started afterwards. 87 Node tests pass. Pushed through 2dcde05 before this work.
