@@ -498,3 +498,8 @@ User asked to fix the right leg at 0.97 s of Cheat 360 crescent. The detector dr
 ## 2026-10-07 — R27 knee hinge and joint ranges; run 17
 
 User asked for a knee-rotation rule and for normal joint ranges from the internet. Ranges and sources are in `docs/RULE_LOG.md` R27. `retarget.ts`: calf swings only from the thigh, thigh rolled so the knee bend is pure; report gains `jointRanges`. `fit.py`: knees and elbows fold at most 150 degrees. `pipeline.mjs`: `action.jointRangesBeyondNormal`. `batch.py` rows gain `beyondNormalRange` from the next run on. Run 17: no change in repairs or fit error; knee twist at most 1 degree; grades carried over (13 good, 4 fair, 1 poor, 2 not upright), only three clips re-read. Hip rows flag nearly every clip, so they are informational. 87 Node tests pass.
+
+
+## 2026-10-07 — Leg through the trunk on Cheat 360 crescent: diagnosed, not fixed; runs 18–20
+
+User saw the right leg pass through the body from 0.89 to 1.04 s and asked whether it is a hip issue. It is: the thigh rises behind the back and crosses the spine. The fitted pelvis faces the opposite way from the starting estimate over those frames while R18's side and knee-direction references come from the starting estimate. Five fit-side attempts were rejected (details in `docs/RULE_LOG.md` after R27); `fit.py` is unchanged from commit adfe5f9 and run 20 equals run 17. Next: settle the pelvis facing for those frames before touching the leg.
