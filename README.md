@@ -84,6 +84,7 @@ WebGPU requires localhost or HTTPS. Watch Lab and Studio have WebGL2 fallback. L
 - [Reference-video pilot: lateral snap kick](docs/VIDEO_KICK_REFERENCE.md)
 - [Fast video-to-motion reconstruction plan](docs/VIDEO_MOTION_RECONSTRUCTION.md)
 - [`reconstruct_motion`: video window to draft action](docs/RECONSTRUCT_MOTION.md)
+- [Rule log: what each reconstruction rule fixed and cost](docs/RULE_LOG.md)
 
 - [Regular Sword contract pilot](docs/SWORD_PILOT.md)
 - [Locomotion contracts: Slide](docs/SLIDE_CONTRACTS.md)

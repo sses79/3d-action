@@ -7,6 +7,7 @@ Three browser demos; active work is **Animation Studio** (LLM-driven movement li
 - `docs/CURRENT_STATE.md` — current architecture, data ownership, the service operations, limits.
 - `docs/NEW_PLAN.md` — active plan (video → reusable 3D actions). Phases 1–5 delivered (`reconstruct_motion`, review sheets, bounded corrections and the `video-to-action` skill; see `docs/RECONSTRUCT_MOTION.md`). Next: prove it on new clips, then Phase 6 (register an accepted video-derived movement).
 - `docs/HANDOFF.md` — append-only session log (long, dense). Read the last few sections, not the whole file. Add a dated section after substantial work.
+- `docs/RULE_LOG.md` — every reconstruction rule, why it exists and what it did to the other clips. After changing a rule, run `authoring/reconstruction/batch.py` and add an entry.
 - Other `docs/` plans and studies are historical unless `CURRENT_STATE.md` points at them.
 
 ## Layout

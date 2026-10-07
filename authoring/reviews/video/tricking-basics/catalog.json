@@ -24,7 +24,8 @@
     0.2,
     2.65
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": false
   },
   {
    "index": 2,
@@ -38,7 +39,8 @@
     3.6,
     5.76
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": false
   },
   {
    "index": 3,
@@ -52,7 +54,8 @@
     6.71,
     8.46
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": false
   },
   {
    "index": 4,
@@ -122,7 +125,8 @@
     25.62,
     27.68
    ],
-   "group": "inverted-or-hand-supported"
+   "group": "inverted-or-hand-supported",
+   "airborne": false
   },
   {
    "index": 9,
@@ -136,7 +140,8 @@
     28.63,
     30.88
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": false
   },
   {
    "index": 10,
@@ -150,7 +155,8 @@
     31.83,
     33.78
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": false
   },
   {
    "index": 11,
@@ -178,7 +184,8 @@
     38.54,
     40.09
    ],
-   "group": "inverted-or-hand-supported"
+   "group": "inverted-or-hand-supported",
+   "airborne": false
   },
   {
    "index": 13,
@@ -234,7 +241,8 @@
     52.45,
     54.9
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 17,
@@ -262,7 +270,8 @@
     59.06,
     61.91
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 19,
@@ -276,7 +285,8 @@
     62.86,
     65.42
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 20,
@@ -290,7 +300,8 @@
     66.37,
     69.12
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 21,
@@ -304,7 +315,8 @@
     70.07,
     73.02
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 22,
@@ -388,7 +400,8 @@
     92.49,
     95.24
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 28,
@@ -402,7 +415,8 @@
     96.19,
     98.95
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 29,
@@ -472,7 +486,8 @@
     115.11,
     117.97
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 34,
@@ -486,7 +501,8 @@
     118.92,
     121.47
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 35,
@@ -500,7 +516,8 @@
     122.42,
     125.27
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 36,
@@ -514,7 +531,8 @@
     126.22,
     129.58
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 37,
@@ -528,7 +546,8 @@
     130.53,
     133.28
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 38,
@@ -542,7 +561,8 @@
     134.23,
     137.09
    ],
-   "group": "upright"
+   "group": "upright",
+   "airborne": true
   },
   {
    "index": 39,

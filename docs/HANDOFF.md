@@ -473,3 +473,8 @@ User reported Cheat 360 crescent wrong from 0.55 s (right leg up instead of left
 ## 2026-10-07 — batch with vision decisions
 
 Reran the 20 tricking clips with `decisions: true` ($0.14, 514 frames). First veto version regressed Pop 360 (crescent); narrowed to confident detections and adjacent frames, then reran (answers cached). Final: four clips changed (3, 19, 36, 37); grades 12 good, 5 fair, 0 partial, 1 poor, 2 not upright. Service is running with `OPENROUTER_ENV_FILE` set. Pushed through 42d41f8 before this.
+
+
+## 2026-10-07 — rule log and batch tool
+
+User asked for a recorded report after each rule change and rerun, to learn which rules help. Added `docs/RULE_LOG.md` (21 rules, scoreboard of 12 runs, lessons), `authoring/reconstruction/batch.py` (tracked replacement for the scratch batch script; writes `runs.json` and prints a per-clip comparison) and `authoring/reviews/video/tricking-basics/runs.json` (12 runs rebuilt from session logs; dates approximate). The `video-to-action` skill has a rule-change protocol. `batch.py run` itself has not yet been used for a real run; only `compare` was exercised.

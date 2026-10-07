@@ -60,6 +60,16 @@ After a correction, compare only the corrected window, then one whole-action pas
 
 `append_action_run_event` with what you checked and what remains wrong, then `finish_action_run`. Tell the user the action id, what matches the clip, what does not, and that the result is an unreviewed draft. Do not register it as a library movement; that needs the user's acceptance and a contact review.
 
+## Changing a pipeline rule
+
+If the fault is in the pipeline and you change `observe.py`, `lift.py`, `fit.py` or `retarget.ts`:
+
+1. Say what was seen, at what times, and measure the cause before editing (detector overlay, joint numbers on the rig). Do not edit on a guess.
+2. Prefer a rule about what a body cannot do over a rule about what the detector probably did.
+3. Rebuild every catalogued clip and read the comparison: `python3 authoring/reconstruction/batch.py run --catalog authoring/reviews/video/tricking-basics --rule "…"`. Look at every clip it marks, especially a jump in swapped frames or fit error on a clip you were not working on.
+4. Add an entry to [RULE_LOG.md](/Users/tim/Yun/codex-3d/docs/RULE_LOG.md): seen, cause, rule, result on the target clip, effect on the others, status. Record mistakes made on the way.
+5. Do not call it fixed from still sheets alone; ask the user to play it.
+
 ## Known limits
 
 - One camera: depth, twist, foot angle and mirroring are estimates. The pipeline leans on a learned 3D estimate for depth.
