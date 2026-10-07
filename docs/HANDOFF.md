@@ -463,3 +463,8 @@ User sent Studio screenshots (0.54–0.66 s) and said the legs look swapped at 0
 ## 2026-10-07 — turn continuity; Backside 900
 
 User sent Studio screenshots of Backside 900 (0.54 right, 0.60 upper body wrong, 0.63 legs wrong) and asked that body and legs turn the same way smoothly. `fit.py`: `keep_turning` rebuilds shoulder and hip depth from image width with turn continuity (fit stage now receives `--speed`). `lift.py`: relabel legs before an overlapped stretch when the reappearing leg was the other one. `trick-35-backside-900` r13 selected at 0.6 s; turn is 810° and the high kick goes over the top. Karate clearance fell to 6.0 cm at one frame. Batch rerun started afterwards. 87 Node tests pass. Pushed through 2dcde05 before this work.
+
+
+## 2026-10-07 — vision decisions stage
+
+User reported Cheat 360 crescent wrong from 0.55 s (right leg up instead of left at 0.58) and asked for a vision-model decision check via OpenRouter with the voice-helper key. Added `authoring/reconstruction/decide.py` and the `decisions` option (stage `decide`, model `openai/gpt-6-luna`; the id the user named does not exist). Facing answers penalize turn candidates in `fit.py`; raised-leg answers only veto swap repairs in `lift.py`. See `docs/RECONSTRUCT_MOTION.md`. The service was started with `OPENROUTER_ENV_FILE=/Users/tim/Yun/voice-helper/.env.local`; the key itself was never printed or copied. `trick-19-cheat-360-crescent` r12 (selected at 0.55 s) and `trick-03-outside-crescent-kick` r12 rebuilt with decisions; the other clips were not. 87 Node tests pass.

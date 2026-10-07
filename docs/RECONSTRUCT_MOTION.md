@@ -19,6 +19,7 @@ node authoring/cli.mjs call reconstruct_motion --args authoring/examples/reconst
 | `fit` | `stable` | `stable`, `fitted` or `none` (lift only) |
 | `straightKneePrior` | `false` | Side-view assumption: a confidently straight 2D knee is treated as straight in 3D. Leave off for other camera angles |
 | `sourceSpeed` | `1` | Speed of the footage relative to real time (0.1–1). `0.4` turns slow motion at 40% into a real-time action. Phases and corrections stay in footage seconds |
+| `decisions` | `false` | Ask a vision model through OpenRouter which way the performer faces and which leg is raised, about every 0.1 s. Sends cropped frames off this machine; about one cent and 30 s per clip. The service needs `OPENROUTER_API_KEY`, or `OPENROUTER_ENV_FILE` pointing at a file that defines it |
 | `airborne` | `false` | Let the character leave the floor, using the lowest ankle's height in the image. For jumps filmed with a level camera at roughly constant distance |
 | `corrections` | none | Up to 8 bounded corrections: `smooth` (strength 1–5) or `hold` on one body part in one clip-time window |
 | `phases` | one phase | `[{name, end, kind?}]`, ends in clip seconds; the last must equal the window length |
@@ -313,6 +314,20 @@ Backside 900 r13: shoulders turn 810° and hips 747°, monotonically; pelvis and
 The Backside 900 high kick also needed one more leg rule in `lift.py`: when a leg reappears after an overlapped stretch but the labels say the other leg was the one that was out beforehand, the clear frames just before the stretch are relabelled. The kick now goes up and over (bridge 135° over the top) and comes down to the right. During the vertical part the leg is kept in front of the trunk by the bridge rule and reads short from the front.
 
 Side effect: the karate cross-step's minimum leg clearance drops from 10.2 cm to 6.0 cm at one frame (1.10 s), because the hips now follow the shoulders there.
+
+## Vision decisions (7 October 2026)
+
+User review of Cheat 360 crescent: wrong from 0.55 s, right leg up instead of left at 0.58 s. The user proposed adding a decision check by a vision model through OpenRouter, using the key in the voice-helper project.
+
+The model id the user gave (`openai/gpt-6-luna-decisions`) is not in OpenRouter's catalogue; `openai/gpt-6-luna` is, with image input and structured output, and is what `decide.py` uses. It is a new optional stage between observe and lift: every 0.1 s of footage a 512 px crop around the performer is sent with a fixed question and a strict JSON schema (`facing`: toward camera, away, image-left, image-right; `raised_leg`: left, right, none, both; `confidence`). Results are cached like any stage. Measured: 26–29 frames per clip, 28–38 s with eight parallel requests, $0.005–0.008 per clip. The key is read from the environment at run time and is not stored in this repository.
+
+What the answers turned out to be good for, on four clips:
+
+- **Facing** is steady and matches the turn track already produced by the turn-continuity rule; it is added as a penalty on turn candidates more than 60° from the answer, and changed nothing on these clips.
+- **Raised leg** is not reliable enough to relabel legs. Acting on it directly (exchanging labels wherever a confident, repeated answer disagreed with the detector) caused repeated 20-frame exchanges and raised projection error (Cheat 720 0.026 → 0.041). That path is off (`--exchange-legs-on-decisions`).
+- **Veto.** Where a confident, repeated answer agrees with the detector's own labels, those labels are pinned and the swap repairs may not exchange legs within three frames. This is what fixed the reported fault: the detector had the left leg kicking at 0.48–0.60 s, and the "relabel before an overlapped stretch" rule added earlier that day had exchanged it. With the veto, swapped frames fall from 9 to 1 and the kick is the left leg to image-left at 0.50–0.58 s. Outside crescent kick recovers the same way (projection 0.055 → 0.028).
+
+Still wrong in Cheat 360 crescent: the high part of the kick at 0.62–0.66 s takes the low way round. Without `decisions` the pipeline behaves as before.
 
 ## Limits
 

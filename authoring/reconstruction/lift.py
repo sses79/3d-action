@@ -1,7 +1,7 @@
 """Bounded MotionBERT-Lite pilot. Estimated 3D joints, not rotation/contact truth."""
 import argparse,time,json,sys,hashlib,subprocess
 from pathlib import Path
-started=time.perf_counter();parser=argparse.ArgumentParser();parser.add_argument('--pose',default='authoring/reviews/video/kick-reference/pose-report.json');parser.add_argument('--out',default='authoring/reviews/video/kick-reference/reconstruction');parser.add_argument('--benchmark',action='store_true');parser.add_argument('--no-leg-repair',action='store_true');parser.add_argument('--speed',type=float,default=1);args=parser.parse_args()
+started=time.perf_counter();parser=argparse.ArgumentParser();parser.add_argument('--pose',default='authoring/reviews/video/kick-reference/pose-report.json');parser.add_argument('--out',default='authoring/reviews/video/kick-reference/reconstruction');parser.add_argument('--benchmark',action='store_true');parser.add_argument('--no-leg-repair',action='store_true');parser.add_argument('--speed',type=float,default=1);parser.add_argument('--decisions');parser.add_argument('--exchange-legs-on-decisions',action='store_true');args=parser.parse_args()
 import numpy as np,torch
 imports=time.perf_counter()-started;torch.set_num_threads(2);torch.set_num_interop_threads(1)
 vendor=Path('.authoring/vendor/MotionBERT');sys.path.insert(0,str(vendor.resolve()));from lib.model.DSTformer import DSTformer
@@ -11,7 +11,8 @@ assert raw.shape[1:]==(17,3) and len(raw)>2 and np.all(np.diff(times)>0)
 samples=round((report['interval'][1]-report['interval'][0])*30)+1
 # Motion blur can make the detector drop a fast leg and redraw it on top of the other leg: both knee and ankle land on the
 # other side's joints, with reduced confidence, a large jump from the last trusted frame. Such frames are bridged, not trusted.
-repaired=[];swapped=[];bridged=[]
+repaired=[];swapped=[];bridged=[];vetoed=[]
+decision_file=json.loads(Path(args.decisions).read_text()) if args.decisions else None;decisions=decision_file['decisions'] if decision_file else [];decision_summary={'model':decision_file['model'],'frames':len(decisions),'costUSD':decision_file['costUSD'],'legAgreed':0,'legDisagreed':[],'legExchanged':[]} if decision_file else None
 if not args.no_leg_repair:
  height=float(np.median([r['bbox'][3]-r['bbox'][1] for r in rows]));apart=lambda a,b:float(np.linalg.norm(a[:2]-b[:2]))/height;sides={'left':(13,15,14,16),'right':(14,16,13,15)};trusted={s:[] for s in sides}
  # Blur can also make the detector exchange the two legs for a frame. Legs move continuously in the image, so when swapping
@@ -19,11 +20,34 @@ if not args.no_leg_repair:
  # Which leg is which can only be judged between frames where the legs are apart. When the detector has drawn them on top of
  # each other, either labelling fits equally well, so such frames are neither tested nor used as the reference.
  together=lambda f:apart(raw[f,13],raw[f,14])<.2 and apart(raw[f,15],raw[f,16])<.2;ref=0
+ # Vision decisions: where the model is confident which of the performer's legs is raised and the detector has the other leg
+ # clearly higher, the labels are exchanged there and in the neighbouring frames that continue the same legs.
+ exchange=lambda f:raw.__setitem__((f,[13,14,15,16]),raw[f,[14,13,16,15]])
+ # Where a firm answer agrees with the detector's own labels, those labels are pinned: the swap repairs below may not
+ # exchange legs within three frames of such a frame. The answers veto repairs; they do not relabel anything themselves.
+ pinned=set();blocked=lambda f:any(g in pinned for g in range(f-3,f+4))
+ # A single answer is not trusted: the same leg must be named, with confidence, in a neighbouring answer within 0.25 s.
+ firm=lambda d:d['raisedLeg'] in ('left','right') and d['confidence']!='low'
+ for n,d in enumerate(decisions):
+  if not firm(d) or not any(firm(o) and o['raisedLeg']==d['raisedLeg'] and abs(o['time']-d['time'])<=.25 for o in decisions[max(0,n-1):n]+decisions[n+1:n+2]):continue
+  i=int(np.argmin(np.abs(times-d['time'])));higher='left' if raw[i,15,1]<raw[i,16,1] else 'right'
+  if abs(times[i]-d['time'])>.03 or together(i) or abs(raw[i,15,1]-raw[i,16,1])/height<.15 or higher==d['raisedLeg']:
+   if abs(times[i]-d['time'])<=.03 and not together(i) and higher==d['raisedLeg'] and abs(raw[i,15,1]-raw[i,16,1])/height>=.15:decision_summary['legAgreed']+=1;pinned.add(i)
+   continue
+  decision_summary['legDisagreed'].append(round(float(d['clipTime']),2))
+  # Exchanging on these answers is off by default: in trials the model's left/right answers were not consistent enough.
+  if not args.exchange_legs_on_decisions:continue
+  exchange(i);changed=[i]
+  for step in (1,-1):
+   j=i+step
+   while 0<=j<len(raw) and not together(j) and sum(apart(raw[j,a],raw[j-step,b]) for a,b in ((13,14),(14,13),(15,16),(16,15)))<sum(apart(raw[j,a],raw[j-step,a]) for a in (13,14,15,16)):exchange(j);changed.append(j);j+=step
+  decision_summary['legExchanged'].append({'time':float(d['time']),'frames':len(changed)});swapped.extend({'frame':int(c),'time':float(times[c]),'jumpBodyHeights':0.0} for c in changed)
  for i in range(1,len(raw)):
   if together(i):continue
   keep=sum(apart(raw[i,j],raw[ref,j]) for j in (13,14,15,16));swap=sum(apart(raw[i,a],raw[ref,b]) for a,b in ((13,14),(14,13),(15,16),(16,15)))
   # Across a gap of overlapped frames a leg may really have moved far, so identity is only corrected between adjacent frames.
-  if ref==i-1 and keep>.5 and swap<.5*keep:raw[i,[13,14,15,16]]=raw[i,[14,13,16,15]];swapped.append({'frame':i,'time':float(times[i]),'jumpBodyHeights':keep})
+  if ref==i-1 and keep>.5 and swap<.5*keep and blocked(i):vetoed.append(float(times[i]))
+  elif ref==i-1 and keep>.5 and swap<.5*keep:raw[i,[13,14,15,16]]=raw[i,[14,13,16,15]];swapped.append({'frame':i,'time':float(times[i]),'jumpBodyHeights':keep})
   ref=i
  # A lost leg starts either merged onto the other leg at reduced confidence after a jump, or with a one-frame jump no real leg
  # makes (0.45 body heights). It stays lost, for at most twelve frames, while it is merged or its knee or ankle is below 0.9.
@@ -47,7 +71,8 @@ if not args.no_leg_repair:
     # The leg that reappears must be the one that was out before the stretch. If the labels say it was the other one (the leg
     # farther from where the pair was drawn), the two were exchanged on the way in, and the clear frames just before are relabelled.
     g=f-1
-    if g>=0 and not together(g) and apart(raw[g,sides[stay][1]],raw[e,sides[stay][1]])>apart(raw[g,sides[away][1]],raw[e,sides[away][1]])+.15:
+    if g>=0 and not together(g) and apart(raw[g,sides[stay][1]],raw[e,sides[stay][1]])>apart(raw[g,sides[away][1]],raw[e,sides[away][1]])+.15 and any(blocked(q) for q in range(max(0,g-8),g+1)):vetoed.append(float(times[g]))
+    elif g>=0 and not together(g) and apart(raw[g,sides[stay][1]],raw[e,sides[stay][1]])>apart(raw[g,sides[away][1]],raw[e,sides[away][1]])+.15:
      while g>=0 and f-g<=8 and not together(g):raw[g,[13,14,15,16]]=raw[g,[14,13,16,15]];swapped.append({'frame':g,'time':float(times[g]),'jumpBodyHeights':0.0});g-=1
     first=f
     while first>0 and f-first<6 and length(away,first-1)<.6*usual[away]:first-=1
@@ -139,5 +164,5 @@ a=time.perf_counter();raw3d=predict(raw_input);raw_infer=time.perf_counter()-a
 # Camera-space x right, y down, depth is learned. Keep root-relative estimates separate from image root.
 root=draft[:,0:1].copy();relative=draft-root
 names=['pelvis','right_hip','right_knee','right_ankle','left_hip','left_knee','left_ankle','spine','neck','nose','head','left_shoulder','left_elbow','left_wrist','right_shoulder','right_elbow','right_wrist']
-result={'schemaVersion':1,'status':'estimated-draft-unreviewed','backend':'MotionBERT-Lite H36M global pose','modelSHA256':hashlib.sha256(path.read_bytes()).hexdigest(),'sourceCodeCommit':subprocess.check_output(['git','-C',str(vendor),'rev-parse','HEAD'],text=True).strip(),'checkpointURL':'https://huggingface.co/walterzhu/MotionBERT/resolve/main/checkpoint/pose3d/FT_MB_lite_MB_ft_h36m_global_lite/best_epoch.bin','sourceSHA256':report['sourceSHA256'],'sourcePose':args.pose,'frameRate':30,'recordingInterval':report['interval'],'times':uniform.tolist(),'jointNames':names,'coordinates':'learned camera-space normalized x-right/y-down/z-depth; relative scale, not metric','rootRelativePositions':relative.tolist(),'rawModelPositions':draft.tolist(),'raw2DModelPositions':raw3d.tolist(),'preparedInput':prepared.tolist(),'synthesizedJoints':['pelvis midpoint','neck shoulder midpoint','spine midpoint','head extrapolated from nose/neck'],'rootTravel':'Not reconstructed in world space; image pelvis movement retained for explicit screen-space trajectory approximation','imagePelvis':((coco[:,11,:2]+coco[:,12,:2])/2).tolist(),'faceDirection':face.tolist(),'lowestAnkleImageY':np.maximum(coco[:,15,1],coco[:,16,1]).tolist(),'inputNormalization':{'centerPixels':center.tolist(),'scalePixels':scale,'resampling':'linear interpolation on uniform30Hz grid, endpoint clamp; not new observed frames','filter':'3-sample median xy; confidence retained'},'observedFrames':observed,'repairedLegObservations':repaired,'swappedLegObservations':swapped,'legArcBridges':bridged,'extendedLegReach':extended,'bridgedFrames':observed-len(rows),'firstBoxHeightPixels':rows[0]['bbox'][3]-rows[0]['bbox'][1],'timingsSeconds':{'imports':imports,'preparation':prep,'modelLoad':load,'firstInference':first,'warmInferences':runs,'rawInputInference':raw_infer,'processWall':time.perf_counter()-started},'limits':['No3D ground truth','COCO-to-H36M includes estimated axial joints','Single-view depth/twist/foot contact uncertain','No mirrored-side resolution','World root/metric scale absent']}
+result={'schemaVersion':1,'status':'estimated-draft-unreviewed','backend':'MotionBERT-Lite H36M global pose','modelSHA256':hashlib.sha256(path.read_bytes()).hexdigest(),'sourceCodeCommit':subprocess.check_output(['git','-C',str(vendor),'rev-parse','HEAD'],text=True).strip(),'checkpointURL':'https://huggingface.co/walterzhu/MotionBERT/resolve/main/checkpoint/pose3d/FT_MB_lite_MB_ft_h36m_global_lite/best_epoch.bin','sourceSHA256':report['sourceSHA256'],'sourcePose':args.pose,'frameRate':30,'recordingInterval':report['interval'],'times':uniform.tolist(),'jointNames':names,'coordinates':'learned camera-space normalized x-right/y-down/z-depth; relative scale, not metric','rootRelativePositions':relative.tolist(),'rawModelPositions':draft.tolist(),'raw2DModelPositions':raw3d.tolist(),'preparedInput':prepared.tolist(),'synthesizedJoints':['pelvis midpoint','neck shoulder midpoint','spine midpoint','head extrapolated from nose/neck'],'rootTravel':'Not reconstructed in world space; image pelvis movement retained for explicit screen-space trajectory approximation','imagePelvis':((coco[:,11,:2]+coco[:,12,:2])/2).tolist(),'faceDirection':face.tolist(),'lowestAnkleImageY':np.maximum(coco[:,15,1],coco[:,16,1]).tolist(),'inputNormalization':{'centerPixels':center.tolist(),'scalePixels':scale,'resampling':'linear interpolation on uniform30Hz grid, endpoint clamp; not new observed frames','filter':'3-sample median xy; confidence retained'},'observedFrames':observed,'repairedLegObservations':repaired,'swappedLegObservations':swapped,'legArcBridges':bridged,'decisions':decisions,'decisionSummary':{**decision_summary,'repairsVetoed':len(vetoed)} if decision_summary else None,'extendedLegReach':extended,'bridgedFrames':observed-len(rows),'firstBoxHeightPixels':rows[0]['bbox'][3]-rows[0]['bbox'][1],'timingsSeconds':{'imports':imports,'preparation':prep,'modelLoad':load,'firstInference':first,'warmInferences':runs,'rawInputInference':raw_infer,'processWall':time.perf_counter()-started},'limits':['No3D ground truth','COCO-to-H36M includes estimated axial joints','Single-view depth/twist/foot contact uncertain','No mirrored-side resolution','World root/metric scale absent']}
 (out/'motion-ir.json').write_text(json.dumps(result));np.save(out/'positions.npy',relative);print(json.dumps({'shape':list(relative.shape),'timings':result['timingsSeconds'],'finite':bool(np.isfinite(relative).all())}))

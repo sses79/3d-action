@@ -25,14 +25,22 @@ lengths=[max(float(np.median(np.linalg.norm(prior[:,a]-prior[:,b],axis=1))),floa
 # the sign follows the lift from frame to frame, except where the lift jumps, and there the turn under way continues.
 # The lift on its own can flip a side-on body front to back in one frame. Only the depth of the two joints is rewritten.
 turn_report={}
+# Vision decisions give the facing in four coarse classes. A candidate turn more than 60 degrees from the class seen at that
+# time is penalized, which settles front-or-back where the shoulders alone cannot.
+facing_yaw={'toward_camera':0.0,'image_right':np.pi/2,'away_from_camera':np.pi,'image_left':-np.pi/2};clock=np.array(ir['times']);seen_at={}
+for d in ir.get('decisions') or []:
+ if d['confidence']!='low':seen_at[int(np.argmin(np.abs(clock-d['time'])))]=facing_yaw[d['facing']]
+def seen(i,c):
+ near=[j for j in (i,i-1,i+1) if j in seen_at]
+ return 0.0 if not near else 3*max(0.0,abs((c-seen_at[near[0]]+np.pi)%(2*np.pi)-np.pi)-np.radians(60))
 def keep_turning(left,right,name,follow=None):
  d=prior[:,left]-prior[:,right];width=float(np.median(np.linalg.norm(d,axis=1)));dx=target[:,left,0]-target[:,right,0];dy=target[:,left,1]-target[:,right,1];flat=np.sqrt(np.maximum(width**2-dy**2,(.3*width)**2));angle=np.arccos(np.clip(dx/flat,-1,1))
- lift=np.unwrap(np.arctan2(d[:,2],d[:,0]));yaw=np.zeros(len(lift));yaw[0]=lift[0] if follow is None else min((lift[0]+2*np.pi*k for k in range(-3,4)),key=lambda c:abs(c-follow[0]));speed=float(np.median(np.diff(lift[:6]))) if len(lift)>6 else 0
+ lift=np.unwrap(np.arctan2(d[:,2],d[:,0]));yaw=np.zeros(len(lift));yaw[0]=min((sign*angle[0]+2*np.pi*k for sign in (1,-1) for k in range(-3,4)),key=lambda c:abs(c-(lift[0] if follow is None else follow[0]))+seen(0,c));speed=float(np.median(np.diff(lift[:6]))) if len(lift)>6 else 0
  for i in range(1,len(lift)):
   step=(lift[i]-lift[i-1]+np.pi)%(2*np.pi)-np.pi
   # The lift's own step is believed unless it turns too far in one frame (100 degrees at half-speed footage, scaled with
   # footage speed); then the turn under way continues.
-  guess=follow[i] if follow is not None else yaw[i-1]+(step if abs(step)<np.radians(min(170,200*args.speed)) else speed);options=[sign*angle[i]+2*np.pi*k for sign in (1,-1) for k in range(-6,7)];yaw[i]=min(options,key=lambda c:abs(c-guess)+.15*abs((c-lift[i]+np.pi)%(2*np.pi)-np.pi));speed=.7*speed+.3*(yaw[i]-yaw[i-1])
+  guess=follow[i] if follow is not None else yaw[i-1]+(step if abs(step)<np.radians(min(170,200*args.speed)) else speed);options=[sign*angle[i]+2*np.pi*k for sign in (1,-1) for k in range(-6,7)];yaw[i]=min(options,key=lambda c:abs(c-guess)+.15*abs((c-lift[i]+np.pi)%(2*np.pi)-np.pi)+seen(i,c));speed=.7*speed+.3*(yaw[i]-yaw[i-1])
  middle=(prior[:,left,2]+prior[:,right,2])/2;depth=flat*np.sin(yaw)/2;changed=float(np.degrees(np.abs((yaw-lift+np.pi)%(2*np.pi)-np.pi)).max());prior[:,left,2]=middle+depth;prior[:,right,2]=middle-depth
  turn_report[name]={'maxDegreesFromLift':changed,'totalTurnDegrees':float(np.degrees(yaw[-1]-yaw[0])),'yawDegrees':[round(float(v)) for v in np.degrees(yaw)],'liftDegrees':[round(float(v)) for v in np.degrees(lift)]};return yaw
 # The hips are narrow in the image and carry little signal, so they take the shoulder turn as their guide.
