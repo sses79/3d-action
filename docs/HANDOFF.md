@@ -580,3 +580,8 @@ Cartwheel, Aerial and Backflip (overtuck) built from SAM 3D Body joints follow t
 ## 2026-10-08 — R37 height and travel from SAM 3D Body keypoints; runs 39 and 40
 
 `sam3d_to_h36m.py` emits `lowestBodyImageY` and `imagePelvis`; the `external` stage uses them and marks `lowestSupportSource: body`; `retarget.ts` then lifts without the 20-40 cm fade and floors on more joints. Cheat 360 crescent's vertical jolt at 0.61-0.65 s is gone in the `sam3d-` action (max frame step 0.66 to 0.06 m). Cartwheel no longer jumps. Sweeps still step where support changes. 87 Node tests pass.
+
+
+## 2026-10-08 — Mac mini runner; all 39 inverted clips; run 41
+
+`mini4.local` (user tim, key login from this Mac) runs SAM 3D Body in `~/Yun/sam3d-runner`: `run_queue.sh` processes `poses/clipN.json` into `out/clipN.npz` and logs to `queue.log`. About twice this Mac's speed. All 59 catalog clips now have `sam3d-<slug>` actions (20 upright from run 39, 39 inverted from run 41). `lift.py` crash on a leg lost before first seen is fixed. Open: user review of the inverted set, jump heights for tucked bodies, a build path that does not need our lift at all.

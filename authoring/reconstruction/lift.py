@@ -113,7 +113,7 @@ if not args.no_leg_repair:
    ahead=i+1<len(raw) and (min(raw[i+1,knee,2],raw[i+1,ankle,2])<.9 or apart(raw[i+1,13],raw[i+1,14])<.2 and apart(raw[i+1,15],raw[i+1,16])<.2)
    # A lost leg is not found again while it is drawn as a stub: thigh plus shank under 60% of that leg's usual image length.
    short=lambda f:apart(raw[f,hips[side]],raw[f,knee])+apart(raw[f,knee],raw[f,ankle])<.6*usual[side];stub=short(i);ahead=ahead or i+1<len(raw) and short(i+1)
-   lost[side]=start or lost[side] and i-last<=20 and (merged or low or ahead or stub)
+   lost[side]=start or lost[side] and (last is None or i-last<=20) and (merged or low or ahead or stub)
    if i in forced[side]:lost[side]=True
    elif -i-1 in forced[side]:lost[side]=False
    if lost[side]:repaired.append({'side':side,'frame':i,'time':float(times[i]),'confidence':float(min(raw[i,knee,2],raw[i,ankle,2])),'jumpBodyHeights':jump[side]})
