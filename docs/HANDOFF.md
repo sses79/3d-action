@@ -508,3 +508,8 @@ User saw the right leg pass through the body from 0.89 to 1.04 s and asked wheth
 ## 2026-10-07 — R28 chest-and-face decisions, R29 mirrored limb depth; runs 21 and 22
 
 User suggested asking the vision model for face and chest; `decide.py` now does, and `fit.py` uses face agreement, drops opposite neighbouring answers and steadies the hip turn. It did not settle the facing on Cheat 360 crescent. The leg-through-trunk fault was R19 rewriting hip and shoulder depth without the limbs; `fit.py` `keep_turning` now mirrors limb depth in those frames (R29) and the right thigh stays clear of the trunk. Grades carried over; ten clips touched by R29 were not re-read. 87 Node tests pass.
+
+
+## 2026-10-08 — R30 solid body parts; runs 23 and 24
+
+User asked for a rule that body parts cannot be inside or pass through each other. `fit.py` `body_gaps` tests rods at the character's proportions (rig lengths hard-coded from `rigProportions`) and separates in depth only; `retarget.ts` measures the same on the rig and reports `bodyPartsInside` and `rigProportions`; `pipeline.mjs` and `batch.py` pass it on. Cheat 360 crescent 16 frames inside → 1; 21 frames across the 20 clips. Only that clip was re-read; grades carried over. 87 Node tests pass.
