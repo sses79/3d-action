@@ -133,7 +133,10 @@ def body_gaps(v,sides=None,seen_runs=None):
  # a point at exactly the rod's depth has no side, and goes toward the camera (measuring plain distance gave no push at all
  # there, which left a part stuck in the middle of another).
  def inside(point,a,b,room,root=None):
-  ab=b-a;u=torch.clamp(((point-a)*ab).sum(-1)/ab.square().sum(-1).clamp_min(1e-9),0,1).detach();nearest=a+u[:,None]*ab;across=(point[:,:2]-nearest[:,:2]).square().sum(-1).detach();behind_by=point[:,2]-nearest[:,2];need=torch.sqrt(torch.relu(room*room-across)+1e-12);side=torch.where(behind_by.detach()>1e-4,1.0,-1.0) if sides is None else sides[counter[0]]
+  # 3 cm more room than the radii ask for. The character's joints as rebuilt here are within a few centimetres of the rig's,
+  # not exact (the rig's pelvis and spine turn separately), and without the margin wrists the fit believed clear were 2-5 cm
+  # inside the rig's trunk.
+  room=room+.03;ab=b-a;u=torch.clamp(((point-a)*ab).sum(-1)/ab.square().sum(-1).clamp_min(1e-9),0,1).detach();nearest=a+u[:,None]*ab;across=(point[:,:2]-nearest[:,:2]).square().sum(-1).detach();behind_by=point[:,2]-nearest[:,2];need=torch.sqrt(torch.relu(room*room-across)+1e-12);side=torch.where(behind_by.detach()>1e-4,1.0,-1.0) if sides is None else sides[counter[0]]
   if seen_runs is not None:seen_runs.append((across<room*room,need.detach(),behind_by.detach(),None if root is None else ((root-(a+torch.clamp(((root-a)*ab).sum(-1)/ab.square().sum(-1).clamp_min(1e-9),0,1)[:,None]*ab))[:,2]+.15*chest[:,2]).detach()))
   counter[0]+=1;return need-side*behind_by
  legs={};arms={};gaps=[];counter=[0]

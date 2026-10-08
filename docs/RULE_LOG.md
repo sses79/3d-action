@@ -52,6 +52,7 @@ Twenty clips from the tricking-basics video, graded by the LLM from eight front-
 | 28 | Nothing passes through anything across time (R32): 9 crossings, 46 frames inside | 20 | grades carried over; fit error worse on 9 clips | | | | | — | — |
 | 29 | Widely swung bridged leg takes its straighter shape (R33): 9 crossings, 55 frames inside | 20 | grades carried over | | | | | — | — |
 | 30 | Limb takes its reachable side against trunk and head (R34): 4 crossings, 34 frames inside | 20 | grades carried over | | | | | — | — |
+| 31 | Fit keeps 3 cm more room than the rig measure (R35): 0 crossings, 18 frames inside | 20 | grades carried over | | | | | — | — |
 
 Run 10 kept the same counts but two clips got worse and one better; counts hide that, which is why the per-clip comparison exists.
 
@@ -129,6 +130,8 @@ Status: **kept**, **kept with a known cost**, **replaced**, or **off**.
 
 **R34. Against the trunk or head a limb takes the side it can reach** (run 30; user: "fix the elbows and wrists inside the trunk"). *Found:* the fit knew about these frames (its own report listed them) and could not clear them, so the model was right and the push was wrong. Elbows sat a steady 7–9 cm inside. R32 took the side a limb comes in and goes out on when those agree; a shoulder sits about 5 cm behind the spine, so an arm folding across the chest "came in from behind", was assigned the back, and was pushed into the chest from the front with nowhere to go. *Rule (`choose_sides` in `fit.py`):* against the trunk or head, the side is where the limb's own shoulder or hip sits as the camera sees it, plus 15 cm toward the chest. Facing the camera or away, that is the chest side; side-on, it is the near or far side the limb is attached on. This comes before the in-and-out side, which is kept for limb against limb. *Result:* frames inside 55 → 34 across the 20 clips (Scoot 13 → 3, (Cheat) 540 kick 6 → 0, Cheat 360 crescent 12 → 8, Feilong 7 → 4); crossings 9 → 4; fit error within 15% everywhere, and Pop 360 (crescent) 0.016 → 0.012. Small rises on Round(house) kick (0 → 3), Hook kick (1 → 2) and Tornado kick (1 → 2), all single frames of 2–5 cm. **Kept.** No sheet was re-read for this run; it is judged on the measures.
 
+**R35. The fit keeps a margin over the measure** (run 31; user: "fix the wrists inside the trunk and shin"). *Found:* two different things. (1) Wrists 2–5 cm inside the trunk on clips where the fit's own report said nothing was inside: the fit's rebuilt character is within a few centimetres of the rig, not exact (the rig's pelvis and spine turn separately, and the error grows along the arm to the wrist). (2) Single frames 5–10 cm inside, mostly a wrist in a shin while the kicking leg sweeps past the hand: the fit knows about these and cannot clear them. *Rule:* every clearance in `fit.py` asks 3 cm more than the rig measure does. *Result:* frames inside 34 → 18 across the 20 clips, crossings 4 → 0, fit error within 15% on every clip. Wrist in trunk 6 → 1 frame, wrist in shin 6 → 3. **Kept.** *What is left (18 frames, all single frames or pairs):* case (2). A limb that overlaps another for one frame would have to jump in depth for that frame and back, which R31 forbids as unnecessary movement, so the two rules meet head on. The way out is to move the limb aside over a longer stretch around that frame, which the fit does not find by itself.
+
 ## Rolling back
 
 - **One action:** each rebuild keeps the previous revision (up to 100). `restore_revision` with the action id, its current revision and the revision wanted.
@@ -158,7 +161,7 @@ Status: **kept**, **kept with a known cost**, **replaced**, or **off**.
 - R29 changed limb depth in 11 clips but only Cheat 360 crescent was re-read; the other ten need a look. Pop 720 at 0.98 s has the kicking leg lower than the video.
 - R31 limits depth only. An unnecessary movement in the picture itself (a wrong 2D bridge or detection) is still only covered by R15 for bridged legs.
 - R13 switches on and off frame by frame inside a bridge (R26); R31 hides the jump this causes but the switching itself should be smooth.
-- After R33: 9 crossings and 55 frames inside remain, mostly elbows and wrists against the trunk (Scoot 13, Cheat 360 crescent 12) and Pop 360 (crescent)'s knee at 0.75–0.77 s. R32 also raised fit error on 9 clips, which needs explaining, since every part of it moves depth only.
+- After R35: 18 single frames inside remain, where a one-frame overlap would need a depth jump that R31 forbids. Needs the dodge spread over a longer stretch. R32 also raised fit error on 9 clips, which needs explaining, since every part of it moves depth only.
 - R7 jump heights are unverified.
 - R27's hip ranges need performer-specific values, or the pose-dependent limits of Akhter and Black (CVPR 2015, measured on gymnasts), before they can flag anything. Elbows are not yet hinged in the retarget; shoulders, neck and wrists have no range check.
 - Back sweep, and the 39 inverted or hands-on-floor tricks, are outside what the rules cover.

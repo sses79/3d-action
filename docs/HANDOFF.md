@@ -538,3 +538,8 @@ User confirmed Cheat 720 and Pop 360 (crescent) look better after R32, so it sta
 ## 2026-10-08 — R34 reachable side against the trunk; run 30
 
 Elbows stuck inside the trunk came from R32 assigning a folding arm the back side. `fit.py` `choose_sides` now takes the side of the limb's own shoulder or hip, leaning to the chest, for trunk and head. Frames inside 55 to 34, crossings 9 to 4, no fit-error regressions. Judged on measures only. 87 Node tests pass.
+
+
+## 2026-10-08 — R35 margin in the fit; run 31
+
+Wrists the fit believed clear were 2-5 cm inside the rig's trunk (model within centimetres of the rig, not exact). `fit.py` `inside` now asks 3 cm more room. Frames inside 34 to 18, crossings 4 to 0, no fit-error change. Remaining frames are one-frame overlaps where R30 and R31 conflict. Judged on measures only. 87 Node tests pass.
