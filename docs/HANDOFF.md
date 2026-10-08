@@ -565,3 +565,8 @@ Two clips, built straight from SAM 3D Body with no fit (`trial-sam3d-19-none`, `
 ## 2026-10-08 — All 20 clips from SAM 3D Body; run 35
 
 User preferred the no-fit SAM 3D Body builds. `batch.py --external DIR` builds each clip from external joints into `sam3d-<slug>`; `.authoring/sam3d-trial/` holds the npz and joint files for the 20 clips (untracked). Run 35: 5 frames inside and 1 crossing across the set, against 18 and 0 for the rules. Hand-on-floor clips pose correctly but sink through the floor. Open: user review of the set, jitter, lean, floor placement for hands, and whether to make this the default lifter and use its rotations.
+
+
+## 2026-10-08 — R36 floor under feet, hands or head; runs 36 and 37
+
+`retarget.ts` floors on the lowest of feet, hands and head; `lift.py` emits `lowestSupportImageY` (ankles or clear wrists) and `core.ts` passes it for the jump height. Scoot and Palm kick in the SAM 3D Body set now stand on the hand. Both sets rebuilt; measures and jump heights unchanged. 87 Node tests pass.

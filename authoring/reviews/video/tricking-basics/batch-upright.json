@@ -1,5 +1,5 @@
 {
- "run": "runs.json run 34",
+ "run": "runs.json run 37 (rule-built set; the SAM 3D Body set is run 36, in sam3d-<slug> actions, not graded)",
  "sourceSpeed": 0.5,
  "sourceSpeedBasis": "free-fall fit to the trunk centre during the tornado kick jump: 0.50-0.53 for a performer 1.65-1.85 m tall; hang-time cross-check 0.53",
  "review": "Run 31 (R35 margin), decisions on. Judged on the rig measures only (frames inside 34 to 18, crossings 4 to 0, fit error within 15% on every clip); no sheet was re-read. Grades carried over. LLM judgement of still poses.",
@@ -19,7 +19,7 @@
     0.2,
     2.65
    ],
-   "revision": 38,
+   "revision": 39,
    "duration": 1.225,
    "frames": 74,
    "weak": 1,
@@ -42,7 +42,7 @@
     3.6,
     5.76
    ],
-   "revision": 35,
+   "revision": 36,
    "duration": 1.08,
    "frames": 66,
    "weak": 3,
@@ -65,7 +65,7 @@
     6.71,
     8.46
    ],
-   "revision": 37,
+   "revision": 38,
    "duration": 0.875,
    "frames": 54,
    "weak": 1,
@@ -88,7 +88,7 @@
     25.62,
     27.68
    ],
-   "revision": 34,
+   "revision": 35,
    "duration": 1.03,
    "frames": 63,
    "weak": 2,
@@ -111,7 +111,7 @@
     28.63,
     30.88
    ],
-   "revision": 34,
+   "revision": 35,
    "duration": 1.125,
    "frames": 69,
    "weak": 10,
@@ -134,7 +134,7 @@
     31.83,
     33.78
    ],
-   "revision": 34,
+   "revision": 35,
    "duration": 0.975,
    "frames": 60,
    "weak": 10,
@@ -157,7 +157,7 @@
     38.54,
     40.09
    ],
-   "revision": 34,
+   "revision": 35,
    "duration": 0.775,
    "frames": 48,
    "weak": 3,
@@ -180,7 +180,7 @@
     52.45,
     54.9
    ],
-   "revision": 38,
+   "revision": 39,
    "duration": 1.225,
    "frames": 74,
    "weak": 5,
@@ -203,7 +203,7 @@
     59.06,
     61.91
    ],
-   "revision": 38,
+   "revision": 39,
    "duration": 1.425,
    "frames": 86,
    "weak": 4,
@@ -226,7 +226,7 @@
     62.86,
     65.42
    ],
-   "revision": 39,
+   "revision": 40,
    "duration": 1.28,
    "frames": 78,
    "weak": 7,
@@ -249,7 +249,7 @@
     66.37,
     69.12
    ],
-   "revision": 36,
+   "revision": 37,
    "duration": 1.375,
    "frames": 83,
    "weak": 6,
@@ -272,7 +272,7 @@
     70.07,
     73.02
    ],
-   "revision": 35,
+   "revision": 36,
    "duration": 1.475,
    "frames": 90,
    "weak": 2,
@@ -295,7 +295,7 @@
     92.49,
     95.24
    ],
-   "revision": 37,
+   "revision": 38,
    "duration": 1.375,
    "frames": 83,
    "weak": 9,
@@ -318,7 +318,7 @@
     96.19,
     98.95
    ],
-   "revision": 35,
+   "revision": 36,
    "duration": 1.38,
    "frames": 84,
    "weak": 8,
@@ -341,7 +341,7 @@
     115.11,
     117.97
    ],
-   "revision": 34,
+   "revision": 35,
    "duration": 1.43,
    "frames": 87,
    "weak": 4,
@@ -364,7 +364,7 @@
     118.92,
     121.47
    ],
-   "revision": 39,
+   "revision": 40,
    "duration": 1.275,
    "frames": 77,
    "weak": 8,
@@ -387,7 +387,7 @@
     122.42,
     125.27
    ],
-   "revision": 38,
+   "revision": 39,
    "duration": 1.425,
    "frames": 86,
    "weak": 9,
@@ -410,7 +410,7 @@
     126.22,
     129.58
    ],
-   "revision": 34,
+   "revision": 35,
    "duration": 1.68,
    "frames": 102,
    "weak": 13,
@@ -433,7 +433,7 @@
     130.53,
     133.28
    ],
-   "revision": 35,
+   "revision": 36,
    "duration": 1.375,
    "frames": 83,
    "weak": 20,
@@ -456,7 +456,7 @@
     134.23,
     137.09
    ],
-   "revision": 34,
+   "revision": 35,
    "duration": 1.43,
    "frames": 87,
    "weak": 9,
