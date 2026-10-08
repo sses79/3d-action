@@ -553,3 +553,10 @@ Tried making room early around overlaps (all overlaps, then only brief ones) and
 ## 2026-10-08 — Line drawn
 
 Docs brought level with the code: Open section of `docs/RULE_LOG.md` rewritten as the current state, skill and `CURRENT_STATE.md` mention the rig measures, `CLAUDE.md` notes the service restart and batch time. Reconstruction work pauses here at 35 rules, run 34. Next topic: evaluating SAM 3D Body and related models as a replacement or cross-check for the lift and fit stages.
+
+
+## 2026-10-08 — SAM 3D Body trial on this Mac (ComfyUI repack)
+
+Research summary and trial. ComfyUI (commit 58b176f) cloned to untracked `.authoring/comfyui` with its own venv; weights `sam_3d_body_dinov3_bf16.safetensors` (2.83 GB) from `Comfy-Org/sam-3d-body` in `models/detection/`. The built-in nodes run headless on the M1 GPU at 1.8-3.8 s a frame (body only), after one workaround in our script for a float64 step MPS lacks. Scripts: `authoring/reconstruction/trials/sam3d_comfy.py` (frames + our person boxes -> npz of 70 keypoints, 127 joints with rotations) and `sam3d_to_h36m.py` (-> our 17 joints). New trial option `externalJoints` on `reconstruct_motion` swaps those joints in for the lift; fit and retarget run as usual.
+
+Two clips, built straight from SAM 3D Body with no fit (`trial-sam3d-19-none`, `trial-sam3d-1-none` in the live project; `-stable` variants ran our fit on top): it sees both legs through the stretch where YOLO26 loses one (Cheat 360 crescent 0.82-1.12 s), so no bridge is needed. Cheat 360 crescent: 0 frames inside, 0 crossings without any depth rule (ours after 35 rules: 4 and 0). Hook kick: 5 frames (wrist 3 cm), 1 crossing; kicking leg long and visible in the front view through 0.55-0.65 s. Our fit on top made Cheat 360 crescent worse (6 inside, 2 crossings) and Hook kick better (0, 0). Seen but not checked: side views lean far back, possibly camera pitch; kicking knee bent at 1.04-1.10 s on Cheat 360 crescent where the video is straight; per-frame jitter not measured. Not yet used: joint rotations, hands, feet, smoothing node, BVH export.
