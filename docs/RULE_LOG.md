@@ -157,16 +157,19 @@ Status: **kept**, **kept with a known cost**, **replaced**, or **off**.
 
 ## Open
 
+State at the line drawn on 2026-10-08 (run 34, commit after `21e7c0e`): 35 rules, 20 upright clips, 18 single frames with a part inside another, 0 crossings, grades 13 good / 4 fair / 1 poor / 2 not upright (carried over since run 22 without a full re-read).
+
+- 18 single frames inside remain (10 clips, 2–10 cm), where a one-frame overlap would need a depth jump that R31 forbids. Three in-fit attempts made things worse (see the rejected entry after R35). Likelier: a targeted pass after the fit on the limb and frames the measure names.
+- R32 raised fit error on 9 clips although it moves depth only; unexplained. The user judged Cheat 720 and Pop 360 (crescent) better after it.
+- The grades have not been re-read as a set since run 22; R27–R35 were judged mostly on measures and a few clips each. A full re-read of the 20 sheets is due before the grades are trusted.
 - Outside crescent kick comes down about 0.06 s early after R22.
-- Cheat 360 crescent: from 0.89 to 1.04 s the raised right leg points the right way but is bent (about 105°) and short; the video has it nearly straight after 0.92 s. The bend is carried in from the entry frame (R24), where the leg really is bent. Frame 0.97 s itself got no second look.
-- R26 uses only the direction of a second look. A better second look (a crop upright on the trunk, or a larger image) might give a usable knee.
-- Back sweep improved under the in-loop island rule that had to be removed; worth finding a version that helps it without breaking the 540 kick.
-- R20 is wrong on two clips when decisions are off; it should require decisions or be reworked.
-- R13's front margin shortens vertical kicks seen from the front, and R26 showed it can also bend the picture: it should act on depth only.
-- R29 changed limb depth in 11 clips but only Cheat 360 crescent was re-read; the other ten need a look. Pop 720 at 0.98 s has the kicking leg lower than the video.
-- R31 limits depth only. An unnecessary movement in the picture itself (a wrong 2D bridge or detection) is still only covered by R15 for bridged legs.
-- R13 switches on and off frame by frame inside a bridge (R26); R31 hides the jump this causes but the switching itself should be smooth.
-- After R35: 18 single frames inside remain, where a one-frame overlap would need a depth jump that R31 forbids. Needs the dodge spread over a longer stretch. R32 also raised fit error on 9 clips, which needs explaining, since every part of it moves depth only.
+- Pop 720 at 0.98 s has the kicking leg lower than the video (seen after R28's prompt change).
+- R26 uses only the direction of a second look; its knee and reach are noise (recorded as `reach` and `bendDegrees`).
+- R13 switches on and off frame by frame inside a bridge (R26); R31 hides the jump this causes.
+- R31 limits depth only; an unnecessary movement in the picture itself is covered only by R15 for bridged legs.
+- R20 is wrong on two clips when decisions are off.
+- Back sweep improved under the in-loop island rule that had to be removed.
+- The solid-parts rods are not the mesh; hands, feet and upper arm against trunk are untested; the rig lengths are written into `fit.py` for this one character.
 - R7 jump heights are unverified.
 - R27's hip ranges need performer-specific values, or the pose-dependent limits of Akhter and Black (CVPR 2015, measured on gymnasts), before they can flag anything. Elbows are not yet hinged in the retarget; shoulders, neck and wrists have no range check.
 - Back sweep, and the 39 inverted or hands-on-floor tricks, are outside what the rules cover.

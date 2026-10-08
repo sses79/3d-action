@@ -548,3 +548,8 @@ Wrists the fit believed clear were 2-5 cm inside the rig's trunk (model within c
 ## 2026-10-08 — Last 18 frames: not fixed; runs 32-34
 
 Tried making room early around overlaps (all overlaps, then only brief ones) and a heavier R30 weight; all made the totals worse and were removed. `fit.py` is unchanged from aa2b1a4 and the last run equals run 31 (18 frames inside, 0 crossings). Next idea: a targeted pass after the fit on the limb and frames the rig measure names.
+
+
+## 2026-10-08 — Line drawn
+
+Docs brought level with the code: Open section of `docs/RULE_LOG.md` rewritten as the current state, skill and `CURRENT_STATE.md` mention the rig measures, `CLAUDE.md` notes the service restart and batch time. Reconstruction work pauses here at 35 rules, run 34. Next topic: evaluating SAM 3D Body and related models as a replacement or cross-check for the lift and fit stages.

@@ -34,6 +34,12 @@ Run `reconstruct_motion` with `commit: true` and `expectedRevision: 0`. Committi
 - `quality.inspectionWindows`: velocity flags. They mark places to look, not faults.
 - `peakLiftMeters`: for a jump, compare with what the video shows.
 
+Also in the summary, from the character itself:
+
+- `action.bodyPartsInside`: frames where one part is more than 2 cm inside another, the worst depth, each stretch with the pair involved, and `crossings` (a limb that changed from in front of a part to behind it while overlapping it). Look at those times first.
+- `action.jointRangesBeyondNormal`: joints past textbook ranges. Expected for hips in splits and high kicks; a prompt to look, not an error.
+- `estimate.reobservedLegFrames`: frames where a lost leg was found again on a turned copy of the frame.
+
 ## 4. Compare with the video
 
 `compare_video_action` writes a sheet with the video on top and the character from the front and side below. Read it.

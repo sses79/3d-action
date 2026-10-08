@@ -5,7 +5,7 @@ Three browser demos; active work is **Animation Studio** (LLM-driven movement li
 ## Read first
 
 - `docs/CURRENT_STATE.md` — current architecture, data ownership, the service operations, limits.
-- `docs/NEW_PLAN.md` — active plan (video → reusable 3D actions). Phases 1–5 delivered (`reconstruct_motion`, review sheets, bounded corrections and the `video-to-action` skill; see `docs/RECONSTRUCT_MOTION.md`). Next: prove it on new clips, then Phase 6 (register an accepted video-derived movement).
+- `docs/NEW_PLAN.md` — active plan (video → reusable 3D actions). Phases 1–5 delivered (`reconstruct_motion`, review sheets, bounded corrections and the `video-to-action` skill; see `docs/RECONSTRUCT_MOTION.md`). Proven on 20 upright clips of a tricking tutorial (`authoring/reviews/video/tricking-basics/`, 34 recorded runs). Next: Phase 6 (register an accepted video-derived movement); see the Open section of `docs/RULE_LOG.md` for what is unfinished.
 - `docs/HANDOFF.md` — append-only session log (long, dense). Read the last few sections, not the whole file. Add a dated section after substantial work.
 - `docs/RULE_LOG.md` — every reconstruction rule, why it exists and what it did to the other clips. After changing a rule, run `authoring/reconstruction/batch.py` and add an entry.
 - Other `docs/` plans and studies are historical unless `CURRENT_STATE.md` points at them.
@@ -40,6 +40,7 @@ node authoring/cli.mjs tools   # operation schemas (service must be running)
 - Use Node 26 (`/Users/tim/.nvm/versions/node/v26.7.0/bin`); the default shell may give Node 18, which fails on JSON import attributes.
 
 - Source is written very densely (multi-thousand-character lines, few comments). Match it when making small edits; grep by symbol rather than reading whole files.
+- Restart the service after editing `pipeline.mjs`, `retarget.ts` or `core.ts` (it loads them once); Python stages are picked up per run. A full 20-clip batch takes 10–15 minutes, so run it in the background.
 - Never hand-edit `.authoring/project.json` or its sidecars; go through the service (MCP `animation-studio` or `authoring/cli.mjs`). Back up the index, blobs folder and sidecars together.
 - Every write pins revisions (`expectedRevision`, `sourceRevision`); fetch current values instead of assuming them.
 - "Supported" contact/seam reviews are bounded, configuration-specific visual and numeric checks, not physical validation. Do not claim more than the evidence in `authoring/reviews/` shows.
