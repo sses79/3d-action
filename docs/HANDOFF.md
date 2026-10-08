@@ -533,3 +533,8 @@ User flagged Hook kick 0.59 s, Tornado kick 0.83 s and the five frames on Cheat 
 ## 2026-10-08 — R33 straight leg through a wide bridged swing; run 29
 
 User confirmed Cheat 720 and Pop 360 (crescent) look better after R32, so it stays. Tornado kick 0.81 s: the trunk lean is real; the fault was the bridge easing a bent entry shape evenly. `lift.py` now takes the straighter of the entry and exit shapes for the middle of a bridge wider than a quarter turn. Tornado kick and the Cheat 360 crescent right leg are straight. Frames inside 46 to 55, crossings 9. Second looks now record `reach` and `bendDegrees` (noisy; not used). 87 Node tests pass.
+
+
+## 2026-10-08 — R34 reachable side against the trunk; run 30
+
+Elbows stuck inside the trunk came from R32 assigning a folding arm the back side. `fit.py` `choose_sides` now takes the side of the limb's own shoulder or hip, leaning to the chest, for trunk and head. Frames inside 55 to 34, crossings 9 to 4, no fit-error regressions. Judged on measures only. 87 Node tests pass.

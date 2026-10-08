@@ -132,21 +132,21 @@ def body_gaps(v,sides=None,seen_runs=None):
  # radii allow, it must be at least the remaining distance in front of or behind it. It is pushed to the side it is on;
  # a point at exactly the rod's depth has no side, and goes toward the camera (measuring plain distance gave no push at all
  # there, which left a part stuck in the middle of another).
- def inside(point,a,b,room):
+ def inside(point,a,b,room,root=None):
   ab=b-a;u=torch.clamp(((point-a)*ab).sum(-1)/ab.square().sum(-1).clamp_min(1e-9),0,1).detach();nearest=a+u[:,None]*ab;across=(point[:,:2]-nearest[:,:2]).square().sum(-1).detach();behind_by=point[:,2]-nearest[:,2];need=torch.sqrt(torch.relu(room*room-across)+1e-12);side=torch.where(behind_by.detach()>1e-4,1.0,-1.0) if sides is None else sides[counter[0]]
-  if seen_runs is not None:seen_runs.append((across<room*room,need.detach(),behind_by.detach(),chest[:,2].detach() if a is pelvis or a is head else None))
+  if seen_runs is not None:seen_runs.append((across<room*room,need.detach(),behind_by.detach(),None if root is None else ((root-(a+torch.clamp(((root-a)*ab).sum(-1)/ab.square().sum(-1).clamp_min(1e-9),0,1)[:,None]*ab))[:,2]+.15*chest[:,2]).detach()))
   counter[0]+=1;return need-side*behind_by
  legs={};arms={};gaps=[];counter=[0]
  for side,sign,(h,k,f),(s,e,w) in (('l',1,(4,5,6),(11,12,13)),('r',-1,(1,2,3),(14,15,16))):
   hip=sign*hips*RIG['hip']+rise*.019+front*.05;knee=hip+d(h,k)*RIG['thigh'];legs[side]=(hip,knee,knee+d(k,f)*RIG['shin']);shoulder=neck-up*.05-chest*.052+sign*wide*RIG['shoulder'];elbow=shoulder+d(s,e)*RIG['upper_arm'];arms[side]=(shoulder,elbow,elbow+d(e,w)*RIG['forearm'])
  for hip,knee,ankle in legs.values():
   # The knee gets a slimmer trunk (0.10) than the shin and ankle: a thigh can lie along the chest in a high kick past the shoulder.
-  gaps+=[inside(knee,head,crown,.1+.06),inside(knee,pelvis,neck,.1+.06)]
-  for point,r in (((knee+ankle)/2,.055),(ankle,.045)):gaps+=[inside(point,pelvis,neck,.13+r),inside(point,head,crown,.1+r)]
+  gaps+=[inside(knee,head,crown,.1+.06,hip),inside(knee,pelvis,neck,.1+.06,hip)]
+  for point,r in (((knee+ankle)/2,.055),(ankle,.045)):gaps+=[inside(point,pelvis,neck,.13+r,hip),inside(point,head,crown,.1+r,hip)]
  for side,(shoulder,elbow,wrist) in arms.items():
   other=arms['l' if side=='r' else 'r']
   for point,r in ((elbow,.04),((elbow+wrist)/2,.04),(wrist,.035)):
-   gaps+=[inside(point,pelvis,neck,.11+r),inside(point,head,crown,.1+r)]
+   gaps+=[inside(point,pelvis,neck,.11+r,shoulder),inside(point,head,crown,.1+r,shoulder)]
    for hip,knee,ankle in legs.values():gaps+=[inside(point,hip,knee,.075+r),inside(point,knee,ankle,.055+r)]
    if side=='r':gaps+=[inside(point,other[0],other[1],.045+r),inside(point,other[1],other[2],.04+r)]
  return torch.relu(torch.stack(gaps))
@@ -173,17 +173,18 @@ def proportion(v):return torch.stack([(torch.linalg.vector_norm(v[:,k]-v[:,h],di
 # trapped elbows inside the trunk.)
 def choose_sides(v):
  runs=[];body_gaps(v,seen_runs=runs);sides=[]
- for over,need,behind_by,chest_depth in runs:
+ for over,need,behind_by,reach_depth in runs:
   side=torch.where(behind_by>1e-4,1.0,-1.0);on=over.numpy().copy();on[1:-1]|=on[:-2]&on[2:];start=None
   for i in range(len(on)+1):
    if i<len(on) and on[i]:start=i if start is None else start
    elif start is not None:
-    # Where the point comes in and goes out on the same side, that is its side: it never had to cross.
     n,b=need[start:i],behind_by[start:i];before=float(behind_by[start-1]) if start>0 else None;after=float(behind_by[i]) if i<len(on) else None;ends=[e for e in (before,after) if e is not None and abs(e)>1e-4]
-    # Where it comes in on one side and goes out on the other, something has to give. Against the trunk or head the limb takes
-    # the chest side, the only side a raised leg or a guarding arm can reach; between two limbs, the side of least movement.
-    agreed=ends and all((e>0)==(ends[0]>0) for e in ends);chest_side=None if chest_depth is None or abs(float(chest_depth[start:i].mean()))<.2 else (1.0 if float(chest_depth[start:i].mean())>0 else -1.0)
-    side[start:i]=(1.0 if ends[0]>0 else -1.0) if agreed else chest_side if chest_side is not None else 1.0 if float(torch.relu(n-b).square().sum())<=float(torch.relu(n+b).square().sum()) else -1.0;start=None
+    # Against the trunk or head a limb has a side it can reach: the side its own shoulder or hip is on, seen from the camera,
+    # leaning toward the chest (a shoulder sits a little behind the spine, and taking that literally sent a guarding arm
+    # behind the back, where it stuck inside the chest). That comes first. Between two limbs, or when the body gives no clear
+    # side, the side it comes in and goes out on when those agree, otherwise the side of least movement.
+    agreed=ends and all((e>0)==(ends[0]>0) for e in ends);reach=None if reach_depth is None else float(reach_depth[start:i].mean())
+    side[start:i]=(1.0 if reach>0 else -1.0) if reach is not None and abs(reach)>.03 else (1.0 if ends[0]>0 else -1.0) if agreed else 1.0 if float(torch.relu(n-b).square().sum())<=float(torch.relu(n+b).square().sum()) else -1.0;start=None
   sides.append(side)
  return sides
 # Knees and elbows fold to about 150 degrees and no further (textbook range 135-155), which leaves 30 degrees between the two
