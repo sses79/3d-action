@@ -11602,6 +11602,73 @@
     }
    },
    "seconds": 586
+  },
+  {
+   "id": 38,
+   "date": "2026-10-08T17:47",
+   "commit": "7dad8d3",
+   "rule": "Trial: three inverted clips (Cartwheel, Aerial, Backflip) from SAM 3D Body joints",
+   "options": {
+    "sourceSpeed": 0.5,
+    "decisions": false,
+    "fit": "none",
+    "straightKneePrior": false,
+    "externalJoints": "SAM 3D Body"
+   },
+   "clips": {
+    "4": {
+     "name": "Cartwheel",
+     "ok": true,
+     "crossings": 0,
+     "insideFrames": 0,
+     "beyondNormalRange": 3,
+     "revision": 2,
+     "weak": 8,
+     "repaired": 34,
+     "swapped": 1,
+     "bridges": 2,
+     "repairsVetoed": null,
+     "lift": 1.169,
+     "projection": null,
+     "flags": 0,
+     "sheet": "/Users/tim/Yun/codex-3d/.authoring/review-sheets/sam3d-trick-04-cartwheel-r2-88deced2e427.png"
+    },
+    "25": {
+     "name": "Aerial",
+     "ok": true,
+     "crossings": 0,
+     "insideFrames": 0,
+     "beyondNormalRange": 3,
+     "revision": 1,
+     "weak": 5,
+     "repaired": 10,
+     "swapped": 0,
+     "bridges": 3,
+     "repairsVetoed": null,
+     "lift": 1.351,
+     "projection": null,
+     "flags": 0,
+     "sheet": "/Users/tim/Yun/codex-3d/.authoring/review-sheets/sam3d-trick-25-aerial-r1-8e8ce0bb3489.png"
+    },
+    "43": {
+     "name": "Backflip (overtuck)",
+     "ok": true,
+     "crossings": 0,
+     "insideFrames": 5,
+     "beyondNormalRange": 2,
+     "revision": 1,
+     "weak": 45,
+     "repaired": 15,
+     "swapped": 0,
+     "bridges": 0,
+     "repairsVetoed": null,
+     "lift": 2.011,
+     "projection": null,
+     "flags": 0,
+     "sheet": "/Users/tim/Yun/codex-3d/.authoring/review-sheets/sam3d-trick-43-backflip-overtuck-r1-6e5215711088.png"
+    }
+   },
+   "seconds": 68
   }
  ]
 }

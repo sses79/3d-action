@@ -570,3 +570,8 @@ User preferred the no-fit SAM 3D Body builds. `batch.py --external DIR` builds e
 ## 2026-10-08 — R36 floor under feet, hands or head; runs 36 and 37
 
 `retarget.ts` floors on the lowest of feet, hands and head; `lift.py` emits `lowestSupportImageY` (ankles or clear wrists) and `core.ts` passes it for the jump height. Scoot and Palm kick in the SAM 3D Body set now stand on the hand. Both sets rebuilt; measures and jump heights unchanged. 87 Node tests pass.
+
+
+## 2026-10-08 — Inverted clips trial; run 38
+
+Cartwheel, Aerial and Backflip (overtuck) built from SAM 3D Body joints follow the video on the review sheets, including inverted phases. Jump heights are not credible for inverted or tucked bodies (1.17, 1.35, 2.01 m): the estimate needs the body's height, not the lowest ankle or wrist. `.authoring/sam3d-trial/` has their joint files.
