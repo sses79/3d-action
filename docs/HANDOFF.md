@@ -513,3 +513,8 @@ User suggested asking the vision model for face and chest; `decide.py` now does,
 ## 2026-10-08 — R30 solid body parts; runs 23 and 24
 
 User asked for a rule that body parts cannot be inside or pass through each other. `fit.py` `body_gaps` tests rods at the character's proportions (rig lengths hard-coded from `rigProportions`) and separates in depth only; `retarget.ts` measures the same on the rig and reports `bodyPartsInside` and `rigProportions`; `pipeline.mjs` and `batch.py` pass it on. Cheat 360 crescent 16 frames inside → 1; 21 frames across the 20 clips. Only that clip was re-read; grades carried over. 87 Node tests pass.
+
+
+## 2026-10-08 — R31 no unnecessary depth movement; R30 revised; run 25
+
+User saw the Hook kick leg fold into the body at 0.60 s (run 24). Cause was R30 moving the hip joint and stretching the thigh to make room. `fit.py`: `detour` (R31), `proportion`, R30 restricted to limb joints and no knee-trunk test; `retarget.ts` measure matches. Hook kick stable 0.57-0.65 s. Only Hook kick and Cheat 360 crescent were re-read; grades carried over. 87 Node tests pass.

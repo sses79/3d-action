@@ -115,14 +115,17 @@ def crossed(v):return torch.stack([torch.relu(-sign*((v[:,j]-v[:,0])*to_left).su
 # wide for the same hips). The character's joints are rebuilt here from this skeleton's directions, the way the retarget does,
 # with the rig's own lengths (metres at character scale 1; retarget-report.json rigProportions). Each part is a rod with a
 # radius: trunk 0.13 against legs and 0.11 against arms, head 0.10, thigh 0.075, shin 0.055, upper arm 0.045, forearm 0.04;
-# knee 0.06, mid-shin 0.055, ankle 0.045, elbow and mid-forearm 0.04, wrist 0.035. Knees, shins, ankles, elbows, forearms and
-# wrists must stay clear of the trunk and the head; elbows, forearms and wrists also of both legs and of the other arm. Leg
+# knee 0.06, mid-shin 0.055, ankle 0.045, elbow and mid-forearm 0.04, wrist 0.035. Shins, ankles, elbows, forearms and wrists must stay
+# clear of the trunk, and those and the knees clear of the head; elbows, forearms and wrists also of both legs and of the other arm. Leg
 # against leg is leg_gap above. Two parts can only be inside each other if they overlap in the picture, and the picture is what
 # was observed, so the parts are moved apart toward or away from the camera only.
 RIG={'hip':.089,'shoulder':.192,'trunk':.572,'head':.083,'crown':.12,'shoulder_drop':.047,'thigh':.4,'shin':.429,'upper_arm':.274,'forearm':.273}
 depth_only=lambda p:torch.cat([p[...,:2].detach(),p[...,2:]],-1)
+limb_joint=torch.tensor([j in (2,3,5,6,12,13,15,16) for j in range(17)])[None,:,None]
 def body_gaps(v):
- z=depth_only(v);d=lambda a,b:unit(z[:,b]-z[:,a]);up=d(0,8);pelvis=torch.zeros_like(z[:,0]);neck=up*RIG['trunk']
+ # Only knees, ankles, elbows and wrists may be moved to make room. Left free, the fit made room by shifting a hip joint and
+ # stretching the thigh instead (the bone-length rule is relaxed for a raised straight leg), which turned the pelvis into the leg.
+ z=depth_only(v);z=torch.where(limb_joint,z,z.detach());d=lambda a,b:unit(z[:,b]-z[:,a]);up=d(0,8);pelvis=torch.zeros_like(z[:,0]);neck=up*RIG['trunk']
  # Pelvis frame (hip line kept, up squared to it) and torso frame (spine kept, shoulder line squared to it), as in retarget.ts.
  hips=d(1,4);rise=unit(up-(up*hips).sum(-1,keepdim=True)*hips);front=torch.linalg.cross(hips,rise,dim=-1);wide=z[:,11]-z[:,14];wide=unit(wide-(wide*up).sum(-1,keepdim=True)*up);chest=torch.linalg.cross(wide,up,dim=-1);head=neck+up*.082+chest*.01;crown=head+up*RIG['crown']
  def gap(point,a,b):ab=b-a;u=torch.clamp(((point-a)*ab).sum(-1)/ab.square().sum(-1).clamp_min(1e-9),0,1);return torch.linalg.vector_norm(point-(a+u[:,None]*ab)+1e-9,dim=-1)
@@ -130,7 +133,10 @@ def body_gaps(v):
  for side,sign,(h,k,f),(s,e,w) in (('l',1,(4,5,6),(11,12,13)),('r',-1,(1,2,3),(14,15,16))):
   hip=sign*hips*RIG['hip']+rise*.019+front*.05;knee=hip+d(h,k)*RIG['thigh'];legs[side]=(hip,knee,knee+d(k,f)*RIG['shin']);shoulder=neck-up*.05-chest*.052+sign*wide*RIG['shoulder'];elbow=shoulder+d(s,e)*RIG['upper_arm'];arms[side]=(shoulder,elbow,elbow+d(e,w)*RIG['forearm'])
  for hip,knee,ankle in legs.values():
-  for point,r in ((knee,.06),((knee+ankle)/2,.055),(ankle,.045)):gaps+=[.13+r-gap(point,pelvis,neck),.1+r-gap(point,head,crown)]
+  # The knee is not tested against the trunk: a thigh can lie along the chest (a high kick past the shoulder), and forcing the
+  # knee clear of it tore the hook kick apart at 0.60 s.
+  gaps+=[.1+.06-gap(knee,head,crown)]
+  for point,r in (((knee+ankle)/2,.055),(ankle,.045)):gaps+=[.13+r-gap(point,pelvis,neck),.1+r-gap(point,head,crown)]
  for side,(shoulder,elbow,wrist) in arms.items():
   other=arms['l' if side=='r' else 'r']
   for point,r in ((elbow,.04),((elbow+wrist)/2,.04),(wrist,.035)):
@@ -138,19 +144,34 @@ def body_gaps(v):
    for hip,knee,ankle in legs.values():gaps+=[.075+r-gap(point,hip,knee),.055+r-gap(point,knee,ankle)]
    if side=='r':gaps+=[.045+r-gap(point,other[0],other[1]),.04+r-gap(point,other[1],other[2])]
  return torch.relu(torch.stack(gaps))
+# No unnecessary movement: between a moment a and a moment c, the moment b in the middle lies on the way. Depth is never
+# observed, so nothing in the picture stops a joint from going out toward the camera and back, or from jumping from behind the
+# body to in front of it, while the picture shows a steady swing. For every joint and for spans of 2, 4 and 8 frames, depth at b
+# may differ from the average of a and c by at most half the depth travelled from a to c, plus however far the picture itself
+# shows b off the straight line from a to c (a real snap shows there), plus a small allowance.
+def detour(v):
+ terms=[]
+ for k in (1,2,4):
+  if len(v)<=2*k:continue
+  z=v[:,:,2];off=(z[k:-k]-(z[2*k:]+z[:-2*k])/2).abs();travelled=(z[2*k:]-z[:-2*k]).abs()/2;seen_off=torch.linalg.vector_norm(target_t[k:-k]-(target_t[2*k:]+target_t[:-2*k])/2,dim=-1);terms.append(torch.relu(off-travelled-seen_off-.1*hip_width).square().mean())
+ return torch.stack(terms).mean() if terms else torch.zeros(())
+# A raised straight leg may come out longer or shorter than the body's (its ankle point slides on blurred frames, R7), but the
+# knee stays where a knee is: thigh and shin keep their proportion. Otherwise the knee can slide to the hip or the ankle for a
+# frame, and the thigh's direction, which is all the character takes from it, becomes noise.
+def proportion(v):return torch.stack([(torch.linalg.vector_norm(v[:,k]-v[:,h],dim=-1)/lengths[edges.index((h,k))]-torch.linalg.vector_norm(v[:,f]-v[:,k],dim=-1)/lengths[edges.index((k,f))]).square().mean() for h,k,f in ((1,2,3),(4,5,6))]).mean()
 # Knees and elbows fold to about 150 degrees and no further (textbook range 135-155), which leaves 30 degrees between the two
 # segments. A tighter fold is the fit hiding a leg it could not place, not a pose.
 def folded(v):return torch.stack([torch.relu((unit(v[:,h]-v[:,k])*unit(v[:,f]-v[:,k])).sum(-1)-.866).square().mean() for h,k,f in ((1,2,3),(4,5,6),(11,12,13),(14,15,16))]).mean()
 x=torch.tensor(prior,requires_grad=True);optim=torch.optim.Adam([x],lr=.025);a=time.perf_counter()
 for step in range(400):
- optim.zero_grad();projection=((x[:,:,:2]-target_t).square().sum(-1)*conf).mean();bone=torch.stack([((torch.linalg.vector_norm(x[:,b]-x[:,a],dim=-1)-lengths[i]).square()*slack[i]).mean() for i,(a,b) in enumerate(edges)]).mean();depth=(x[:,:,2]-prior_t[:,:,2]).square().mean();trunk_depth=(x[:,trunk,2]-trunk_target).square().mean();acc=(x[2:]-2*x[1:-1]+x[:-2]).square().mean();root=x[:,0].square().mean();collinear=torch.stack([((unit(x[:,h]-x[:,k])+unit(x[:,f]-x[:,k])).square().sum(-1)*raised*weight+4*torch.relu((unit(x[:,h]-x[:,k])*unit(x[:,f]-x[:,k])).sum(-1)-floor).square()*(1-raised)*seen).mean() for h,k,f,weight,raised,seen,floor in straight]).mean();depth_acc=(x[2:,:,2]-2*x[1:-1,:,2]+x[:-2,:,2]).square().mean();overlap=leg_gap(x).square().mean();loss=(6*depth_acc if args.stable else 0)+400*overlap+400*behind(x)+(0 if args.no_knee_direction else 400)*(backward(x)+crossed(x))+400*folded(x)+2000*body_gaps(x).square().mean()+knee_weight*collinear+12*projection+8*bone+.5*depth+20*trunk_depth+(.8 if args.stable else .015)*acc+30*root;loss.backward();optim.step()
+ optim.zero_grad();projection=((x[:,:,:2]-target_t).square().sum(-1)*conf).mean();bone=torch.stack([((torch.linalg.vector_norm(x[:,b]-x[:,a],dim=-1)-lengths[i]).square()*slack[i]).mean() for i,(a,b) in enumerate(edges)]).mean();depth=(x[:,:,2]-prior_t[:,:,2]).square().mean();trunk_depth=(x[:,trunk,2]-trunk_target).square().mean();acc=(x[2:]-2*x[1:-1]+x[:-2]).square().mean();root=x[:,0].square().mean();collinear=torch.stack([((unit(x[:,h]-x[:,k])+unit(x[:,f]-x[:,k])).square().sum(-1)*raised*weight+4*torch.relu((unit(x[:,h]-x[:,k])*unit(x[:,f]-x[:,k])).sum(-1)-floor).square()*(1-raised)*seen).mean() for h,k,f,weight,raised,seen,floor in straight]).mean();depth_acc=(x[2:,:,2]-2*x[1:-1,:,2]+x[:-2,:,2]).square().mean();overlap=leg_gap(x).square().mean();loss=(6*depth_acc if args.stable else 0)+400*overlap+400*behind(x)+(0 if args.no_knee_direction else 400)*(backward(x)+crossed(x))+400*folded(x)+8*proportion(x)+400*detour(x)+2000*body_gaps(x).square().mean()+knee_weight*collinear+12*projection+8*bone+.5*depth+20*trunk_depth+(.8 if args.stable else .015)*acc+30*root;loss.backward();optim.step()
 elapsed=time.perf_counter()-a;fitted=x.detach().numpy();fitted-=fitted[:,0:1]
 def angles(v):
  a=v[:,1]-v[:,2];b=v[:,3]-v[:,2];return np.degrees(np.arccos(np.clip((a*b).sum(-1)/np.linalg.norm(a,axis=-1)/np.linalg.norm(b,axis=-1),-1,1)))
 peak=int(np.argmin(abs(np.array(ir['times'])-args.peak_time)))
 def left(v):return v[:,[0,4,5,6]]
 extension={side:{'time':float(ir['times'][int(np.argmax(a))]),'degrees':float(a.max()),'before':float(b[int(np.argmax(a))])} for side,a,b in [('right',angles(fitted),angles(prior)),('left',angles(left(fitted)),angles(left(prior)))]};out=Path(args.out);out.mkdir(parents=True,exist_ok=True)
-report={'algorithm':'orthographic-landmark-fit-stable-v2' if args.stable else 'orthographic-landmark-fit-v1','rejectedObservations':rejected,'iterations':400,'cameraScale':scale,'fitSeconds':elapsed,'processWallSeconds':time.perf_counter()-started,'straightKneePrior':not args.no_straight_knee_prior,'maximumKneeExtension':extension,'rightKneePeakDegrees':{'before':float(angles(prior)[peak]),'after':float(angles(fitted)[peak])},'projectionRMS':float(np.sqrt(((fitted[:,:,:2]-target)**2).mean())),'segmentLengthRMS':float(np.sqrt(np.mean([(np.linalg.norm(fitted[:,b]-fitted[:,a],axis=-1)-lengths[i])**2 for i,(a,b) in enumerate(edges)]))),'turnContinuity':turn_report,'crossedLegs':{'before':float(crossed(prior_t)),'after':float(crossed(torch.tensor(fitted)))},'backwardKnee':{'before':float(backward(prior_t)),'after':float(backward(torch.tensor(fitted)))},'bodyPartsInside':{k:{'frames':int((g.max(0).values>.02).sum()),'worstMeters':round(float(g.max()),3)} for k,g in (('before',body_gaps(prior_t)),('after',body_gaps(torch.tensor(fitted))))},'legOverlap':{'before':float(leg_gap(prior_t).max()),'after':float(leg_gap(torch.tensor(fitted)).max()),'units':'normalized estimate; 0 means no sampled leg points closer than their radii'},'limits':['Orthographic camera assumption','Soft segment lengths; runtime retarget preserves actual rig lengths','Occluded/misassigned observations may distort the fit',*([] if args.no_straight_knee_prior else ['Near-straight 2D knees assumed near-straight in 3D for this side-view fixture only']),'Depth prior remains ambiguous; no contacts or joint-limit solver']}
+report={'algorithm':'orthographic-landmark-fit-stable-v2' if args.stable else 'orthographic-landmark-fit-v1','rejectedObservations':rejected,'iterations':400,'cameraScale':scale,'fitSeconds':elapsed,'processWallSeconds':time.perf_counter()-started,'straightKneePrior':not args.no_straight_knee_prior,'maximumKneeExtension':extension,'rightKneePeakDegrees':{'before':float(angles(prior)[peak]),'after':float(angles(fitted)[peak])},'projectionRMS':float(np.sqrt(((fitted[:,:,:2]-target)**2).mean())),'segmentLengthRMS':float(np.sqrt(np.mean([(np.linalg.norm(fitted[:,b]-fitted[:,a],axis=-1)-lengths[i])**2 for i,(a,b) in enumerate(edges)]))),'turnContinuity':turn_report,'crossedLegs':{'before':float(crossed(prior_t)),'after':float(crossed(torch.tensor(fitted)))},'backwardKnee':{'before':float(backward(prior_t)),'after':float(backward(torch.tensor(fitted)))},'depthDetour':{'before':round(float(detour(prior_t)),6),'after':round(float(detour(torch.tensor(fitted))),6)},'bodyPartsInside':{k:{'frames':int((g.max(0).values>.02).sum()),'worstMeters':round(float(g.max()),3)} for k,g in (('before',body_gaps(prior_t)),('after',body_gaps(torch.tensor(fitted))))},'legOverlap':{'before':float(leg_gap(prior_t).max()),'after':float(leg_gap(torch.tensor(fitted)).max()),'units':'normalized estimate; 0 means no sampled leg points closer than their radii'},'limits':['Orthographic camera assumption','Soft segment lengths; runtime retarget preserves actual rig lengths','Occluded/misassigned observations may distort the fit',*([] if args.no_straight_knee_prior else ['Near-straight 2D knees assumed near-straight in 3D for this side-view fixture only']),'Depth prior remains ambiguous; no contacts or joint-limit solver']}
 if args.stable:
  ir['preStabilityInput']=ir['preparedInput'];ir['preparedInput']=obs.tolist();original_root=np.array(ir['imagePelvis']);smoothed=original_root.copy()
  # Five-sample symmetric root-only filter; joint snap timing is not resampled.

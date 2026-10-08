@@ -71,7 +71,7 @@ export function retarget(model:T.Object3D,positions:number[][][],times:number[],
    const pelvis=P('pelvis'),neck=P('neck_01'),head=P('Head'),crown=head.clone().add(head.clone().sub(neck).normalize().multiplyScalar(.12)),leg=(s:string)=>[P('thigh_'+s),P('calf_'+s),P('foot_'+s)],arm=(s:string)=>[P('upperarm_'+s),P('lowerarm_'+s),P('hand_'+s)],legs={l:leg('l'),r:leg('r')},arms={l:arm('l'),r:arm('r')};let worst=0,pair='';
    const test=(name:string,q:T.Vector3,r:number,a:T.Vector3,b:T.Vector3,R:number)=>{const inside=r+R-gapTo(q,a,b);if(inside>worst){worst=inside;pair=name;}};
    for(const s of ['l','r'] as const){const [h,k,f]=legs[s],[sh,e,w]=arms[s],o=arms[s==='l'?'r':'l'];
-    for(const [n,q,r] of [['knee',k,.06],['shin',k.clone().lerp(f,.5),.055],['ankle',f,.045]] as const){test(`${n}_${s} in trunk`,q,r,pelvis,neck,.13);test(`${n}_${s} in head`,q,r,head,crown,.1);}
+    for(const [n,q,r] of [['knee',k,.06],['shin',k.clone().lerp(f,.5),.055],['ankle',f,.045]] as const){if(n!=='knee')test(`${n}_${s} in trunk`,q,r,pelvis,neck,.13);test(`${n}_${s} in head`,q,r,head,crown,.1);}
     for(const [n,q,r] of [['elbow',e,.04],['forearm',e.clone().lerp(w,.5),.04],['wrist',w,.035]] as const){test(`${n}_${s} in trunk`,q,r,pelvis,neck,.11);test(`${n}_${s} in head`,q,r,head,crown,.1);
      for(const t of ['l','r'] as const){test(`${n}_${s} in thigh_${t}`,q,r,legs[t][0],legs[t][1],.075);test(`${n}_${s} in shin_${t}`,q,r,legs[t][1],legs[t][2],.055);}
      if(s==='r'){test(`${n}_r in upperarm_l`,q,r,o[0],o[1],.045);test(`${n}_r in forearm_l`,q,r,o[1],o[2],.04);}}}
