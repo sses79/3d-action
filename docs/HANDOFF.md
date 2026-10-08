@@ -543,3 +543,8 @@ Elbows stuck inside the trunk came from R32 assigning a folding arm the back sid
 ## 2026-10-08 — R35 margin in the fit; run 31
 
 Wrists the fit believed clear were 2-5 cm inside the rig's trunk (model within centimetres of the rig, not exact). `fit.py` `inside` now asks 3 cm more room. Frames inside 34 to 18, crossings 4 to 0, no fit-error change. Remaining frames are one-frame overlaps where R30 and R31 conflict. Judged on measures only. 87 Node tests pass.
+
+
+## 2026-10-08 — Last 18 frames: not fixed; runs 32-34
+
+Tried making room early around overlaps (all overlaps, then only brief ones) and a heavier R30 weight; all made the totals worse and were removed. `fit.py` is unchanged from aa2b1a4 and the last run equals run 31 (18 frames inside, 0 crossings). Next idea: a targeted pass after the fit on the limb and frames the rig measure names.
