@@ -1,8 +1,8 @@
 {
- "run": "runs.json run 26",
+ "run": "runs.json run 28",
  "sourceSpeed": 0.5,
  "sourceSpeedBasis": "free-fall fit to the trunk centre during the tornado kick jump: 0.50-0.53 for a performer 1.65-1.85 m tall; hang-time cross-check 0.53",
- "review": "Run 26 (R30 revised again), decisions on. Hook kick and Tornado kick re-read front and side at the times the user flagged. No other clip was re-read; fit error within 15% except Hook kick (0.027 to 0.020, better) and Pop 360 hyper (0.011 to 0.020, worse). Grades carried over. LLM judgement of still poses.",
+ "review": "Run 28 (R32 crossing rule), decisions on. Tornado kick re-read front and side at 0.77-0.83 s; Cheat 720, Pop 360 (crescent) and Cheat 360 crescent re-read on eight-frame strips (kicks intact, no broken poses). Fit error rose more than 15% on 9 clips. Grades carried over; they were not re-judged against the higher fit error. LLM judgement of still poses.",
  "gradeCounts": {
   "good": 13,
   "fair": 4,
@@ -19,19 +19,20 @@
     0.2,
     2.65
    ],
-   "revision": 30,
+   "revision": 32,
    "duration": 1.225,
    "frames": 74,
    "weak": 1,
    "repaired": 15,
    "swapped": 0,
    "lift": 0,
-   "projection": 0.02022,
+   "projection": 0.02372,
    "grade": "good",
    "note": "kick swings over the top; checked on a dense sheet",
    "previousGrade": "partial",
    "repairsVetoed": 0,
-   "insideFrames": 0
+   "insideFrames": 0,
+   "crossings": 0
   },
   {
    "index": 2,
@@ -41,19 +42,20 @@
     3.6,
     5.76
    ],
-   "revision": 27,
+   "revision": 29,
    "duration": 1.08,
    "frames": 66,
    "weak": 3,
    "repaired": 20,
    "swapped": 0,
    "lift": 0,
-   "projection": 0.02897,
+   "projection": 0.03193,
    "grade": "good",
    "note": "low kick and high kick both follow",
    "previousGrade": "poor",
    "repairsVetoed": 0,
-   "insideFrames": 7
+   "insideFrames": 5,
+   "crossings": 0
   },
   {
    "index": 3,
@@ -63,19 +65,20 @@
     6.71,
     8.46
    ],
-   "revision": 29,
+   "revision": 31,
    "duration": 0.875,
    "frames": 54,
    "weak": 1,
    "repaired": 10,
    "swapped": 8,
    "lift": 0,
-   "projection": 0.03489,
+   "projection": 0.04132,
    "grade": "fair",
    "note": "kick rises to vertical at 0.54-0.58 s; comes down about 0.06 s early; fit error 0.046",
    "previousGrade": "fair",
    "repairsVetoed": 0,
-   "insideFrames": 1
+   "insideFrames": 2,
+   "crossings": 0
   },
   {
    "index": 8,
@@ -85,19 +88,20 @@
     25.62,
     27.68
    ],
-   "revision": 26,
+   "revision": 28,
    "duration": 1.03,
    "frames": 63,
    "weak": 2,
    "repaired": 8,
    "swapped": 7,
    "lift": 0,
-   "projection": 0.02941,
+   "projection": 0.03925,
    "grade": "not-upright",
    "note": "hands on the floor and inverted; collapses",
    "previousGrade": "not-upright",
    "repairsVetoed": 0,
-   "insideFrames": 9
+   "insideFrames": 10,
+   "crossings": 6
   },
   {
    "index": 9,
@@ -107,19 +111,20 @@
     28.63,
     30.88
    ],
-   "revision": 26,
+   "revision": 28,
    "duration": 1.125,
    "frames": 69,
    "weak": 10,
    "repaired": 3,
    "swapped": 0,
    "lift": 0,
-   "projection": 0.02148,
+   "projection": 0.02187,
    "grade": "fair",
    "note": "low sweep recognisable",
    "previousGrade": "fair",
    "repairsVetoed": 0,
-   "insideFrames": 0
+   "insideFrames": 0,
+   "crossings": 0
   },
   {
    "index": 10,
@@ -129,19 +134,20 @@
     31.83,
     33.78
    ],
-   "revision": 26,
+   "revision": 28,
    "duration": 0.975,
    "frames": 60,
    "weak": 10,
    "repaired": 5,
    "swapped": 11,
    "lift": 0,
-   "projection": 0.03603,
+   "projection": 0.04164,
    "grade": "poor",
    "note": "sinks into the floor when the hands go down",
    "previousGrade": "poor",
    "repairsVetoed": 0,
-   "insideFrames": 0
+   "insideFrames": 0,
+   "crossings": 0
   },
   {
    "index": 12,
@@ -151,19 +157,20 @@
     38.54,
     40.09
    ],
-   "revision": 26,
+   "revision": 28,
    "duration": 0.775,
    "frames": 48,
    "weak": 3,
    "repaired": 40,
    "swapped": 1,
    "lift": 0,
-   "projection": 0.07301,
+   "projection": 0.07944,
    "grade": "not-upright",
    "note": "hand-supported inverted kick; collapses",
    "previousGrade": "not-upright",
    "repairsVetoed": 0,
-   "insideFrames": 0
+   "insideFrames": 1,
+   "crossings": 0
   },
   {
    "index": 16,
@@ -173,19 +180,20 @@
     52.45,
     54.9
    ],
-   "revision": 30,
+   "revision": 32,
    "duration": 1.225,
    "frames": 74,
    "weak": 5,
    "repaired": 15,
    "swapped": 0,
    "lift": 1.257,
-   "projection": 0.02103,
+   "projection": 0.02485,
    "grade": "good",
    "note": "second kick present but lower at 0.88 s than in the previous run",
    "previousGrade": "good",
    "repairsVetoed": 0,
-   "insideFrames": 3
+   "insideFrames": 3,
+   "crossings": 1
   },
   {
    "index": 18,
@@ -195,19 +203,20 @@
     59.06,
     61.91
    ],
-   "revision": 30,
+   "revision": 32,
    "duration": 1.425,
    "frames": 86,
    "weak": 4,
    "repaired": 10,
    "swapped": 1,
    "lift": 0.721,
-   "projection": 0.01076,
+   "projection": 0.0181,
    "grade": "good",
    "note": "leg swings over the top in front of the body; feet turn with the pelvis through the spin",
    "previousGrade": "good",
    "repairsVetoed": 0,
-   "insideFrames": 0
+   "insideFrames": 2,
+   "crossings": 0
   },
   {
    "index": 19,
@@ -217,19 +226,20 @@
     62.86,
     65.42
    ],
-   "revision": 31,
+   "revision": 33,
    "duration": 1.28,
    "frames": 78,
    "weak": 7,
    "repaired": 24,
    "swapped": 28,
    "lift": 1.337,
-   "projection": 0.02478,
+   "projection": 0.02791,
    "grade": "good",
    "note": "left leg straight through the whole swing and the split holds (0.64-0.89 s); right thigh stays on its own side from 0.89 to 1.06 s; with R30 the arms and raised leg no longer sit inside the trunk, head or each other at 0.72 s and 0.96-1.05 s (one frame, 1.01 s, still has the right elbow 5 cm inside the right thigh); the raised right leg is still bent to about 90 degrees where the video has it nearly straight",
    "previousGrade": "fair",
    "repairsVetoed": 1,
-   "insideFrames": 6
+   "insideFrames": 5,
+   "crossings": 0
   },
   {
    "index": 20,
@@ -239,19 +249,20 @@
     66.37,
     69.12
    ],
-   "revision": 28,
+   "revision": 30,
    "duration": 1.375,
    "frames": 83,
    "weak": 6,
    "repaired": 24,
    "swapped": 0,
    "lift": 1.355,
-   "projection": 0.02078,
+   "projection": 0.02022,
    "grade": "good",
    "note": "both high kicks present",
    "previousGrade": "fair",
    "repairsVetoed": 0,
-   "insideFrames": 1
+   "insideFrames": 6,
+   "crossings": 0
   },
   {
    "index": 21,
@@ -261,19 +272,20 @@
     70.07,
     73.02
    ],
-   "revision": 27,
+   "revision": 29,
    "duration": 1.475,
    "frames": 90,
    "weak": 2,
    "repaired": 9,
    "swapped": 3,
    "lift": 1.319,
-   "projection": 0.01992,
+   "projection": 0.00897,
    "grade": "good",
    "note": "airborne kick follows",
    "previousGrade": "good",
    "repairsVetoed": 0,
-   "insideFrames": 2
+   "insideFrames": 1,
+   "crossings": 0
   },
   {
    "index": 27,
@@ -283,19 +295,20 @@
     92.49,
     95.24
    ],
-   "revision": 29,
+   "revision": 31,
    "duration": 1.375,
    "frames": 83,
    "weak": 9,
    "repaired": 6,
    "swapped": 0,
    "lift": 1.035,
-   "projection": 0.01583,
+   "projection": 0.01728,
    "grade": "good",
    "note": "right leg stays the swinging leg through the kick; left takes the final kick",
    "previousGrade": "good",
    "repairsVetoed": 0,
-   "insideFrames": 0
+   "insideFrames": 0,
+   "crossings": 0
   },
   {
    "index": 28,
@@ -305,19 +318,20 @@
     96.19,
     98.95
    ],
-   "revision": 27,
+   "revision": 29,
    "duration": 1.38,
    "frames": 84,
    "weak": 8,
    "repaired": 12,
    "swapped": 0,
    "lift": 0.893,
-   "projection": 0.03156,
+   "projection": 0.03298,
    "grade": "good",
    "note": "kick, tuck and second kick follow; second kick a little low",
    "previousGrade": "partial",
    "repairsVetoed": 0,
-   "insideFrames": 3
+   "insideFrames": 2,
+   "crossings": 0
   },
   {
    "index": 33,
@@ -327,19 +341,20 @@
     115.11,
     117.97
    ],
-   "revision": 26,
+   "revision": 28,
    "duration": 1.43,
    "frames": 87,
    "weak": 4,
    "repaired": 18,
    "swapped": 4,
    "lift": 1.218,
-   "projection": 0.01643,
+   "projection": 0.02111,
    "grade": "fair",
    "note": "kick and jump follow; airborne kick weak",
    "previousGrade": "fair",
    "repairsVetoed": 0,
-   "insideFrames": 2
+   "insideFrames": 4,
+   "crossings": 0
   },
   {
    "index": 34,
@@ -349,19 +364,20 @@
     118.92,
     121.47
    ],
-   "revision": 31,
+   "revision": 33,
    "duration": 1.275,
    "frames": 77,
    "weak": 8,
    "repaired": 15,
    "swapped": 0,
    "lift": 1.091,
-   "projection": 0.02547,
+   "projection": 0.03907,
    "grade": "good",
    "note": "airborne kick and second kick follow",
    "previousGrade": "partial",
    "repairsVetoed": 0,
-   "insideFrames": 0
+   "insideFrames": 0,
+   "crossings": 0
   },
   {
    "index": 35,
@@ -371,19 +387,20 @@
     122.42,
     125.27
    ],
-   "revision": 30,
+   "revision": 32,
    "duration": 1.425,
    "frames": 86,
    "weak": 9,
    "repaired": 13,
    "swapped": 3,
    "lift": 1.895,
-   "projection": 0.02109,
+   "projection": 0.02517,
    "grade": "fair",
    "note": "turns the full way with body and legs together; high kick goes over the top but reads short from the front",
    "previousGrade": "partial",
    "repairsVetoed": 0,
-   "insideFrames": 0
+   "insideFrames": 0,
+   "crossings": 1
   },
   {
    "index": 36,
@@ -393,19 +410,20 @@
     126.22,
     129.58
    ],
-   "revision": 26,
+   "revision": 28,
    "duration": 1.68,
    "frames": 102,
    "weak": 13,
    "repaired": 15,
    "swapped": 8,
    "lift": 1.256,
-   "projection": 0.02267,
+   "projection": 0.02104,
    "grade": "good",
    "note": "high kick follows",
    "previousGrade": "fair",
    "repairsVetoed": 5,
-   "insideFrames": 3
+   "insideFrames": 2,
+   "crossings": 0
   },
   {
    "index": 37,
@@ -415,19 +433,20 @@
     130.53,
     133.28
    ],
-   "revision": 27,
+   "revision": 29,
    "duration": 1.375,
    "frames": 83,
    "weak": 20,
    "repaired": 8,
    "swapped": 4,
    "lift": 0.624,
-   "projection": 0.01102,
+   "projection": 0.01116,
    "grade": "good",
    "note": "all sampled poses follow",
    "previousGrade": "good",
    "repairsVetoed": 2,
-   "insideFrames": 0
+   "insideFrames": 0,
+   "crossings": 0
   },
   {
    "index": 38,
@@ -437,19 +456,20 @@
     134.23,
     137.09
    ],
-   "revision": 26,
+   "revision": 28,
    "duration": 1.43,
    "frames": 87,
    "weak": 9,
    "repaired": 14,
    "swapped": 0,
    "lift": 1.179,
-   "projection": 0.02253,
+   "projection": 0.0246,
    "grade": "good",
    "note": "kicks follow; last kick a little low",
    "previousGrade": "partial",
    "repairsVetoed": 0,
-   "insideFrames": 1
+   "insideFrames": 3,
+   "crossings": 1
   }
  ],
  "decisions": {

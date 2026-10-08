@@ -122,7 +122,7 @@ def crossed(v):return torch.stack([torch.relu(-sign*((v[:,j]-v[:,0])*to_left).su
 RIG={'hip':.089,'shoulder':.192,'trunk':.572,'head':.083,'crown':.12,'shoulder_drop':.047,'thigh':.4,'shin':.429,'upper_arm':.274,'forearm':.273}
 depth_only=lambda p:torch.cat([p[...,:2].detach(),p[...,2:]],-1)
 limb_joint=torch.tensor([j in (2,3,5,6,12,13,15,16) for j in range(17)])[None,:,None]
-def body_gaps(v):
+def body_gaps(v,sides=None,seen_runs=None):
  # Only knees, ankles, elbows and wrists may be moved to make room. Left free, the fit made room by shifting a hip joint and
  # stretching the thigh instead (the bone-length rule is relaxed for a raised straight leg), which turned the pelvis into the leg.
  z=depth_only(v);z=torch.where(limb_joint,z,z.detach());d=lambda a,b:unit(z[:,b]-z[:,a]);up=d(0,8);pelvis=torch.zeros_like(z[:,0]);neck=up*RIG['trunk']
@@ -133,9 +133,10 @@ def body_gaps(v):
  # a point at exactly the rod's depth has no side, and goes toward the camera (measuring plain distance gave no push at all
  # there, which left a part stuck in the middle of another).
  def inside(point,a,b,room):
-  ab=b-a;u=torch.clamp(((point-a)*ab).sum(-1)/ab.square().sum(-1).clamp_min(1e-9),0,1).detach();nearest=a+u[:,None]*ab;across=(point[:,:2]-nearest[:,:2]).square().sum(-1).detach();behind_by=point[:,2]-nearest[:,2];side=torch.where(behind_by.detach()>1e-4,1.0,-1.0)
-  return torch.sqrt(torch.relu(room*room-across)+1e-12)-side*behind_by
- legs={};arms={};gaps=[]
+  ab=b-a;u=torch.clamp(((point-a)*ab).sum(-1)/ab.square().sum(-1).clamp_min(1e-9),0,1).detach();nearest=a+u[:,None]*ab;across=(point[:,:2]-nearest[:,:2]).square().sum(-1).detach();behind_by=point[:,2]-nearest[:,2];need=torch.sqrt(torch.relu(room*room-across)+1e-12);side=torch.where(behind_by.detach()>1e-4,1.0,-1.0) if sides is None else sides[counter[0]]
+  if seen_runs is not None:seen_runs.append((across<room*room,need.detach(),behind_by.detach(),chest[:,2].detach() if a is pelvis or a is head else None))
+  counter[0]+=1;return need-side*behind_by
+ legs={};arms={};gaps=[];counter=[0]
  for side,sign,(h,k,f),(s,e,w) in (('l',1,(4,5,6),(11,12,13)),('r',-1,(1,2,3),(14,15,16))):
   hip=sign*hips*RIG['hip']+rise*.019+front*.05;knee=hip+d(h,k)*RIG['thigh'];legs[side]=(hip,knee,knee+d(k,f)*RIG['shin']);shoulder=neck-up*.05-chest*.052+sign*wide*RIG['shoulder'];elbow=shoulder+d(s,e)*RIG['upper_arm'];arms[side]=(shoulder,elbow,elbow+d(e,w)*RIG['forearm'])
  for hip,knee,ankle in legs.values():
@@ -164,12 +165,35 @@ def detour(v):
 # knee stays where a knee is: thigh and shin keep their proportion. Otherwise the knee can slide to the hip or the ankle for a
 # frame, and the thigh's direction, which is all the character takes from it, becomes noise.
 def proportion(v):return torch.stack([(torch.linalg.vector_norm(v[:,k]-v[:,h],dim=-1)/lengths[edges.index((h,k))]-torch.linalg.vector_norm(v[:,f]-v[:,k],dim=-1)/lengths[edges.index((k,f))]).square().mean() for h,k,f in ((1,2,3),(4,5,6))]).mean()
+# Nothing passes through anything across time either. While a point overlaps a rod in the picture it stays on one side of it,
+# in front or behind, from the frame the overlap starts to the frame it ends; to change side it has to leave the rod's outline
+# in the picture first, which is going round. For each stretch of overlap (gaps of one frame are bridged) the side is the one
+# that needs the least total movement over the whole stretch. Sides are chosen again every 50 steps of the fit.
+# (An earlier attempt took the balance of the nine frames around each frame; on a long stretch that changed side partway and
+# trapped elbows inside the trunk.)
+def choose_sides(v):
+ runs=[];body_gaps(v,seen_runs=runs);sides=[]
+ for over,need,behind_by,chest_depth in runs:
+  side=torch.where(behind_by>1e-4,1.0,-1.0);on=over.numpy().copy();on[1:-1]|=on[:-2]&on[2:];start=None
+  for i in range(len(on)+1):
+   if i<len(on) and on[i]:start=i if start is None else start
+   elif start is not None:
+    # Where the point comes in and goes out on the same side, that is its side: it never had to cross.
+    n,b=need[start:i],behind_by[start:i];before=float(behind_by[start-1]) if start>0 else None;after=float(behind_by[i]) if i<len(on) else None;ends=[e for e in (before,after) if e is not None and abs(e)>1e-4]
+    # Where it comes in on one side and goes out on the other, something has to give. Against the trunk or head the limb takes
+    # the chest side, the only side a raised leg or a guarding arm can reach; between two limbs, the side of least movement.
+    agreed=ends and all((e>0)==(ends[0]>0) for e in ends);chest_side=None if chest_depth is None or abs(float(chest_depth[start:i].mean()))<.2 else (1.0 if float(chest_depth[start:i].mean())>0 else -1.0)
+    side[start:i]=(1.0 if ends[0]>0 else -1.0) if agreed else chest_side if chest_side is not None else 1.0 if float(torch.relu(n-b).square().sum())<=float(torch.relu(n+b).square().sum()) else -1.0;start=None
+  sides.append(side)
+ return sides
 # Knees and elbows fold to about 150 degrees and no further (textbook range 135-155), which leaves 30 degrees between the two
 # segments. A tighter fold is the fit hiding a leg it could not place, not a pose.
 def folded(v):return torch.stack([torch.relu((unit(v[:,h]-v[:,k])*unit(v[:,f]-v[:,k])).sum(-1)-.866).square().mean() for h,k,f in ((1,2,3),(4,5,6),(11,12,13),(14,15,16))]).mean()
 x=torch.tensor(prior,requires_grad=True);optim=torch.optim.Adam([x],lr=.025);a=time.perf_counter()
+sides=None
 for step in range(400):
- optim.zero_grad();projection=((x[:,:,:2]-target_t).square().sum(-1)*conf).mean();bone=torch.stack([((torch.linalg.vector_norm(x[:,b]-x[:,a],dim=-1)-lengths[i]).square()*slack[i]).mean() for i,(a,b) in enumerate(edges)]).mean();depth=(x[:,:,2]-prior_t[:,:,2]).square().mean();trunk_depth=(x[:,trunk,2]-trunk_target).square().mean();acc=(x[2:]-2*x[1:-1]+x[:-2]).square().mean();root=x[:,0].square().mean();collinear=torch.stack([((unit(x[:,h]-x[:,k])+unit(x[:,f]-x[:,k])).square().sum(-1)*raised*weight+4*torch.relu((unit(x[:,h]-x[:,k])*unit(x[:,f]-x[:,k])).sum(-1)-floor).square()*(1-raised)*seen).mean() for h,k,f,weight,raised,seen,floor in straight]).mean();depth_acc=(x[2:,:,2]-2*x[1:-1,:,2]+x[:-2,:,2]).square().mean();overlap=leg_gap(x).square().mean();loss=(6*depth_acc if args.stable else 0)+400*overlap+400*behind(x)+(0 if args.no_knee_direction else 400)*(backward(x)+crossed(x))+400*folded(x)+8*proportion(x)+400*detour(x)+2000*body_gaps(x).square().mean()+knee_weight*collinear+12*projection+8*bone+.5*depth+20*trunk_depth+(.8 if args.stable else .015)*acc+30*root;loss.backward();optim.step()
+ if step%50==0:sides=choose_sides(x.detach())
+ optim.zero_grad();projection=((x[:,:,:2]-target_t).square().sum(-1)*conf).mean();bone=torch.stack([((torch.linalg.vector_norm(x[:,b]-x[:,a],dim=-1)-lengths[i]).square()*slack[i]).mean() for i,(a,b) in enumerate(edges)]).mean();depth=(x[:,:,2]-prior_t[:,:,2]).square().mean();trunk_depth=(x[:,trunk,2]-trunk_target).square().mean();acc=(x[2:]-2*x[1:-1]+x[:-2]).square().mean();root=x[:,0].square().mean();collinear=torch.stack([((unit(x[:,h]-x[:,k])+unit(x[:,f]-x[:,k])).square().sum(-1)*raised*weight+4*torch.relu((unit(x[:,h]-x[:,k])*unit(x[:,f]-x[:,k])).sum(-1)-floor).square()*(1-raised)*seen).mean() for h,k,f,weight,raised,seen,floor in straight]).mean();depth_acc=(x[2:,:,2]-2*x[1:-1,:,2]+x[:-2,:,2]).square().mean();overlap=leg_gap(x).square().mean();loss=(6*depth_acc if args.stable else 0)+400*overlap+400*behind(x)+(0 if args.no_knee_direction else 400)*(backward(x)+crossed(x))+400*folded(x)+8*proportion(x)+400*detour(x)+2000*body_gaps(x,sides).square().mean()+knee_weight*collinear+12*projection+8*bone+.5*depth+20*trunk_depth+(.8 if args.stable else .015)*acc+30*root;loss.backward();optim.step()
 elapsed=time.perf_counter()-a;fitted=x.detach().numpy();fitted-=fitted[:,0:1]
 def angles(v):
  a=v[:,1]-v[:,2];b=v[:,3]-v[:,2];return np.degrees(np.arccos(np.clip((a*b).sum(-1)/np.linalg.norm(a,axis=-1)/np.linalg.norm(b,axis=-1),-1,1)))
