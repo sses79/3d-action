@@ -518,3 +518,8 @@ User asked for a rule that body parts cannot be inside or pass through each othe
 ## 2026-10-08 — R31 no unnecessary depth movement; R30 revised; run 25
 
 User saw the Hook kick leg fold into the body at 0.60 s (run 24). Cause was R30 moving the hip joint and stretching the thigh to make room. `fit.py`: `detour` (R31), `proportion`, R30 restricted to limb joints and no knee-trunk test; `retarget.ts` measure matches. Hook kick stable 0.57-0.65 s. Only Hook kick and Cheat 360 crescent were re-read; grades carried over. 87 Node tests pass.
+
+
+## 2026-10-08 — R30 third revision; run 26
+
+User flagged Hook kick 0.59 s, Tornado kick 0.83 s and the five frames on Cheat 360 crescent. Knee is tested against a slimmer trunk again and "inside" is a depth shortfall with a side (`fit.py` `body_gaps`/`inside`; `retarget.ts` measure matches). Hook kick fixed (0 frames). Tornado kick and Cheat 360 crescent not fixed: remaining frames are limbs changing side between frames. A one-side-per-stretch attempt was removed. 87 Node tests pass.

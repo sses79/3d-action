@@ -128,21 +128,26 @@ def body_gaps(v):
  z=depth_only(v);z=torch.where(limb_joint,z,z.detach());d=lambda a,b:unit(z[:,b]-z[:,a]);up=d(0,8);pelvis=torch.zeros_like(z[:,0]);neck=up*RIG['trunk']
  # Pelvis frame (hip line kept, up squared to it) and torso frame (spine kept, shoulder line squared to it), as in retarget.ts.
  hips=d(1,4);rise=unit(up-(up*hips).sum(-1,keepdim=True)*hips);front=torch.linalg.cross(hips,rise,dim=-1);wide=z[:,11]-z[:,14];wide=unit(wide-(wide*up).sum(-1,keepdim=True)*up);chest=torch.linalg.cross(wide,up,dim=-1);head=neck+up*.082+chest*.01;crown=head+up*RIG['crown']
- def gap(point,a,b):ab=b-a;u=torch.clamp(((point-a)*ab).sum(-1)/ab.square().sum(-1).clamp_min(1e-9),0,1);return torch.linalg.vector_norm(point-(a+u[:,None]*ab)+1e-9,dim=-1)
+ # How far a point is inside a rod, to be undone in depth: where the point is closer to the rod in the picture than the two
+ # radii allow, it must be at least the remaining distance in front of or behind it. It is pushed to the side it is on;
+ # a point at exactly the rod's depth has no side, and goes toward the camera (measuring plain distance gave no push at all
+ # there, which left a part stuck in the middle of another).
+ def inside(point,a,b,room):
+  ab=b-a;u=torch.clamp(((point-a)*ab).sum(-1)/ab.square().sum(-1).clamp_min(1e-9),0,1).detach();nearest=a+u[:,None]*ab;across=(point[:,:2]-nearest[:,:2]).square().sum(-1).detach();behind_by=point[:,2]-nearest[:,2];side=torch.where(behind_by.detach()>1e-4,1.0,-1.0)
+  return torch.sqrt(torch.relu(room*room-across)+1e-12)-side*behind_by
  legs={};arms={};gaps=[]
  for side,sign,(h,k,f),(s,e,w) in (('l',1,(4,5,6),(11,12,13)),('r',-1,(1,2,3),(14,15,16))):
   hip=sign*hips*RIG['hip']+rise*.019+front*.05;knee=hip+d(h,k)*RIG['thigh'];legs[side]=(hip,knee,knee+d(k,f)*RIG['shin']);shoulder=neck-up*.05-chest*.052+sign*wide*RIG['shoulder'];elbow=shoulder+d(s,e)*RIG['upper_arm'];arms[side]=(shoulder,elbow,elbow+d(e,w)*RIG['forearm'])
  for hip,knee,ankle in legs.values():
-  # The knee is not tested against the trunk: a thigh can lie along the chest (a high kick past the shoulder), and forcing the
-  # knee clear of it tore the hook kick apart at 0.60 s.
-  gaps+=[.1+.06-gap(knee,head,crown)]
-  for point,r in (((knee+ankle)/2,.055),(ankle,.045)):gaps+=[.13+r-gap(point,pelvis,neck),.1+r-gap(point,head,crown)]
+  # The knee gets a slimmer trunk (0.10) than the shin and ankle: a thigh can lie along the chest in a high kick past the shoulder.
+  gaps+=[inside(knee,head,crown,.1+.06),inside(knee,pelvis,neck,.1+.06)]
+  for point,r in (((knee+ankle)/2,.055),(ankle,.045)):gaps+=[inside(point,pelvis,neck,.13+r),inside(point,head,crown,.1+r)]
  for side,(shoulder,elbow,wrist) in arms.items():
   other=arms['l' if side=='r' else 'r']
   for point,r in ((elbow,.04),((elbow+wrist)/2,.04),(wrist,.035)):
-   gaps+=[.11+r-gap(point,pelvis,neck),.1+r-gap(point,head,crown)]
-   for hip,knee,ankle in legs.values():gaps+=[.075+r-gap(point,hip,knee),.055+r-gap(point,knee,ankle)]
-   if side=='r':gaps+=[.045+r-gap(point,other[0],other[1]),.04+r-gap(point,other[1],other[2])]
+   gaps+=[inside(point,pelvis,neck,.11+r),inside(point,head,crown,.1+r)]
+   for hip,knee,ankle in legs.values():gaps+=[inside(point,hip,knee,.075+r),inside(point,knee,ankle,.055+r)]
+   if side=='r':gaps+=[inside(point,other[0],other[1],.045+r),inside(point,other[1],other[2],.04+r)]
  return torch.relu(torch.stack(gaps))
 # No unnecessary movement: between a moment a and a moment c, the moment b in the middle lies on the way. Depth is never
 # observed, so nothing in the picture stops a joint from going out toward the camera and back, or from jumping from behind the
