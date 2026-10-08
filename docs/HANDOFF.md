@@ -575,3 +575,8 @@ User preferred the no-fit SAM 3D Body builds. `batch.py --external DIR` builds e
 ## 2026-10-08 — Inverted clips trial; run 38
 
 Cartwheel, Aerial and Backflip (overtuck) built from SAM 3D Body joints follow the video on the review sheets, including inverted phases. Jump heights are not credible for inverted or tucked bodies (1.17, 1.35, 2.01 m): the estimate needs the body's height, not the lowest ankle or wrist. `.authoring/sam3d-trial/` has their joint files.
+
+
+## 2026-10-08 — R37 height and travel from SAM 3D Body keypoints; runs 39 and 40
+
+`sam3d_to_h36m.py` emits `lowestBodyImageY` and `imagePelvis`; the `external` stage uses them and marks `lowestSupportSource: body`; `retarget.ts` then lifts without the 20-40 cm fade and floors on more joints. Cheat 360 crescent's vertical jolt at 0.61-0.65 s is gone in the `sam3d-` action (max frame step 0.66 to 0.06 m). Cartwheel no longer jumps. Sweeps still step where support changes. 87 Node tests pass.

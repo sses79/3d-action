@@ -7,4 +7,7 @@ H[:,0]=pelvis;H[:,1]=K[:,rhip];H[:,2]=K[:,rkne];H[:,3]=K[:,rank];H[:,4]=K[:,lhip
 H[:,11]=K[:,lsho];H[:,12]=K[:,lelb];H[:,13]=K[:,lwri];H[:,14]=K[:,rsho];H[:,15]=K[:,relb];H[:,16]=K[:,rwri];H-=H[:,0:1]
 leg=lambda P:np.median(np.linalg.norm(P[:,2]-P[:,1],axis=1)+np.linalg.norm(P[:,3]-P[:,2],axis=1)+np.linalg.norm(P[:,5]-P[:,4],axis=1)+np.linalg.norm(P[:,6]-P[:,5],axis=1))
 scale=leg(L)/leg(H);H*=scale
-json.dump({'backend':'SAM 3D Body (ComfyUI repack, dinov3 bf16), per frame, no smoothing','times':d['times'].tolist(),'positions':H.tolist(),'scale':float(scale)},open(out,'w'));print('frames',len(H),'scale',round(float(scale),3))
+# Where the body is in the picture, from the same model that poses it: the lowest of all 70 keypoints (toes, heels, hands, head
+# included) and the middle of the hips. The detector's ankles are no longer needed for height or travel.
+k2=d['pred_keypoints_2d'].astype(np.float64);lowest=k2[:,:,1].max(1);hips=(k2[:,rhip]+k2[:,lhip])/2
+json.dump({'backend':'SAM 3D Body (ComfyUI repack, dinov3 bf16), per frame, no smoothing','times':d['times'].tolist(),'positions':H.tolist(),'lowestBodyImageY':lowest.tolist(),'imagePelvis':hips.tolist(),'scale':float(scale)},open(out,'w'));print('frames',len(H),'scale',round(float(scale),3))
