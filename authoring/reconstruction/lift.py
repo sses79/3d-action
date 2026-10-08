@@ -167,7 +167,7 @@ if not args.no_leg_repair:
     for i in range(len(seenlegs)):
      for j in range(i):
       if seenlegs[j][1]<=seenlegs[i][1] and len(chain[j])+1>len(chain[i]):chain[i]=chain[j]+[seenlegs[i]]
-    kept=max(chain,key=len,default=[]);marks+=kept;reobserved+=[{'side':side,'frame':int(f),'time':float(times[f])} for f,_,_ in kept]
+    kept=max(chain,key=len,default=[]);marks+=kept;reobserved+=[{'side':side,'frame':int(f),'time':float(times[f]),'reach':float(np.hypot(l*np.cos(t)+m*np.cos(sh),l*np.sin(t)+m*np.sin(sh))/height/usual[side]),'bendDegrees':float(abs(np.degrees(wrap(sh-t))))} for f,_,(t,l,sh,m) in kept]
     # Where the leg points was seen on these frames, so they count for more than a plain bridge, though less than a clean detection.
     for f,_,_ in kept:raw[f,[knee,ankle],2]=.5
    marks.append((b,1.0,shape(raw[b],hip,knee,ankle)))
@@ -176,8 +176,14 @@ if not args.no_leg_repair:
    # separate arcs let them turn by different amounts, which folded a straight kicking leg in the middle of the gap. A second
    # look says how far round the leg is at that moment, not its shape: its knee and length are too rough to use.
    (_,_,(t1,l1,s1,m1)),(_,_,(t2,l2,s2,m2))=marks[0],marks[-1];turn=min((wrap(t2-t1)+2*np.pi*k for k in (-1,0,1)),key=lambda c:abs(c-sweep));bend_a=wrap(s1-t1);bend=wrap(wrap(s2-t2)-bend_a)
+   # A leg swung wide is a straight leg: it cannot stay folded through a fast swing. So across a swing of more than a quarter
+   # turn the leg takes the straighter of its two shapes, going in or coming out, for the middle of the gap, and changes to or
+   # from the more bent one within the first or last fifth. Easing the bend evenly across the gap kept a kicking leg half
+   # folded at the top of the kick, knee toward the camera and foot behind the head, through the trunk.
+   smooth=lambda x:float(np.clip(x,0,1))**2*(3-2*float(np.clip(x,0,1)));entry_straighter=abs(bend_a)<=abs(wrap(s2-t2))
+   shape_at=(lambda u:u) if abs(sweep)<=np.pi/2 else (lambda u:smooth((u-.8)/.2)) if entry_straighter else (lambda u:smooth(u/.2))
    for f in run:
-    u=(times[f]-times[a])/(times[b]-times[a]);thigh=t1+turn*float(np.interp(times[f],[times[m[0]] for m in marks],[m[1] for m in marks]));shank=thigh+bend_a+bend*u;raw[f,knee,:2]=raw[f,hip,:2]+(l1+(l2-l1)*u)*np.array([np.cos(thigh),np.sin(thigh)]);raw[f,ankle,:2]=raw[f,knee,:2]+(m1+(m2-m1)*u)*np.array([np.cos(shank),np.sin(shank)])
+    u=(times[f]-times[a])/(times[b]-times[a]);thigh=t1+turn*float(np.interp(times[f],[times[m[0]] for m in marks],[m[1] for m in marks]));e=shape_at(u);shank=thigh+bend_a+bend*e;raw[f,knee,:2]=raw[f,hip,:2]+(l1+(l2-l1)*e)*np.array([np.cos(thigh),np.sin(thigh)]);raw[f,ankle,:2]=raw[f,knee,:2]+(m1+(m2-m1)*e)*np.array([np.cos(shank),np.sin(shank)])
    bridged.append({'side':side,'from':float(times[a]),'to':float(times[b]),'sweepDegrees':float(np.degrees(sweep))})
 # On a raised, straight leg the blurred ankle point slides up the shin, which only ever shortens the hip-to-ankle reach.
 # The reach is therefore restored to its largest value within two neighbouring straight frames; the observed direction is kept.

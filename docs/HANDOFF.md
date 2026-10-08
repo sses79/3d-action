@@ -528,3 +528,8 @@ User flagged Hook kick 0.59 s, Tornado kick 0.83 s and the five frames on Cheat 
 ## 2026-10-08 — R32 crossing rule across time; runs 27 and 28
 
 `retarget.ts` counts crossings on the rig; `fit.py` `choose_sides` keeps one side per stretch of overlap. Crossings 47 to 9 across the 20 clips; frames inside 38 to 46; fit error worse on 9 clips. Tornado kick 0.81 s still not fixed. Grades carried over without re-judging. 87 Node tests pass.
+
+
+## 2026-10-08 — R33 straight leg through a wide bridged swing; run 29
+
+User confirmed Cheat 720 and Pop 360 (crescent) look better after R32, so it stays. Tornado kick 0.81 s: the trunk lean is real; the fault was the bridge easing a bent entry shape evenly. `lift.py` now takes the straighter of the entry and exit shapes for the middle of a bridge wider than a quarter turn. Tornado kick and the Cheat 360 crescent right leg are straight. Frames inside 46 to 55, crossings 9. Second looks now record `reach` and `bendDegrees` (noisy; not used). 87 Node tests pass.
