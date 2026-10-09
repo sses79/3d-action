@@ -346,6 +346,10 @@ What the retarget does differently for this source: height comes from the lowest
 
 Measured on the 59 tricking clips: see runs 35–43 in `docs/RULE_LOG.md`.
 
+## Posing from the model's rotations (9 October 2026)
+
+`pose: rotations` (body source; default `positions`) turns each of 22 bones from its rest pose by the world rotation the model's joint has turned from the model's rest pose, after lining up the two rest poses bone by bone. Twist, hands, feet and toes then come from the model instead of being inferred or left at rest. `summary.pose` is `{requested, used, reason?}`; it falls back to positions when the estimate has no rotations or marks frames whose rotations belong to a reading the second look replaced. Fingers are not driven yet.
+
 ## Confidence levels, notes and versions (9 October 2026)
 
 Each entry carries `review: {level, notes[], updatedAt}`: level 0 unreviewed, 1 has issues, 2 acceptable, 3 approved; a note has `text`, optional `time` (action seconds), the `revision` it was written against, `at`, and `by` (user, assistant or system). It is metadata: setting it does not change the action or its revision, and it survives new revisions. Operations: `set_review`, `list_reviews`, `set_reference_revision`. Studio shows the level as a dot in the left list (searchable by level name) and a CONFIDENCE panel on the right with the four levels, "Add note at <current time>", the notes (a timed note seeks to its moment) and a "Reference is revision N" menu.

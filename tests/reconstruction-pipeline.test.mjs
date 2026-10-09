@@ -58,5 +58,5 @@ test('the body source is the default when installed, and falls back to the rules
  [calls,summary]=await ran(f,{...f.request,actionId:'body-two',fit:'stable'});assert.equal(summary.source.used,'rules');assert.equal(summary.source.fallbackReason,undefined);
  f.env.failStage='body';[calls,summary]=await ran(f,{...f.request,actionId:'body-three',smooth:.5});assert.ok(calls.startsWith('body')&&!calls.includes('body,body'));assert.equal(summary.source.used,'rules');assert.match(summary.source.fallbackReason,/failed: .*boom/);assert.equal(summary.fitting.mode,'stable');
  await assert.rejects(reconstruct(process.cwd(),{...f.request,source:'body',smooth:.25},f.env),/boom/);
- for(const bad of [{source:'body',fit:'stable'},{source:'rules',smooth:1},{source:'other'},{smooth:2},{secondLook:'no'}])assert.throws(()=>normalizeRequest({...f.request,...bad}));
+ for(const bad of [{source:'body',fit:'stable'},{source:'rules',smooth:1},{source:'other'},{smooth:2},{secondLook:'no'},{pose:'bones'}])assert.throws(()=>normalizeRequest({...f.request,...bad}));
 }finally{rmSync(f.dir,{recursive:true,force:true});}});

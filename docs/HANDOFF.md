@@ -620,3 +620,8 @@ The second look made Butterfly twist, B-twist round and Moonkick worse in the us
 ## 2026-10-09 — Confidence levels, timed notes, per-action switches
 
 User could not tell whether Butterfly twist, B-twist round and Moonkick were better or worse and asked for a confidence level per action and movement, shown and editable in the UI with timed notes, readable by Claude, deciding what gets rebuilt; plus adjustments per action and comparable versions instead of rebuilding everything after a rule change. Added `review` on entries, operations `set_review`, `list_reviews`, `set_reference_revision` (44 operations), rebuild protection (`overrideConfidence`), `build` stored per revision, `batch.py --only-issues/--include-accepted`, per-action `secondLook`/`despike`, the CONFIDENCE panel and list dots in Studio, `tests/review.test.mjs`. Those three clips are at level 1 with the user's words; Sideswipe and Raiz carry a note. No rule changed.
+
+
+## 2026-10-09 — Step 3 first cut: rotation path
+
+`pose: rotations` (body source) poses 22 bones from SAM 3D Body's joint rotations. `authoring/reconstruction/mhr-rig.json` holds the model's rest pose; `body.py` emits `boneRotations`; `retarget.ts` applies D . A . rest and reports `pose` in the summary. `batch.py --pose rotations --suffix=-rot` builds variants beside existing actions (use `=` for a suffix that starts with a dash). Built: `sam3d-trick-01-hook-kick-rot`, `sam3d-trick-19-cheat-360-crescent-rot`, `sam3d-trick-43-backflip-overtuck-rot`. Awaiting user comparison before changing the default. 89 Node tests.

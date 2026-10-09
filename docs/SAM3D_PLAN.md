@@ -6,7 +6,7 @@ Written 2026-10-09, after runs 35–41 showed the SAM 3D Body builds (`sam3d-<sl
 
 - Step 1: done 2026-10-09 (run 42).
 - Step 2: done 2026-10-09 (run 43): default, fallback, smoothing, jitter measure. MoGe field of view tried and not adopted (below). Single-frame pose jumps: fixed for runs of one or two frames (R38, run 44); longer wrong stretches in four twisting clips remain. Left over, not blocking step 3: the mini is used by hand (send person boxes, run `body.py`, copy `body-raw.npz` into `.authoring/sam3d-trial`), not yet as a configured runner.
-- Step 3: not started. Three clips have the model's rotation parameters saved.
+- Step 3: first cut done 2026-10-09. `pose: rotations` drives 22 bones (spine, limbs, hands, feet, toes) from the model's joint rotations; built for three clips as `-rot` actions beside the position builds. Default is still positions until the user has compared them. Left: fingers, rotations for frames the second look replaced, a wider set of clips.
 
 ## What ComfyUI ships and what we do with it
 
