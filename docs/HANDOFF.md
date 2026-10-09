@@ -650,3 +650,8 @@ Runs 47-48. `-rot` actions now exist for clips 1, 4, 16, 19, 34, 43, 51, 52 (19 
 ## 2026-10-09 — Run 49: plain actions on rotations
 
 Eight plain `sam3d-` actions rebuilt on rotations; seven `-rot` copies archived; the approved `sam3d-trick-19-cheat-360-crescent-rot` kept. User notes carried onto the plain Hook kick, Backflip and Cheat 720 actions. Open on Cheat 720: the hand passes over the kicking leg in both builds; whether that needs the hold-one-side version of R40 is the user's call.
+
+
+## 2026-10-09 — R40 extended: hand laid on the surface
+
+User: "make the hand touch the leg" (Cheat 720). `retarget.ts` now has two steps per arm on the rotation path: upper arm at the shoulder for elbow/forearm/wrist, then hand at the wrist for palm and middle fingertip, with a tapered thigh for the hand step. Run 50 rebuilt only `sam3d-trick-34-cheat-720` (revision 10). The other seven rotation builds predate this step. Mesh thickness figures (thigh 8→5.2 cm, shin up to 7.4 cm at the calf, forearm 5.5→3.7 cm, trunk 11–15 cm) were measured from `character.glb` this session and are only used for the thigh in the hand step.

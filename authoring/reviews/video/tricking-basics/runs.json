@@ -16518,6 +16518,44 @@
     }
    },
    "seconds": 315
+  },
+  {
+   "id": 50,
+   "date": "2026-10-09T16:57",
+   "commit": "006e401+uncommitted",
+   "rule": "R40 extended: palm and fingertips are laid on the surface by turning the hand at the wrist (Cheat 720, hand through the knee)",
+   "options": {
+    "sourceSpeed": 0.5,
+    "decisions": false,
+    "fit": "none",
+    "straightKneePrior": false,
+    "source": "body"
+   },
+   "clips": {
+    "34": {
+     "name": "Cheat 720",
+     "ok": true,
+     "pose": "rotations",
+     "secondLook": 0,
+     "despiked": 0,
+     "despikedKeypoints": 0,
+     "jitterMm": 8.6,
+     "crossings": 0,
+     "insideFrames": 0,
+     "beyondNormalRange": 3,
+     "revision": 10,
+     "weak": 8,
+     "repaired": 0,
+     "swapped": 0,
+     "bridges": 0,
+     "repairsVetoed": null,
+     "lift": 0.937,
+     "projection": null,
+     "flags": 0,
+     "sheet": "/Users/tim/Yun/codex-3d/.authoring/review-sheets/sam3d-trick-34-cheat-720-r10-3958832e0617.png"
+    }
+   },
+   "seconds": 29
   }
  ]
 }
