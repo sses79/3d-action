@@ -660,3 +660,8 @@ User: "make the hand touch the leg" (Cheat 720). `retarget.ts` now has two steps
 ## 2026-10-09 — Phase 6 started
 
 User: Cheat 720 "hands touch not cross through now" (approved by the user in Studio), Cheat 360 crescent good (set to acceptable; its `-rot` copy archived), most `sam3d-` actions are good and need no rebuild. Phase 6: `build_movement` with `sourceActionId` copied Hook kick into `move-video-hook-kick` r1; `profile_movement_library`; `compose_action` into `guard-video-hook-kick-guard` r2 with `blend: velocity` and `travel: continue` on both joins. Library cleanup the user suggested is not done: a scripted bulk archive of 39 actions (21 rule-pipeline `trick-*` that have a `sam3d-` twin, 4 `trial-sam3d-*`, 14 early `video-*` drafts superseded by v7/v3/v3/v4) was blocked by the permission layer and needs the user's explicit yes. The 43 contract/velocity review actions and all movements were left out of that list on purpose (they are review evidence, not duplicates).
+
+
+## 2026-10-09 — Library cleanup
+
+On the user's "archive the 39": 21 rule-pipeline `trick-*` actions with a `sam3d-` twin, 4 `trial-sam3d-*` and 14 early `video-*` drafts are archived (restorable with `archive_entry`). Kept: `video-side-kick-v7`, `video-flying-side-kick-v3`, `video-flying-kick-landing-v3`, `video-triple-kick-v4`, all contract/velocity review actions, all movements. Note: `batch.py --source rules` writes into the archived `trick-*` slugs.
