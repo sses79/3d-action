@@ -5,7 +5,7 @@ Written 2026-10-09, after runs 35–41 showed the SAM 3D Body builds (`sam3d-<sl
 ## Status
 
 - Step 1: done 2026-10-09 (run 42).
-- Step 2: done 2026-10-09 (run 43): default, fallback, smoothing, jitter measure. MoGe field of view tried and not adopted (below). Left over, not blocking step 3: single-frame pose jumps in twisting clips; the mini is used by hand (send person boxes, run `body.py`, copy `body-raw.npz` into `.authoring/sam3d-trial`), not yet as a configured runner.
+- Step 2: done 2026-10-09 (run 43): default, fallback, smoothing, jitter measure. MoGe field of view tried and not adopted (below). Single-frame pose jumps: fixed for runs of one or two frames (R38, run 44); longer wrong stretches in four twisting clips remain. Left over, not blocking step 3: the mini is used by hand (send person boxes, run `body.py`, copy `body-raw.npz` into `.authoring/sam3d-trial`), not yet as a configured runner.
 - Step 3: not started. Three clips have the model's rotation parameters saved.
 
 ## What ComfyUI ships and what we do with it

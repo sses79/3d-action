@@ -600,3 +600,8 @@ Cartwheel, Aerial and Backflip (overtuck) built from SAM 3D Body joints follow t
 ## 2026-10-09 — Step 2 closed; MoGe field of view not adopted
 
 MoGe gives 36-40 degrees vertical; with it Predict changes distance (5.2-5.7 m to 3.6-4.2 m) but trunk lean by at most 2.3 degrees on three clips. Not wired in. Details in `docs/SAM3D_PLAN.md`. Next: step 3 (rotations), and the single-frame pose jumps in twisting clips.
+
+
+## 2026-10-09 — R38 single-frame jumps; run 44
+
+`body.py` replaces one- or two-frame runs whose root turn or keypoints jump out and back, before smoothing; counts in `estimate.despiked` and the batch log. Worst jitter 60 to 29 mm. Longer wrong stretches in four twisting clips remain (Sideswipe, B-twist round, Raiz, Scoot full). 88 Node tests pass.
