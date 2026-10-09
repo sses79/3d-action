@@ -595,3 +595,8 @@ Cartwheel, Aerial and Backflip (overtuck) built from SAM 3D Body joints follow t
 ## 2026-10-09 — Plan step 2: body source is the default; run 43
 
 `reconstruct_motion` defaults to `source: auto` (body when installed, rules otherwise or on failure, reported in `summary.source`); `smooth` default 1 via ComfyUI's Smooth node; `action.jitter` in the rig report. `batch.py` defaults to the body source over all catalog clips into `sam3d-<slug>`; `--source rules` builds the 20 upright clips into the plain slugs. 88 Node tests. Three clips (19, 1, 43) have fuller raw results with MHR parameters, run on the mini with the same `body.py`. Open: single-frame pose jumps in twisting clips (jitter up to 60 mm), MoGe field of view, the mini as a configured runner.
+
+
+## 2026-10-09 — Step 2 closed; MoGe field of view not adopted
+
+MoGe gives 36-40 degrees vertical; with it Predict changes distance (5.2-5.7 m to 3.6-4.2 m) but trunk lean by at most 2.3 degrees on three clips. Not wired in. Details in `docs/SAM3D_PLAN.md`. Next: step 3 (rotations), and the single-frame pose jumps in twisting clips.

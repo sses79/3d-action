@@ -5,7 +5,7 @@ Written 2026-10-09, after runs 35–41 showed the SAM 3D Body builds (`sam3d-<sl
 ## Status
 
 - Step 1: done 2026-10-09 (run 42).
-- Step 2: default, fallback, smoothing and the jitter measure done (run 43). Open in step 2: MoGe field of view, the mini as a configured runner, single-frame pose jumps in twisting clips.
+- Step 2: done 2026-10-09 (run 43): default, fallback, smoothing, jitter measure. MoGe field of view tried and not adopted (below). Left over, not blocking step 3: single-frame pose jumps in twisting clips; the mini is used by hand (send person boxes, run `body.py`, copy `body-raw.npz` into `.authoring/sam3d-trial`), not yet as a configured runner.
 - Step 3: not started. Three clips have the model's rotation parameters saved.
 
 ## What ComfyUI ships and what we do with it
@@ -73,3 +73,7 @@ Done when rotation builds are at least as good as position builds on all 59 clip
 - Speed and memory of Smooth and MoGe on these Macs.
 - Whether Predict's results change materially with a field of view supplied.
 - Licence: the weights are under Meta's SAM License; outputs are not restricted beyond law and trade controls, but the text does not explicitly address commercial use.
+
+## Finding: field of view (MoGe), 2026-10-09
+
+Tried on Hook kick, Backflip (overtuck) and Round(house) kick, first 12 frames each, `moge_2_vitl_normal_fp16` (0.66 GB, 16–18 s per clip on this Mac). MoGe reads a vertical field of view of 36–40°. Passing it to Predict moves the estimated distance to the performer from 5.2–5.7 m to 3.6–4.2 m, and changes the trunk's lean in depth by 0.1–2.3°. So it changes scale, which we do not use, and not pose. Not adopted. The backward lean seen in side views during kicks is therefore not a field-of-view effect; it is either real counter-lean or the model's depth guess, and is still unexplained. The weights stay in `.authoring/comfyui/models/geometry_estimation` for a later floor-plane check of jump heights.
