@@ -348,7 +348,7 @@ Measured on the 59 tricking clips: see runs 35–43 in `docs/RULE_LOG.md`.
 
 ## Posing from the model's rotations (9 October 2026)
 
-`pose: rotations` (body source; default `positions`) turns each of 52 bones (22 body bones and 30 finger bones) from its rest pose by the world rotation the model's joint has turned from the model's rest pose, after lining up the two rest poses bone by bone. Twist, hands, feet and toes then come from the model instead of being inferred or left at rest. `summary.pose` is `{requested, used, reason?}`; it falls back to positions when the estimate has no rotations. Frames the second look replaced carry the chosen reading's rotations, turned back to the upright picture. Fingers come from the whole-body pass (no separate hand crop), so they are coarse.
+`pose: rotations` (body source; default `positions`) turns each of 52 bones (22 body bones and 30 finger bones) from its rest pose by the world rotation the model's joint has turned from the model's rest pose, after lining up the two rest poses bone by bone. Twist, hands, feet and toes then come from the model instead of being inferred or left at rest. `summary.pose` is `{requested, used, reason?}`; it falls back to positions when the estimate has no rotations. Frames the second look replaced carry the chosen reading's rotations, turned back to the upright picture. Fingers come from the whole-body pass (no separate hand crop), so they are coarse. Where an elbow, forearm or wrist lands inside the trunk, head or a leg on our proportions, the upper arm is swung out at the shoulder to the surface (R40); `summary.pose.armsSwungOutFrames` counts those frames.
 
 ## Confidence levels, notes and versions (9 October 2026)
 

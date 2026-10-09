@@ -16266,6 +16266,66 @@
     }
    },
    "seconds": 114
+  },
+  {
+   "id": 48,
+   "date": "2026-10-09T16:33",
+   "commit": "4b37a4e+uncommitted",
+   "rule": "Rotation path: an arm inside another body part is swung out at the shoulder (Cheat 720 left wrist in thigh)",
+   "options": {
+    "sourceSpeed": 0.5,
+    "decisions": false,
+    "fit": "none",
+    "straightKneePrior": false,
+    "source": "body"
+   },
+   "clips": {
+    "34": {
+     "name": "Cheat 720",
+     "ok": true,
+     "pose": "rotations",
+     "secondLook": 0,
+     "despiked": 0,
+     "despikedKeypoints": 0,
+     "jitterMm": 8.6,
+     "crossings": 0,
+     "insideFrames": 0,
+     "beyondNormalRange": 3,
+     "revision": 2,
+     "weak": 8,
+     "repaired": 0,
+     "swapped": 0,
+     "bridges": 0,
+     "repairsVetoed": null,
+     "lift": 0.937,
+     "projection": null,
+     "flags": 0,
+     "sheet": "/Users/tim/Yun/codex-3d/.authoring/review-sheets/sam3d-trick-34-cheat-720-rot-r2-47a3af511310.png"
+    },
+    "43": {
+     "name": "Backflip (overtuck)",
+     "ok": true,
+     "pose": "rotations",
+     "secondLook": 0,
+     "despiked": 0,
+     "despikedKeypoints": 0,
+     "jitterMm": 4,
+     "crossings": 0,
+     "insideFrames": 0,
+     "beyondNormalRange": 2,
+     "revision": 4,
+     "weak": 45,
+     "repaired": 0,
+     "swapped": 0,
+     "bridges": 0,
+     "repairsVetoed": null,
+     "lift": 1.653,
+     "projection": null,
+     "flags": 0,
+     "sheet": "/Users/tim/Yun/codex-3d/.authoring/review-sheets/sam3d-trick-43-backflip-overtuck-rot-r4-fddc1f9f3676.png"
+    }
+   },
+   "seconds": 55
   }
  ]
 }

@@ -635,3 +635,8 @@ User judged the `-rot` builds of Hook kick and Backflip (overtuck) better "for s
 ## 2026-10-09 — Step 3: fingers
 
 `body.py` adds 30 finger bones to `boneRotations` (joint indices in the comment there); `retarget.ts` knows their next bones (`*_02`, `*_03`, `*_04_leaf`). Run 46 rebuilt `sam3d-trick-01-hook-kick-rot` and `sam3d-trick-43-backflip-overtuck-rot` (revision 3 each). The user has set `sam3d-trick-19-cheat-360-crescent-rot` to approved, so it was skipped and still has no fingers. Not tried: `run_hand_refinement=True` (extra model passes per frame). Left in step 3: more clips on rotations, then the default.
+
+
+## 2026-10-09 — Step 3: three more clips, R40
+
+Runs 47-48. `-rot` actions now exist for clips 1, 4, 16, 19, 34, 43, 51, 52 (19 is approved by the user and has no fingers). R40 in `retarget.ts` swings an arm out at the shoulder when it lands inside another part on the rotation path; it works frame by frame, so a leg sweeping through a hand gives a short detour (Cheat 720, 0.82-0.86 s) that raises jitter. If the user dislikes that detour, the next step is a two-pass version that picks one side per stretch (as R32 did in `fit.py`). Default pose is still positions.
