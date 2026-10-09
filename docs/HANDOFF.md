@@ -630,3 +630,8 @@ User could not tell whether Butterfly twist, B-twist round and Moonkick were bet
 ## 2026-10-09 — Step 3: second-look frames on the rotation path
 
 User judged the `-rot` builds of Hook kick and Backflip (overtuck) better "for sure" (recorded as notes on those actions; levels left unreviewed); the three "has issues" clips are deferred by the user. `body.py` now turns the chosen second-look reading's joint rotations back (G = T^-1 G') and no longer marks those frames unreliable, so `pose: rotations` works on Raiz and Sideswipe: `sam3d-trick-51-raiz-rot`, `sam3d-trick-52-sideswipe-rot` (run 45, two clips). Verified to 0.07 degrees against the model's own joints before building. Left in step 3: fingers, more clips, then flipping the default. `batch.py` takes the catalog folder, not the file, and `--runs` did not redirect the run log (run 45 went into the real `runs.json`).
+
+
+## 2026-10-09 — Step 3: fingers
+
+`body.py` adds 30 finger bones to `boneRotations` (joint indices in the comment there); `retarget.ts` knows their next bones (`*_02`, `*_03`, `*_04_leaf`). Run 46 rebuilt `sam3d-trick-01-hook-kick-rot` and `sam3d-trick-43-backflip-overtuck-rot` (revision 3 each). The user has set `sam3d-trick-19-cheat-360-crescent-rot` to approved, so it was skipped and still has no fingers. Not tried: `run_hand_refinement=True` (extra model passes per frame). Left in step 3: more clips on rotations, then the default.

@@ -130,6 +130,13 @@ lowest=even(k2[:,:,1].max(1)[:,None])[:,0]
 # reproduces the direction between its own joint positions within 0.3 degrees. The rest direction of each bone (toward the
 # next joint) goes along so the retarget can line up the two rest poses, which differ (arms lowered here, level on ours).
 BONES={'pelvis':(1,None),'spine_01':(35,36),'spine_02':(36,37),'spine_03':(37,110),'neck_01':(110,113),'Head':(113,None),'clavicle_l':(74,75),'upperarm_l':(75,76),'lowerarm_l':(76,77),'hand_l':(78,None),'clavicle_r':(38,39),'upperarm_r':(39,40),'lowerarm_r':(40,41),'hand_r':(42,None),'thigh_l':(2,3),'calf_l':(3,4),'foot_l':(7,5,8),'ball_l':(8,None),'thigh_r':(18,19),'calf_r':(19,20),'foot_r':(23,21,24),'ball_r':(24,None)}
+# Fingers: three bones each. The model's hand joints were matched to its own named hand keypoints (thumb tip to pinky base,
+# then wrist), which coincide with joints to the millimetre: on the right hand thumb 61-64, index 56-59, middle 52-55, ring
+# 48-51, little finger 44-47; the left hand is 36 higher. The estimate comes from the whole-body pass (no separate hand crop),
+# so it is coarse: open, closed and roughly how far, not individual finger detail.
+for side,off in (('r',0),('l',36)):
+ for finger,base in (('thumb',61),('index',56),('middle',52),('ring',48),('pinky',44)):
+  for k in range(3):BONES[f'{finger}_0{k+1}_{side}']=(base+off+k,base+off+k+1)
 rotations=None
 if 'pred_global_rots' in raw:
  mhr=json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'mhr-rig.json')));bind=np.array(mhr['bind'])
