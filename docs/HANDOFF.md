@@ -590,3 +590,8 @@ Cartwheel, Aerial and Backflip (overtuck) built from SAM 3D Body joints follow t
 ## 2026-10-09 — Plan step 1 done: source body; run 42
 
 `authoring/reconstruction/body.py` (ComfyUI venv) replaces the trial scripts; `pipeline.mjs` branches on `request.source`; `batch.py --source body` builds into `sam3d-<slug>`. Environment keys: `comfy`, `bodyPython`, `bodyWeights`, `bodyReuse` (`.authoring/sam3d-trial`, raw results reused when frames match). All 59 clips build without the lift. Default is still `rules`; step 2 flips it and adds the fallback, smoothing and the mini as a runner. The mini still has the old trial script.
+
+
+## 2026-10-09 — Plan step 2: body source is the default; run 43
+
+`reconstruct_motion` defaults to `source: auto` (body when installed, rules otherwise or on failure, reported in `summary.source`); `smooth` default 1 via ComfyUI's Smooth node; `action.jitter` in the rig report. `batch.py` defaults to the body source over all catalog clips into `sam3d-<slug>`; `--source rules` builds the 20 upright clips into the plain slugs. 88 Node tests. Three clips (19, 1, 43) have fuller raw results with MHR parameters, run on the mini with the same `body.py`. Open: single-frame pose jumps in twisting clips (jitter up to 60 mm), MoGe field of view, the mini as a configured runner.

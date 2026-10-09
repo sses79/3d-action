@@ -334,6 +334,18 @@ Batch of 20 with decisions on: 514 frames, $0.14. A first version of the veto (a
 
 Still wrong in Cheat 360 crescent: the high part of the kick at 0.62–0.66 s takes the low way round. Without `decisions` the pipeline behaves as before.
 
+## Body source: SAM 3D Body (8–9 October 2026)
+
+`source` chooses how the 3D body is estimated. `auto` (default) uses the body source when ComfyUI, its Python environment and the weights are present under `.authoring/comfyui`, and the request has no rule-only option (`fit`, `straightKneePrior`, `decisions`, `externalJoints`); otherwise the rule pipeline. `summary.source` is `{requested, used, fallbackReason?}`. If the body stage fails under `auto`, the rule pipeline runs and the reason is reported; under `source: body` the failure is an error.
+
+Stages for the body source: observe → body → (correct) → retarget. `body.py` runs in ComfyUI's environment and calls its built-in nodes headless: `SAM3DBody_Predict` on each observed frame with the performer's box, then `SAM3DBody_Smooth` (Savitzky–Golay, 7 frames, easing off above 30° of root rotation per frame) at strength `smooth` (default 1). It writes 17 joints, the hip centre, the lowest of the model's 70 keypoints in the picture and the face direction, resampled to 30 Hz, and keeps the raw output (`body-raw.npz`: 70 keypoints, 127 joints with rotations, pose parameters). The lift, the vision decisions and the fit do not run. One step of ComfyUI's rig code needs 64-bit floats, which the Mac GPU lacks; `body.py` runs that step on the CPU without changing ComfyUI's files.
+
+The stage reuses a raw result from `.authoring/sam3d-trial` when its frames match (`bodyReuse` in the environment), so clips processed on another machine need not be recomputed. `mini4.local` runs the same script about twice as fast (0.9 s a frame against 1.8).
+
+What the retarget does differently for this source: height comes from the lowest body keypoint and follows it from 2–6 cm (R37); the floor is under the lowest of feet, ankles, hands, head, knees, elbows and hips (R36, R37).
+
+Measured on the 59 tricking clips: see runs 35–43 in `docs/RULE_LOG.md`.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

@@ -18,9 +18,11 @@ You choose the window, the options and the phase labels, and you judge the resul
 ## 2. Choose the window and options
 
 - **Window**: one continuous real-time performance by one person, 0.5–8 s. Start once the whole body is inside the frame and end before a cut or freeze. Prefer a start and end in a settled pose. The tallest person in the first frame is the one followed, so do not start on a frame where someone else is larger.
-- **`straightKneePrior`**: set `true` when a kicking or raised leg is seen roughly side-on and visibly straightens. Leave `false` when the leg points toward or away from the camera.
+- **`source`**: leave it out. The body model (SAM 3D Body) is used when installed and handles kicks, spins, hand-supported and inverted moves; `summary.source` says which source ran, and gives a `fallbackReason` when the rule pipeline ran instead. Set `source: rules` only to compare, or when you need a rule-only option (`fit`, `straightKneePrior`, `decisions`).
+- **`smooth`** (body source): 0–1, default 1. Lower it only if a fast, sharp move looks softened against the video.
+- **`straightKneePrior`** (rule pipeline only; selects it): set `true` when a kicking or raised leg is seen roughly side-on and visibly straightens. Leave `false` when the leg points toward or away from the camera.
 - **`sourceSpeed`**: for slow-motion footage, the fraction of real speed (0.4 = 40%). The action comes out in real time; `phases` and `corrections` stay in footage seconds, while review times are action seconds. State how you estimated it.
-- **`decisions`**: set `true` for spins and fast kicks where legs cross, if the user accepts cropped frames being sent to a vision model through OpenRouter (about a cent per clip). It lets confident answers veto wrong leg-swap repairs. Check `decisions.legDisagreed` in the summary: those times are where the model and the detector name different legs.
+- **`decisions`** (rule pipeline only; selects it): set `true` for spins and fast kicks where legs cross, if the user accepts cropped frames being sent to a vision model through OpenRouter (about a cent per clip). It lets confident answers veto wrong leg-swap repairs. Check `decisions.legDisagreed` in the summary: those times are where the model and the detector name different legs.
 - **`airborne`**: set `true` only if both feet leave the floor. It assumes a level camera and a performer at roughly constant distance.
 - **`phases`**: name what the body is doing, in clip seconds from the window start, the last ending at the window length. Mark quick strikes `fast` and still poses `hold`. Read the times off the contact sheet; do not guess.
 - **`actionId`**: a new id that does not start with `move-`. Use a fresh id (or `-v2`, `-v3`) for each attempt so earlier ones remain for comparison.
@@ -36,6 +38,7 @@ Run `reconstruct_motion` with `commit: true` and `expectedRevision: 0`. Committi
 
 Also in the summary, from the character itself:
 
+- `action.jitter`: millimetres of frame-to-frame shake in knees, feet, elbows, hands and head (distance from a smooth curve through neighbouring frames). About 4–7 mm with smoothing on these clips, 9–13 mm without.
 - `action.bodyPartsInside`: frames where one part is more than 2 cm inside another, the worst depth, each stretch with the pair involved, and `crossings` (a limb that changed from in front of a part to behind it while overlapping it). Look at those times first.
 - `action.jointRangesBeyondNormal`: joints past textbook ranges. Expected for hips in splits and high kicks; a prompt to look, not an error.
 - `estimate.reobservedLegFrames`: frames where a lost leg was found again on a turned copy of the frame.

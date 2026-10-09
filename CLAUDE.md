@@ -28,7 +28,7 @@ npm run build:editor     # editor/app.js
 npm run build:authoring  # authoring/core.js (required after editing core.ts or runtime/)
 npm run start:authoring  # service on 127.0.0.1:5174 (set OPENROUTER_ENV_FILE or OPENROUTER_API_KEY to allow reconstruct_motion decisions:true)
 python3 serve_demo.py --host 127.0.0.1 --port 5173   # public demo server
-node --test tests/*.test.mjs   # 87 tests, ~17 s, uses temp state dirs
+node --test tests/*.test.mjs   # 88 tests, ~17 s, uses temp state dirs
 npm run test:vision && python3 tests/server.py && node tests/physics.mjs && node tests/fallback.mjs
 npx tsc --noEmit -p editor/tsconfig.json
 node authoring/cli.mjs tools   # operation schemas (service must be running)
@@ -42,7 +42,7 @@ node authoring/cli.mjs tools   # operation schemas (service must be running)
 
 - Source is written very densely (multi-thousand-character lines, few comments). Match it when making small edits; grep by symbol rather than reading whole files.
 - Restart the service after editing `pipeline.mjs`, `retarget.ts` or `core.ts` (it loads them once); Python stages are picked up per run. A full 20-clip batch takes 10–15 minutes, so run it in the background.
-- SAM 3D Body path (`source: body`, plan in `docs/SAM3D_PLAN.md`): ComfyUI and weights live in untracked `.authoring/comfyui`; `authoring/reconstruction/body.py` runs there. `batch.py --source body` builds into `sam3d-<slug>` actions. `mini4.local` (key login as `tim`, `~/Yun/sam3d-runner`) runs the model about twice as fast.
+- SAM 3D Body is the default 3D source (`source: auto`; plan and status in `docs/SAM3D_PLAN.md`): ComfyUI and weights live in untracked `.authoring/comfyui`; `authoring/reconstruction/body.py` runs there. `batch.py` builds all catalog clips into `sam3d-<slug>` actions; `--source rules` builds the rule pipeline into the plain slugs. `mini4.local` (key login as `tim`, `~/Yun/sam3d-runner`) runs the model about twice as fast.
 - Never hand-edit `.authoring/project.json` or its sidecars; go through the service (MCP `animation-studio` or `authoring/cli.mjs`). Back up the index, blobs folder and sidecars together.
 - Every write pins revisions (`expectedRevision`, `sourceRevision`); fetch current values instead of assuming them.
 - "Supported" contact/seam reviews are bounded, configuration-specific visual and numeric checks, not physical validation. Do not claim more than the evidence in `authoring/reviews/` shows.

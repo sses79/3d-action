@@ -2,6 +2,12 @@
 
 Written 2026-10-09, after runs 35–41 showed the SAM 3D Body builds (`sam3d-<slug>`) beat the 35-rule pipeline on all 59 tricking clips. Agreed order with the user: (1) a direct person detector so the old 2D stage drops out, (2) SAM 3D Body as the default with the old pipeline as fallback, (3) joint rotations. Rule for this plan: use what ComfyUI already ships before writing our own.
 
+## Status
+
+- Step 1: done 2026-10-09 (run 42).
+- Step 2: default, fallback, smoothing and the jitter measure done (run 43). Open in step 2: MoGe field of view, the mini as a configured runner, single-frame pose jumps in twisting clips.
+- Step 3: not started. Three clips have the model's rotation parameters saved.
+
 ## What ComfyUI ships and what we do with it
 
 Checked in our checkout (`.authoring/comfyui`, commit 58b176f). "Use" means call it from our script, as we already do for Predict; none of it needs the ComfyUI interface.

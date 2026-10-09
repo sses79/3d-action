@@ -4,7 +4,7 @@ import {reconstruct,normalizeRequest,applyCorrections} from '../authoring/recons
 // Stage processes are replaced by fakes that write the files each real script produces, so caching is tested without Python.
 const fixture=()=>{const dir=mkdtempSync(join(tmpdir(),'reconstruct-'));for(const f of ['video.mp4','python','model.pt','checkpoint.bin','lock.txt','asset.glb'])writeFileSync(join(dir,f),f);mkdirSync(join(dir,'vendor'));
  const calls=[],arg=(a,n)=>a[a.indexOf(n)+1];
- const env={python:join(dir,'python'),models:{yolo26s:join(dir,'model.pt'),yolo26n:join(dir,'model.pt')},checkpoint:join(dir,'checkpoint.bin'),vendor:join(dir,'vendor'),vendorCommit:'abc',lock:join(dir,'lock.txt'),asset:join(dir,'asset.glb'),cache:join(dir,'cache'),failStage:null,
+ const env={python:join(dir,'python'),models:{yolo26s:join(dir,'model.pt'),yolo26n:join(dir,'model.pt')},checkpoint:join(dir,'checkpoint.bin'),vendor:join(dir,'vendor'),vendorCommit:'abc',lock:join(dir,'lock.txt'),asset:join(dir,'asset.glb'),cache:join(dir,'cache'),comfy:join(dir,'comfy'),comfyCommit:'c0',bodyPython:join(dir,'python'),bodyWeights:'weights.bin',failStage:null,
   run:async(_python,a)=>{const stage=a[0].split('/').at(-1).replace('.py','');calls.push(stage);if(env.failStage===stage)throw Error('boom');const out=arg(a,'--out');
    if(stage==='decide'){writeFileSync(join(out,'decisions.json'),JSON.stringify({model:'fake',costUSD:0,decisions:[]}));return;}
    if(stage==='observe'){const start=+arg(a,'--start');writeFileSync(join(out,'pose-report.json'),JSON.stringify({model:'fake',confidenceThreshold:.5,frames:[0,1,2].map(i=>({clipTime:i/30,time:start+i/30,detections:1,missingOrAmbiguousSubject:i===1,keypoints:i===1?[]:Array.from({length:17},(_,j)=>[0,0,i===2&&j===16?.2:.9])}))}));}
@@ -50,3 +50,13 @@ test('corrections change only the named part inside the window and keep its edge
  for(const bad of [{type:'twist',part:'left-leg',start:0,end:1},{type:'smooth',part:'tail',start:0,end:1},{type:'smooth',part:'legs',start:0,end:.05},{type:'smooth',part:'legs',start:1,end:9},{type:'hold',part:'legs',start:0,end:1,strength:2}])assert.throws(()=>normalizeRequest({video:'v.mp4',start:1,end:3,corrections:[bad]}));
  assert.equal(normalizeRequest({video:'v.mp4',start:1,end:3,corrections:[{type:'smooth',part:'legs',start:0,end:1}]}).corrections[0].strength,2);
 });
+
+test('the body source is the default when installed, and falls back to the rules with a reason',async()=>{const f=fixture();try{
+ let [calls,summary]=await ran(f,f.request);assert.equal(calls,'observe,lift,fit,retarget');assert.equal(summary.source.used,'rules');assert.match(summary.source.fallbackReason,/not installed/);
+ mkdirSync(join(f.dir,'comfy/models/detection'),{recursive:true});writeFileSync(join(f.dir,'comfy/models/detection/weights.bin'),'w');
+ [calls,summary]=await ran(f,{...f.request,actionId:'body-one'});assert.equal(calls,'body,retarget');assert.deepEqual(summary.source,{requested:'auto',used:'body'});assert.equal(summary.fitting.mode,'none');
+ [calls,summary]=await ran(f,{...f.request,actionId:'body-two',fit:'stable'});assert.equal(summary.source.used,'rules');assert.equal(summary.source.fallbackReason,undefined);
+ f.env.failStage='body';[calls,summary]=await ran(f,{...f.request,actionId:'body-three',smooth:.5});assert.ok(calls.startsWith('body')&&!calls.includes('body,body'));assert.equal(summary.source.used,'rules');assert.match(summary.source.fallbackReason,/failed: .*boom/);assert.equal(summary.fitting.mode,'stable');
+ await assert.rejects(reconstruct(process.cwd(),{...f.request,source:'body',smooth:.25},f.env),/boom/);
+ for(const bad of [{source:'body',fit:'stable'},{source:'rules',smooth:1},{source:'other'},{smooth:2}])assert.throws(()=>normalizeRequest({...f.request,...bad}));
+}finally{rmSync(f.dir,{recursive:true,force:true});}});
