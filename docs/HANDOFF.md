@@ -640,3 +640,8 @@ User judged the `-rot` builds of Hook kick and Backflip (overtuck) better "for s
 ## 2026-10-09 — Step 3: three more clips, R40
 
 Runs 47-48. `-rot` actions now exist for clips 1, 4, 16, 19, 34, 43, 51, 52 (19 is approved by the user and has no fingers). R40 in `retarget.ts` swings an arm out at the shoulder when it lands inside another part on the rotation path; it works frame by frame, so a leg sweeping through a hand gives a short detour (Cheat 720, 0.82-0.86 s) that raises jitter. If the user dislikes that detour, the next step is a two-pass version that picks one side per stretch (as R32 did in `fit.py`). Default pose is still positions.
+
+
+## 2026-10-09 — Rotations are the default
+
+`pipeline.mjs` resolves `pose` to rotations unless the request has corrections (then positions) or says otherwise; rules-source builds report positions with a reason. Nothing rebuilt. Open: corrections do not work on the rotation path (they edit positions); the `-rot` actions and the plain `sam3d-` actions now duplicate eight clips, and the user has not said which to keep; 51 clips have never been built on rotations; R40's detour on Cheat 720 awaits the user's look.
