@@ -585,3 +585,8 @@ Cartwheel, Aerial and Backflip (overtuck) built from SAM 3D Body joints follow t
 ## 2026-10-08 — Mac mini runner; all 39 inverted clips; run 41
 
 `mini4.local` (user tim, key login from this Mac) runs SAM 3D Body in `~/Yun/sam3d-runner`: `run_queue.sh` processes `poses/clipN.json` into `out/clipN.npz` and logs to `queue.log`. About twice this Mac's speed. All 59 catalog clips now have `sam3d-<slug>` actions (20 upright from run 39, 39 inverted from run 41). `lift.py` crash on a leg lost before first seen is fixed. Open: user review of the inverted set, jump heights for tucked bodies, a build path that does not need our lift at all.
+
+
+## 2026-10-09 — Plan step 1 done: source body; run 42
+
+`authoring/reconstruction/body.py` (ComfyUI venv) replaces the trial scripts; `pipeline.mjs` branches on `request.source`; `batch.py --source body` builds into `sam3d-<slug>`. Environment keys: `comfy`, `bodyPython`, `bodyWeights`, `bodyReuse` (`.authoring/sam3d-trial`, raw results reused when frames match). All 59 clips build without the lift. Default is still `rules`; step 2 flips it and adds the fallback, smoothing and the mini as a runner. The mini still has the old trial script.

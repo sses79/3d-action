@@ -42,7 +42,7 @@ node authoring/cli.mjs tools   # operation schemas (service must be running)
 
 - Source is written very densely (multi-thousand-character lines, few comments). Match it when making small edits; grep by symbol rather than reading whole files.
 - Restart the service after editing `pipeline.mjs`, `retarget.ts` or `core.ts` (it loads them once); Python stages are picked up per run. A full 20-clip batch takes 10–15 minutes, so run it in the background.
-- SAM 3D Body trial: weights and ComfyUI live in untracked `.authoring/comfyui` here and in `~/Yun/sam3d-runner` on `mini4.local` (key login as `tim`; about twice as fast). Scripts are in `authoring/reconstruction/trials/`; build with `batch.py --external .authoring/sam3d-trial` into `sam3d-<slug>` actions.
+- SAM 3D Body path (`source: body`, plan in `docs/SAM3D_PLAN.md`): ComfyUI and weights live in untracked `.authoring/comfyui`; `authoring/reconstruction/body.py` runs there. `batch.py --source body` builds into `sam3d-<slug>` actions. `mini4.local` (key login as `tim`, `~/Yun/sam3d-runner`) runs the model about twice as fast.
 - Never hand-edit `.authoring/project.json` or its sidecars; go through the service (MCP `animation-studio` or `authoring/cli.mjs`). Back up the index, blobs folder and sidecars together.
 - Every write pins revisions (`expectedRevision`, `sourceRevision`); fetch current values instead of assuming them.
 - "Supported" contact/seam reviews are bounded, configuration-specific visual and numeric checks, not physical validation. Do not claim more than the evidence in `authoring/reviews/` shows.
