@@ -38,15 +38,17 @@ def predict(images,boxes):
 if raw is None:raw=predict(pictures(order),[r['bbox'] for r in rows])
 os.makedirs(out,exist_ok=True);np.savez(os.path.join(out,'body-raw.npz'),frameIndex=np.array(order),times=times,**raw)
 # A second look with the picture turned. The model reads upright bodies best; on an inverted, twisting body its reading of which
-# way the chest faces can jump from frame to frame. Around every frame where the whole body turns more than 45 degrees in one
-# frame (three frames either side), the same model is run on the picture turned by 90, 180 and 270 degrees and each result is
+# way the chest faces can jump back and forth. Only where it does so repeatedly: three or more jumps of over 45 degrees in one
+# frame, each within four frames of the next. One jump alone can be a real fast twist, and an out-and-back pair is a spike that
+# the next rule removes; looking again at those changed frames that were fine (Butterfly twist, B-twist round, Moonkick; the
+# user saw them get worse). Around such a group (four frames either side), the same model is run on the picture turned by 90, 180 and 270 degrees and each result is
 # turned back. That gives up to four readings of those frames. One reading per frame is then chosen so that the joints travel
 # least from frame to frame across the whole clip (a shortest path through the candidates), which is the a-b-c idea again:
 # the reading that lies on the way. Only the keypoints of the chosen reading are taken; the raw file keeps the first reading.
 turn=lambda A,B:float(np.degrees(np.arccos(np.clip((np.trace(A@B.T)-1)/2,-1,1))))
 second={'frames':[],'changed':[]}
 if 'pred_global_rots' in raw and len(order)>4:
- R0=raw['pred_global_rots'][:,1].astype(np.float64);jumpy=[i for i in range(1,len(R0)) if turn(R0[i],R0[i-1])>45];flagged=sorted({j for i in jumpy for j in range(max(0,i-4),min(len(order),i+4))})
+ R0=raw['pred_global_rots'][:,1].astype(np.float64);jumpy=[i for i in range(1,len(R0)) if turn(R0[i],R0[i-1])>45];groups=[];[groups[-1].append(i) if groups and i-groups[-1][-1]<=4 else groups.append([i]) for i in jumpy];flagged=sorted({j for g in groups if len(g)>=3 for j in range(max(0,g[0]-4),min(len(order),g[-1]+4))})
  if flagged:
   imgs=pictures([order[i] for i in flagged]);Hh,Ww=imgs.shape[1:3];JN=[0,5,6,7,8,9,10,11,12,13,14,41,62,69];rel=lambda K:K-(K[:,[9]]+K[:,[10]])/2
   cands={i:[(rel(raw['pred_keypoints_3d'][[i]].astype(np.float64))[0],raw['pred_keypoints_2d'][i].astype(np.float64))] for i in range(len(order))}

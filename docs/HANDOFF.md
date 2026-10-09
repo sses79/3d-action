@@ -610,3 +610,8 @@ MoGe gives 36-40 degrees vertical; with it Predict changes distance (5.2-5.7 m t
 ## 2026-10-09 — R39 turned second look; partial rebuild only
 
 User found Sideswipe 0.83-0.99 s and Raiz 0.84-0.95 s wrong; cause is the model's raw reading, not smoothing or R38. `body.py` now runs the model on 90/180/270-degree turned pictures around frames whose root turn jumps over 45 degrees and picks the most continuous reading per frame. Eight clips rebuilt and checked by number, two on sheets. The user stopped the 59-clip rebuild ("don't do all rebuild"): no run is recorded for R39, and the live `sam3d-` actions are a mix of run 44 and R39 builds. Rebuild a clip to bring it up to date.
+
+
+## 2026-10-09 — R39 narrowed after user review
+
+The second look made Butterfly twist, B-twist round and Moonkick worse in the user's eyes. It now triggers only around three or more root-turn jumps over 45 degrees close together (Sideswipe, Raiz); the other three are back to their run 44 result. Checked on those five clips only. Live `sam3d-` actions: those five are current; clips 1-19 and 57 were rebuilt by the cancelled run with no second-look change; the rest are at run 44.
