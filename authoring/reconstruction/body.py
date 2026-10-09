@@ -44,7 +44,11 @@ os.makedirs(out,exist_ok=True);np.savez(os.path.join(out,'body-raw.npz'),frameIn
 # user saw them get worse). Around such a group (four frames either side), the same model is run on the picture turned by 90, 180 and 270 degrees and each result is
 # turned back. That gives up to four readings of those frames. One reading per frame is then chosen so that the joints travel
 # least from frame to frame across the whole clip (a shortest path through the candidates), which is the a-b-c idea again:
-# the reading that lies on the way. Only the keypoints of the chosen reading are taken; the raw file keeps the first reading.
+# the reading that lies on the way. The keypoints and the joint rotations of the chosen reading are taken, both turned back:
+# a picture turned by k quarter turns gives positions p' with p = T p', T a turn about the view axis, and joint rotations G'
+# with G = T^-1 G' (the model's own axes are the camera's with y and z flipped, which reverses the turn). Checked against the
+# model: the turned-back rotations reproduce the directions between the turned-back joints as closely as an unturned reading
+# does. The raw file keeps the first reading.
 turn=lambda A,B:float(np.degrees(np.arccos(np.clip((np.trace(A@B.T)-1)/2,-1,1))))
 second={'frames':[],'changed':[]}
 if 'pred_global_rots' in raw and len(order)>4 and not args.no_second_look:
@@ -57,17 +61,18 @@ if 'pred_global_rots' in raw and len(order)>4 and not args.no_second_look:
    for i in flagged:
     x0,y0,x1,y1=rows[i]['bbox'];pts=[to(x0,y0),to(x1,y1),to(x0,y1),to(x1,y0)];boxes.append([min(q[0] for q in pts),min(q[1] for q in pts),max(q[0] for q in pts),max(q[1] for q in pts)])
    got=predict(np.stack([np.rot90(im,k) for im in imgs]).copy(),boxes);K=rel(got['pred_keypoints_3d'].astype(np.float64));q=got['pred_keypoints_2d'].astype(np.float64);x,y,z,u,v=K[...,0],K[...,1],K[...,2],q[...,0],q[...,1]
-   K=np.stack({1:(-y,x,z),2:(-x,-y,z),3:(y,-x,z)}[k],-1);q=np.stack({1:(Ww-1-v,u),2:(Ww-1-u,Hh-1-v),3:(v,Hh-1-u)}[k],-1)
-   for n,i in enumerate(flagged):cands[i].append((K[n],q[n]))
+   K=np.stack({1:(-y,x,z),2:(-x,-y,z),3:(y,-x,z)}[k],-1);q=np.stack({1:(Ww-1-v,u),2:(Ww-1-u,Hh-1-v),3:(v,Hh-1-u)}[k],-1);back_turn=np.array({1:[[0,1,0],[-1,0,0],[0,0,1]],2:[[-1,0,0],[0,-1,0],[0,0,1]],3:[[0,-1,0],[1,0,0],[0,0,1]]}[k],dtype=np.float64);Gk=back_turn@got['pred_global_rots'].astype(np.float64)
+   for n,i in enumerate(flagged):cands[i].append((K[n],q[n],Gk[n]))
   cost=[np.zeros(len(cands[0]))];back=[]
   for i in range(1,len(order)):
    step=np.array([[np.linalg.norm(c[0][JN]-p[0][JN],axis=1).sum() for p in cands[i-1]] for c in cands[i]])+cost[-1][None,:];back.append(step.argmin(1));cost.append(step.min(1))
   pick=[int(np.argmin(cost[-1]))]
   for i in range(len(order)-1,0,-1):pick.append(int(back[i-1][pick[-1]]))
   pick=pick[::-1];second['frames']=[int(i) for i in flagged]
+  if any(pick[i] for i in flagged):raw.pop('global_rot',None)
   for i in flagged:
    if pick[i]:
-    centre=(raw['pred_keypoints_3d'][i,9]+raw['pred_keypoints_3d'][i,10])/2;raw['pred_keypoints_3d'][i]=(cands[i][pick[i]][0]+centre).astype(np.float32);raw['pred_keypoints_2d'][i]=cands[i][pick[i]][1].astype(np.float32);second['changed'].append({'frame':int(i),'time':float(times[i]),'turnedDegrees':90*pick[i]})
+    centre=(raw['pred_keypoints_3d'][i,9]+raw['pred_keypoints_3d'][i,10])/2;raw['pred_keypoints_3d'][i]=(cands[i][pick[i]][0]+centre).astype(np.float32);raw['pred_keypoints_2d'][i]=cands[i][pick[i]][1].astype(np.float32);raw['pred_global_rots'][i]=cands[i][pick[i]][2].astype(np.float32);second['changed'].append({'frame':int(i),'time':float(times[i]),'turnedDegrees':90*pick[i]})
 # Single-frame jumps. The model looks at one picture at a time, and where the body is foreshortened or turning fast it
 # sometimes lands on a different reading for a frame or two and then comes back. The test is the a-b-c one used elsewhere:
 # take the frame before (a) and the frame after (c) a run of one or two frames (b). If a and c agree with each other and b is
@@ -140,6 +145,6 @@ if 'pred_global_rots' in raw:
  # the foot's rest direction runs from the ankle to the ball. Taking the first small joint below the ankle instead pointed the
  # rest foot straight down and stood the character on its toes.
  ends={n:((v[1],v[2]) if len(v)==3 else (v[0],v[1])) for n,v in BONES.items()};rest={n:(None if b is None else ((bind[b,:3]-bind[a,:3])/np.linalg.norm(bind[b,:3]-bind[a,:3])).round(5).tolist()) for n,(a,b) in ends.items()}
- rotations={'bones':names,'quaternions':np.round(Q,5).tolist(),'restDirections':rest,'convention':'world rotation from the model rest pose, x right, y up, z toward the camera, quaternion x,y,z,w','unreliableFrames':[int(x['frame']) for x in second['changed']]}
+ rotations={'bones':names,'quaternions':np.round(Q,5).tolist(),'restDirections':rest,'convention':'world rotation from the model rest pose, x right, y up, z toward the camera, quaternion x,y,z,w','unreliableFrames':[]}
 ir={'schemaVersion':1,'status':'estimated-draft-unreviewed','backend':'SAM 3D Body (ComfyUI nodes, per frame'+(f', smoothed {args.smooth:g}' if args.smooth>0 else ', no smoothing')+')','turnedSecondLook':second,'despiked':despiked,'smoothing':({'node':'SAM3DBody_Smooth','strength':args.smooth,'method':'savgol','window':7,'rotationThresholdDegrees':30} if args.smooth>0 else None),'weights':args.weights,'sourceSHA256':report.get('sourceSHA256'),'sourcePose':pose_path,'frameRate':30,'recordingInterval':[start,end],'times':uniform.tolist(),'coordinates':'camera axes: x right, y down, z away; metres, root-relative','rootRelativePositions':even(H).tolist(),'imagePelvis':even((k2[:,rhip]+k2[:,lhip])/2).tolist(),'faceDirection':even(face).tolist(),'lowestSupportImageY':lowest.tolist(),'lowestAnkleImageY':lowest.tolist(),'lowestSupportSource':'body','boneRotations':rotations,'observedFrames':observed,'bridgedFrames':observed-len(rows),'firstBoxHeightPixels':rows[0]['bbox'][3]-rows[0]['bbox'][1],'raw':'body-raw.npz (70 keypoints, 127 joints with rotations, camera translation)','timingsSeconds':{**{k:v for k,v in timings.items() if not isinstance(v,str)},'wall':time.perf_counter()-started},**({'reusedRaw':timings['reusedRaw']} if 'reusedRaw' in timings else {}),'limits':['One image at a time: no temporal model','Depth and scale are monocular estimates','Field of view not estimated (default)']}
 json.dump(ir,open(os.path.join(out,'motion-ir.json'),'w'));print(json.dumps({'frames':len(rows),'samples':samples,'turnedSecondLook':{'looked':len(second['frames']),'changed':len(second['changed'])},'despiked':{'frames':len(despiked['frames']),'keypoints':despiked['keypoints']},'reused':'reusedRaw' in timings,'timings':ir['timingsSeconds']}))
