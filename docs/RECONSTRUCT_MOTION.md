@@ -346,6 +346,12 @@ What the retarget does differently for this source: height comes from the lowest
 
 Measured on the 59 tricking clips: see runs 35–43 in `docs/RULE_LOG.md`.
 
+## Confidence levels, notes and versions (9 October 2026)
+
+Each entry carries `review: {level, notes[], updatedAt}`: level 0 unreviewed, 1 has issues, 2 acceptable, 3 approved; a note has `text`, optional `time` (action seconds), the `revision` it was written against, `at`, and `by` (user, assistant or system). It is metadata: setting it does not change the action or its revision, and it survives new revisions. Operations: `set_review`, `list_reviews`, `set_reference_revision`. Studio shows the level as a dot in the left list (searchable by level name) and a CONFIDENCE panel on the right with the four levels, "Add note at <current time>", the notes (a timed note seeks to its moment) and a "Reference is revision N" menu.
+
+Rebuild policy: `reconstruct_motion` with `commit` refuses an action at level 2 or 3 unless `overrideConfidence: true`. `batch.py` skips those (`--include-accepted` overrides) and `--only-issues` rebuilds level 1 only. Each rebuild stores how it was built (`build`: date, source, options) with the revision and adds a system note. Per-action switches for the newest rules: `secondLook`, `despike`, `smooth`.
+
 ## Limits
 
 - Each uncached run starts new Python processes, so imports and model load are paid every time; there is no resident model.

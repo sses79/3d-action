@@ -615,3 +615,8 @@ User found Sideswipe 0.83-0.99 s and Raiz 0.84-0.95 s wrong; cause is the model'
 ## 2026-10-09 — R39 narrowed after user review
 
 The second look made Butterfly twist, B-twist round and Moonkick worse in the user's eyes. It now triggers only around three or more root-turn jumps over 45 degrees close together (Sideswipe, Raiz); the other three are back to their run 44 result. Checked on those five clips only. Live `sam3d-` actions: those five are current; clips 1-19 and 57 were rebuilt by the cancelled run with no second-look change; the rest are at run 44.
+
+
+## 2026-10-09 — Confidence levels, timed notes, per-action switches
+
+User could not tell whether Butterfly twist, B-twist round and Moonkick were better or worse and asked for a confidence level per action and movement, shown and editable in the UI with timed notes, readable by Claude, deciding what gets rebuilt; plus adjustments per action and comparable versions instead of rebuilding everything after a rule change. Added `review` on entries, operations `set_review`, `list_reviews`, `set_reference_revision` (44 operations), rebuild protection (`overrideConfidence`), `build` stored per revision, `batch.py --only-issues/--include-accepted`, per-action `secondLook`/`despike`, the CONFIDENCE panel and list dots in Studio, `tests/review.test.mjs`. Those three clips are at level 1 with the user's words; Sideswipe and Raiz carry a note. No rule changed.

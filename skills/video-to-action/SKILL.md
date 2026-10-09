@@ -69,6 +69,18 @@ After a correction, compare only the corrected window, then one whole-action pas
 
 `append_action_run_event` with what you checked and what remains wrong, then `finish_action_run`. Tell the user the action id, what matches the clip, what does not, and that the result is an unreviewed draft. Do not register it as a library movement; that needs the user's acceptance and a contact review.
 
+## Confidence levels: what to rebuild and what to leave
+
+Every action and movement has a confidence level and notes, set by the user in Studio's CONFIDENCE panel or by you with `set_review`: 0 unreviewed, 1 has issues, 2 acceptable, 3 approved. Read them with `list_reviews` before changing a rule or rebuilding anything.
+
+- Levels 2 and 3 are not rebuilt: `reconstruct_motion` refuses unless `overrideConfidence: true`, and `batch.py` skips them. Do not override unless the user asks.
+- Level 1 is the work list. The notes say what is wrong and at which second (`time`, action seconds) and which revision was judged. `batch.py --only-issues` rebuilds just these.
+- When the user reports a problem in chat, record it: `set_review` with level 1 and a note quoting them, with the time if they gave one. Do not invent a time.
+- After a rebuild the level stays as it was; only the user raises it. A system note records each rebuild and its options.
+- Fix one action at a time where you can. `secondLook: false`, `despike: false` and `smooth` change the newest body-source rules for a single action without touching the others. The options used are kept with each revision (`build` in `get_action` history and `list_reviews`).
+- Earlier versions are kept as revisions. `set_reference_revision` (or the "Reference is" menu in the panel) makes any retained revision the reference, so Studio's Reference and Compare views show it against the current one. Every rebuild already sets the reference to the version it replaced.
+- After a rule change, rebuild only the actions the rule is for plus a control or two; a full batch is for when the user asks.
+
 ## Changing a pipeline rule
 
 If the fault is in the pipeline and you change `observe.py`, `lift.py`, `fit.py` or `retarget.ts`:

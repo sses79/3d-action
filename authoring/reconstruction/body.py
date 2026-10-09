@@ -2,7 +2,7 @@
 stage picked. Writes motion-ir.json for the retarget: 17 joints, hip centre and lowest body point in the picture, face direction.
 Estimated per frame, not rig ground truth. Runs in ComfyUI's own Python environment."""
 import sys,json,time,os,argparse,glob
-p=argparse.ArgumentParser();p.add_argument('--comfy',required=True);p.add_argument('--weights',required=True);p.add_argument('--pose',required=True);p.add_argument('--video',required=True);p.add_argument('--out',required=True);p.add_argument('--smooth',type=float,default=0,help='0-1: strength of ComfyUI\'s temporal smoothing (Savitzky-Golay over 7 frames, backing off during fast spins)');p.add_argument('--reuse',help='folder of raw results from earlier runs; one whose frames match is used instead of running the model');args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--comfy',required=True);p.add_argument('--weights',required=True);p.add_argument('--pose',required=True);p.add_argument('--video',required=True);p.add_argument('--out',required=True);p.add_argument('--smooth',type=float,default=0,help='0-1: strength of ComfyUI\'s temporal smoothing (Savitzky-Golay over 7 frames, backing off during fast spins)');p.add_argument('--no-second-look',action='store_true');p.add_argument('--no-despike',action='store_true');p.add_argument('--reuse',help='folder of raw results from earlier runs; one whose frames match is used instead of running the model');args=p.parse_args()
 pose_path,video,out,comfy=os.path.abspath(args.pose),os.path.abspath(args.video),os.path.abspath(args.out),os.path.abspath(args.comfy);reuse=os.path.abspath(args.reuse) if args.reuse else None
 started=time.perf_counter();import numpy as np
 report=json.load(open(pose_path));observed=len(report['frames']);rows=[f for f in report['frames'] if f['bbox']]
@@ -47,7 +47,7 @@ os.makedirs(out,exist_ok=True);np.savez(os.path.join(out,'body-raw.npz'),frameIn
 # the reading that lies on the way. Only the keypoints of the chosen reading are taken; the raw file keeps the first reading.
 turn=lambda A,B:float(np.degrees(np.arccos(np.clip((np.trace(A@B.T)-1)/2,-1,1))))
 second={'frames':[],'changed':[]}
-if 'pred_global_rots' in raw and len(order)>4:
+if 'pred_global_rots' in raw and len(order)>4 and not args.no_second_look:
  R0=raw['pred_global_rots'][:,1].astype(np.float64);jumpy=[i for i in range(1,len(R0)) if turn(R0[i],R0[i-1])>45];groups=[];[groups[-1].append(i) if groups and i-groups[-1][-1]<=4 else groups.append([i]) for i in jumpy];flagged=sorted({j for g in groups if len(g)>=3 for j in range(max(0,g[0]-4),min(len(order),g[-1]+4))})
  if flagged:
   imgs=pictures([order[i] for i in flagged]);Hh,Ww=imgs.shape[1:3];JN=[0,5,6,7,8,9,10,11,12,13,14,41,62,69];rel=lambda K:K-(K[:,[9]]+K[:,[10]])/2
@@ -78,7 +78,7 @@ if 'pred_global_rots' in raw and len(order)>4:
 def on_rotations(M):
  U,_,Vt=np.linalg.svd(M);fix=np.ones(M.shape[:-2]+(3,));fix[...,2]=np.sign(np.linalg.det(U@Vt));return (U*fix[...,None,:])@Vt
 despiked={'frames':[],'keypoints':0}
-if 'pred_global_rots' in raw and len(order)>4:
+if 'pred_global_rots' in raw and len(order)>4 and not args.no_despike:
  R=raw['pred_global_rots'][:,1].astype(np.float64);done=set()
  for gap in (1,2):
   for i in range(1,len(R)-gap):
