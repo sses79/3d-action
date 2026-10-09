@@ -179,6 +179,8 @@ Status: **kept**, **kept with a known cost**, **replaced**, or **off**.
 
 **Rotations are the default pose** (no run; one dry build each way on Hook kick). At the user's request after comparing the `-rot` builds ("better for sure" on Hook kick and Backflip, "much better" with fingers). `reconstruct_motion` without `pose` now reports `pose.used: rotations` on the body source; on the rules source it reports positions with the reason "this source has no joint rotations". A request with `corrections` defaults to positions, and rotations with corrections is refused, because corrections edit joint positions that the rotation path does not read. Nothing was rebuilt: live `sam3d-<slug>` actions stay as they are, and the eight rotation builds stay in their `-rot` actions. Evidence behind the default is eight clips, not 59.
 
+**Run 49 — the eight clips rebuilt in their plain actions on rotations.** Hook kick, Cartwheel, Tornado kick, Cheat 360 crescent, Cheat 720, Backflip (overtuck), Raiz and Sideswipe: all `pose.used: rotations`, 0 frames inside and 0 crossings on all eight; jitter 4.2, 1.7, 5.6, 5.7, 8.6, 4.0, 11.2, 10.6 mm. Seven `-rot` actions archived (restorable); `sam3d-trick-19-cheat-360-crescent-rot` kept because the user approved that revision, which has no fingers and no R40. User on Cheat 720: the hand going over the thigh is confirmed on the rotation build, and in version 7 (a position build) the straight fingers go over the knee as well. No sheets read for this run.
+
 ## Rolling back
 
 - **One action:** each rebuild keeps the previous revision (up to 100). `restore_revision` with the action id, its current revision and the revision wanted.

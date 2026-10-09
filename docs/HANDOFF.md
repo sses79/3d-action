@@ -645,3 +645,8 @@ Runs 47-48. `-rot` actions now exist for clips 1, 4, 16, 19, 34, 43, 51, 52 (19 
 ## 2026-10-09 — Rotations are the default
 
 `pipeline.mjs` resolves `pose` to rotations unless the request has corrections (then positions) or says otherwise; rules-source builds report positions with a reason. Nothing rebuilt. Open: corrections do not work on the rotation path (they edit positions); the `-rot` actions and the plain `sam3d-` actions now duplicate eight clips, and the user has not said which to keep; 51 clips have never been built on rotations; R40's detour on Cheat 720 awaits the user's look.
+
+
+## 2026-10-09 — Run 49: plain actions on rotations
+
+Eight plain `sam3d-` actions rebuilt on rotations; seven `-rot` copies archived; the approved `sam3d-trick-19-cheat-360-crescent-rot` kept. User notes carried onto the plain Hook kick, Backflip and Cheat 720 actions. Open on Cheat 720: the hand passes over the kicking leg in both builds; whether that needs the hold-one-side version of R40 is the user's call.
