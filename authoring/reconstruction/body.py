@@ -12,28 +12,60 @@ KEEP=('pred_keypoints_3d','pred_keypoints_2d','pred_cam_t','pred_joint_coords','
 for f in sorted(glob.glob(os.path.join(reuse,'*.npz'))) if reuse else []:
  d=np.load(f)
  if len(d['frameIndex'])==len(order) and (d['frameIndex']==np.array(order)).all() and abs(float(d['times'][0])-float(times[0]))<1e-6:raw={k:d[k] for k in KEEP if k in d};timings['reusedRaw']=os.path.basename(f);break
-if raw is None or args.smooth>0:
- # ComfyUI reads the command line and the working folder on import.
- sys.argv=[sys.argv[0]];sys.path.insert(0,comfy);os.chdir(comfy)
- import torch,av
- from comfy_extras.nodes_sam3d_body import SAM3DBody_Loader,SAM3DBody_Predict,SAM3DBody_Smooth
-if raw is None:
- # The Mac GPU has no 64-bit floats, which the rig's joint walk asks for. That walk alone runs on the CPU; ComfyUI's files are untouched.
- import comfy.ldm.sam3d_body.mhr.mhr_rig as rig
- walk=rig._global_skel_state_from_local
- rig._global_skel_state_from_local=lambda local,levels:walk(local.cpu(),[(a.cpu(),b.cpu()) for a,b in levels]).to(local.device) if local.device.type=='mps' else walk(local,levels)
- wanted=set(order);frames={}
+# ComfyUI reads the command line and the working folder on import.
+sys.argv=[sys.argv[0]];sys.path.insert(0,comfy);os.chdir(comfy)
+import torch,av
+from comfy_extras.nodes_sam3d_body import SAM3DBody_Loader,SAM3DBody_Predict,SAM3DBody_Smooth
+# The Mac GPU has no 64-bit floats, which the rig's joint walk asks for. That walk alone runs on the CPU; ComfyUI's files are untouched.
+import comfy.ldm.sam3d_body.mhr.mhr_rig as rig
+walk=rig._global_skel_state_from_local
+rig._global_skel_state_from_local=lambda local,levels:walk(local.cpu(),[(a.cpu(),b.cpu()) for a,b in levels]).to(local.device) if local.device.type=='mps' else walk(local,levels)
+loaded={}
+def pictures(indices):
+ wanted=set(indices);frames={}
  for i,frame in enumerate(av.open(video).decode(video=0)):
   if i in wanted:frames[i]=frame.to_ndarray(format='rgb24')
   if i>max(wanted):break
- if len(frames)!=len(order):raise SystemExit('Could not decode every observed frame')
- image=torch.from_numpy(np.stack([frames[i] for i in order]).astype(np.float32)/255);boxes=[[{'x':r['bbox'][0],'y':r['bbox'][1],'width':r['bbox'][2]-r['bbox'][0],'height':r['bbox'][3]-r['bbox'][1]}] for r in rows]
- a=time.perf_counter();model=SAM3DBody_Loader.execute(args.weights).result[0];timings['load']=time.perf_counter()-a;a=time.perf_counter()
- with torch.no_grad():data=SAM3DBody_Predict.execute(model,image,bboxes=boxes,run_hand_refinement=False,fov=0.0,batch_size=2).result[0]
- timings['predict']=time.perf_counter()-a;people=data['frames']
+ if len(frames)!=len(wanted):raise SystemExit('Could not decode every observed frame')
+ return np.stack([frames[i] for i in indices])
+def predict(images,boxes):
+ if 'model' not in loaded:a=time.perf_counter();loaded['model']=SAM3DBody_Loader.execute(args.weights).result[0];timings['load']=time.perf_counter()-a
+ a=time.perf_counter()
+ with torch.no_grad():people=SAM3DBody_Predict.execute(loaded['model'],torch.from_numpy(images.astype(np.float32)/255),bboxes=[[{'x':b[0],'y':b[1],'width':b[2]-b[0],'height':b[3]-b[1]}] for b in boxes],run_hand_refinement=False,fov=0.0,batch_size=2).result[0]['frames']
+ timings['predict']=timings.get('predict',0)+time.perf_counter()-a
  if any(not f for f in people):raise SystemExit('The body model returned no person for some frames')
- raw={k:np.stack([np.asarray(f[0][k].cpu() if hasattr(f[0][k],'cpu') else f[0][k],dtype=np.float32) for f in people]) for k in KEEP if k in people[0][0]}
+ return {k:np.stack([np.asarray(f[0][k].cpu() if hasattr(f[0][k],'cpu') else f[0][k],dtype=np.float32) for f in people]) for k in KEEP if k in people[0][0]}
+if raw is None:raw=predict(pictures(order),[r['bbox'] for r in rows])
 os.makedirs(out,exist_ok=True);np.savez(os.path.join(out,'body-raw.npz'),frameIndex=np.array(order),times=times,**raw)
+# A second look with the picture turned. The model reads upright bodies best; on an inverted, twisting body its reading of which
+# way the chest faces can jump from frame to frame. Around every frame where the whole body turns more than 45 degrees in one
+# frame (three frames either side), the same model is run on the picture turned by 90, 180 and 270 degrees and each result is
+# turned back. That gives up to four readings of those frames. One reading per frame is then chosen so that the joints travel
+# least from frame to frame across the whole clip (a shortest path through the candidates), which is the a-b-c idea again:
+# the reading that lies on the way. Only the keypoints of the chosen reading are taken; the raw file keeps the first reading.
+turn=lambda A,B:float(np.degrees(np.arccos(np.clip((np.trace(A@B.T)-1)/2,-1,1))))
+second={'frames':[],'changed':[]}
+if 'pred_global_rots' in raw and len(order)>4:
+ R0=raw['pred_global_rots'][:,1].astype(np.float64);jumpy=[i for i in range(1,len(R0)) if turn(R0[i],R0[i-1])>45];flagged=sorted({j for i in jumpy for j in range(max(0,i-4),min(len(order),i+4))})
+ if flagged:
+  imgs=pictures([order[i] for i in flagged]);Hh,Ww=imgs.shape[1:3];JN=[0,5,6,7,8,9,10,11,12,13,14,41,62,69];rel=lambda K:K-(K[:,[9]]+K[:,[10]])/2
+  cands={i:[(rel(raw['pred_keypoints_3d'][[i]].astype(np.float64))[0],raw['pred_keypoints_2d'][i].astype(np.float64))] for i in range(len(order))}
+  for k in (1,2,3):
+   to=lambda x,y:{1:(y,Ww-1-x),2:(Ww-1-x,Hh-1-y),3:(Hh-1-y,x)}[k];boxes=[]
+   for i in flagged:
+    x0,y0,x1,y1=rows[i]['bbox'];pts=[to(x0,y0),to(x1,y1),to(x0,y1),to(x1,y0)];boxes.append([min(q[0] for q in pts),min(q[1] for q in pts),max(q[0] for q in pts),max(q[1] for q in pts)])
+   got=predict(np.stack([np.rot90(im,k) for im in imgs]).copy(),boxes);K=rel(got['pred_keypoints_3d'].astype(np.float64));q=got['pred_keypoints_2d'].astype(np.float64);x,y,z,u,v=K[...,0],K[...,1],K[...,2],q[...,0],q[...,1]
+   K=np.stack({1:(-y,x,z),2:(-x,-y,z),3:(y,-x,z)}[k],-1);q=np.stack({1:(Ww-1-v,u),2:(Ww-1-u,Hh-1-v),3:(v,Hh-1-u)}[k],-1)
+   for n,i in enumerate(flagged):cands[i].append((K[n],q[n]))
+  cost=[np.zeros(len(cands[0]))];back=[]
+  for i in range(1,len(order)):
+   step=np.array([[np.linalg.norm(c[0][JN]-p[0][JN],axis=1).sum() for p in cands[i-1]] for c in cands[i]])+cost[-1][None,:];back.append(step.argmin(1));cost.append(step.min(1))
+  pick=[int(np.argmin(cost[-1]))]
+  for i in range(len(order)-1,0,-1):pick.append(int(back[i-1][pick[-1]]))
+  pick=pick[::-1];second['frames']=[int(i) for i in flagged]
+  for i in flagged:
+   if pick[i]:
+    centre=(raw['pred_keypoints_3d'][i,9]+raw['pred_keypoints_3d'][i,10])/2;raw['pred_keypoints_3d'][i]=(cands[i][pick[i]][0]+centre).astype(np.float32);raw['pred_keypoints_2d'][i]=cands[i][pick[i]][1].astype(np.float32);second['changed'].append({'frame':int(i),'time':float(times[i]),'turnedDegrees':90*pick[i]})
 # Single-frame jumps. The model looks at one picture at a time, and where the body is foreshortened or turning fast it
 # sometimes lands on a different reading for a frame or two and then comes back. The test is the a-b-c one used elsewhere:
 # take the frame before (a) and the frame after (c) a run of one or two frames (b). If a and c agree with each other and b is
@@ -41,7 +73,6 @@ os.makedirs(out,exist_ok=True);np.savez(os.path.join(out,'body-raw.npz'),frameIn
 # (b more than 60 degrees and 1.5 times the a-to-c turn away from both), where every output of the frame is replaced; and single
 # keypoints relative to the hips (b more than 15 cm and twice the a-to-c distance off the straight path). A real fast move
 # passes between a and c, so speed alone never triggers it. Smoothing cannot do this job: it eases off exactly in fast turns.
-turn=lambda A,B:float(np.degrees(np.arccos(np.clip((np.trace(A@B.T)-1)/2,-1,1))))
 def on_rotations(M):
  U,_,Vt=np.linalg.svd(M);fix=np.ones(M.shape[:-2]+(3,));fix[...,2]=np.sign(np.linalg.det(U@Vt));return (U*fix[...,None,:])@Vt
 despiked={'frames':[],'keypoints':0}
@@ -86,5 +117,5 @@ stature=float(np.median([r['bbox'][3]-r['bbox'][1] for r in rows]));face=np.conc
 # The retarget expects an even 30 Hz sequence over the window; interpolation between observed frames is explicit, not new evidence.
 start,end=report['interval'];samples=round((end-start)*30)+1;uniform=np.linspace(start,end,samples);even=lambda a:np.stack([np.interp(uniform,times,a.reshape(len(a),-1)[:,c]) for c in range(a.reshape(len(a),-1).shape[1])],1).reshape((samples,)+a.shape[1:])
 lowest=even(k2[:,:,1].max(1)[:,None])[:,0]
-ir={'schemaVersion':1,'status':'estimated-draft-unreviewed','backend':'SAM 3D Body (ComfyUI nodes, per frame'+(f', smoothed {args.smooth:g}' if args.smooth>0 else ', no smoothing')+')','despiked':despiked,'smoothing':({'node':'SAM3DBody_Smooth','strength':args.smooth,'method':'savgol','window':7,'rotationThresholdDegrees':30} if args.smooth>0 else None),'weights':args.weights,'sourceSHA256':report.get('sourceSHA256'),'sourcePose':pose_path,'frameRate':30,'recordingInterval':[start,end],'times':uniform.tolist(),'coordinates':'camera axes: x right, y down, z away; metres, root-relative','rootRelativePositions':even(H).tolist(),'imagePelvis':even((k2[:,rhip]+k2[:,lhip])/2).tolist(),'faceDirection':even(face).tolist(),'lowestSupportImageY':lowest.tolist(),'lowestAnkleImageY':lowest.tolist(),'lowestSupportSource':'body','observedFrames':observed,'bridgedFrames':observed-len(rows),'firstBoxHeightPixels':rows[0]['bbox'][3]-rows[0]['bbox'][1],'raw':'body-raw.npz (70 keypoints, 127 joints with rotations, camera translation)','timingsSeconds':{**{k:v for k,v in timings.items() if not isinstance(v,str)},'wall':time.perf_counter()-started},**({'reusedRaw':timings['reusedRaw']} if 'reusedRaw' in timings else {}),'limits':['One image at a time: no temporal model','Depth and scale are monocular estimates','Field of view not estimated (default)']}
-json.dump(ir,open(os.path.join(out,'motion-ir.json'),'w'));print(json.dumps({'frames':len(rows),'samples':samples,'despiked':{'frames':len(despiked['frames']),'keypoints':despiked['keypoints']},'reused':'reusedRaw' in timings,'timings':ir['timingsSeconds']}))
+ir={'schemaVersion':1,'status':'estimated-draft-unreviewed','backend':'SAM 3D Body (ComfyUI nodes, per frame'+(f', smoothed {args.smooth:g}' if args.smooth>0 else ', no smoothing')+')','turnedSecondLook':second,'despiked':despiked,'smoothing':({'node':'SAM3DBody_Smooth','strength':args.smooth,'method':'savgol','window':7,'rotationThresholdDegrees':30} if args.smooth>0 else None),'weights':args.weights,'sourceSHA256':report.get('sourceSHA256'),'sourcePose':pose_path,'frameRate':30,'recordingInterval':[start,end],'times':uniform.tolist(),'coordinates':'camera axes: x right, y down, z away; metres, root-relative','rootRelativePositions':even(H).tolist(),'imagePelvis':even((k2[:,rhip]+k2[:,lhip])/2).tolist(),'faceDirection':even(face).tolist(),'lowestSupportImageY':lowest.tolist(),'lowestAnkleImageY':lowest.tolist(),'lowestSupportSource':'body','observedFrames':observed,'bridgedFrames':observed-len(rows),'firstBoxHeightPixels':rows[0]['bbox'][3]-rows[0]['bbox'][1],'raw':'body-raw.npz (70 keypoints, 127 joints with rotations, camera translation)','timingsSeconds':{**{k:v for k,v in timings.items() if not isinstance(v,str)},'wall':time.perf_counter()-started},**({'reusedRaw':timings['reusedRaw']} if 'reusedRaw' in timings else {}),'limits':['One image at a time: no temporal model','Depth and scale are monocular estimates','Field of view not estimated (default)']}
+json.dump(ir,open(os.path.join(out,'motion-ir.json'),'w'));print(json.dumps({'frames':len(rows),'samples':samples,'turnedSecondLook':{'looked':len(second['frames']),'changed':len(second['changed'])},'despiked':{'frames':len(despiked['frames']),'keypoints':despiked['keypoints']},'reused':'reusedRaw' in timings,'timings':ir['timingsSeconds']}))

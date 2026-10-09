@@ -605,3 +605,8 @@ MoGe gives 36-40 degrees vertical; with it Predict changes distance (5.2-5.7 m t
 ## 2026-10-09 — R38 single-frame jumps; run 44
 
 `body.py` replaces one- or two-frame runs whose root turn or keypoints jump out and back, before smoothing; counts in `estimate.despiked` and the batch log. Worst jitter 60 to 29 mm. Longer wrong stretches in four twisting clips remain (Sideswipe, B-twist round, Raiz, Scoot full). 88 Node tests pass.
+
+
+## 2026-10-09 — R39 turned second look; partial rebuild only
+
+User found Sideswipe 0.83-0.99 s and Raiz 0.84-0.95 s wrong; cause is the model's raw reading, not smoothing or R38. `body.py` now runs the model on 90/180/270-degree turned pictures around frames whose root turn jumps over 45 degrees and picks the most continuous reading per frame. Eight clips rebuilt and checked by number, two on sheets. The user stopped the 59-clip rebuild ("don't do all rebuild"): no run is recorded for R39, and the live `sam3d-` actions are a mix of run 44 and R39 builds. Rebuild a clip to bring it up to date.
