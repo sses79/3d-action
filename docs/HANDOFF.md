@@ -655,3 +655,8 @@ Eight plain `sam3d-` actions rebuilt on rotations; seven `-rot` copies archived;
 ## 2026-10-09 — R40 extended: hand laid on the surface
 
 User: "make the hand touch the leg" (Cheat 720). `retarget.ts` now has two steps per arm on the rotation path: upper arm at the shoulder for elbow/forearm/wrist, then hand at the wrist for palm and middle fingertip, with a tapered thigh for the hand step. Run 50 rebuilt only `sam3d-trick-34-cheat-720` (revision 10). The other seven rotation builds predate this step. Mesh thickness figures (thigh 8→5.2 cm, shin up to 7.4 cm at the calf, forearm 5.5→3.7 cm, trunk 11–15 cm) were measured from `character.glb` this session and are only used for the thigh in the hand step.
+
+
+## 2026-10-09 — Phase 6 started
+
+User: Cheat 720 "hands touch not cross through now" (approved by the user in Studio), Cheat 360 crescent good (set to acceptable; its `-rot` copy archived), most `sam3d-` actions are good and need no rebuild. Phase 6: `build_movement` with `sourceActionId` copied Hook kick into `move-video-hook-kick` r1; `profile_movement_library`; `compose_action` into `guard-video-hook-kick-guard` r2 with `blend: velocity` and `travel: continue` on both joins. Library cleanup the user suggested is not done: a scripted bulk archive of 39 actions (21 rule-pipeline `trick-*` that have a `sam3d-` twin, 4 `trial-sam3d-*`, 14 early `video-*` drafts superseded by v7/v3/v3/v4) was blocked by the permission layer and needs the user's explicit yes. The 43 contract/velocity review actions and all movements were left out of that list on purpose (they are review evidence, not duplicates).
