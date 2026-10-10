@@ -772,3 +772,8 @@ User judged the clinch very good and asked to rerun the kick pair with smoothing
 ## 2026-10-10 — Composing with a partner
 
 `compose_action` `partner` option; `composeMovements` reports placements (time span, yaw, offset per step); a pair-movement step is aimed at its recorded partner (`toward`). `walk-low-kick-duo` + `walk-low-kick-duo-partner`, pair `pair-walk-low-kick` r2. See `docs/TWO_PERSON_PLAN.md`, "Step 5, second part". Untested by the test suite. Ideas not built: idle motion for the waiting partner, contact rule on composed pairs, a travelling approach.
+
+
+## 2026-10-10 — Pair spacing
+
+User: composing with a partner is not needed (option stays, no further work). Asked how the two fighters' distance is calculated and for a little more of it on the 1:39 pair. `resolve_pair_contact` gained `spacing` (extra metres along the line between the hips, half each, on the reconstructed actions; stored as `pairs[id].spacing`). `pair-kc-139` resolved with 0.10 m: 11 frames inside before the contact rule (16 without spacing), 0 after (8 mm at worst); the kicks still land (contacts at 0.70 s, 2.17-2.30 s, 3.43 s). Pair r3, both actions r3. The other two pairs are unchanged (spacing 0).

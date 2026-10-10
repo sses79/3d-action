@@ -58,6 +58,14 @@ The user agreed to drop the reaction (the pair `pair-kc-kick` is resolved again 
 - **Built.** `walk-low-kick-duo` (Walk cycle, 0.3 s join, `move-pair-low-kick` with `facing: target`, 0.3 s join, Counter ready; 3.79 s) with partner `walk-low-kick-duo-partner` (waits 1.63 s, plays `move-pair-low-kick-taken`, holds 0.46 s), pair `pair-walk-low-kick`. Joins 0.21–0.28 m/s, no configured flags. Stills in Studio: during the walk the partner stands directly in front of the walker, facing him; later the two are engaged at kicking distance.
 - **Limits.** The partner is frozen while it waits and after it finishes (a held pose, not a stance that breathes or shifts). The contact rule is not run on a composed pair (`resolve_pair_contact` needs reconstructed actions). The walk is on the spot, so the lead does not close distance before the kick: the partner simply stands at kicking range from the start. One partner step per action. No test covers this path yet.
 
+## Distance between the two, and a spacing setting (2026-10-10)
+
+The user did not think composing with a partner was needed (it stays as an option; no more work on it) and asked how the distance between the two fighters in the 1:39 pair is calculated, saying a little more distance would make it perfect.
+
+- **How it is calculated.** For each fighter the body model gives the hip centre in the camera's space, in metres. Each action's travel is that hip track from its own first frame, and the pair stores the offset between the two first frames. Nothing is scaled. The fighters as the model measured them are almost our character's size (thigh plus shin 0.82 m against our 0.84 m; forearm 0.25 m against 0.28 m), so size is not the reason they read as close. Our character is thicker in the trunk and limbs than the people filmed, and the depth between two people is a single-camera guess.
+- **Setting.** `resolve_pair_contact` takes `spacing` (-0.3 to 0.5 m): that much extra distance along the line between the hips in every frame, half to each fighter, applied to the reconstructed actions before contact is measured. It is kept on the pair and reused by later calls.
+- **On `pair-kc-139`,** frames with a limb inside the other fighter before the contact rule: 16 with no spacing, 11 with 0.10 m, 9 with 0.15 m, 8 with 0.20 m. Applied 0.10 m with the contact rule; the result is in the handoff entry of the same date.
+
 This is one easy case. It says step 1 and the start of step 2 are as reachable as hoped; it says nothing yet about occlusion.
 
 ## Goal
