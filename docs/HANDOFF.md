@@ -665,3 +665,8 @@ User: Cheat 720 "hands touch not cross through now" (approved by the user in Stu
 ## 2026-10-09 — Library cleanup
 
 On the user's "archive the 39": 21 rule-pipeline `trick-*` actions with a `sam3d-` twin, 4 `trial-sam3d-*` and 14 early `video-*` drafts are archived (restorable with `archive_entry`). Kept: `video-side-kick-v7`, `video-flying-side-kick-v3`, `video-flying-kick-landing-v3`, `video-triple-kick-v4`, all contract/velocity review actions, all movements. Note: `batch.py --source rules` writes into the archived `trick-*` slugs.
+
+
+## 2026-10-10 — Phase 6: chaining video movements
+
+Registered `move-video-tornado-kick`, `move-video-cheat-720`, `move-video-cheat-360-crescent` (each copied from its `sam3d-` action). Every video movement's exit is "needs-transition" to every entry (pose RMS 0.33-0.58 m), partly because clips face wherever the camera saw them; the composer does not align facing. Chains `video-hook-into-tornado` and `video-hook-into-cheat-720` compose and pass the seam check with velocity joins. Fixed in `runtime/movements.ts`: travel continuation no longer carries height (offset y = 0). `guard-video-hook-kick-guard` r2 (accepted by the user) was composed before the fix and ends 2.4 cm low; not recomposed. Limits met: 4 s per composed action; no facing alignment; feet are not pinned in any video movement.
