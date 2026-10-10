@@ -752,3 +752,8 @@ User reviewed the pair ("looks great") and asked for step 4. `resolve_pair_conta
 ## 2026-10-10 — Pair contact: reaction
 
 `resolve_pair_contact` gained `reaction`; it restarts from the reconstructed revisions each time (found through `build.scene` without `build.pairContact`, in the entry or its history). `pair-kc-kick` resolved with 0.5: pair r3, left action r3, right action r4. Not looked at. Next ideas if the user wants more: trunk reaction (spine lean), contact cues in Studio.
+
+
+## 2026-10-10 — Clinch handled without SAM 3
+
+Reaction dropped at the user's agreement (option stays, default 0; `pair-kc-kick` re-resolved). Clinch: `observe.py` stitches a performer's identities and checks swaps by leg colour; actions `pair-kc-clinch-left/right`, pair `pair-kc-clinch` (r5). `resolve_pair_contact` now smooths corrections over seven frames and iterates twelve rounds (`runtime/pair-contact.ts`); per-frame correction alone made arms jerk in sustained contact. Numbers in `docs/TWO_PERSON_PLAN.md`, section "The clinch, second attempt". Not judged in motion by anyone yet.
