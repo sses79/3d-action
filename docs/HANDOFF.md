@@ -722,3 +722,8 @@ User drew a line after the composed chains and asked whether two characters in o
 ## 2026-10-10 — Two-performer first experiment
 
 User supplied a fight highlight video (in `~/Downloads`, third-party footage: keep it and all frames out of the repo). Cut 54.65-56.35 s to untracked `.authoring/two-person/kc-kick.mp4`. Scratch scripts only (session scratchpad, not kept): BoT-SORT tracking held both identities for 51 frames; SAM 3D Body with two boxes per frame gave two bodies per frame that follow the fighters; `pred_cam_t` puts the kicker's ankle 0.12 m from the opponent's shin at the kick. Results and limits are in `docs/TWO_PERSON_PLAN.md`. Other usable stretches seen on contact sheets: about 26.5-28 s (square up, punch, clinch) and 57-59.2 s (kick exchange, closer shot, feet near the frame edge). Next is step 1 proper: `observe.py` keeping two tracks, `subject` on `reconstruct_motion`.
+
+
+## 2026-10-10 — Two performers, step 1
+
+`subject: left | right` on `reconstruct_motion` (observe stage keyed on it only when set, so solo cache keys are unchanged). Actions `pair-kc-kick-left` and `pair-kc-kick-right` built from the user's fight video at 54.65-56.35 s, `sourceSpeed` 1. `cli.mjs` times out on a build that runs the body model from scratch (about 3-4 minutes); the service completes and commits anyway, and a second reconstruction is refused while one runs: wait for `.tmp-` to leave `.authoring/reconstruction-cache`, then read the summary with `commit: false`. User approved downloading SAM 3.1 tracking weights to test masks on the clinch at about 26.5-28 s.

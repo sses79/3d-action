@@ -1,7 +1,7 @@
 """2D pose observations for one person in a video window. Observational evidence, not rig ground truth."""
 import argparse,os,time,json,hashlib,subprocess
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('--video',required=True);p.add_argument('--sha256',required=True);p.add_argument('--start',type=float,required=True);p.add_argument('--end',type=float,required=True);p.add_argument('--model',required=True);p.add_argument('--out',required=True);args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--video',required=True);p.add_argument('--sha256',required=True);p.add_argument('--start',type=float,required=True);p.add_argument('--end',type=float,required=True);p.add_argument('--model',required=True);p.add_argument('--out',required=True);p.add_argument('--subject',choices=['left','right'],help='two performers in the window: which one to follow, named by where they stand in the picture at the start');args=p.parse_args()
 start=time.perf_counter();os.environ.setdefault('YOLO_CONFIG_DIR',str(Path('.authoring/vision-config').resolve()));os.environ.setdefault('MPLCONFIGDIR',str(Path('.authoring/vision-config/matplotlib').resolve()))
 import cv2,torch
 from ultralytics import YOLO
@@ -22,9 +22,28 @@ modelpath=Path(args.model);a=time.perf_counter();model=YOLO(str(modelpath));load
 def area(b):return max(0,b[2]-b[0])*max(0,b[3]-b[1])
 def iou(b,c):
  x=max(0,min(b[2],c[2])-max(b[0],c[0]));y=max(0,min(b[3],c[3])-max(b[1],c[1]));return x*y/max(1,area(b)+area(c)-x*y)
-rows=[];prediction=0;detections=[];tracks=[]
+rows=[];prediction=0;detections=[];tracks=[];named=[]
+# Two performers. Identities come from the tracker that ships with the detector (BoT-SORT: motion plus appearance), not from
+# our overlap chains, which cannot tell two people apart once their boxes overlap. The two performers are the two identities
+# with the most box area over the window (spectators and a referee at the back are smaller), and they are called left and
+# right by where their boxes' centres are, on average, over the first five frames each is seen. Pictures go in at 960 pixels
+# because each of two people fills less of the frame than one. Tried on one clip of two fighters with a kick: both identities
+# held for 51 frames. Not tried where the two cross over or clinch.
 for index,t,f in frames:
- a=time.perf_counter();r=model.predict(f,device='cpu',imgsz=640,verbose=False)[0];elapsed=time.perf_counter()-a;prediction+=elapsed;detections.append((r.boxes.xyxy.cpu().tolist(),r.keypoints.data.cpu().tolist() if len(r.boxes) else [],elapsed))
+ a=time.perf_counter()
+ if args.subject:
+  r=model.track(f,persist=True,tracker='botsort.yaml',device='cpu',imgsz=960,verbose=False)[0];named.append(r.boxes.id.int().tolist() if r.boxes.id is not None else [None]*len(r.boxes))
+ else:r=model.predict(f,device='cpu',imgsz=640,verbose=False)[0]
+ elapsed=time.perf_counter()-a;prediction+=elapsed;detections.append((r.boxes.xyxy.cpu().tolist(),r.keypoints.data.cpu().tolist() if len(r.boxes) else [],elapsed))
+pair=None
+if args.subject:
+ total={};seen={}
+ for n,(boxes,_,_) in enumerate(detections):
+  for d,i in enumerate(named[n]):
+   if i is not None:total[i]=total.get(i,0)+area(boxes[d]);seen.setdefault(i,[]).append((boxes[d][0]+boxes[d][2])/2)
+ two=sorted(total,key=total.get,reverse=True)[:2]
+ if len(two)<2:raise SystemExit('Unsupported window: fewer than two tracked people')
+ two.sort(key=lambda i:sum(seen[i][:5])/len(seen[i][:5]));pair={'left':two[0],'right':two[1]};mine=pair[args.subject];theirs=pair['right' if args.subject=='left' else 'left']
 # The performer is the person who stays: boxes are chained frame to frame by overlap, bridging gaps of up to six frames, and the
 # longest chain wins (taller on a tie). A figure that fades out, such as the previous clip in a crossfade, forms a short chain.
 for n,(boxes,_,_) in enumerate(detections):
@@ -34,16 +53,17 @@ for n,(boxes,_,_) in enumerate(detections):
   if best is not None and iou(boxes[d],tracks[best]['box'])>=.2:tracks[best].update(box=boxes[d],frame=n);tracks[best]['members'][n]=d;taken.add(best)
   else:tracks.append({'box':boxes[d],'frame':n,'members':{n:d}});taken.add(len(tracks)-1)
 chosen=max(tracks,key=lambda k:(len(k['members']),float(sorted(detections[n][0][d][3]-detections[n][0][d][1] for n,d in k['members'].items())[len(k['members'])//2])))['members'] if tracks else {}
+if pair:chosen={n:named[n].index(mine) for n in range(len(detections)) if mine in named[n]}
 heights=sorted(detections[n][0][d][3]-detections[n][0][d][1] for n,d in chosen.items());usual=heights[len(heights)//2] if heights else 0;previous=None
 for n,(index,t,f) in enumerate(frames):
  boxes,keypoints,elapsed=detections[n];selected=chosen.get(n)
  # Outside the chain (a fast pose change can break the overlap), continue by overlap with the last accepted box, or take the
  # tallest figure when it is at least 60% of the performer's usual height.
- if selected is None and boxes:
+ if selected is None and boxes and not pair:
   near=max(range(len(boxes)),key=lambda d:iou(boxes[d],previous)) if previous else None;tall=max(range(len(boxes)),key=lambda d:boxes[d][3]-boxes[d][1])
   selected=near if near is not None and iou(boxes[near],previous)>=.2 else tall if boxes[tall][3]-boxes[tall][1]>=.6*usual else None
  if selected is not None:previous=boxes[selected]
  k=[] if selected is None else keypoints[selected]
- rows.append({'frameIndex':index,'time':t,'clipTime':t-args.start,'detections':len(boxes),'selection':'longest overlap-linked chain of boxes, continued by overlap or height; not identity certification','bbox':None if selected is None else boxes[selected],'keypoints':k,'missingOrAmbiguousSubject':selected is None,'predictWallSeconds':elapsed})
-report={'status':'observational 2D pose evidence; no rig ground truth','model':modelpath.name,'modelSHA256':hashlib.sha256(modelpath.read_bytes()).hexdigest(),'versions':{n:version(n) for n in ['ultralytics','torch','opencv-python']},'sourceSHA256':args.sha256,'interval':[args.start,args.end],'frameSize':[int(frames[0][2].shape[1]),int(frames[0][2].shape[0])],'confidenceThreshold':.5,'keypointOrder':'COCO17; anatomical labels are model estimates and may swap','timingsSeconds':{'imports':imports,'modelLoad':load,'warmup':warmup,'predictions':prediction,'wall':time.perf_counter()-start},'frames':rows}
+ rows.append({'frameIndex':index,'time':t,'clipTime':t-args.start,'detections':len(boxes),'selection':'longest overlap-linked chain of boxes, continued by overlap or height; not identity certification' if not pair else f'{args.subject} of the two largest tracked identities (BoT-SORT); not identity certification',**({'otherBBox':boxes[named[n].index(theirs)] if theirs in named[n] else None} if pair else {}),'bbox':None if selected is None else boxes[selected],'keypoints':k,'missingOrAmbiguousSubject':selected is None,'predictWallSeconds':elapsed})
+report={'status':'observational 2D pose evidence; no rig ground truth','model':modelpath.name,'modelSHA256':hashlib.sha256(modelpath.read_bytes()).hexdigest(),'versions':{n:version(n) for n in ['ultralytics','torch','opencv-python']},'sourceSHA256':args.sha256,**({'subject':args.subject,'performers':{k:int(v) for k,v in pair.items()}} if pair else {}),'interval':[args.start,args.end],'frameSize':[int(frames[0][2].shape[1]),int(frames[0][2].shape[0])],'confidenceThreshold':.5,'keypointOrder':'COCO17; anatomical labels are model estimates and may swap','timingsSeconds':{'imports':imports,'modelLoad':load,'warmup':warmup,'predictions':prediction,'wall':time.perf_counter()-start},'frames':rows}
 out=Path(args.out);out.mkdir(parents=True,exist_ok=True);(out/'pose-report.json').write_text(json.dumps(report));print(json.dumps({'frames':len(rows),'missing':sum(x['missingOrAmbiguousSubject'] for x in rows),'timings':report['timingsSeconds']}))
