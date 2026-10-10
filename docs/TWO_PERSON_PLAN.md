@@ -87,6 +87,15 @@ The user's screenshots of the dance pair showed the two characters' arms reachin
 - **On `pair-samba`** with spacing 0.20 m: holds found at 6.30–8.30 s (her left hand, his right) with the other pair of hands joining at 6.60–7.00 and 7.83–8.40 s, and three short ones (8.47–8.63, 8.97–9.20, 9.43–9.70 s) that were not checked against the video. 0 frames with a limb inside the other dancer before or after. Pair revision 5, both actions revision 5. Stills in Studio at 6.5 and 7.0 s: the hands meet between the two bodies and the arms no longer cross.
 - **Limits.** Wrists are brought together, not fingers; the hands are not oriented to grip. A hold is found from the model's reading, so a missed or invented hold is possible (the three short ones are candidates). The reach is not smoothed beyond its ramp. Older pairs have no wrists recorded and are unaffected.
 
+## White-model video with the source camera (2026-10-10)
+
+The user asked for a 10 s white-model video and, before export, a cinema-level camera; of four options (match the source shot, author a camera in Studio with a timeline such as Theatre.js, generate one with a model such as DanceCamera3D or DIRECTOR, export to Blender or Unreal) the user chose the first, white clay, 1280x720 at 30 frames per second.
+
+- **Operation `render_pair_video`** (`authoring/render/pair-page.ts`, `pair-video.mjs`): draws the pair in headless Chrome with software WebGL (white clay characters, pale floor, one soft shadow) and encodes an MP4 with ffmpeg under `.authoring/renders`. Cameras: `source`, `fixed`, `orbit`.
+- **The source camera.** Our scene for a pair is the camera space of the source window, so the camera sits at its origin, unrotated, with the body model's lens (focal length = the picture's diagonal in pixels, 27.6° vertical at 720p). Each character stands at its first-frame hip position plus its own root travel. The camera's height over our floor is worked out per frame: how far below the camera's axis the model put each performer's hips, added to how high our character's hips are, averaged over the two. The hips' camera-space track is kept on new builds (`build.scene.hips`) and read back from the body stage's cache for older ones.
+- **On `pair-samba`** (revision 5): 301 frames, 10.03 s, 2.0 MB, rendered in 24 s. Ten frames, one per second, laid beside the source frames at the same times: the two characters sit where the dancers sit in the picture and are the same size, through the crane move in and the pull back, and the hand hold at 6–8 s is in place. Checked on those ten stills; the video was not watched in motion by me.
+- **Limits.** The lens is assumed, so the broadcast's zoom reads as the camera travelling; the camera never turns, because our scene takes the camera's axes as the world's (a tilted camera shows up as leaning characters and a floor that is not quite where the real one was). `fixed` and `orbit` exist and were not rendered. One character model for both performers.
+
 This is one easy case. It says step 1 and the start of step 2 are as reachable as hoped; it says nothing yet about occlusion.
 
 ## Goal

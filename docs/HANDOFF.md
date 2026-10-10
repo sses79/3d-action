@@ -797,3 +797,8 @@ Limits raised (window 15 s, 512 keys per track, phase 16 s); body stage time lim
 ## 2026-10-10 — Hand holds for pairs
 
 See "Hand holds" in `docs/TWO_PERSON_PLAN.md`. `cameraWrists` in the body stage's motion file, `build.scene.wrists`, hold detection in `resolve_pair_contact` (core), `holdHands` two-bone reach in `runtime/pair-contact.ts`. `pair-samba` r5 at spacing 0.20 m with holds. Rebuilding the dancers was needed for the wrists (body.py changed, so every body-stage cache key changed; other clips would rerun the model if rebuilt).
+
+
+## 2026-10-10 — White-model video, source camera
+
+`render_pair_video` (49 operations): `authoring/render/pair-page.ts` + `pair-video.mjs`, Playwright Chrome with swiftshader as the review sheets use, ffmpeg. `.authoring/renders/pair-samba-r5-source.mp4`. Camera research and the other three options are summarised in `docs/TWO_PERSON_PLAN.md`. `build.scene.hips` added for new builds. Next candidates: authored camera (timeline), a camera that turns (needs camera and people separated: TRAM/MegaSaM class), two different character looks.
