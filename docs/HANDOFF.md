@@ -705,3 +705,8 @@ User on `walk-into-front-sweep`: "use 2.39 as the front, first join can turn rig
 ## 2026-10-10 — Turn-first redone through the spine
 
 User on r7: the first join should be smooth like the second and turn with the body's joints, not like a camera. The r7 version ran root and pelvis rotation ahead, which spun the whole figure about the vertical. Now (`runtime/movements.ts`): root and pelvis rotate on the join's clock; spine_01-03, neck and head each get a fifth of a world-vertical twist of 0.35 x the join's change of hip heading x sin^2(pi x) (capped at 45 degrees), so the look and shoulders lead; positions and limb rotations lag by 0.15 sin^2(pi x). `walk-into-front-sweep` r8: no flags (0.26-0.63 m/s). Still true: the hips turn about 85 degrees in 0.4 s with no foot steps, so the feet slide round.
+
+
+## 2026-10-10 — Step between walk and sweep
+
+User asked for a stepping movement between the walk and the sweep. `walk-into-front-sweep` r11: `move-walk-half-a` r1 (first half of the Walk cycle, 0.67 s; made with `adapt_movement` so the chain stays under 4 s), 0.15 s join, `move-step-forward` r1 (Advancing left step, 0.53 m forward), 0.25 s join into the sweep (the user had set 0.25 s with the slider at r10; kept), sweep with `facing: target`, `aim: 0.61`, `order: turn-first`, 0.4 s join, Counter ready. Half a's exit to the step's entry ranks "near" (0.042 m, 7 degrees). One flag, inside the step movement itself and not at a join: at 1.35 s, between its "Left step" and "Plant" phases, root travel stops from 0.97 m/s in one frame. `move-walk-half-b` was made for comparison and archived.
