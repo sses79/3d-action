@@ -727,3 +727,8 @@ User supplied a fight highlight video (in `~/Downloads`, third-party footage: ke
 ## 2026-10-10 — Two performers, step 1
 
 `subject: left | right` on `reconstruct_motion` (observe stage keyed on it only when set, so solo cache keys are unchanged). Actions `pair-kc-kick-left` and `pair-kc-kick-right` built from the user's fight video at 54.65-56.35 s, `sourceSpeed` 1. `cli.mjs` times out on a build that runs the body model from scratch (about 3-4 minutes); the service completes and commits anyway, and a second reconstruction is refused while one runs: wait for `.tmp-` to leave `.authoring/reconstruction-cache`, then read the summary with `commit: false`. User approved downloading SAM 3.1 tracking weights to test masks on the clinch at about 26.5-28 s.
+
+
+## 2026-10-10 — SAM 3.1 tracking tried on the clinch
+
+See "Clinch clip and SAM 3.1" in `docs/TWO_PERSON_PLAN.md`. BoT-SORT loses the hidden fighter in the clinch. SAM 3.1 (`SAM3_Detect` + `SAM3_VideoTrack`, headless like `body.py`; load with `comfy.sd.load_checkpoint_guess_config`, text via `nodes.CLIPTextEncode`) runs at about 10 s per frame and every track's mask goes empty at frame 7 in four configurations, GPU and CPU. The ComfyUI venv has no OpenCV (use PIL). Scratch scripts were in the session scratchpad and are not kept. Open choice for the user: update the ComfyUI checkout and retest, or handle the clinch another way.
