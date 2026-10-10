@@ -185,6 +185,8 @@ Status: **kept**, **kept with a known cost**, **replaced**, or **off**.
 
 **Run 51 — the hand step on the other seven rotation clips.** Hook kick, Cartwheel, Tornado kick, Cheat 360 crescent, Backflip (overtuck), Raiz and Sideswipe rebuilt in their plain actions. All seven: 0 frames inside, 0 crossings; jitter 4.2, 1.7, 5.6, 5.7, 4.0, 11.2, 10.6 mm and lifts, all identical to run 49. All eight rotation clips now carry both R40 steps. No sheets read.
 
+**Run 52 — Front sweep rebuilt on rotations** (one clip; found while chaining it after a walk). Its position build snapped the head 160° in one frame nine frames before the end, and 37° five frames later: the position path's head-direction rule, which reads the nose against the ears, flips when the performer faces away. On rotations the head comes from the model: largest head turn in one frame is 6°. Jitter 3.2 mm, 0 inside, 0 crossings. Still there on rotations, so it is in the model's reading: the right arm turns 15° and 20° in the last two frames of the window (2–7° before). Not fixed in the action; the library movement cuts the last 0.05 s. Other position builds may carry the same head snap; none has been checked for it.
+
 ## Rolling back
 
 - **One action:** each rebuild keeps the previous revision (up to 100). `restore_revision` with the action id, its current revision and the revision wanted.

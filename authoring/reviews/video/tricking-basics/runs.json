@@ -16726,6 +16726,44 @@
     }
    },
    "seconds": 197
+  },
+  {
+   "id": 52,
+   "date": "2026-10-10T11:50",
+   "commit": "f0ae57b",
+   "rule": "Front sweep rebuilt on rotations: its position build snapped the head 160 degrees in one frame near the end",
+   "options": {
+    "sourceSpeed": 0.5,
+    "decisions": false,
+    "fit": "none",
+    "straightKneePrior": false,
+    "source": "body"
+   },
+   "clips": {
+    "9": {
+     "name": "Front sweep",
+     "ok": true,
+     "pose": "rotations",
+     "secondLook": 0,
+     "despiked": 0,
+     "despikedKeypoints": 24,
+     "jitterMm": 3.2,
+     "crossings": 0,
+     "insideFrames": 0,
+     "beyondNormalRange": 3,
+     "revision": 8,
+     "weak": 10,
+     "repaired": 0,
+     "swapped": 0,
+     "bridges": 0,
+     "repairsVetoed": null,
+     "lift": 0,
+     "projection": null,
+     "flags": 0,
+     "sheet": "/Users/tim/Yun/codex-3d/.authoring/review-sheets/sam3d-trick-09-front-sweep-r8-35d19b972672.png"
+    }
+   },
+   "seconds": 42
   }
  ]
 }
