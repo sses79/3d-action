@@ -747,3 +747,8 @@ Studio shows a pair: `partner` in the viewer state, fetched with `get_action` wh
 ## 2026-10-10 — Two performers, step 4 first part
 
 User reviewed the pair ("looks great") and asked for step 4. `resolve_pair_contact` (47 operations): measure or remove one performer's limb inside the other's body; the limb's owner gives way. Applied to `pair-kc-kick` (pair r2, right action r3). Details and limits in `docs/TWO_PERSON_PLAN.md`. Open in step 4: reaction of the body that is hit, showing contacts in Studio. The clinch is still unsolved.
+
+
+## 2026-10-10 — Pair contact: reaction
+
+`resolve_pair_contact` gained `reaction`; it restarts from the reconstructed revisions each time (found through `build.scene` without `build.pairContact`, in the entry or its history). `pair-kc-kick` resolved with 0.5: pair r3, left action r3, right action r4. Not looked at. Next ideas if the user wants more: trunk reaction (spine lean), contact cues in Studio.
