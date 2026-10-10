@@ -717,3 +717,8 @@ User, same day: adding the step was not a good idea. `walk-into-front-sweep` r12
 ## 2026-10-10 — Line drawn; two-performer plan
 
 User drew a line after the composed chains and asked whether two characters in one video can be handled, then for a web and GitHub search, then for a plan document: `docs/TWO_PERSON_PLAN.md`. Decisions in it: BoT-SORT (already in Ultralytics) for identities with SAM 3.1 tracking as fallback; stay on SAM 3D Body and use its per-person camera position for the shared space; extend our solid-parts rule across bodies before trying research priors (BUDDI and others are SMPL-X, non-commercial). No code yet. Blocked on a two-person clip from the user.
+
+
+## 2026-10-10 — Two-performer first experiment
+
+User supplied a fight highlight video (in `~/Downloads`, third-party footage: keep it and all frames out of the repo). Cut 54.65-56.35 s to untracked `.authoring/two-person/kc-kick.mp4`. Scratch scripts only (session scratchpad, not kept): BoT-SORT tracking held both identities for 51 frames; SAM 3D Body with two boxes per frame gave two bodies per frame that follow the fighters; `pred_cam_t` puts the kicker's ankle 0.12 m from the opponent's shin at the kick. Results and limits are in `docs/TWO_PERSON_PLAN.md`. Other usable stretches seen on contact sheets: about 26.5-28 s (square up, punch, clinch) and 57-59.2 s (kick exchange, closer shot, feet near the frame edge). Next is step 1 proper: `observe.py` keeping two tracks, `subject` on `reconstruct_motion`.

@@ -2,7 +2,19 @@
 
 Written 2026-10-10, after the line drawn at the end of Phase 6's first round (four video movements registered, four composed chains, facing options in the composer). The user asked whether a video with two characters can be handled and asked for a search of what exists before planning. Rule carried over from `SAM3D_PLAN.md`: use what is already installed or published before writing our own.
 
-Nothing in this plan is built yet.
+Nothing in this plan is built into the pipeline yet. A first experiment was run on 2026-10-10 with scratch scripts; see the next section.
+
+## First experiment (2026-10-10)
+
+Clip: 1.70 s (51 frames at 29.97 per second) cut from a fight highlight video the user supplied, 54.65–56.35 s: two fighters, one low kick that lands on the other's leg, a crowd behind, no referee in shot. The camera pans and zooms during it, which the plan had hoped to avoid. The cut is in untracked `.authoring/two-person/kc-kick.mp4`; no footage or frames are in this repository.
+
+- **Identities (BoT-SORT in Ultralytics, YOLO26s pose, 960 px):** both fighters keep one identity each for all 51 frames, through the kick where their boxes overlap. The two largest tracks by box area are the fighters; spectators are far smaller. Checked on a sheet of 12 frames with the boxes drawn.
+- **Bodies (`SAM3DBody_Predict` with two boxes per frame):** two bodies in every frame; 191 s for 102 bodies on this Mac (1.87 s each). Drawn over 12 frames, each skeleton follows its own fighter, the kicking leg included.
+- **Shared space (`pred_cam_t`):** the distance between the two along the floor goes from 1.36 m to 0.94 m at the kick and back to 1.34 m. At frame 35, the kick, one fighter's ankle is 0.12 m from the other's shin in camera space, which is two limbs touching. So the per-person camera positions are consistent enough between the two bodies to show the contact.
+- **Not checked:** depth between the two (it swings from -0.40 m to +1.07 m over the clip, some of which may be the zooming camera and not the fighters); anything in motion; our character, since no action was built; clips where the two cross over or clinch; the referee as a third person.
+- **Side effect:** Ultralytics installed the `lap` package (0.5.13) into `.authoring/vision-venv` by itself the first time tracking ran.
+
+This is one easy case. It says step 1 and the start of step 2 are as reachable as hoped; it says nothing yet about occlusion.
 
 ## Goal
 
