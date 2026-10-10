@@ -762,3 +762,8 @@ Reaction dropped at the user's agreement (option stays, default 0; `pair-kc-kick
 ## 2026-10-10 — Pair contact, final pass
 
 User judged the clinch very good and asked to rerun the kick pair with smoothing and make one last try at arms through the body. `runtime/pair-contact.ts`: after the smoothed rounds, a small unsmoothed pass (`polish`, 0.05 rad per step, three steps). `pair-kc-clinch` r6: 11 frames inside of 115 (72 uncorrected). `pair-kc-kick` r6: 0 frames. The two-performer plan's steps 1-4 are done to the user's "good enough"; step 5 (paired library movements) is not started.
+
+
+## 2026-10-10 — Pair movements; third fight clip
+
+`register_pair_movements` (48 operations) and Studio's partner lookup extended to pair movements. `move-pair-low-kick` / `move-pair-low-kick-taken` registered from `pair-kc-kick` (pair r7). Third clip from the user's video, 99.77-103.6 s: `pair-kc-139-left/right`, pair `pair-kc-139` r2. Open in step 5: composing with a partner (two characters in the composer).

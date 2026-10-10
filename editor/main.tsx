@@ -114,8 +114,10 @@ function App(){
  // Pairs: when the selected action is one of two performers recorded as a pair (set_pair) and both are at the paired revisions,
  // the other performer's action is fetched and shown with it. The snapshot carries tracks for the selected action only.
  useEffect(()=>{const id=actionId(action),pairs=Object.values(bridgeState.current?.pairs||{}) as any[],live=bridgeState.current?.actions||{};
-  const found=bridge?pairs.find(p=>[p.left,p.right].some((x:any)=>x.actionId===id)&&[p.left,p.right].every((x:any)=>live[x.actionId]&&!live[x.actionId].archived&&live[x.actionId].revision===x.revision)):null;
-  if(!found){setPartner(null);return;}const mine=found.left.actionId===id?found.left:found.right,other=mine===found.left?found.right:found.left,key=`${other.actionId}@${other.revision}/${found.revision}`;if(partner?.key===key)return;let stale=false;
+  // a pair links two actions, and (once registered) the two library movements copied from them, with the same placement
+  const links=pairs.flatMap(p=>[{name:p.name,revision:p.revision,sides:[p.left,p.right].map((x:any)=>({actionId:x.actionId,revision:x.revision,offset:x.offset}))},...(p.movements?[{name:p.name,revision:p.revision,sides:[{actionId:p.movements.left.movementId,revision:p.movements.left.revision,offset:p.left.offset},{actionId:p.movements.right.movementId,revision:p.movements.right.revision,offset:p.right.offset}]}]:[])]);
+  const found=bridge?links.find(p=>p.sides.some((x:any)=>x.actionId===id)&&p.sides.every((x:any)=>live[x.actionId]&&!live[x.actionId].archived&&live[x.actionId].revision===x.revision)):null;
+  if(!found){setPartner(null);return;}const mine=found.sides[0].actionId===id?found.sides[0]:found.sides[1],other=mine===found.sides[0]?found.sides[1]:found.sides[0],key=`${other.actionId}@${other.revision}/${found.revision}`;if(partner?.key===key)return;let stale=false;
   fetch(bridgeUrl+'/api/tool',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'get_action',arguments:{actionId:other.actionId}})}).then(r=>r.json()).then(d=>{if(stale||!d.result)return;setPartner({action:validateAction(d.result.action),offset:other.offset.map((v:number,k:number)=>v-mine.offset[k]),name:d.result.action.name,pairName:found.name,key});}).catch(()=>{});
   return()=>{stale=true;};},[actionId(action),bridgeRevision,bridge]);
  // Video review follows the selected action: any action with a current linked source video shows it beside the character.
