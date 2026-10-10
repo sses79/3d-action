@@ -670,3 +670,8 @@ On the user's "archive the 39": 21 rule-pipeline `trick-*` actions with a `sam3d
 ## 2026-10-10 — Phase 6: chaining video movements
 
 Registered `move-video-tornado-kick`, `move-video-cheat-720`, `move-video-cheat-360-crescent` (each copied from its `sam3d-` action). Every video movement's exit is "needs-transition" to every entry (pose RMS 0.33-0.58 m), partly because clips face wherever the camera saw them; the composer does not align facing. Chains `video-hook-into-tornado` and `video-hook-into-cheat-720` compose and pass the seam check with velocity joins. Fixed in `runtime/movements.ts`: travel continuation no longer carries height (offset y = 0). `guard-video-hook-kick-guard` r2 (accepted by the user) was composed before the fix and ends 2.4 cm low; not recomposed. Limits met: 4 s per composed action; no facing alignment; feet are not pinned in any video movement.
+
+
+## 2026-10-10 — Facing continuation in the composer
+
+`runtime/movements.ts`: per-step yaw (`turns[i]`) from the hip line's heading at the previous exit and this entry; `place()` turns root position and rotation, offsets and bridge velocities use the turned vectors; skipped (previous yaw kept) when the hip line is nearer vertical than horizontal. `core.ts`: `facing` on `compose_action` steps and in recipe validation; not yet in `build_action_spec` connections. Test added in `tests/connection.test.mjs` (a movement stored a quarter turn off comes in turned back, travel turned with it; default unchanged; refused with `contact`). Existing recipes are unaffected (default `source`).
