@@ -685,3 +685,8 @@ Registered `move-video-tornado-kick`, `move-video-cheat-720`, `move-video-cheat-
 ## 2026-10-10 — Walk into Front sweep
 
 User marked the two kick chains acceptable and asked for a Walk cycle plus Front sweep chain. `sam3d-trick-09-front-sweep` rebuilt on rotations (r8, run 52) after its position build showed a 160-degree head snap; `move-video-front-sweep` r4 is that build with the last 0.05 s cut (`adapt_movement` to 0.955); `walk-into-front-sweep` r4 composed with velocity joins, travel and facing continued. Lesson for registering more tricks: check the last frames of a clip window (arm jump, body still turning) and prefer rotation builds, since position builds can snap the head.
+
+
+## 2026-10-10 — Facing by travel
+
+User on `walk-into-front-sweep`: the walk direction should usually match the attack direction; with hips aligned the sweep went off the walk's line. Also asked to end on Counter ready. Added `facing: travel` to `compose_action` steps (`runtime/movements.ts`): incoming travel direction is turned onto the previous movement's direction of going (travel if over 0.2 m, else hip facing). `walk-into-front-sweep` r5: Walk cycle, 0.4 s join with `facing: travel`, Front sweep, 0.4 s join, Counter ready; travel 1.26 m along the walk's facing (was 1.22 m the opposite way); no flags. Cost: the Front sweep clip starts facing about 167 degrees away from where it travels, so the body turns that much in the 0.4 s join. Facts found: the library Walk cycle is in place (no root travel); video movements only travel along the camera's x (depth travel is not estimated).
