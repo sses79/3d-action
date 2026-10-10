@@ -781,3 +781,5 @@ User: composing with a partner is not needed (option stays, no further work). As
 User asked to try 0.15 m on `pair-kc-139`: 9 frames inside before the contact rule, 0 after (2 mm at worst); kicks still land (0.70 s, 2.13-2.30 s, 3.43 s). Pair r4, both actions r4; the 0.10 m build is each action's reference revision.
 
 User asked to try 0.20 m on `pair-kc-139`: 8 frames inside before the contact rule, 0 after (0 mm); kicks still land (0.70 s, 2.13-2.30 s, 3.46-3.50 s). Pair r5, both actions r5; the 0.15 m build is each action's reference revision.
+
+User: keep 0.20 m on `pair-kc-139`, and use 0.20 m on the clinch too. `pair-kc-clinch` r7 (both actions r7): 56 frames inside before the contact rule (72 with no spacing), 7 after (11 before), 5.9 cm at worst; 52 contact stretches, so the two are still in contact through the clinch. `pair-kc-kick` stays at spacing 0.
