@@ -732,3 +732,8 @@ User supplied a fight highlight video (in `~/Downloads`, third-party footage: ke
 ## 2026-10-10 — SAM 3.1 tracking tried on the clinch
 
 See "Clinch clip and SAM 3.1" in `docs/TWO_PERSON_PLAN.md`. BoT-SORT loses the hidden fighter in the clinch. SAM 3.1 (`SAM3_Detect` + `SAM3_VideoTrack`, headless like `body.py`; load with `comfy.sd.load_checkpoint_guess_config`, text via `nodes.CLIPTextEncode`) runs at about 10 s per frame and every track's mask goes empty at frame 7 in four configurations, GPU and CPU. The ComfyUI venv has no OpenCV (use PIL). Scratch scripts were in the session scratchpad and are not kept. Open choice for the user: update the ComfyUI checkout and retest, or handle the clinch another way.
+
+
+## 2026-10-10 — Two performers, step 2
+
+SAM 3.1 weights deleted at the user's request. Step 2: `cameraHip` in the body stage's motion file, scene travel in `retarget.ts` when `subject` is set, `build.scene` on the entry, operations `set_pair` / `list_pairs` (46 operations; pairs live in `state.pairs`). `pair-kc-kick-left` and `-right` are at revision 2; pair `pair-kc-kick` r1. Numbers are in `docs/TWO_PERSON_PLAN.md`. Next is step 3: a second character in the Studio viewer playing a pair on one clock. The clinch is still unsolved.
