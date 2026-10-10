@@ -779,3 +779,5 @@ User judged the clinch very good and asked to rerun the kick pair with smoothing
 User: composing with a partner is not needed (option stays, no further work). Asked how the two fighters' distance is calculated and for a little more of it on the 1:39 pair. `resolve_pair_contact` gained `spacing` (extra metres along the line between the hips, half each, on the reconstructed actions; stored as `pairs[id].spacing`). `pair-kc-139` resolved with 0.10 m: 11 frames inside before the contact rule (16 without spacing), 0 after (8 mm at worst); the kicks still land (contacts at 0.70 s, 2.17-2.30 s, 3.43 s). Pair r3, both actions r3. The other two pairs are unchanged (spacing 0).
 
 User asked to try 0.15 m on `pair-kc-139`: 9 frames inside before the contact rule, 0 after (2 mm at worst); kicks still land (0.70 s, 2.13-2.30 s, 3.43 s). Pair r4, both actions r4; the 0.10 m build is each action's reference revision.
+
+User asked to try 0.20 m on `pair-kc-139`: 8 frames inside before the contact rule, 0 after (0 mm); kicks still land (0.70 s, 2.13-2.30 s, 3.46-3.50 s). Pair r5, both actions r5; the 0.15 m build is each action's reference revision.
