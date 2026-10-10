@@ -767,3 +767,8 @@ User judged the clinch very good and asked to rerun the kick pair with smoothing
 ## 2026-10-10 — Pair movements; third fight clip
 
 `register_pair_movements` (48 operations) and Studio's partner lookup extended to pair movements. `move-pair-low-kick` / `move-pair-low-kick-taken` registered from `pair-kc-kick` (pair r7). Third clip from the user's video, 99.77-103.6 s: `pair-kc-139-left/right`, pair `pair-kc-139` r2. Open in step 5: composing with a partner (two characters in the composer).
+
+
+## 2026-10-10 — Composing with a partner
+
+`compose_action` `partner` option; `composeMovements` reports placements (time span, yaw, offset per step); a pair-movement step is aimed at its recorded partner (`toward`). `walk-low-kick-duo` + `walk-low-kick-duo-partner`, pair `pair-walk-low-kick` r2. See `docs/TWO_PERSON_PLAN.md`, "Step 5, second part". Untested by the test suite. Ideas not built: idle motion for the waiting partner, contact rule on composed pairs, a travelling approach.
