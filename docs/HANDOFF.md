@@ -700,3 +700,8 @@ User corrected the chain: an attack's direction is where the head faces, and the
 ## 2026-10-10 — Aim moment and turn-first joins
 
 User on `walk-into-front-sweep`: "use 2.39 as the front, first join can turn right a little bit then lower the body". `compose_action` steps gain `aim` (0-1, with `facing: target`: the moment the head is on the opponent) and `order: turn-first` (root and pelvis rotation run ahead in the join, everything else behind, by 0.3 sin^2(pi x); end speeds unchanged). r7: sweep step `aim: 0.61` (2.39 s is 0.657 s into the 1.074 s sweep), `order: turn-first`. No flags (joins 0.26-0.63 m/s). Stills: in the first join the character turns to its right while upright, then bends; at 2.39 s it is low in the sweep toward the camera; Counter ready faces front. The sweep now enters about 85 degrees to the right of front and the action's travel is 1.25 m to the character's left.
+
+
+## 2026-10-10 — Turn-first redone through the spine
+
+User on r7: the first join should be smooth like the second and turn with the body's joints, not like a camera. The r7 version ran root and pelvis rotation ahead, which spun the whole figure about the vertical. Now (`runtime/movements.ts`): root and pelvis rotate on the join's clock; spine_01-03, neck and head each get a fifth of a world-vertical twist of 0.35 x the join's change of hip heading x sin^2(pi x) (capped at 45 degrees), so the look and shoulders lead; positions and limb rotations lag by 0.15 sin^2(pi x). `walk-into-front-sweep` r8: no flags (0.26-0.63 m/s). Still true: the hips turn about 85 degrees in 0.4 s with no foot steps, so the feet slide round.
