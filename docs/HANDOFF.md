@@ -737,3 +737,8 @@ See "Clinch clip and SAM 3.1" in `docs/TWO_PERSON_PLAN.md`. BoT-SORT loses the h
 ## 2026-10-10 — Two performers, step 2
 
 SAM 3.1 weights deleted at the user's request. Step 2: `cameraHip` in the body stage's motion file, scene travel in `retarget.ts` when `subject` is set, `build.scene` on the entry, operations `set_pair` / `list_pairs` (46 operations; pairs live in `state.pairs`). `pair-kc-kick-left` and `-right` are at revision 2; pair `pair-kc-kick` r1. Numbers are in `docs/TWO_PERSON_PLAN.md`. Next is step 3: a second character in the Studio viewer playing a pair on one clock. The clinch is still unsolved.
+
+
+## 2026-10-10 — Two performers, step 3
+
+Studio shows a pair: `partner` in the viewer state, fetched with `get_action` when the selected action is in a current pair (`bridgeState.current.pairs`); players[0] plays it at the relative offset when the view is Current. Checked in the browser with and without Video review on `pair-kc-kick-right`. Steps 1-3 of `docs/TWO_PERSON_PLAN.md` are done for the kick clip; the plan says to stop here for the user's verdict before step 4 (contact). The clinch is unsolved.
