@@ -710,3 +710,5 @@ User on r7: the first join should be smooth like the second and turn with the bo
 ## 2026-10-10 — Step between walk and sweep
 
 User asked for a stepping movement between the walk and the sweep. `walk-into-front-sweep` r11: `move-walk-half-a` r1 (first half of the Walk cycle, 0.67 s; made with `adapt_movement` so the chain stays under 4 s), 0.15 s join, `move-step-forward` r1 (Advancing left step, 0.53 m forward), 0.25 s join into the sweep (the user had set 0.25 s with the slider at r10; kept), sweep with `facing: target`, `aim: 0.61`, `order: turn-first`, 0.4 s join, Counter ready. Half a's exit to the step's entry ranks "near" (0.042 m, 7 degrees). One flag, inside the step movement itself and not at a join: at 1.35 s, between its "Left step" and "Plant" phases, root travel stops from 0.97 m/s in one frame. `move-walk-half-b` was made for comparison and archived.
+
+User, same day: adding the step was not a good idea. `walk-into-front-sweep` r12 is the r10 recipe again (Walk cycle, 0.25 s turn-first join, sweep, 0.4 s join, Counter ready); `move-walk-half-a` archived. Do not put a filler step between an approach and an attack unless asked.
