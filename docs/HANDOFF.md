@@ -757,3 +757,8 @@ User reviewed the pair ("looks great") and asked for step 4. `resolve_pair_conta
 ## 2026-10-10 — Clinch handled without SAM 3
 
 Reaction dropped at the user's agreement (option stays, default 0; `pair-kc-kick` re-resolved). Clinch: `observe.py` stitches a performer's identities and checks swaps by leg colour; actions `pair-kc-clinch-left/right`, pair `pair-kc-clinch` (r5). `resolve_pair_contact` now smooths corrections over seven frames and iterates twelve rounds (`runtime/pair-contact.ts`); per-frame correction alone made arms jerk in sustained contact. Numbers in `docs/TWO_PERSON_PLAN.md`, section "The clinch, second attempt". Not judged in motion by anyone yet.
+
+
+## 2026-10-10 — Pair contact, final pass
+
+User judged the clinch very good and asked to rerun the kick pair with smoothing and make one last try at arms through the body. `runtime/pair-contact.ts`: after the smoothed rounds, a small unsmoothed pass (`polish`, 0.05 rad per step, three steps). `pair-kc-clinch` r6: 11 frames inside of 115 (72 uncorrected). `pair-kc-kick` r6: 0 frames. The two-performer plan's steps 1-4 are done to the user's "good enough"; step 5 (paired library movements) is not started.
