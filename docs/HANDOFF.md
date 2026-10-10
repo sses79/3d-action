@@ -742,3 +742,8 @@ SAM 3.1 weights deleted at the user's request. Step 2: `cameraHip` in the body s
 ## 2026-10-10 — Two performers, step 3
 
 Studio shows a pair: `partner` in the viewer state, fetched with `get_action` when the selected action is in a current pair (`bridgeState.current.pairs`); players[0] plays it at the relative offset when the view is Current. Checked in the browser with and without Video review on `pair-kc-kick-right`. Steps 1-3 of `docs/TWO_PERSON_PLAN.md` are done for the kick clip; the plan says to stop here for the user's verdict before step 4 (contact). The clinch is unsolved.
+
+
+## 2026-10-10 — Two performers, step 4 first part
+
+User reviewed the pair ("looks great") and asked for step 4. `resolve_pair_contact` (47 operations): measure or remove one performer's limb inside the other's body; the limb's owner gives way. Applied to `pair-kc-kick` (pair r2, right action r3). Details and limits in `docs/TWO_PERSON_PLAN.md`. Open in step 4: reaction of the body that is hit, showing contacts in Studio. The clinch is still unsolved.
