@@ -792,3 +792,8 @@ User chose 0.10 m for `pair-kc-kick`: pair r9, left action r6, right action r9; 
 ## 2026-10-10 — Dance pair; windows up to 15 s
 
 Limits raised (window 15 s, 512 keys per track, phase 16 s); body stage time limit scales with the window; `body.py` predicts in chunks of 64. Second user video (samba broadcast, in `~/Downloads`; keep footage and frames out of the repo). `pair-samba-left` / `pair-samba-right` from 70.7-80.7 s (10 s), pair `pair-samba` r2 resolved with spacing 0.10 m: 6 frames inside before the contact rule, 0 after (1 cm at worst); recorded contacts are hands and forearms meeting at 6.97-7.13 s, 7.7-7.8 s and 8.57 s, which is the hand hold. Both actions r2. Lesson recorded in `CLAUDE.md`: rebuild `core.js` after editing `pipeline.mjs`; use curl, not the CLI, for long builds. Not judged in motion.
+
+
+## 2026-10-10 — Hand holds for pairs
+
+See "Hand holds" in `docs/TWO_PERSON_PLAN.md`. `cameraWrists` in the body stage's motion file, `build.scene.wrists`, hold detection in `resolve_pair_contact` (core), `holdHands` two-bone reach in `runtime/pair-contact.ts`. `pair-samba` r5 at spacing 0.20 m with holds. Rebuilding the dancers was needed for the wrists (body.py changed, so every body-stage cache key changed; other clips would rerun the model if rebuilt).
