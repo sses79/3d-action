@@ -31,7 +31,10 @@ def pictures(indices):
 def predict(images,boxes):
  if 'model' not in loaded:a=time.perf_counter();loaded['model']=SAM3DBody_Loader.execute(args.weights).result[0];timings['load']=time.perf_counter()-a
  a=time.perf_counter()
- with torch.no_grad():people=SAM3DBody_Predict.execute(loaded['model'],torch.from_numpy(images.astype(np.float32)/255),bboxes=[[{'x':b[0],'y':b[1],'width':b[2]-b[0],'height':b[3]-b[1]}] for b in boxes],run_hand_refinement=False,fov=0.0,batch_size=2).result[0]['frames']
+ # 64 pictures at a time: a 15-second window is over 400 pictures, 4.7 GB as one float array
+ people=[]
+ with torch.no_grad():
+  for at in range(0,len(images),64):people+=SAM3DBody_Predict.execute(loaded['model'],torch.from_numpy(images[at:at+64].astype(np.float32)/255),bboxes=[[{'x':b[0],'y':b[1],'width':b[2]-b[0],'height':b[3]-b[1]}] for b in boxes[at:at+64]],run_hand_refinement=False,fov=0.0,batch_size=2).result[0]['frames']
  timings['predict']=timings.get('predict',0)+time.perf_counter()-a
  if any(not f for f in people):raise SystemExit('The body model returned no person for some frames')
  return {k:np.stack([np.asarray(f[0][k].cpu() if hasattr(f[0][k],'cpu') else f[0][k],dtype=np.float32) for f in people]) for k in KEEP if k in people[0][0]}

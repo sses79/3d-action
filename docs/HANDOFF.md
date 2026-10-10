@@ -787,3 +787,8 @@ User: keep 0.20 m on `pair-kc-139`, and use 0.20 m on the clinch too. `pair-kc-c
 User asked for 0.20 m on `pair-kc-kick` too. Applied (pair r8, left action r5, right action r8), but at 0.20 m the low kick no longer touches: no contact stretch at all. Dry runs: 0.05 m still overlaps (2 frames, 4.3 cm); 0.10 m touches with nothing inside (ankle then toes on the shin, 1.13-1.17 s); 0.15 m only the toes touch (1.17-1.23 s); 0.20 m misses. Reported to the user with 0.10 m as the recommendation; waiting for the choice. The library movements `move-pair-low-kick` / `-taken` were copied before any spacing and are unchanged.
 
 User chose 0.10 m for `pair-kc-kick`: pair r9, left action r6, right action r9; 0 frames inside before and after the contact rule (5 mm at most before), kicker's ankle then toes on the shin at 1.13-1.17 s. Spacing now: kick pair 0.10 m, clinch 0.20 m, 1:39 exchange 0.20 m.
+
+
+## 2026-10-10 — Dance pair; windows up to 15 s
+
+Limits raised (window 15 s, 512 keys per track, phase 16 s); body stage time limit scales with the window; `body.py` predicts in chunks of 64. Second user video (samba broadcast, in `~/Downloads`; keep footage and frames out of the repo). `pair-samba-left` / `pair-samba-right` from 70.7-80.7 s (10 s), pair `pair-samba` r2 resolved with spacing 0.10 m: 6 frames inside before the contact rule, 0 after (1 cm at worst); recorded contacts are hands and forearms meeting at 6.97-7.13 s, 7.7-7.8 s and 8.57 s, which is the hand hold. Both actions r2. Lesson recorded in `CLAUDE.md`: rebuild `core.js` after editing `pipeline.mjs`; use curl, not the CLI, for long builds. Not judged in motion.

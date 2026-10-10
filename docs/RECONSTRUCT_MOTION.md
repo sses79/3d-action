@@ -14,7 +14,7 @@ node authoring/cli.mjs call reconstruct_motion --args authoring/examples/reconst
 | Field | Default | Meaning |
 | --- | --- | --- |
 | `video` | required | Local file path, absolute or relative to the repository root |
-| `start`, `end` | required | Window in source seconds, 0.5–8 s long |
+| `start`, `end` | required | Window in source seconds, 0.5–15 s long (8 s until 2026-10-10). The body stage's time limit grows with the window; allow about a minute per second of video per performer |
 | `detector` | `yolo26s` | `yolo26s` or `yolo26n` 2D pose model |
 | `fit` | `stable` | `stable`, `fitted` or `none` (lift only) |
 | `straightKneePrior` | `false` | Side-view assumption: a confidently straight 2D knee is treated as straight in 3D. Leave off for other camera angles |

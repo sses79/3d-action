@@ -17,7 +17,7 @@ You choose the window, the options and the phase labels, and you judge the resul
 
 ## 2. Choose the window and options
 
-- **Window**: one continuous real-time performance by one person, 0.5–8 s. Start once the whole body is inside the frame and end before a cut or freeze. Prefer a start and end in a settled pose. The tallest person in the first frame is the one followed, so do not start on a frame where someone else is larger.
+- **Window**: one continuous real-time performance, 0.5–15 s (about a minute of processing per second of video per performer); one person, or two with `subject: left` / `right` built in two calls. Start once the whole body is inside the frame and end before a cut or freeze. Prefer a start and end in a settled pose. The tallest person in the first frame is the one followed, so do not start on a frame where someone else is larger.
 - **`source`**: leave it out. The body model (SAM 3D Body) is used when installed and handles kicks, spins, hand-supported and inverted moves; `summary.source` says which source ran, and gives a `fallbackReason` when the rule pipeline ran instead. Set `source: rules` only to compare, or when you need a rule-only option (`fit`, `straightKneePrior`, `decisions`).
 - **`smooth`** (body source): 0–1, default 1. Lower it only if a fast, sharp move looks softened against the video.
 - **`straightKneePrior`** (rule pipeline only; selects it): set `true` when a kicking or raised leg is seen roughly side-on and visibly straightens. Leave `false` when the leg points toward or away from the camera.

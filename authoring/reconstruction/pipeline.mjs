@@ -6,7 +6,7 @@ import {createReadStream,existsSync,mkdirSync,readFileSync,renameSync,rmSync,sta
 import {isAbsolute,join,resolve} from 'node:path';
 import {digest} from './contracts.mjs';
 
-export const limits={minWindow:.5,maxWindow:8,sampleRate:30,maxPhases:32,detectors:['yolo26s','yolo26n'],fits:['stable','fitted','none']};
+export const limits={minWindow:.5,maxWindow:15,sampleRate:30,maxPhases:32,detectors:['yolo26s','yolo26n'],fits:['stable','fitted','none']};
 const fail=m=>{throw Error(m);};
 const round=(x,n=3)=>Math.round(x*10**n)/10**n;
 
@@ -90,7 +90,7 @@ async function pipeline(root,request,env){
  let motionDir;const observeKey=stages[0].key;
  // Source 'body': one model (SAM 3D Body) estimates the whole body per frame from the performer's boxes. The lift, the vision
  // decisions and the fit are not run; the retarget reads its joints, hip centre, lowest point and face direction directly.
- if(source==='body'){try{const weights=join(env.comfy,'models/detection',env.bodyWeights),comfyCommit=env.comfyCommit??execFileSync('git',['-C',env.comfy,'rev-parse','HEAD'],{encoding:'utf8'}).trim();motionDir=await stage('body',{code:await code(['body.py','mhr-rig.json']),observe:observeKey,weights:[env.bodyWeights,statSync(weights).size],comfy:comfyCommit,smooth:request.smooth,secondLook:request.secondLook,despike:request.despike},dir=>env.run(env.bodyPython,[script('body.py'),'--comfy',env.comfy,'--weights',env.bodyWeights,'--pose',join(observeDir,'pose-report.json'),'--video',video,'--out',dir,'--smooth',String(request.smooth),...(request.secondLook?[]:['--no-second-look']),...(request.despike?[]:['--no-despike']),/* raw results are matched by frame numbers alone, which two performers in one window share */...(env.bodyReuse&&existsSync(env.bodyReuse)&&!request.subject?['--reuse',env.bodyReuse]:[])],root));}catch(error){if(request.source!=='auto')throw error;fallbackReason=`SAM 3D Body failed: ${String(error.message).slice(0,300)}`;source='rules';needRules();}}
+ if(source==='body'){try{const weights=join(env.comfy,'models/detection',env.bodyWeights),comfyCommit=env.comfyCommit??execFileSync('git',['-C',env.comfy,'rev-parse','HEAD'],{encoding:'utf8'}).trim();motionDir=await stage('body',{code:await code(['body.py','mhr-rig.json']),observe:observeKey,weights:[env.bodyWeights,statSync(weights).size],comfy:comfyCommit,smooth:request.smooth,secondLook:request.secondLook,despike:request.despike},dir=>env.run(env.bodyPython,[script('body.py'),'--comfy',env.comfy,'--weights',env.bodyWeights,'--pose',join(observeDir,'pose-report.json'),'--video',video,'--out',dir,'--smooth',String(request.smooth),...(request.secondLook?[]:['--no-second-look']),...(request.despike?[]:['--no-despike']),/* raw results are matched by frame numbers alone, which two performers in one window share */...(env.bodyReuse&&existsSync(env.bodyReuse)&&!request.subject?['--reuse',env.bodyReuse]:[])],root,/* the body model takes about 2 s a frame; a 15 s window is some 11 minutes, more with a second look */Math.max(300000,Math.round((request.end-request.start)*30*8000))));}catch(error){if(request.source!=='auto')throw error;fallbackReason=`SAM 3D Body failed: ${String(error.message).slice(0,300)}`;source='rules';needRules();}}
  if(source==='rules'){
  const commit=env.vendorCommit??execFileSync('git',['-C',env.vendor,'rev-parse','HEAD'],{encoding:'utf8'}).trim();
  // Optional: a vision model (via OpenRouter) says which way the performer faces and which leg is raised. Frames leave this machine.
