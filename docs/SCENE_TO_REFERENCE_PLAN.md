@@ -189,3 +189,13 @@ The hair is three pieces of flat cards. Three treatments were tried in the rende
 3. **One smooth volume** (kept): the cards' points, in the head's own space, each add a small blob to a field, and the surface where the field is strong enough is drawn with three's marching cubes (64 cells a side) and fixed to the head. It reads as sculpted hair: a cap, bangs and two buns, the face clear from the side. It is somewhat fuller than the real hair and does not move.
 
 Still a renderer trial: no `character` id, not in Studio, not in the export. Sheet: `.authoring/renders/woman01-hair.jpg`.
+
+### Woman01 rolled back (2026-10-11)
+
+Making Woman01 a registered character and showing her in Studio was built but never committed. When the user reloaded Studio with her in the scene, the Mac hung. It was rolled back at the user's request:
+
+- The character was unregistered and `scene-very-grown-up` restaged without her (r12: Gabi mannequin, Abby `superhero-female`).
+- The uncommitted code (operations `register_character` / `list_characters`, the service's file route, the Studio loader, shared `prepareFollower`) was reverted. It is kept as a patch outside git: `.authoring/woman01-studio-integration.patch`.
+- What remains in the repo is the earlier renderer-only trial (`follow`, `characterCreatorMap`, `payload.followers` in `pair-page.ts`). Nothing uses it unless a render payload names a follower.
+- Cause of the hang not established. Suspects, all in the Studio path: loading and parsing a 13.7 MB FBX with 13 skinned meshes in the page, building the hair volume (marching cubes at 64 cells a side) on the main thread, and posing two skeletons every frame. The offline renderer does the same work once per frame without trouble because nothing else is waiting on it.
+- Before any retry: convert the model to a small GLB offline (hair volume baked in), and check Studio in a visible browser before asking the user to open it.
