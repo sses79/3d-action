@@ -225,3 +225,32 @@ Weights `depth_anything_3_base.safetensors` (541.5 MB, Apache 2.0) in `.authorin
 - 8 frames over 70.7–80.7 s at 392: usable. After applying each view's own focal length the depth-to-body-model scale is 11.5 with 7% spread over views, all eight floors lie on one plane with 17 cm rms, camera height 1.2–1.7 m (MoGe on one frame: 1.62 m), pitch 0.5–11° down. `cam_dec` and `ray_pose` agree to about 10%.
 - 16 frames at 504: both pose methods return unusable cameras (zero or >130° fields of view, centres 1e5 units away). Cause not found; depth maps still look valid.
 - Weak point: the per-view field of view swings from 23° to 78° on a shot that does not zoom that much, and the camera path (2.9 m) does not match the dancers' 4.9 m approach in the body model, which assumes one fixed lens. Depth divided by focal length is the reliable quantity; the split between zoom and dolly is not.
+
+### Fixed stage with a tracked camera and lens, first version (2026-10-11)
+
+Scripts (first version, run by hand, not behind an operation): `authoring/render/stage-depth.py` (Depth Anything 3 on a few frames, run with ComfyUI's Python) and `authoring/render/stage-track.py` (run from the repo root with the vision Python: `stage-track.py key.npz video.mp4 <start> out.json`). The output's `track` and `stage` go into the renderer payload; `pair-page.ts` then moves the source camera through a fixed room and changes its lens per frame.
+
+What was learned on the samba clip (70.7–80.7 s):
+
+- The clip is one shot with a strong zoom (lens 1390 px wide → 3030 px close → 800 px wide, on a 1280-wide picture) and a moving camera. The body model assumes one lens (1469 px), so the "4.9 m approach" of the dancers was mostly the zoom. Depth Anything 3's per-view lens agrees with the lens found independently from the stage points (789 against 795 px, 1612 against 1628 px), so those figures are real, not noise as first assumed.
+- Method: 8 key views with depth, one scale for all (11.3, from the dancers' hips after correcting each view for its lens). SIFT points of the key views form a map; every video frame is placed against the map with its lens solved too. 186 of 241 frames have 80 or more map points and are placed outright. Two stretches are not (0.45–0.91 s and 7.63–9.55 s, fast zoom and blur): there the lens and the camera's turn are carried frame to frame from the background's motion and the end error (48% lens, 20° turn on the long one) is spread over the stretch. Those two stretches are the weak part; the stage visibly slides there.
+- The floor from the five key views that join well is flat to 2.8 cm. Camera height over it 0.7–2.0 m.
+- Dancers in a room: their depth is multiplied by lens/model lens, the camera stands where the track says, its height still comes from the dancers' own floor rule.
+- Stage mesh: the first key view as a 10 px grid, the dancers' boxes filled row by row from the set either side, surface smoothed; other views only add what the first does not see. Views 4, 6 and 7 did not join well enough and are left out, so the set ends at the sides of the first view. The result is a soft backdrop with the floor, not a model of the set.
+- Output: `.authoring/renders/pair-samba-r5-stage.mp4` (1280×720, 30 fps, 34 s to render); stills against the video in `.authoring/renders/stage-track-compare.jpg`.
+
+Open: key views inside the two weak stretches (placed by depth, not by map points); joining the wide end view so the set has sides; a cleaner set (planes for floor, steps, back wall) if the soft backdrop is not enough for the AIGC reference; wiring into `render_pair_video`.
+
+### Pair scene: floor, plain stage objects and a camera that turns and zooms (2026-10-11)
+
+Asked for by the user: the stage as simple clay objects (no detail; an AIGC prompt describes them and a reference image replaces them), shown in Studio and in the video. This replaces the fused depth mesh above as the way to show the set.
+
+- **Data** (`runtime/pair-scene.ts`): a pair may carry `scene = {objects, camera, performers}`. Objects are named boxes and cylinders in a room (x right, z toward the first camera, y up, floor at y=0). `camera` is the source camera per frame (turn, place, lens ratio). `performers` holds each side's first-frame hip and per-frame hip drop, copied from the builds.
+- **Operation `set_pair_scene`** (50 operations) stores or removes it; `render_pair_video` draws it when present (`scene: false` leaves it out; file name ends `-scene`). Studio: a **Scene** button beside **Pair** stands both performers in the room with the objects; the room is shifted so the selected performer starts at the centre.
+- **Objects are made by hand**, not measured. Depth Anything 3 flattens the set into a floor and one back surface (everything at 12–13.7 m), so it cannot give object shapes. `authoring/render/scene-samba.py` writes the 16 objects for the samba clip (three front steps, platform, bandstand drum, four stair blocks each side, two seating blocks, back wall), sized from the first frame's picture geometry and checked by rendering against five video stills.
+- **Camera: turn and zoom only** (`stage-track.py --nodal --overlay=x0,y0,x1,y1`). With real objects at their own depths, the earlier track (solved against the flattened depth) made the set shrink and grow wrongly: it had traded zoom for camera travel. The new solve keeps the camera at one place and finds turn and lens for each frame against a reference frame (two-point RANSAC on directions, then a fit; the reference moves on when fewer than 40 points agree). No depth is used. All 241 frames solved, 13 reference changes, median 155 points, minimum 40. Lens 1424 → 3433 → 1035 px.
+- Channel logos must be masked (`--overlay`): they sit still on the screen and otherwise win as "a camera that never moves". That had also been inflating the key-view joins before.
+- The floor's tilt still comes from the five depth key views (pitch 5.1° at the start). From the first view alone it came out at -1.1°, from MoGe 3.2°: the tilt is uncertain by a few degrees, and it sets how high the set sits in the picture.
+- Result: `.authoring/renders/pair-samba-r6-source-scene.mp4`; pair `pair-samba` is at revision 6 with the scene.
+
+Limits: a real jib move is not represented (the camera is assumed to stay in one place); object sizes are a reading of the picture; the room's scale hangs on the dancers' body-model depth and the first view's lens (1391 px, from the depth model).

@@ -807,3 +807,11 @@ See "Hand holds" in `docs/TWO_PERSON_PLAN.md`. `cameraWrists` in the body stage'
 ## 2026-10-11 — Stage from the video, MoGe look
 
 See "Stage from the video" in `docs/TWO_PERSON_PLAN.md`. Renderer page accepts a `stage` mesh. Scratch flow: MoGe point map of one frame with `fov_x` = our lens, scale to the body model by depth at the dancers' hips (0.864), inpaint depth under the dancers, grid mesh, render. Useful find: MoGe's floor plane gives camera height and pitch (3.2 degrees here). Waiting for the user's view of the look before the multi-view step (Depth Anything 3 nodes exist in the ComfyUI checkout; weights would be a new download).
+
+## 2026-10-11 — Stage for the clay reference video
+
+- Depth Anything 3 Base tried for a stage from several frames: usable depth on 8 frames, but it flattens the set; a fused mesh gives only a soft backdrop. Details in `docs/TWO_PERSON_PLAN.md` (three sections dated 2026-10-11).
+- What is kept: a **pair scene** (`runtime/pair-scene.ts`, operation `set_pair_scene`, 50 operations): plain named boxes and cylinders plus the source camera per frame. Studio shows it with the **Scene** button in Pair view; `render_pair_video` draws it.
+- Camera track: `authoring/render/stage-track.py --nodal` (turn and zoom only, no depth, logos masked with `--overlay`). `authoring/render/stage-depth.py` makes the key views with depth that the script still needs for the floor's tilt and scale.
+- Samba pair is at r6 with 16 hand-made objects (`authoring/render/scene-samba.py`).
+- Not done: objects are authored by hand per clip; camera assumed to stay in one place; `stage-track.py` is a dense first version with the earlier map-based path still in it.
