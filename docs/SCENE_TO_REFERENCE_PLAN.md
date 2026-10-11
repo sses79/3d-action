@@ -107,3 +107,10 @@ Room: floor, two walls, front door block, corridor opening; marks for Gabi, Abby
 - **Three rig clips registered as movements** for this: `move-idle`, `move-idle-talking`, `move-walk-formal` (Quaternius UAL1, CC0, not reviewed). The rig also has sitting, interact and pick-up clips not yet registered.
 - **Not in it**: the foot stamp, Abby's glance, looking down, feet together (no such movements, no look-at); turning on the spot swivels the feet; the walk is one straight line; the child is the adult figure scaled; one camera, no cuts tried; every movement used is unreviewed.
 - **A fault and its repair.** The first version saved an action whose last keys repeated a time, without validating it. The service validates everything at start and would not start. `stage_scene` now validates before saving, and the loader drops keys that repeat a time (keeping the first) instead of refusing to start; two actions were repaired that way.
+
+## Free Quaternius clips: what is left to import (2026-10-11)
+
+- Both libraries are CC0. Their free Standard editions hold 45 clips (library 1) and 42 (library 2); the rest of the "120+" and "130+" are in paid editions ($9.99 and $14.99).
+- We already had both Standard files: library 1 is the character's own rig file (43 clips), library 2 was imported as 43 movements. So there is nothing more to download for free.
+- What was missing: only 6 of the rig's 43 clips were registered as movements. The other 37 are now seeded by the service at start (`seedMovements` in `runtime/movements.ts`), as `move-ual1-<clip>`, unmodified and unreviewed. The library has 108 movements.
+- Useful for scenes: sitting down, sitting idle, sitting and talking, standing up; interact; pick up from a table; push; crouch idle and crouch walk; jog; kneeling to fix something. Still missing for "Very Grown-Up": foot stamp, look down, feet together, a glance.
