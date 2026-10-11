@@ -162,3 +162,12 @@ Not verified: any output quality, Mac support, the exact checkpoint licence term
 - **Same skeleton as ours**: both bodies have the 65 joints of our rig, name for name. No mapping is needed.
 - **Trial render** (`.authoring/renders/base-character-trial.jpg`): Abby in "Very Grown-Up" as the Superhero Female, the staged action unchanged. Arms folded, the glance and the talking all play. The renderer loads the other body when the payload names one (`staged.characters`, files served from `characterDir`), keeps only the rotations of the library clips and baked tracks (and the pelvis' position), so the body keeps its own proportions, and scales it to the performer's height.
 - Not done: this is a renderer payload field only. `stage_scene` has no character choice, Studio still shows the mannequin, hair is not attached, and foot height on the new body was not checked (the pelvis height is the mannequin's).
+
+## The two free bodies, wired in (2026-10-11)
+
+- **Files in the repo**: `editor/assets/characters/superhero-female.glb` (1.0 MB) and `superhero-male.glb` (0.7 MB), made by `authoring/source/import-base-characters.py` from the pack's glTF files with images, textures and materials dropped. CC0; licence text and provenance beside them. Both servers serve them.
+- **`character` on a performer** in `stage_scene`: `mannequin` (default), `superhero-female`, `superhero-male`. Stored with the scene, used by the renderer, the reference export (named in the meta) and Studio's Scene view.
+- **How another body plays the same action** (`runtime/characters.ts`): only the rotations of the clips and baked tracks are applied, plus the pelvis' position, so the body keeps its proportions. It is then raised so the lowest its foot bones come over the action equals their rest height over the sole. On the example the lowest foot point is 2.1–2.4 cm for both bodies, the bone's own height; slide 0.23 m over 15 s (0.18 m on the mannequin).
+- **Baking still uses the mannequin**: walk distances and looks are worked out on its proportions, then played on the chosen body.
+- **Example** (`scene-very-grown-up` r10): Abby is `superhero-female` at 1.70 m; Gabi stays the mannequin at 1.55 m. I first put both on the female body and took Gabi back: these are unclothed adult bodies, and a scaled-down one is not a fit stand-in for a 13-year-old.
+- Not done: hair (8 styles are in the pack, unattached); the Regular and Teen bodies (paid edition); a character choice for video-derived pairs.

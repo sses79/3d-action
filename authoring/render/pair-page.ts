@@ -1,6 +1,7 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {CharacterPlayer} from '../../runtime/player';
+import {characterFiles,ownShapeClips,ownShapeAction,ballHeight,floorLift} from '../../runtime/characters';
 import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom} from '../../runtime/pair-scene';
 // White-model render of a pair of actions, one picture per call. Cameras:
 //  source  the camera of the source video. The body model places each performer relative to that camera, and the actions keep
@@ -12,7 +13,7 @@ import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,
 //  orbit   a slow quarter circle round the pair at eye height, always looking at the point between them.
 //  staged  (payload.staged) a scene staged from text: the actions are already in the room, each figure is scaled to its
 //          performer's height, and the camera is the scene's shot for the time. 'fixed' is the still check camera as above.
-type Payload={staged?:{objects:SceneObject[],heights:number[],cameras:StagedShot[],characters?:(string|null)[]},level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
+type Payload={staged?:{objects:SceneObject[],heights:number[],cameras:StagedShot[],characters?:string[]},level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
 async function init(){
  const payload:Payload=await fetch('/payload.json').then(r=>r.json()),{width,height}=payload,scene=new T.Scene();scene.background=new T.Color('#eceeef');scene.fog=new T.Fog('#eceeef',14,40);
  const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(width,height);renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;document.body.appendChild(renderer.domElement);
@@ -20,13 +21,11 @@ async function init(){
  const floor=new T.Mesh(new T.PlaneGeometry(200,200),new T.MeshStandardMaterial({color:'#f1f2f2',roughness:1}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
  const gltf=await new GLTFLoader().loadAsync('/character.glb'),clay=new T.MeshStandardMaterial({color:'#f4f3f0',roughness:.82,metalness:0});
  // one load of the asset per character: a skinned mesh does not survive a plain clone
- // Trial: another character of the same skeleton per performer (payload.staged.characters, a file served under /characters/).
- // The library's clips and the baked tracks carry the mannequin's bone offsets; on another body only the rotations are kept
- // (and the pelvis' position, for height), so the body keeps its own proportions.
- const other=await Promise.all(payload.actions.map((_,i)=>payload.staged?.characters?.[i]?new GLTFLoader().loadAsync('/characters/'+payload.staged.characters[i]):null)),ownShape=(name:string)=>name.endsWith('.quaternion')||name.startsWith('pelvis.')||!name.includes('.'),turnsOnly=gltf.animations.map(c=>new T.AnimationClip(c.name,c.duration,c.tracks.filter(t=>ownShape(t.name))));
- other.forEach((o,i)=>{if(o)payload.actions[i]={...payload.actions[i],tracks:payload.actions[i].tracks.filter((t:any)=>t.property==='rotation'||t.target==='$root'||t.target==='pelvis')};});
+ // Another body per performer (payload.staged.characters, ids from runtime/characters.ts; files served under /characters/).
+ const other=await Promise.all(payload.actions.map((_,i)=>{const file=characterFiles[payload.staged?.characters?.[i]??'mannequin'];return file?new GLTFLoader().loadAsync('/characters/'+file):null;})),turnsOnly=ownShapeClips(T,gltf.animations);
+ other.forEach((o,i)=>{if(o)payload.actions[i]=ownShapeAction(payload.actions[i]);});
  const second=payload.actions.length>1?await new GLTFLoader().loadAsync('/character.glb'):null,cast=payload.actions.map((_,i)=>({root:other[i]?other[i]!.scene:i?second!.scene:gltf.scene}));
- const players=cast.map(({root},i)=>{const holder=new T.Group();holder.add(root);scene.add(holder);const scale=1.85/new T.Box3().setFromObject(root).getSize(new T.Vector3()).y*((payload.staged?.heights[i]??1.85)/1.85);holder.scale.setScalar(scale);root.traverse(o=>{const m=o as T.Mesh;if(m.isMesh){m.material=clay;m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;}});const anims=other[i]?turnsOnly:i?second!.animations:gltf.animations;return {holder,root,scale,player:new CharacterPlayer(root,anims,scale)};});
+ const players=cast.map(({root},i)=>{const holder=new T.Group();holder.add(root);scene.add(holder);const scale=1.85/new T.Box3().setFromObject(root).getSize(new T.Vector3()).y*((payload.staged?.heights[i]??1.85)/1.85);holder.scale.setScalar(scale);root.traverse(o=>{const m=o as T.Mesh;if(m.isMesh){m.material=clay;m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;}});const anims=other[i]?turnsOnly:i?second!.animations:gltf.animations,rest=other[i]?ballHeight(T,root):0,player=new CharacterPlayer(root,anims,scale);return {holder,root,scale,player,lift:other[i]?floorLift(T,root,t=>player.sample(payload.actions[i],t),payload.duration,rest):0};});
  const camera=new T.PerspectiveCamera(2*Math.atan(height/(2*Math.hypot(width,height)))*180/Math.PI,width/height,.1,200);
  // Level room. The source camera is rarely level: here the floor's normal in the camera's space (from a point map of the
  // source frame, given in payload.level) says how the camera is tipped. `level` is the turn that stands that normal upright.
@@ -45,7 +44,7 @@ async function init(){
  const place=(time:number)=>{let sum=0;if(track)trackAt(time);players.forEach((p,i)=>{p.player.sample(payload.actions[i],Math.min(time,payload.duration));
    if(payload.scene){const local=p.root.position.clone().multiplyScalar(p.scale),s=standInRoom(payload.scene,i,time,payload.duration,local.toArray());p.holder.quaternion.fromArray(s.quat);p.holder.position.fromArray(s.position);p.holder.updateMatrixWorld(true);sum+=p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()).y-s.inCameraY;}
    else if(level){const local=p.root.position.clone().multiplyScalar(p.scale),inCamera=new T.Vector3(payload.origins[i][0]+local.x,-hipDown(time,i),(payload.origins[i][1]+local.z)*zoom).multiplyScalar(even).applyQuaternion(level);p.holder.quaternion.copy(level);p.holder.position.set(inCamera.x+shift.x,local.y,inCamera.z+shift.z).sub(local.clone().applyQuaternion(level));p.holder.updateMatrixWorld(true);sum+=p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()).y-inCamera.y;}
-   else{p.holder.position.set(payload.origins[i][0],0,payload.origins[i][1]);p.holder.updateMatrixWorld(true);}});cameraHeight=sum/players.length;return players.map(p=>p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()));};
+   else{p.holder.position.set(payload.origins[i][0],p.lift,payload.origins[i][1]);p.holder.updateMatrixWorld(true);}});cameraHeight=sum/players.length;return players.map(p=>p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()));};
  const heightAt=(time:number,hips:T.Vector3[])=>{if(level)return cameraHeight;const k=Math.min(payload.hips[0].length-1,Math.max(0,time/Math.max(payload.duration,1e-6)*(payload.hips[0].length-1))),lo=Math.floor(k),hi=Math.min(payload.hips[0].length-1,lo+1),u=k-lo;let sum=0;hips.forEach((h,i)=>{const down=payload.hips[i][lo][1]*(1-u)+payload.hips[i][hi][1]*u;sum+=h.y+down;});return sum/hips.length;};
  const first=place(0),height0=heightAt(0,first);
  // A scene's objects: plain clay shapes standing for the set, a shade darker than the performers so the two read apart.

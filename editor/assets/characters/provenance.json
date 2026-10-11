@@ -1,0 +1,19 @@
+{
+ "source": "https://quaternius.com/packs/universalbasecharacters.html",
+ "edition": "Standard (free)",
+ "license": "CC0-1.0",
+ "files": {
+  "superhero-female.glb": {
+   "bytes": 1012336,
+   "sha256": "dbbdb964ad997e7ce4d7db29ff8a8898cbaf287567fd9bad6b6ed77daab080af",
+   "joints": 65,
+   "from": "Superhero_Female_FullBody.gltf"
+  },
+  "superhero-male.glb": {
+   "bytes": 741104,
+   "sha256": "ab62691d8e7a802db34591d6d5ed86b17f330358750f4fdec9baf422a669b125",
+   "joints": 65,
+   "from": "Superhero_Male_FullBody.gltf"
+  }
+ }
+}
