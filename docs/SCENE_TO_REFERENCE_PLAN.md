@@ -1,6 +1,6 @@
 # Scene text to reference: plan
 
-Written 2026-10-11 at the user's request. Status: milestones 1–3 built the same day (see the end); milestone 2 without captured clips; milestone 4 not started.
+Written 2026-10-11 at the user's request. Status: milestones 1–3 built the same day (see the end); milestone 2 without captured clips; milestone 4 researched, nothing installed.
 
 ## Goal
 
@@ -132,3 +132,25 @@ No clips were captured: who films or finds them is still open. What could be bui
 - **Skill** `skills/scene-to-reference/SKILL.md`: how to read a scene, write the blocking, stage, check and export, and what to report.
 - **Example** (`scene-very-grown-up` r8): four shots of my own, since no shot plan was supplied: a 28 mm wide two-shot (0–7 s), a low 28 mm full-body view of Gabi for the stamp with a slight move in (7–10 s), a 50 mm medium on Abby for the glance (10–13 s), a 28 mm wide toward the corridor following Gabi (13–15 s). The first try at the stamp shot aimed at her body from low down and cut her feet off; it now aims at knee height.
 - Not done: taking a shot plan in `director-advisor`'s own format (not seen yet); checking that a camera is inside the room or not blocked by an object; more than two performers.
+
+## Milestone 4: text-to-motion as a source of movements, research (2026-10-11)
+
+Read from the projects' own pages and secondary sources; nothing was downloaded or run.
+
+| | Kimodo (NVIDIA, March 2026) | HY-Motion 1.0 (Tencent, December 2025) | Hosted services |
+|---|---|---|---|
+| Licence | Code Apache-2.0. Most checkpoints "NVIDIA Open Model"; the SMPL-X one is R&D only. Commercial terms per checkpoint not read yet. | "Tencent HY-Motion 1.0 Community License": does not apply in the EU, the UK and South Korea, with use restrictions. Sites calling it Apache-2.0 are wrong. | Per service |
+| Control beyond text | Prompts on a timeline; full-body keyframes; a root path or waypoints on the floor; hand and foot targets | Text only. Says it does not do in-place motion, loops, emotions or two people | Mostly text |
+| Output | NPZ: joint positions and rotations, foot contacts, root, heading; 77-joint SOMA skeleton | SMPL-H skeleton; FBX/BVH/NPY reported | FBX, GLB, BVH (SayMotion, Uthana) |
+| Hardware | About 17 GB of GPU memory, or under 3 GB with the text encoder on the CPU. Tested on Nvidia cards under Linux; Mac not mentioned | 24–26 GB of GPU memory; lists macOS as supported, without saying how | None |
+| Cost | Free | Free locally; fal.ai hosts it at $0.06–0.08 per generation | Cartwheel about $0.05 per second; SayMotion's API is partners only; Uthana no public price |
+
+What this means for us:
+
+- **Kimodo fits the blocking best.** A root path on the floor and foot targets are exactly what a blocking spec has (marks, walks, a stamp). It could replace the straight-line walk and the rule-made stamp with generated motion that hits the same marks.
+- **Neither is known to run on our Macs.** Kimodo is tested on Nvidia only. Both need a trial to find out; the downloads are large.
+- **Licences need reading before use.** HY-Motion's excludes the UK and EU outright. Kimodo's checkpoint licence has to be read for commercial use.
+- **Either needs an import step.** Their skeletons are not ours. The video path already turns another skeleton's joint positions and rotations into our figure (`retarget.ts`), so the work is a mapping for a new skeleton, not a new method.
+- **A hosted call avoids the hardware question** at a few cents per movement, but needs an account and a key, and sends the prompt to a third party.
+
+Not verified: any output quality, Mac support, the exact checkpoint licence terms, hosted output formats.
