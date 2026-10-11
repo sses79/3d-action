@@ -8,7 +8,7 @@ import {CharacterPlayer} from '../../runtime/player';
 //          below the camera's axis the model put each performer's hips against how high our character's hips are.
 //  fixed   the source camera held where it was on the first frame.
 //  orbit   a slow quarter circle round the pair at eye height, always looking at the point between them.
-type Payload={actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
+type Payload={stage?:{positions:number[],indices:number[],time:number},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
 async function init(){
  const payload:Payload=await fetch('/payload.json').then(r=>r.json()),{width,height}=payload,scene=new T.Scene();scene.background=new T.Color('#eceeef');scene.fog=new T.Fog('#eceeef',14,40);
  const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(width,height);renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;document.body.appendChild(renderer.domElement);
@@ -22,6 +22,10 @@ async function init(){
  const place=(time:number)=>{players.forEach((p,i)=>{p.player.sample(payload.actions[i],Math.min(time,payload.duration));p.holder.position.set(payload.origins[i][0],0,payload.origins[i][1]);p.holder.updateMatrixWorld(true);});return players.map(p=>p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()));};
  const heightAt=(time:number,hips:T.Vector3[])=>{const k=Math.min(payload.hips[0].length-1,Math.max(0,time/Math.max(payload.duration,1e-6)*(payload.hips[0].length-1))),lo=Math.floor(k),hi=Math.min(payload.hips[0].length-1,lo+1),u=k-lo;let sum=0;hips.forEach((h,i)=>{const down=payload.hips[i][lo][1]*(1-u)+payload.hips[i][hi][1]*u;sum+=h.y+down;});return sum/hips.length;};
  const first=place(0),height0=heightAt(0,first);
+ // A stage: a coarse mesh of the set from the source video, given in the camera's space at one moment (x right, y up, z toward
+ // the camera, metres). It is stood in our scene by raising it by the camera's height at that moment, and replaces the plain floor.
+ // It is only right for that moment's camera position: the source camera moves and the mesh does not follow it.
+ if(payload.stage){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(payload.stage.positions,3));geo.setIndex(payload.stage.indices);geo.computeVertexNormals();const mesh=new T.Mesh(geo,new T.MeshStandardMaterial({color:'#e6e5e1',roughness:.95,side:T.DoubleSide}));mesh.receiveShadow=true;mesh.frustumCulled=false;mesh.position.y=heightAt(payload.stage.time,place(payload.stage.time));scene.add(mesh);floor.visible=false;scene.fog=null;}
  (window as any).renderFrame=(time:number)=>{const hips=place(time),centre=hips.reduce((s,h)=>s.add(h),new T.Vector3()).divideScalar(hips.length);
   if(payload.camera==='orbit'){const angle=-Math.PI/4+Math.PI/2*time/Math.max(payload.duration,1e-6),far=5.2;camera.position.set(centre.x+Math.sin(angle)*far,1.55,centre.z+Math.cos(angle)*far);camera.lookAt(centre.x,1,centre.z);}
   else{camera.position.set(0,Math.max(.15,payload.camera==='fixed'?height0:heightAt(time,hips)),0);camera.quaternion.identity();}

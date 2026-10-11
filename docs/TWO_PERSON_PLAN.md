@@ -96,6 +96,16 @@ The user asked for a 10 s white-model video and, before export, a cinema-level c
 - **On `pair-samba`** (revision 5): 301 frames, 10.03 s, 2.0 MB, rendered in 24 s. Ten frames, one per second, laid beside the source frames at the same times: the two characters sit where the dancers sit in the picture and are the same size, through the crane move in and the pull back, and the hand hold at 6–8 s is in place. Checked on those ten stills; the video was not watched in motion by me.
 - **Limits.** The lens is assumed, so the broadcast's zoom reads as the camera travelling; the camera never turns, because our scene takes the camera's axes as the world's (a tilted camera shows up as leaning characters and a floor that is not quite where the real one was). `fixed` and `orbit` exist and were not rendered. One character model for both performers.
 
+## Stage from the video: first look with MoGe (2026-10-11)
+
+The user wants the clay video to include the stage and floor of the source, built coarsely from the video's own geometry with the performers removed, as a reference for generated video. Plan agreed in conversation: a one-frame look with MoGe (already downloaded), then a multi-view model for the camera path and a fused stage.
+
+- **MoGe on one frame** (70.7 s, the first of the dance window; `MoGeInference` through ComfyUI's nodes with our assumed lens passed in as `fov_x` 47.1°; 18 s on this Mac): a full point map. Its depth at the two dancers' hips is 8.62 and 8.41 m against the body model's 7.58 and 7.14 m, a ratio of 0.879 and 0.849, so one scale (0.864) brings the stage into the dancers' space. A plane fitted to the lower part of the picture is flat to 5.6 cm and puts the camera 1.88 m above the floor (1.62 m after scaling), pitched down 3.2°. That pitch is information we have not had: our scene takes the camera's axes as the world's.
+- **Coarse stage.** Depth under the dancers' boxes filled by inpainting, sampled every 4 pixels (57,600 vertices, 106,502 triangles after dropping those across depth jumps of more than 12%), scaled, and stood in the scene at the camera's height for that moment. `authoring/render/pair-page.ts` takes an optional `stage` mesh and then hides the plain floor.
+- **What the stills show** (`.authoring/renders/stage-look-moge-70.7.jpg`, untracked): from the source camera at that moment the clay stage lines up with the picture (arches, steps, the raised platform) and the two characters stand in it. Behind each dancer the filled-in patch is a ridged rectangle. From the side it is a relief, not a room: ragged edges and a rough, slightly tilted floor.
+- **Limits of this look.** One frame, so it is right only for that camera position; the source camera then moves and the mesh does not. The scripts were scratch (session scratchpad), not pipeline code.
+- **Next, not started:** flatten the floor to the fitted plane; fill behind the dancers from other frames; camera poses and a fused cloud from several frames. ComfyUI's checkout already has Depth Anything 3 nodes (`comfy_extras/nodes_depth_anything_3.py`), so that is the first multi-view model to try; its weights are not downloaded.
+
 This is one easy case. It says step 1 and the start of step 2 are as reachable as hoped; it says nothing yet about occlusion.
 
 ## Goal

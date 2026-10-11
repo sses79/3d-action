@@ -802,3 +802,8 @@ See "Hand holds" in `docs/TWO_PERSON_PLAN.md`. `cameraWrists` in the body stage'
 ## 2026-10-10 — White-model video, source camera
 
 `render_pair_video` (49 operations): `authoring/render/pair-page.ts` + `pair-video.mjs`, Playwright Chrome with swiftshader as the review sheets use, ffmpeg. `.authoring/renders/pair-samba-r5-source.mp4`. Camera research and the other three options are summarised in `docs/TWO_PERSON_PLAN.md`. `build.scene.hips` added for new builds. Next candidates: authored camera (timeline), a camera that turns (needs camera and people separated: TRAM/MegaSaM class), two different character looks.
+
+
+## 2026-10-11 — Stage from the video, MoGe look
+
+See "Stage from the video" in `docs/TWO_PERSON_PLAN.md`. Renderer page accepts a `stage` mesh. Scratch flow: MoGe point map of one frame with `fov_x` = our lens, scale to the body model by depth at the dancers' hips (0.864), inpaint depth under the dancers, grid mesh, render. Useful find: MoGe's floor plane gives camera height and pitch (3.2 degrees here). Waiting for the user's view of the look before the multi-view step (Depth Anything 3 nodes exist in the ComfyUI checkout; weights would be a new download).
