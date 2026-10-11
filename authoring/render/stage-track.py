@@ -141,7 +141,7 @@ for x in t30:
 C30=np.array(C30);Q30=np.array(Q30);jit=float(np.mean(jit));fine=[i for i in range(n) if R[i] is not None and (i==0 or (lambda r:r['inliers']>=50 and abs(r['scaleFromMap']/s0-1)<.25)(next(r for r in report if r['view']==i)))];print('key views used for the stage',fine)
 # floor: plane through the low part of the key views
 F=[]
-for i in fine:
+for i in ([0] if NODAL else fine):  # one camera place: the floor is read from the first view alone (the joined views gave a tilt the set's known heights contradict)
     ys,xs=np.mgrid[int(H*.72):H:6,0:W:6];ok=masks[i][ys,xs]>0;uv=np.stack([xs[ok],ys[ok]],1).astype(np.float32);F.append((unproject(uv,depth_at(D[i],uv)*used[i],fk[i])-t[i])@R[i])
 F=np.concatenate(F);rng=np.random.default_rng(1);best=None
 for _ in range(400):

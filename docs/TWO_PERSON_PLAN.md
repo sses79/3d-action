@@ -254,3 +254,10 @@ Asked for by the user: the stage as simple clay objects (no detail; an AIGC prom
 - Result: `.authoring/renders/pair-samba-r6-source-scene.mp4`; pair `pair-samba` is at revision 6 with the scene.
 
 Limits: a real jib move is not represented (the camera is assumed to stay in one place); object sizes are a reading of the picture; the room's scale hangs on the dancers' body-model depth and the first view's lens (1391 px, from the depth model).
+
+### Stage rebuilt from wide views elsewhere in the video; arch shape; camera tilt corrected (2026-10-11)
+
+- The set is the same through the routine, so the objects were re-read from three wide views outside the clip (3.30 s, 28.43 s, 69.30 s; candidates in `.authoring/renders/stage-candidates/`). They show what the clip's own frames hide: the bandstand is a low oval wall with a thin roof on posts, stairs climb round both its sides to a rear gallery, and three arches of growing size stand behind it.
+- New shape `arch` (half an oval ring, `rim` its band width). The samba scene now has 27 objects (`authoring/render/scene-samba.py`): three front steps, platform, bandstand wall, roof and four posts, five stair blocks each side, seating and balcony each side, rear gallery, three arches, back screen. Pair `pair-samba` r7; video `.authoring/renders/pair-samba-r7-source-scene.mp4`.
+- **Camera tilt corrected.** The wide views fix the bandstand roof at about 2.4 m. Against the dancers' height that puts the clip's camera about 1.1 m over the floor looking 1° up, not 1.8 m looking 5° down as the previous section assumed. The floor read from the first depth view alone had said this (-1.1°, 0.99 m) and is now what `--nodal` uses. The earlier objects only matched the stills because they were too low and too near, which cancelled the wrong tilt. Bandstand centre is now 15.5 m from the camera (was 12.8 m).
+- The wide views were read by eye; no camera was solved for them. The check is still the clip's own stills (`stage-candidates/scene-check.jpg`).
