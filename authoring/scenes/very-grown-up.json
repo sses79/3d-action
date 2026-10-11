@@ -130,11 +130,11 @@
   }
  ],
  "marks": {
-  "gabi": [
+  "gabi mark": [
    -0.7,
    0.0
   ],
-  "abby": [
+  "abby mark": [
    0.7,
    -0.2
   ],
@@ -145,6 +145,10 @@
   "corridor": [
    1.8,
    -3.4
+  ],
+  "gabi feet": [
+   -0.55,
+   0.05
   ]
  },
  "performers": [
@@ -153,7 +157,7 @@
    "actionId": "very-grown-up-gabi",
    "name": "Very Grown-Up · Gabi",
    "height": 1.55,
-   "start": "gabi",
+   "start": "gabi mark",
    "facing": "abby",
    "parts": [
     {
@@ -168,13 +172,17 @@
     },
     {
      "movementId": "move-idle-talking",
-     "name": "7-10 s: \"I'm not a child!\" (foot stamp not in the library yet)",
-     "duration": 3
+     "name": "7-8 s: \"I'm not a child!\"",
+     "duration": 1
+    },
+    {
+     "movementId": "move-foot-stamp",
+     "name": "8-9.2 s: stamps her right foot"
     },
     {
      "movementId": "move-idle",
-     "name": "10-13 s: still",
-     "duration": 3
+     "name": "9.2-13 s: still",
+     "duration": 3.8
     },
     {
      "movementId": "move-walk-formal",
@@ -183,6 +191,22 @@
      "duration": 2,
      "speed": 0.7
     }
+   ],
+   "looks": [
+    {
+     "start": 0,
+     "end": 12.4,
+     "at": "abby"
+    },
+    {
+     "start": 12.5,
+     "end": 13.5,
+     "at": [
+      0.2,
+      0,
+      -0.07
+     ]
+    }
    ]
   },
   {
@@ -190,7 +214,7 @@
    "actionId": "very-grown-up-abby",
    "name": "Very Grown-Up · Abby",
    "height": 1.7,
-   "start": "abby",
+   "start": "abby mark",
    "facing": "gabi",
    "parts": [
     {
@@ -210,13 +234,30 @@
     },
     {
      "movementId": "move-idle-talking",
-     "name": "10-13 s: \"Very grown-up.\" (glance at the foot not possible yet)",
+     "name": "10-13 s: glances at the foot, \"Very grown-up.\"",
      "duration": 3
     },
     {
      "movementId": "move-ual2-idle-foldarms-loop",
      "name": "13-15 s: stays",
      "duration": 2
+    }
+   ],
+   "looks": [
+    {
+     "start": 0,
+     "end": 10.2,
+     "at": "gabi"
+    },
+    {
+     "start": 10.3,
+     "end": 11.4,
+     "at": "gabi feet"
+    },
+    {
+     "start": 11.5,
+     "end": 14.9,
+     "at": "gabi"
     }
    ]
   }

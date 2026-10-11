@@ -10,12 +10,17 @@ import {CharacterPlayer} from './player';
 //               while a foot is the lower one, the body moves so that foot stays put. Whole cycles are played (as many as come
 //               nearest the distance at the movement's own stride) and the stride is then stretched or shortened to land on the
 //               mark; the figures are in the report. The body turns to the direction of travel over the first half second.
+// Looks: for a stretch of time the head is turned toward a point in the room (the other performer's head, a spot on the
+// floor). The turn is shared between the upper spine (15%), the neck (35%) and the head (50%), eases in and out over 0.3 s,
+// and stops at 70 degrees from where the movement itself points the head, so a target behind is looked at over the shoulder
+// as far as that goes. Eyes are not modelled: this is where the face points.
 // Items are joined by blending poses for `blend` seconds. This is pose blending: no balance, no reaching, no obstacle
 // avoidance. Turning on the spot does not step: the feet swivel.
 export type StageItem={action:Action;name:string;duration?:number;speed?:number;walkTo?:number[];face?:number[]};
+export type StageLook={start:number;end:number;target:(time:number)=>number[]};
 export type StageReport={item:number;name:string;start:number;end:number;kind:'on the spot'|'walk';from:number[];to:number[];cycles?:number;strideScale?:number;speed:number}[];
 const FEET=['foot_l','ball_l','foot_r','ball_r'];
-export function stagePerformer(model:THREE.Object3D,clips:THREE.AnimationClip[],scale:number,id:string,name:string,start:{position:number[];facing:number[]},items:StageItem[],blend=.3):{action:Action;report:StageReport;duration:number}{
+export function stagePerformer(model:THREE.Object3D,clips:THREE.AnimationClip[],scale:number,id:string,name:string,start:{position:number[];facing:number[]},items:StageItem[],looks:StageLook[]=[],blend=.3):{action:Action;report:StageReport;duration:number}{
  if(!items.length||items.length>30)throw Error('Stage 1–30 items for a performer');
  const player=new CharacterPlayer(model,clips,scale),bones:THREE.Object3D[]=[];model.traverse(b=>{if((b as THREE.Bone).isBone)bones.push(b);});
  const up=new THREE.Vector3(0,1,0),v=new THREE.Vector3(),world=(n:string)=>model.getObjectByName(n)!.getWorldPosition(new THREE.Vector3());
@@ -24,6 +29,9 @@ export function stagePerformer(model:THREE.Object3D,clips:THREE.AnimationClip[],
  const capture=(a:Action,t:number):Pose=>{player.sample(a,t);model.updateMatrixWorld(true);const rootW=model.getWorldPosition(new THREE.Vector3()),across=world('thigh_r').sub(world('thigh_l')),f=v.copy(up).cross(across);return {rootP:model.position.clone(),rootQ:model.quaternion.clone(),rootS:model.scale.clone(),bones:bones.map(b=>({p:b.position.clone(),q:b.quaternion.clone(),s:b.scale.clone()})),feet:FEET.map(n=>world(n).sub(rootW)),forward:Math.atan2(f.x,f.z)};};
  // how far along its own forward a movement carries the body by each time in one cycle, from the feet (see above)
  const travelOf=(a:Action,speed:number,rate:number)=>{const T=duration(a),n=Math.max(2,Math.round(T/speed*rate)),first=capture(a,0),dir=new THREE.Vector3(Math.sin(first.forward),0,Math.cos(first.forward)),out=[0];let prev=first,support=-1;for(let k=1;k<=n;k++){const p=capture(a,Math.min(T,k/n*T));let low=0;for(let j=1;j<4;j++)if(prev.feet[j].y+p.feet[j].y<prev.feet[low].y+p.feet[low].y)low=j;if(support<0||Math.floor(support/2)!==Math.floor(low/2))support=low;const rel=p.feet[support].clone().sub(prev.feet[support]);out.push(out[k-1]+Math.max(0,-rel.dot(dir)));prev=p;}return {cycle:T/speed,samples:out};};
+ // which way the head's own axes point when the head faces forward, read from the T-pose
+ const tpose:Action={version:2,rig:'quaternius-ual1',id:'tpose',name:'T',phases:[{id:'t',name:'T',intent:'',duration:.1,kind:'hold',clip:'A_TPose',from:0,to:0}],tracks:[],cues:[]},t0=capture(tpose,0),headBone=model.getObjectByName('Head')!,headAxis=new THREE.Vector3(Math.sin(t0.forward),0,Math.cos(t0.forward)).applyQuaternion(headBone.getWorldQuaternion(new THREE.Quaternion()).invert());
+ const chain=[['spine_03',.15],['neck_01',.35],['Head',.5]] as const,boneIndex=new Map(bones.map((b,j)=>[b.name,j]));
  const total=items.reduce((s,i)=>s+(i.duration??duration(i.action)/(i.speed??1)),0);if(!(total>0)||total>30)throw Error('A part runs up to 30 seconds');
  const rate=Math.min(30,Math.floor(510/total)),ease=(x:number)=>x<=0?0:x>=1?1:x*x*(3-2*x),wrap=(a:number)=>Math.atan2(Math.sin(a),Math.cos(a));
  const tracks:NonNullable<Action['tracks']>=[];for(const target of ['$root',...bones.map(b=>b.name)])for(const property of ['rotation','position','scale'] as const)tracks.push({target,property,mode:'absolute',interpolation:'linear',keys:[]});
@@ -45,6 +53,10 @@ export function stagePerformer(model:THREE.Object3D,clips:THREE.AnimationClip[],
   const prior=plans[plans.indexOf(plan)-1];if(prior&&local<blend){const held=prior.last??=capture(prior.item.action,Math.min(duration(prior.item.action),((prior.length-1e-6)%prior.T)*prior.speed));const x=ease(local/blend);pose.rootQ=held.rootQ.clone().slerp(pose.rootQ,x);pose.rootP=held.rootP.clone().lerp(pose.rootP,x);pose.bones=pose.bones.map((b,j)=>({p:held!.bones[j].p.clone().lerp(b.p,x),q:held!.bones[j].q.clone().slerp(b.q,x),s:held!.bones[j].s.clone().lerp(b.s,x)}));}
   // root: the movement's own turn and height, stood at the place and turned to the facing; its drift over the floor is dropped
   const q=new THREE.Quaternion().setFromAxisAngle(up,facing-plan.forward).multiply(pose.rootQ).normalize(),p=[place.x,pose.rootP.y*scale,place.y];
+  // looks: with the pose stood in the room, turn spine, neck and head toward the target
+  const look=looks.find(l=>time>=l.start&&time<=l.end);if(look){const w=ease(Math.min((time-look.start)/.3,(look.end-time)/.3,1));if(w>0){model.position.set(p[0]/scale,p[1]/scale,p[2]/scale);model.quaternion.copy(q);pose.bones.forEach((b,j)=>{bones[j].position.copy(b.p);bones[j].quaternion.copy(b.q);bones[j].scale.copy(b.s);});model.updateMatrixWorld(true);
+    const target=new THREE.Vector3().fromArray(look.target(time));let left=1;for(const [name,share] of chain){const bone=model.getObjectByName(name)!,head=headBone.getWorldPosition(new THREE.Vector3()),now=headAxis.clone().applyQuaternion(headBone.getWorldQuaternion(new THREE.Quaternion())),want=target.clone().sub(head).normalize(),angle=Math.min(now.angleTo(want),70*Math.PI/180*left),axis=now.clone().cross(want);if(axis.lengthSq()<1e-10||angle<1e-5)continue;
+     const R=new THREE.Quaternion().setFromAxisAngle(axis.normalize(),angle*w*share/left),parent=bone.parent!.getWorldQuaternion(new THREE.Quaternion());bone.quaternion.premultiply(parent.clone().invert().multiply(R).multiply(parent));bone.updateMatrixWorld(true);pose.bones[boneIndex.get(name)!].q=bone.quaternion.clone();left-=share;}}}
   tracks[0].keys.push({time,value:q.toArray()});tracks[1].keys.push({time,value:p});tracks[2].keys.push({time,value:pose.rootS.toArray()});
   pose.bones.forEach((b,j)=>{tracks[(j+1)*3].keys.push({time,value:b.q.clone().normalize().toArray()});tracks[(j+1)*3+1].keys.push({time,value:b.p.toArray()});tracks[(j+1)*3+2].keys.push({time,value:b.s.toArray()});});
  }

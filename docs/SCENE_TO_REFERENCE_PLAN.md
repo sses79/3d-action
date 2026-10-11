@@ -114,3 +114,12 @@ Room: floor, two walls, front door block, corridor opening; marks for Gabi, Abby
 - We already had both Standard files: library 1 is the character's own rig file (43 clips), library 2 was imported as 43 movements. So there is nothing more to download for free.
 - What was missing: only 6 of the rig's 43 clips were registered as movements. The other 37 are now seeded by the service at start (`seedMovements` in `runtime/movements.ts`), as `move-ual1-<clip>`, unmodified and unreviewed. The library has 108 movements.
 - Useful for scenes: sitting down, sitting idle, sitting and talking, standing up; interact; pick up from a table; push; crouch idle and crouch walk; jog; kneeling to fix something. Still missing for "Very Grown-Up": foot stamp, look down, feet together, a glance.
+
+## Milestone 2, as built (2026-10-11)
+
+No clips were captured: who films or finds them is still open. What could be built without them:
+
+- **Looks** (`runtime/stage.ts`, `looks` on a performer in `stage_scene`): for a stretch of time the head is turned toward a mark on the floor, the other performer's head (following them as they move) or a point. The turn is shared by upper spine, neck and head (15/35/50%), eases over 0.3 s and stops at 70° from where the movement points the head. A mark may no longer share a name with a performer: that clash sent both heads to the floor in the first try.
+- **Foot stamp** (`move-foot-stamp`, built by `authoring/source/build-foot-stamp.mjs`, stored in `authoring/source/foot-stamp.json`): the standing idle with the right thigh, shin and foot turned so the foot rises 0.20 m under the hip and comes down in a tenth of a second with a small rebound. Made by rule, one leg only, no weight shift or arm reaction, not reviewed. It is registered on this machine; on another, register it from the JSON.
+- **The scene as written** (`scene-very-grown-up` r6): Gabi talks, listens, protests, stamps at 8.0–9.2 s, stands, looks down at the floor ahead of her at 12.5–13.5 s, then walks. Abby looks at Gabi, glances at the stamped foot at 10.3–11.4 s, looks back, and follows her with her head as she leaves.
+- Still missing: "brings her feet together" (no movement), a walk that reads as exaggeratedly careful (it is the formal walk at 0.7 speed), any reaction in the body to the stamp, and a turn on the spot that steps.
