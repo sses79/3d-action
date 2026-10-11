@@ -1,6 +1,6 @@
 # Scene text to reference: plan
 
-Written 2026-10-11 at the user's request. Status: milestone 1 built the same day (see the end); milestones 2-4 not started.
+Written 2026-10-11 at the user's request. Status: milestones 1–3 built the same day (see the end); milestone 2 without captured clips; milestone 4 not started.
 
 ## Goal
 
@@ -123,3 +123,12 @@ No clips were captured: who films or finds them is still open. What could be bui
 - **Foot stamp** (`move-foot-stamp`, built by `authoring/source/build-foot-stamp.mjs`, stored in `authoring/source/foot-stamp.json`): the standing idle with the right thigh, shin and foot turned so the foot rises 0.20 m under the hip and comes down in a tenth of a second with a small rebound. Made by rule, one leg only, no weight shift or arm reaction, not reviewed. It is registered on this machine; on another, register it from the JSON.
 - **The scene as written** (`scene-very-grown-up` r6): Gabi talks, listens, protests, stamps at 8.0–9.2 s, stands, looks down at the floor ahead of her at 12.5–13.5 s, then walks. Abby looks at Gabi, glances at the stamped foot at 10.3–11.4 s, looks back, and follows her with her head as she leaves.
 - Still missing: "brings her feet together" (no movement), a walk that reads as exaggeratedly careful (it is the formal walk at 0.7 speed), any reaction in the body to the stamp, and a turn on the spot that steps.
+
+## Milestone 3, as built (2026-10-11)
+
+- **Shots.** A camera entry is a shot: `{start, name, position, lookAt, aim, lens35, to}`. A new shot is a cut. `lookAt` is a point, a mark, a performer (head or body, followed as they move) or `"both"`; `to` moves the camera or changes the lens over the shot, eased.
+- **Beats.** `beats: {start, end, text, speaker, line}` carries the scene's timed beats and spoken lines into the meta. They do not change the motion.
+- **Meta.** `reference.json` for a staged scene gains `shots` (per shot: times, lens, framing, camera, where each performer is, objects in frame, its first-frame stills), `staging.beats`, and a `shot` number on each timeline row. The export saves `shot-N-clay.png` and `shot-N-depth.png` for every shot after the first.
+- **Skill** `skills/scene-to-reference/SKILL.md`: how to read a scene, write the blocking, stage, check and export, and what to report.
+- **Example** (`scene-very-grown-up` r8): four shots of my own, since no shot plan was supplied: a 28 mm wide two-shot (0–7 s), a low 28 mm full-body view of Gabi for the stamp with a slight move in (7–10 s), a 50 mm medium on Abby for the glance (10–13 s), a 28 mm wide toward the corridor following Gabi (13–15 s). The first try at the stamp shot aimed at her body from low down and cut her feet off; it now aims at knee height.
+- Not done: taking a shot plan in `director-advisor`'s own format (not seen yet); checking that a camera is inside the room or not blocked by an object; more than two performers.

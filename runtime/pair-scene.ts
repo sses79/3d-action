@@ -18,8 +18,10 @@ export type SceneObject={name:string;shape:'box'|'cylinder'|'arch'|'wedge';posit
 export type SceneCamera={quats:number[][];positions:number[][];focal:number[]};
 // A staged scene (stage_scene) has no source camera: its two actions are already in the room's coordinates, so nothing is
 // re-placed. `staged` then holds each performer's height (the figure is scaled to it) and the cameras as shots: from `start`
-// seconds a camera at `position` looking at `lookAt` with a 35 mm-equivalent lens.
-export type StagedShot={start:number;position:number[];lookAt:number[];lens35:number};
+// seconds a camera at `position` looking at `lookAt` with a 35 mm-equivalent lens. A new shot is a cut.
+// lookAt is a point, or {performer, aim} to keep a performer's head or body in the middle, or {between:true} for the point
+// between the two. `to` moves the camera and/or changes the lens over the shot, eased, until the next shot starts.
+export type StagedShot={start:number;position:number[];lookAt:number[]|{performer:number;aim?:'head'|'body'}|{between:true};lens35:number;to?:{position?:number[];lens35?:number}};
 export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[];lock?:number[][]}[];distanceScale?:number[];staged?:{heights:number[];cameras:StagedShot[]}};
 // Distance from one camera is the noisiest thing the body model gives, and it shows as feet sliding toward and away from the
 // camera. distanceScale evens it out: per frame, the factor that takes the pair's mean distance from the camera (model depth
