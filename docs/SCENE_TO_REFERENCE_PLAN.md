@@ -1,6 +1,6 @@
 # Scene text to reference: plan
 
-Written 2026-10-11 at the user's request. Status: plan only, nothing built.
+Written 2026-10-11 at the user's request. Status: milestone 1 built the same day (see the end); milestones 2-4 not started.
 
 ## Goal
 
@@ -98,3 +98,12 @@ Room: floor, two walls, front door block, corridor opening; marks for Gabi, Abby
 - How the composer's joins behave over 15 s with loops and holds; it has only been used up to 4 s.
 - Whether foot locking needs changes for composed actions, where the feet are already clean inside each movement.
 - Whether any text-to-motion generator is good enough and usable under its licence.
+
+## Milestone 1, as built (2026-10-11)
+
+- **`stage_scene`** (52 operations) takes a blocking spec: room objects, named marks, two performers (height, start mark, facing, parts) and camera shots. It bakes one action per performer in room coordinates (`runtime/stage.ts`) and records the two as a pair with a staged scene, so Studio (Pair and Scene on), `render_pair_video` and `export_pair_reference` work on it unchanged. `reference.json` gains `staging` (marks, each performer's parts with times and movement IDs, the shots).
+- **Parts**: a library movement looped to fill its seconds, on the spot (turning to face a mark or the other performer over half a second) or walking in a straight line to a mark. Walk distance is read from the movement's feet (the body moves so the lower foot stays put); whole cycles are played and the stride is scaled to land on the mark. Joins are 0.3 s pose blends. Up to 30 s and 30 parts per performer; keys at 30 per second, fewer for parts over 17 s.
+- **Example**: `authoring/scenes/very-grown-up.json`, staged as `scene-very-grown-up` (r3). Hall of 9 blocks, 4 marks, one 28 mm wide camera. Gabi (1.55 m): talking, listening, talking, still, then one cycle of the formal walk at 0.7 speed, 1.00 m toward the corridor, stride x0.97. Abby (1.70 m): arms folded, the "no" idle on her refusal, arms folded, talking, arms folded. Foot slide over 15 s: 0.18 m for Gabi (all in the walk), 0 for Abby.
+- **Three rig clips registered as movements** for this: `move-idle`, `move-idle-talking`, `move-walk-formal` (Quaternius UAL1, CC0, not reviewed). The rig also has sitting, interact and pick-up clips not yet registered.
+- **Not in it**: the foot stamp, Abby's glance, looking down, feet together (no such movements, no look-at); turning on the spot swivels the feet; the walk is one straight line; the child is the adult figure scaled; one camera, no cuts tried; every movement used is unreviewed.
+- **A fault and its repair.** The first version saved an action whose last keys repeated a time, without validating it. The service validates everything at start and would not start. `stage_scene` now validates before saving, and the loader drops keys that repeat a time (keeping the first) instead of refusing to start; two actions were repaired that way.

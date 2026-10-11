@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {CharacterPlayer} from '../../runtime/player';
-import {PairScene,SceneObject,SceneCamera,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom} from '../../runtime/pair-scene';
+import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom} from '../../runtime/pair-scene';
 // White-model render of a pair of actions, one picture per call. Cameras:
 //  source  the camera of the source video. The body model places each performer relative to that camera, and the actions keep
 //          those positions, so a camera at that origin with the model's lens (focal length = the picture's diagonal in pixels)
@@ -10,7 +10,9 @@ import {PairScene,SceneObject,SceneCamera,sceneCameraAt,sampleSeries,buildSceneO
 //  fixed   the source camera held where it was on the first frame. With a scene: a camera that stands still in the room and
 //          keeps both performers in full view for the whole clip, to show how they move over the floor (sliding feet, drift).
 //  orbit   a slow quarter circle round the pair at eye height, always looking at the point between them.
-type Payload={level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
+//  staged  (payload.staged) a scene staged from text: the actions are already in the room, each figure is scaled to its
+//          performer's height, and the camera is the scene's shot for the time. 'fixed' is the still check camera as above.
+type Payload={staged?:{objects:SceneObject[],heights:number[],cameras:StagedShot[]},level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
 async function init(){
  const payload:Payload=await fetch('/payload.json').then(r=>r.json()),{width,height}=payload,scene=new T.Scene();scene.background=new T.Color('#eceeef');scene.fog=new T.Fog('#eceeef',14,40);
  const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(width,height);renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;document.body.appendChild(renderer.domElement);
@@ -19,7 +21,7 @@ async function init(){
  const gltf=await new GLTFLoader().loadAsync('/character.glb'),clay=new T.MeshStandardMaterial({color:'#f4f3f0',roughness:.82,metalness:0});
  // one load of the asset per character: a skinned mesh does not survive a plain clone
  const second=payload.actions.length>1?await new GLTFLoader().loadAsync('/character.glb'):null,cast=payload.actions.map((_,i)=>({root:i?second!.scene:gltf.scene}));
- const players=cast.map(({root},i)=>{const holder=new T.Group();holder.add(root);scene.add(holder);const scale=1.85/new T.Box3().setFromObject(root).getSize(new T.Vector3()).y;holder.scale.setScalar(scale);root.traverse(o=>{const m=o as T.Mesh;if(m.isMesh){m.material=clay;m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;}});const anims=i?second!.animations:gltf.animations;return {holder,root,scale,player:new CharacterPlayer(root,anims,scale)};});
+ const players=cast.map(({root},i)=>{const holder=new T.Group();holder.add(root);scene.add(holder);const scale=1.85/new T.Box3().setFromObject(root).getSize(new T.Vector3()).y*((payload.staged?.heights[i]??1.85)/1.85);holder.scale.setScalar(scale);root.traverse(o=>{const m=o as T.Mesh;if(m.isMesh){m.material=clay;m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;}});const anims=i?second!.animations:gltf.animations;return {holder,root,scale,player:new CharacterPlayer(root,anims,scale)};});
  const camera=new T.PerspectiveCamera(2*Math.atan(height/(2*Math.hypot(width,height)))*180/Math.PI,width/height,.1,200);
  // Level room. The source camera is rarely level: here the floor's normal in the camera's space (from a point map of the
  // source frame, given in payload.level) says how the camera is tipped. `level` is the turn that stands that normal upright.
@@ -43,6 +45,7 @@ async function init(){
  const first=place(0),height0=heightAt(0,first);
  // A scene's objects: plain clay shapes standing for the set, a shade darker than the performers so the two read apart.
  let objectGroup:T.Group|null=null;
+ if(payload.staged){objectGroup=buildSceneObjects(T,payload.staged.objects,new T.MeshStandardMaterial({color:'#b9bdc1',roughness:.9}));scene.add(objectGroup!);(floor.material as T.MeshStandardMaterial).color.set('#cfd2d4');scene.fog=null;}
  if(payload.scene){const grey=new T.MeshStandardMaterial({color:'#b9bdc1',roughness:.9});objectGroup=buildSceneObjects(T,payload.scene.objects,grey);scene.add(objectGroup!);(floor.material as T.MeshStandardMaterial).color.set('#cfd2d4');scene.fog=null;}
  // A stage: a coarse mesh of the set from the source video, given in the camera's space at one moment (x right, y up, z toward
  // the camera, metres). It is stood in our scene by raising it by the camera's height at that moment, and replaces the plain floor.
@@ -55,11 +58,12 @@ async function init(){
    const keep:number[]=[],idx=payload.stage.indices;for(let k=0;k<idx.length;k+=3)if(!(low[idx[k]]&&low[idx[k+1]]&&low[idx[k+2]]))keep.push(idx[k],idx[k+1],idx[k+2]);geo.setIndex(keep);geo.computeVertexNormals();scene.add(mesh);scene.fog=null;}
   else{mesh.position.y=lift;scene.add(mesh);floor.visible=false;scene.fog=null;}}
  // the still camera for a scene: off to one side of the ground the performers cover, far enough back to hold all of it
- let still:{eye:T.Vector3,look:T.Vector3}|null=null;if(track&&payload.camera==='fixed'){const box=new T.Box3();for(let k=0;k<=40;k++)for(const h of place(payload.duration*k/40))box.expandByPoint(h);const mid=box.getCenter(new T.Vector3()),reach=box.getSize(new T.Vector3()).setY(0).length()/2;still={eye:new T.Vector3(mid.x+(reach+5)*.55,1.7,mid.z+(reach+5)*.83),look:new T.Vector3(mid.x,.95,mid.z)};}
+ let still:{eye:T.Vector3,look:T.Vector3}|null=null;if((track||payload.staged)&&payload.camera==='fixed'){const box=new T.Box3();for(let k=0;k<=40;k++)for(const h of place(payload.duration*k/40))box.expandByPoint(h);const mid=box.getCenter(new T.Vector3()),reach=box.getSize(new T.Vector3()).setY(0).length()/2;still={eye:new T.Vector3(mid.x+(reach+5)*.55,1.7,mid.z+(reach+5)*.83),look:new T.Vector3(mid.x,.95,mid.z)};}
  // where the feet are in the room at a time: heel and ball of each foot, per performer (for measuring sliding)
  (window as any).feet=(time:number)=>{place(time);return players.map(p=>['foot_l','ball_l','foot_r','ball_r'].map(n=>p.root.getObjectByName(n)!.getWorldPosition(new T.Vector3()).toArray()));};
  (window as any).renderFrame=(time:number)=>{const hips=place(time),centre=hips.reduce((s,h)=>s.add(h),new T.Vector3()).divideScalar(hips.length);
   if(payload.camera==='orbit'){const angle=-Math.PI/4+Math.PI/2*time/Math.max(payload.duration,1e-6),far=5.2;camera.position.set(centre.x+Math.sin(angle)*far,1.55,centre.z+Math.cos(angle)*far);camera.lookAt(centre.x,1,centre.z);}
+  else if(payload.staged&&!still){const shot=[...payload.staged.cameras].reverse().find(c=>c.start<=time+1e-6)??payload.staged.cameras[0];camera.position.fromArray(shot.position);camera.fov=2*Math.atan(Math.tan(Math.atan(18/shot.lens35))/camera.aspect)*180/Math.PI;camera.updateProjectionMatrix();camera.lookAt(new T.Vector3().fromArray(shot.lookAt));}
   else if(still){camera.position.copy(still.eye);camera.fov=38;camera.updateProjectionMatrix();camera.lookAt(still.look);}
   else{camera.position.set(shift.x,Math.max(.15,payload.camera==='fixed'?height0:heightAt(time,hips)),shift.z);if(level)camera.quaternion.copy(level);else camera.quaternion.identity();if(track){camera.fov=2*Math.atan(height/(2*Math.hypot(width,height)*zoom))*180/Math.PI;camera.updateProjectionMatrix();}}
   camera.updateMatrixWorld(true);sun.target.position.set(centre.x,0,centre.z);sun.position.set(centre.x+3.5,7,centre.z+4.5);sun.target.updateMatrixWorld();

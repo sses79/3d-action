@@ -1,0 +1,240 @@
+{
+ "sceneId": "scene-very-grown-up",
+ "name": "Very Grown-Up",
+ "objects": [
+  {
+   "name": "back wall left",
+   "shape": "box",
+   "position": [
+    -0.9,
+    1.4,
+    -3.075
+   ],
+   "size": [
+    4.2,
+    2.8,
+    0.15
+   ]
+  },
+  {
+   "name": "back wall right",
+   "shape": "box",
+   "position": [
+    2.7,
+    1.4,
+    -3.075
+   ],
+   "size": [
+    0.6,
+    2.8,
+    0.15
+   ]
+  },
+  {
+   "name": "corridor header",
+   "shape": "box",
+   "position": [
+    1.8,
+    2.5,
+    -3.075
+   ],
+   "size": [
+    1.2,
+    0.6,
+    0.15
+   ]
+  },
+  {
+   "name": "left wall",
+   "shape": "box",
+   "position": [
+    -3.075,
+    1.4,
+    -0.5
+   ],
+   "size": [
+    0.15,
+    2.8,
+    5.3
+   ]
+  },
+  {
+   "name": "right wall",
+   "shape": "box",
+   "position": [
+    3.075,
+    1.4,
+    -0.5
+   ],
+   "size": [
+    0.15,
+    2.8,
+    5.3
+   ]
+  },
+  {
+   "name": "front door",
+   "shape": "box",
+   "position": [
+    -2.96,
+    1.05,
+    0.6
+   ],
+   "size": [
+    0.08,
+    2.1,
+    1.0
+   ]
+  },
+  {
+   "name": "corridor wall left",
+   "shape": "box",
+   "position": [
+    1.125,
+    1.4,
+    -4.65
+   ],
+   "size": [
+    0.15,
+    2.8,
+    3.0
+   ]
+  },
+  {
+   "name": "corridor wall right",
+   "shape": "box",
+   "position": [
+    2.475,
+    1.4,
+    -4.65
+   ],
+   "size": [
+    0.15,
+    2.8,
+    3.0
+   ]
+  },
+  {
+   "name": "console table",
+   "shape": "box",
+   "position": [
+    -1.6,
+    0.4,
+    -2.75
+   ],
+   "size": [
+    1.3,
+    0.8,
+    0.4
+   ]
+  }
+ ],
+ "marks": {
+  "gabi": [
+   -0.7,
+   0.0
+  ],
+  "abby": [
+   0.7,
+   -0.2
+  ],
+  "corridor approach": [
+   -0.11,
+   -0.81
+  ],
+  "corridor": [
+   1.8,
+   -3.4
+  ]
+ },
+ "performers": [
+  {
+   "id": "gabi",
+   "actionId": "very-grown-up-gabi",
+   "name": "Very Grown-Up · Gabi",
+   "height": 1.55,
+   "start": "gabi",
+   "facing": "abby",
+   "parts": [
+    {
+     "movementId": "move-idle-talking",
+     "name": "0-4 s: \"I can babysit. I'm grown up.\"",
+     "duration": 4
+    },
+    {
+     "movementId": "move-idle",
+     "name": "4-7 s: listens",
+     "duration": 3
+    },
+    {
+     "movementId": "move-idle-talking",
+     "name": "7-10 s: \"I'm not a child!\" (foot stamp not in the library yet)",
+     "duration": 3
+    },
+    {
+     "movementId": "move-idle",
+     "name": "10-13 s: still",
+     "duration": 3
+    },
+    {
+     "movementId": "move-walk-formal",
+     "name": "13-15 s: careful steps toward the corridor",
+     "walkTo": "corridor approach",
+     "duration": 2,
+     "speed": 0.7
+    }
+   ]
+  },
+  {
+   "id": "abby",
+   "actionId": "very-grown-up-abby",
+   "name": "Very Grown-Up · Abby",
+   "height": 1.7,
+   "start": "abby",
+   "facing": "gabi",
+   "parts": [
+    {
+     "movementId": "move-ual2-idle-foldarms-loop",
+     "name": "0-4 s: listens, arms folded",
+     "duration": 4
+    },
+    {
+     "movementId": "move-ual2-idle-no-loop",
+     "name": "4-7 s: \"You have diving tonight. No.\"",
+     "duration": 3
+    },
+    {
+     "movementId": "move-ual2-idle-foldarms-loop",
+     "name": "7-10 s: still",
+     "duration": 3
+    },
+    {
+     "movementId": "move-idle-talking",
+     "name": "10-13 s: \"Very grown-up.\" (glance at the foot not possible yet)",
+     "duration": 3
+    },
+    {
+     "movementId": "move-ual2-idle-foldarms-loop",
+     "name": "13-15 s: stays",
+     "duration": 2
+    }
+   ]
+  }
+ ],
+ "cameras": [
+  {
+   "start": 0,
+   "position": [
+    0.3,
+    1.4,
+    4.6
+   ],
+   "lookAt": [
+    0.2,
+    1.0,
+    -0.8
+   ],
+   "lens35": 28
+  }
+ ]
+}

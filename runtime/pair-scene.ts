@@ -16,7 +16,11 @@
 // model assumed means the performer is that much further off). Height stays the character's own, from its floor rule.
 export type SceneObject={name:string;shape:'box'|'cylinder'|'arch'|'wedge';position:number[];size:number[];rotationY?:number;rim?:number};
 export type SceneCamera={quats:number[][];positions:number[][];focal:number[]};
-export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[];lock?:number[][]}[];distanceScale?:number[]};
+// A staged scene (stage_scene) has no source camera: its two actions are already in the room's coordinates, so nothing is
+// re-placed. `staged` then holds each performer's height (the figure is scaled to it) and the cameras as shots: from `start`
+// seconds a camera at `position` looking at `lookAt` with a 35 mm-equivalent lens.
+export type StagedShot={start:number;position:number[];lookAt:number[];lens35:number};
+export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[];lock?:number[][]}[];distanceScale?:number[];staged?:{heights:number[];cameras:StagedShot[]}};
 // Distance from one camera is the noisiest thing the body model gives, and it shows as feet sliding toward and away from the
 // camera. distanceScale evens it out: per frame, the factor that takes the pair's mean distance from the camera (model depth
 // times lens ratio) to its average over about a second. One factor for both performers, so what lies between them is kept.
@@ -25,9 +29,13 @@ export function distanceScale(depths:number[][][],camera:SceneCamera,half=15){
  return raw.map((v,k)=>{let sum=0,weight=0;for(let j=-half;j<=half;j++){const w=half+1-Math.abs(j);sum+=w*raw[Math.min(n-1,Math.max(0,k+j))];weight+=w;}return Math.round(sum/weight/v*1e4)/1e4;});
 }
 const finite=(v:any,n:number)=>Array.isArray(v)&&v.length===n&&v.every(x=>typeof x==='number'&&Number.isFinite(x));
+export function validateObjects(objects:any):string|null{
+ if(!Array.isArray(objects)||objects.length>64)return 'A scene needs up to 64 objects';
+  const names=new Set<string>();for(const o of objects){if(typeof o?.name!=='string'||!/^[a-z0-9][a-z0-9 -]{0,39}$/.test(o.name)||names.has(o.name))return 'Each object needs its own short lower-case name';names.add(o.name);if(!['box','cylinder','arch','wedge'].includes(o.shape))return `${o.name}: shape is box, cylinder, arch or wedge`;if(o.rim!==undefined&&!(o.shape==='arch'&&typeof o.rim==='number'&&o.rim>0&&o.rim<Math.min(o.size?.[0]/2,o.size?.[1])))return `${o.name}: rim is the band width of an arch, less than its half width and its height`;if(!finite(o.position,3)||o.position.some((x:number)=>Math.abs(x)>200))return `${o.name}: position is [x, y, z] in metres`;if(!finite(o.size,3)||o.size.some((x:number)=>x<=0||x>200))return `${o.name}: size is [width, height, depth] in metres`;if(o.rotationY!==undefined&&!(typeof o.rotationY==='number'&&Math.abs(o.rotationY)<=360))return `${o.name}: rotationY is in degrees`;}
+ return null;
+}
 export function validateScene(scene:any):string|null{
- if(!scene||!Array.isArray(scene.objects)||scene.objects.length>64)return 'A scene needs up to 64 objects';
- const names=new Set<string>();for(const o of scene.objects){if(typeof o?.name!=='string'||!/^[a-z0-9][a-z0-9 -]{0,39}$/.test(o.name)||names.has(o.name))return 'Each object needs its own short lower-case name';names.add(o.name);if(!['box','cylinder','arch','wedge'].includes(o.shape))return `${o.name}: shape is box, cylinder, arch or wedge`;if(o.rim!==undefined&&!(o.shape==='arch'&&typeof o.rim==='number'&&o.rim>0&&o.rim<Math.min(o.size?.[0]/2,o.size?.[1])))return `${o.name}: rim is the band width of an arch, less than its half width and its height`;if(!finite(o.position,3)||o.position.some((x:number)=>Math.abs(x)>200))return `${o.name}: position is [x, y, z] in metres`;if(!finite(o.size,3)||o.size.some((x:number)=>x<=0||x>200))return `${o.name}: size is [width, height, depth] in metres`;if(o.rotationY!==undefined&&!(typeof o.rotationY==='number'&&Math.abs(o.rotationY)<=360))return `${o.name}: rotationY is in degrees`;}
+ if(!scene)return 'A scene needs up to 64 objects';const problem=validateObjects(scene.objects);if(problem)return problem;
  const c=scene.camera;if(!c||!Array.isArray(c.quats)||c.quats.length<2||c.quats.length>2000||!Array.isArray(c.positions)||!Array.isArray(c.focal)||c.positions.length!==c.quats.length||c.focal.length!==c.quats.length)return 'A scene needs a camera track: quats, positions and focal of one length';
  if(!c.quats.every((q:any)=>finite(q,4)&&Math.abs(Math.hypot(...q)-1)<1e-3)||!c.positions.every((p:any)=>finite(p,3))||!c.focal.every((f:any)=>typeof f==='number'&&f>.2&&f<8))return 'Camera track values are out of range';
  return null;

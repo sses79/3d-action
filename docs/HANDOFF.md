@@ -815,3 +815,10 @@ See "Stage from the video" in `docs/TWO_PERSON_PLAN.md`. Renderer page accepts a
 - Camera track: `authoring/render/stage-track.py --nodal` (turn and zoom only, no depth, logos masked with `--overlay`). `authoring/render/stage-depth.py` makes the key views with depth that the script still needs for the floor's tilt and scale.
 - Samba pair is at r6 with 16 hand-made objects (`authoring/render/scene-samba.py`).
 - Not done: objects are authored by hand per clip; camera assumed to stay in one place; `stage-track.py` is a dense first version with the earlier map-based path still in it.
+
+## 2026-10-11 (later) — Scene text to reference, milestone 1
+
+- Plan: `docs/SCENE_TO_REFERENCE_PLAN.md`. Built: `stage_scene`, `runtime/stage.ts`, staged scenes in the renderer, Studio and the reference export; example spec `authoring/scenes/very-grown-up.json`.
+- Also this day: `video-to-reference` skill, wedge shape, pit scene for `pair-kc-139`, direct depth with Video Depth Anything Small (`authoring/render/video-depth.py`, 29 minutes for 10 s on this Mac; kept as an option, the user ranks speed first).
+- The service loader now repairs actions with repeated keyframe times instead of refusing to start (see the plan's last section for why).
+- Next in that plan: milestone 2 (capture the missing acting movements, head look-at).
