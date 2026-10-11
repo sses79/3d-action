@@ -171,3 +171,11 @@ Not verified: any output quality, Mac support, the exact checkpoint licence term
 - **Baking still uses the mannequin**: walk distances and looks are worked out on its proportions, then played on the chosen body.
 - **Example** (`scene-very-grown-up` r10): Abby is `superhero-female` at 1.70 m; Gabi stays the mannequin at 1.55 m. I first put both on the female body and took Gabi back: these are unclothed adult bodies, and a scaled-down one is not a fit stand-in for a 13-year-old.
 - Not done: hair (8 styles are in the pack, unattached); the Regular and Teen bodies (paid edition); a character choice for video-derived pairs.
+
+## A body with another skeleton: Character Creator "Woman01", trial (2026-10-11)
+
+- Source: the user's `fbx.zip` (one `fbx.fbx`, 13.7 MB), unpacked in `.authoring/woman01-fbx/` and kept out of git: Character Creator content, licence to be checked by the user. 13 meshes (body 14,164 vertices, eyes, teeth, tongue, three card-hair pieces, bra, underwear, flats), 101 bones named `EM3D_Base_*`, centimetres, no animation.
+- **Follower** (`follow`, `characterCreatorMap` in `runtime/characters.ts`): the performer's mannequin is still posed, hidden; 58 of its joints are paired with the other body's. Once, the other body's rest pose is turned to the mannequin's joint by joint; then every frame each paired joint takes the turn its mannequin joint has made from rest, in world axes, and the hips go where the mannequin's are, height in proportion (1.12 here). Twist, face and toe bones stay at rest.
+- **Renderer**: `payload.followers` (id → bone prefix and mesh names to hide) and `payload.followerFiles` (id → file), loaded with three's FBX loader, drawn as clay, scaled to the performer's height, raised so the lowest its toe joints come equals their rest height (the file's own floor is y=0; a bounding box of the skinned meshes was wrong and sank the feet 3 cm).
+- **Result** (`.authoring/renders/woman01-trial.jpg`): Abby's part plays on it: arms folded, the glance, the talking hands. The hair is flat cards meant for transparency textures and renders as a tangle of sheets in clay, so the hair pieces are hidden: the figure is bald.
+- Not done: a `character` id for it in `stage_scene`, Studio, the export; fingers and foot contact not looked at closely; arm twist bones do not follow, so forearms may pinch at the wrist.
