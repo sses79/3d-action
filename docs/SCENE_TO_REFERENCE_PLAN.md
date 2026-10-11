@@ -154,3 +154,11 @@ What this means for us:
 - **A hosted call avoids the hardware question** at a few cents per movement, but needs an account and a key, and sends the prompt to a third party.
 
 Not verified: any output quality, Mac support, the exact checkpoint licence terms, hosted output formats.
+
+## Quaternius Universal Base Characters, trial (2026-10-11)
+
+- Downloaded with the user's approval: `Universal Base Characters[Standard].zip`, 129 MB, CC0, from quaternius.itch.io (free option), unpacked in `.authoring/quaternius-base-characters/` (not in git). SHA-256 `fdbf1804…455f40`.
+- **The free edition holds two bodies only**: Superhero Male and Superhero Female, plus 8 hairstyles and eyebrows. The Regular and Teen bodies named on the pack's page are in the paid Source edition ($19.99, 655 MB).
+- **Same skeleton as ours**: both bodies have the 65 joints of our rig, name for name. No mapping is needed.
+- **Trial render** (`.authoring/renders/base-character-trial.jpg`): Abby in "Very Grown-Up" as the Superhero Female, the staged action unchanged. Arms folded, the glance and the talking all play. The renderer loads the other body when the payload names one (`staged.characters`, files served from `characterDir`), keeps only the rotations of the library clips and baked tracks (and the pelvis' position), so the body keeps its own proportions, and scales it to the performer's height.
+- Not done: this is a renderer payload field only. `stage_scene` has no character choice, Studio still shows the mannequin, hair is not attached, and foot height on the new body was not checked (the pelvis height is the mannequin's).

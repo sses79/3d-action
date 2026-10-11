@@ -12,7 +12,7 @@ import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,
 //  orbit   a slow quarter circle round the pair at eye height, always looking at the point between them.
 //  staged  (payload.staged) a scene staged from text: the actions are already in the room, each figure is scaled to its
 //          performer's height, and the camera is the scene's shot for the time. 'fixed' is the still check camera as above.
-type Payload={staged?:{objects:SceneObject[],heights:number[],cameras:StagedShot[]},level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
+type Payload={staged?:{objects:SceneObject[],heights:number[],cameras:StagedShot[],characters?:(string|null)[]},level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
 async function init(){
  const payload:Payload=await fetch('/payload.json').then(r=>r.json()),{width,height}=payload,scene=new T.Scene();scene.background=new T.Color('#eceeef');scene.fog=new T.Fog('#eceeef',14,40);
  const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(width,height);renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;document.body.appendChild(renderer.domElement);
@@ -20,8 +20,13 @@ async function init(){
  const floor=new T.Mesh(new T.PlaneGeometry(200,200),new T.MeshStandardMaterial({color:'#f1f2f2',roughness:1}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
  const gltf=await new GLTFLoader().loadAsync('/character.glb'),clay=new T.MeshStandardMaterial({color:'#f4f3f0',roughness:.82,metalness:0});
  // one load of the asset per character: a skinned mesh does not survive a plain clone
- const second=payload.actions.length>1?await new GLTFLoader().loadAsync('/character.glb'):null,cast=payload.actions.map((_,i)=>({root:i?second!.scene:gltf.scene}));
- const players=cast.map(({root},i)=>{const holder=new T.Group();holder.add(root);scene.add(holder);const scale=1.85/new T.Box3().setFromObject(root).getSize(new T.Vector3()).y*((payload.staged?.heights[i]??1.85)/1.85);holder.scale.setScalar(scale);root.traverse(o=>{const m=o as T.Mesh;if(m.isMesh){m.material=clay;m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;}});const anims=i?second!.animations:gltf.animations;return {holder,root,scale,player:new CharacterPlayer(root,anims,scale)};});
+ // Trial: another character of the same skeleton per performer (payload.staged.characters, a file served under /characters/).
+ // The library's clips and the baked tracks carry the mannequin's bone offsets; on another body only the rotations are kept
+ // (and the pelvis' position, for height), so the body keeps its own proportions.
+ const other=await Promise.all(payload.actions.map((_,i)=>payload.staged?.characters?.[i]?new GLTFLoader().loadAsync('/characters/'+payload.staged.characters[i]):null)),ownShape=(name:string)=>name.endsWith('.quaternion')||name.startsWith('pelvis.')||!name.includes('.'),turnsOnly=gltf.animations.map(c=>new T.AnimationClip(c.name,c.duration,c.tracks.filter(t=>ownShape(t.name))));
+ other.forEach((o,i)=>{if(o)payload.actions[i]={...payload.actions[i],tracks:payload.actions[i].tracks.filter((t:any)=>t.property==='rotation'||t.target==='$root'||t.target==='pelvis')};});
+ const second=payload.actions.length>1?await new GLTFLoader().loadAsync('/character.glb'):null,cast=payload.actions.map((_,i)=>({root:other[i]?other[i]!.scene:i?second!.scene:gltf.scene}));
+ const players=cast.map(({root},i)=>{const holder=new T.Group();holder.add(root);scene.add(holder);const scale=1.85/new T.Box3().setFromObject(root).getSize(new T.Vector3()).y*((payload.staged?.heights[i]??1.85)/1.85);holder.scale.setScalar(scale);root.traverse(o=>{const m=o as T.Mesh;if(m.isMesh){m.material=clay;m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;}});const anims=other[i]?turnsOnly:i?second!.animations:gltf.animations;return {holder,root,scale,player:new CharacterPlayer(root,anims,scale)};});
  const camera=new T.PerspectiveCamera(2*Math.atan(height/(2*Math.hypot(width,height)))*180/Math.PI,width/height,.1,200);
  // Level room. The source camera is rarely level: here the floor's normal in the camera's space (from a point map of the
  // source frame, given in payload.level) says how the camera is tipped. `level` is the turn that stands that normal upright.
