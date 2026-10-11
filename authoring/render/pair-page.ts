@@ -1,6 +1,7 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';
+import {MarchingCubes} from 'three/addons/objects/MarchingCubes.js';
 import {CharacterPlayer} from '../../runtime/player';
 import {characterFiles,ownShapeClips,ownShapeAction,ballHeight,floorLift,follow,characterCreatorMap} from '../../runtime/characters';
 import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom} from '../../runtime/pair-scene';
@@ -14,7 +15,7 @@ import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,
 //  orbit   a slow quarter circle round the pair at eye height, always looking at the point between them.
 //  staged  (payload.staged) a scene staged from text: the actions are already in the room, each figure is scaled to its
 //          performer's height, and the camera is the scene's shot for the time. 'fixed' is the still check camera as above.
-type Payload={followers?:Record<string,{prefix:string,hide?:string[]}>,staged?:{objects:SceneObject[],heights:number[],cameras:StagedShot[],characters?:string[]},level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
+type Payload={followers?:Record<string,{prefix:string,hide?:string[],hair?:string[]}>,staged?:{objects:SceneObject[],heights:number[],cameras:StagedShot[],characters?:string[]},level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
 async function init(){
  const payload:Payload=await fetch('/payload.json').then(r=>r.json()),{width,height}=payload,scene=new T.Scene();scene.background=new T.Color('#eceeef');scene.fog=new T.Fog('#eceeef',14,40);
  const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(width,height);renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;document.body.appendChild(renderer.domElement);
@@ -32,6 +33,14 @@ async function init(){
  const followers:({update:()=>void,holder:T.Group,lift:number}|null)[]=await Promise.all(players.map(async(p,i)=>{const id=payload.staged?.characters?.[i]??'',spec=payload.followers?.[id];if(!spec)return null;const body=await new FBXLoader().loadAsync('/follower/'+id),holder=new T.Group();holder.add(body);scene.add(holder);
    body.traverse(o=>{const m=o as T.Mesh;if(m.isMesh){m.material=new T.MeshStandardMaterial({color:'#f4f3f0',roughness:.82,side:T.DoubleSide});m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;if(spec.hide?.some(h=>m.name.includes(h)))m.visible=false;}});
    const size=new T.Box3().setFromObject(body).getSize(new T.Vector3()).y,height=payload.staged!.heights[i];holder.scale.setScalar(height/size);holder.updateMatrixWorld(true);p.player.sample({...payload.actions[i],tracks:[]},0);p.holder.position.set(0,0,0);p.holder.quaternion.identity();p.holder.updateMatrixWorld(true);
+   // Hair made of flat cards (meant for transparency textures) is a tangle of sheets in clay. The pieces named in spec.hair
+   // are replaced by one smooth volume: their points, in the head's own space, each add a small blob to a field, and the
+   // surface where the field is strong enough is drawn and fixed to the head (three's marching cubes). Tried first and
+   // dropped: convex shells of point groups (looked like broken rock) and fitted ellipsoids (looked like scales).
+   if(spec.hair?.length){const head=body.getObjectByName(spec.prefix+'Head')!;body.updateMatrixWorld(true);const pts:T.Vector3[]=[];
+    body.traverse(o=>{const m=o as T.SkinnedMesh;if(!m.isMesh||!spec.hair!.some(h=>m.name.includes(h)))return;m.visible=false;const at=m.geometry.getAttribute('position'),step=Math.max(1,Math.floor(at.count/1500));for(let k=0;k<at.count;k+=step){const v=new T.Vector3();if(m.isSkinnedMesh)m.getVertexPosition(k,v);else v.fromBufferAttribute(at,k);pts.push(head.worldToLocal(v.applyMatrix4(m.matrixWorld)));}});
+    if(pts.length){const box=new T.Box3().setFromPoints(pts),size=box.getSize(new T.Vector3()),side=Math.max(size.x,size.y,size.z)*1.3,mid=box.getCenter(new T.Vector3()),field=new MarchingCubes(64,new T.MeshStandardMaterial({color:'#e9e7e2',roughness:.9}),false,false,200000);field.isolation=80;field.reset();
+     const reach=(spec as any).hairBlob??.022,strength=92*reach*reach;for(const q of pts)field.addBall((q.x-mid.x)/side+.5,(q.y-mid.y)/side+.5,(q.z-mid.z)/side+.5,strength,12);field.update();field.position.copy(mid);field.scale.setScalar(side/2);field.castShadow=true;field.receiveShadow=true;field.frustumCulled=false;field.name='hair';head.add(field);}}
    // the file's own floor is y=0, so a toe joint's height at rest is its height over the sole
    const toes=[spec.prefix+'L_ToeBase',spec.prefix+'R_ToeBase'].map(n=>body.getObjectByName(n)!),rest=Math.min(...toes.map(o=>o.getWorldPosition(new T.Vector3()).y));
    const f=follow(T,p.root,body,characterCreatorMap,spec.prefix);p.root.traverse(o=>{if((o as T.Mesh).isMesh)o.visible=false;});

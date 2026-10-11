@@ -179,3 +179,13 @@ Not verified: any output quality, Mac support, the exact checkpoint licence term
 - **Renderer**: `payload.followers` (id → bone prefix and mesh names to hide) and `payload.followerFiles` (id → file), loaded with three's FBX loader, drawn as clay, scaled to the performer's height, raised so the lowest its toe joints come equals their rest height (the file's own floor is y=0; a bounding box of the skinned meshes was wrong and sank the feet 3 cm).
 - **Result** (`.authoring/renders/woman01-trial.jpg`): Abby's part plays on it: arms folded, the glance, the talking hands. The hair is flat cards meant for transparency textures and renders as a tangle of sheets in clay, so the hair pieces are hidden: the figure is bald.
 - Not done: a `character` id for it in `stage_scene`, Studio, the export; fingers and foot contact not looked at closely; arm twist bones do not follow, so forearms may pinch at the wrist.
+
+### Woman01's hair in clay (2026-10-11)
+
+The hair is three pieces of flat cards. Three treatments were tried in the renderer (`followers[id].hair`):
+
+1. Convex shells of groups of hair points: faceted, read as broken rock.
+2. An ellipsoid fitted to each group: the groups are flat, so they came out as discs and read as scales.
+3. **One smooth volume** (kept): the cards' points, in the head's own space, each add a small blob to a field, and the surface where the field is strong enough is drawn with three's marching cubes (64 cells a side) and fixed to the head. It reads as sculpted hair: a cap, bangs and two buns, the face clear from the side. It is somewhat fuller than the real hair and does not move.
+
+Still a renderer trial: no `character` id, not in Studio, not in the export. Sheet: `.authoring/renders/woman01-hair.jpg`.
