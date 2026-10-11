@@ -42,7 +42,8 @@ async function init(){
  const heightAt=(time:number,hips:T.Vector3[])=>{if(level)return cameraHeight;const k=Math.min(payload.hips[0].length-1,Math.max(0,time/Math.max(payload.duration,1e-6)*(payload.hips[0].length-1))),lo=Math.floor(k),hi=Math.min(payload.hips[0].length-1,lo+1),u=k-lo;let sum=0;hips.forEach((h,i)=>{const down=payload.hips[i][lo][1]*(1-u)+payload.hips[i][hi][1]*u;sum+=h.y+down;});return sum/hips.length;};
  const first=place(0),height0=heightAt(0,first);
  // A scene's objects: plain clay shapes standing for the set, a shade darker than the performers so the two read apart.
- if(payload.scene){const grey=new T.MeshStandardMaterial({color:'#b9bdc1',roughness:.9});scene.add(buildSceneObjects(T,payload.scene.objects,grey));(floor.material as T.MeshStandardMaterial).color.set('#cfd2d4');scene.fog=null;}
+ let objectGroup:T.Group|null=null;
+ if(payload.scene){const grey=new T.MeshStandardMaterial({color:'#b9bdc1',roughness:.9});objectGroup=buildSceneObjects(T,payload.scene.objects,grey);scene.add(objectGroup!);(floor.material as T.MeshStandardMaterial).color.set('#cfd2d4');scene.fog=null;}
  // A stage: a coarse mesh of the set from the source video, given in the camera's space at one moment (x right, y up, z toward
  // the camera, metres). It is stood in our scene by raising it by the camera's height at that moment, and replaces the plain floor.
  // It is only right for that moment's camera position: the source camera moves and the mesh does not follow it.
@@ -63,6 +64,19 @@ async function init(){
   else{camera.position.set(shift.x,Math.max(.15,payload.camera==='fixed'?height0:heightAt(time,hips)),shift.z);if(level)camera.quaternion.copy(level);else camera.quaternion.identity();if(track){camera.fov=2*Math.atan(height/(2*Math.hypot(width,height)*zoom))*180/Math.PI;camera.updateProjectionMatrix();}}
   camera.updateMatrixWorld(true);sun.target.position.set(centre.x,0,centre.z);sun.position.set(centre.x+3.5,7,centre.z+4.5);sun.target.updateMatrixWorld();
   renderer.render(scene,camera);renderer.getContext().finish();return renderer.domElement.toDataURL('image/png');};
+ // Depth pass: every surface drawn by how far it is from the camera, as inverse distance (white at `near`, black at `far` and
+ // beyond, linear in 1/distance between), the form depth-guided video models are fed.
+ const depthMaterial=new T.ShaderMaterial({uniforms:{near:{value:1.5},far:{value:40}},vertexShader:'#include <common>\n#include <skinning_pars_vertex>\nvarying float vZ;\nvoid main(){\n#include <skinbase_vertex>\n#include <begin_vertex>\n#include <skinning_vertex>\n#include <project_vertex>\nvZ=-mvPosition.z;}',fragmentShader:'uniform float near;uniform float far;varying float vZ;\nvoid main(){float d=clamp((1.0/vZ-1.0/far)/(1.0/near-1.0/far),0.0,1.0);gl_FragColor=vec4(vec3(d),1.0);}'}),clayBackground=scene.background;
+ (window as any).setPass=(pass:string,near=1.5,far=40)=>{depthMaterial.uniforms.near.value=near;depthMaterial.uniforms.far.value=far;scene.overrideMaterial=pass==='depth'?depthMaterial:null;scene.background=pass==='depth'?new T.Color(0,0,0):clayBackground;renderer.toneMapping=pass==='depth'?T.NoToneMapping:T.ACESFilmicToneMapping;};
+ // What the picture holds at a time, for a reference description: the camera, and for each performer and scene object its box
+ // in the picture (0-1 from the left and from the top, clipped to the frame) and its distance. Boxes are of the whole shape:
+ // what stands in front of what is not worked out.
+ (window as any).describe=(time:number)=>{(window as any).renderFrame(time);const r=(x:number,d=3)=>Math.round(x*10**d)/10**d,eye=camera.position,forward=camera.getWorldDirection(new T.Vector3()),v=new T.Vector3();
+  const boxOf=(points:T.Vector3[])=>{let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity,front=0;for(const p of points){if(v.copy(p).sub(eye).dot(forward)<.05)continue;front++;v.copy(p).project(camera);x0=Math.min(x0,(v.x+1)/2);x1=Math.max(x1,(v.x+1)/2);y0=Math.min(y0,(1-v.y)/2);y1=Math.max(y1,(1-v.y)/2);}if(!front)return null;const full=[x0,y0,x1,y1],clip=[Math.max(0,x0),Math.max(0,y0),Math.min(1,x1),Math.min(1,y1)];if(clip[2]<=clip[0]||clip[3]<=clip[1])return null;return {box:clip.map(x=>r(x)),whole:front===points.length&&full.every((x,i)=>Math.abs(x-clip[i])<1e-9)};};
+  const performers=players.map(p=>{const bones:T.Vector3[]=[];p.root.traverse(o=>{if((o as T.Bone).isBone)bones.push(o.getWorldPosition(new T.Vector3()));});const head=p.root.getObjectByName('Head')!.getWorldPosition(new T.Vector3());bones.push(head.clone().add(new T.Vector3(0,.14,0)));const hip=p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()),across=p.root.getObjectByName('thigh_r')!.getWorldPosition(new T.Vector3()).sub(p.root.getObjectByName('thigh_l')!.getWorldPosition(new T.Vector3())),facing=new T.Vector3(0,1,0).cross(across).setY(0).normalize(),toCamera=eye.clone().sub(hip).setY(0).normalize();
+   return {...(boxOf(bones)??{box:null,whole:false}),hip:hip.toArray().map(x=>r(x)),distance:r(hip.distanceTo(eye),2),turnedFromCamera:r(Math.atan2(facing.x*toCamera.z-facing.z*toCamera.x,facing.dot(toCamera))*180/Math.PI,0)};});
+  const objects=(objectGroup?.children??[]).map(o=>{const b=new T.Box3().setFromObject(o),corners=[0,1,2,3,4,5,6,7].map(k=>new T.Vector3(k&1?b.max.x:b.min.x,k&2?b.max.y:b.min.y,k&4?b.max.z:b.min.z)),seen=boxOf(corners);return {name:o.name,inFrame:!!seen,box:seen?.box??null,whole:seen?.whole??false,distance:r(b.getCenter(new T.Vector3()).distanceTo(eye),2)};});
+  return {time:r(time),camera:{position:eye.toArray().map(x=>r(x)),fovVertical:r(camera.fov,2),fovHorizontal:r(2*Math.atan(Math.tan(camera.fov*Math.PI/360)*camera.aspect)*180/Math.PI,2),pitchDown:r(-Math.asin(forward.y)*180/Math.PI,1),yawRight:r(Math.atan2(forward.x,-forward.z)*180/Math.PI,1),lensRatio:r(zoom)},performers,objects};};
  (window as any).renderReady=true;
 }
 init().catch(e=>(window as any).renderError=String(e?.message||e));

@@ -295,3 +295,16 @@ Pair `pair-samba` r8. Videos `.authoring/renders/pair-samba-r8-fixed-scene.mp4` 
 - Limits: the lock moves the whole performer, it does not bend a leg, so of two joined dancers at most the mean is held; a foot brushing the floor on purpose counts as planted; the measure counts swivels and brushes as slide.
 
 Pair `pair-samba` r15. Videos `.authoring/renders/pair-samba-r15-fixed-scene.mp4` and `pair-samba-r15-source-scene.mp4`.
+
+### Reference package for a video model (2026-10-11)
+
+Operation `export_pair_reference {pairId}` (51 operations) writes `.authoring/renders/<pair>-r<rev>-reference/`:
+
+- `clay.mp4` — white-model video from the source camera with the scene.
+- `depth.mp4` — the same frames as inverse distance from the camera (white near, black far; the near and far distances are in the meta; near is set at 0.6 of the nearest the performers come so they keep contrast).
+- `first-frame-clay.png`, `first-frame-depth.png`.
+- `reference.json` — the meta meant for a prompt-writer skill, in place of hand-written prompt text: files, depth encoding, conventions, the room's named objects with sizes and positions, a camera summary in 35 mm-equivalent focal lengths, the first frame on its own (framing, camera, each performer's box, distance, room position and which way they are turned, each object's box), a per-second timeline of the same, and the limits.
+
+Renderer support: `pair-video.mjs --depth`, `--still`, `--describe`; `pair-page.ts` `setPass` (depth shader that follows the skinned figures) and `describe`.
+
+Boxes are of whole shapes and do not allow for what stands in front of what. Samba pair: 40 mm at the start, 97 mm at 7 s, 29 mm at the end; first frame "full body with room around", both performers three-quarter turned toward picture left.
