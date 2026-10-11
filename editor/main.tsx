@@ -9,7 +9,7 @@ import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {Action,jump,burst,actionId,template,phaseKind,impactTime,clone,duration,locate,rootHeight,validateAction} from '../runtime/action';
 import {CharacterPlayer} from '../runtime/player';
 import {ImpactPreview} from '../runtime/effects';
-import {PairScene,sceneCameraAt,sampleSeries,buildSceneObjects} from '../runtime/pair-scene';
+import {PairScene,buildSceneObjects,standInRoom} from '../runtime/pair-scene';
 
 type View='current'|'reference'|'both'; type Cam='Orbit'|'Front'|'Side'|'Top';
 type State={action:Action;reference:Action;time:number;playing:boolean;speed:number;loop:boolean;view:View;camera:Cam;idle:boolean;grid:boolean;effects:boolean;videoReview:boolean;partner?:{action:Action;offset:number[];scene?:PairScene|null;mine?:number}|null};
@@ -53,7 +53,7 @@ function Viewport({state,onReady,onError,onCurves}:{state:React.MutableRefObject
     if(room!==shownRoom){shownRoom=room;if(roomGroup){scene.remove(roomGroup);roomGroup.traverse(o=>{if((o as THREE.Mesh).isMesh)(o as THREE.Mesh).geometry.dispose();});roomGroup=null;}if(room){roomGroup=buildSceneObjects(THREE,room.objects,roomMaterial);scene.add(roomGroup!);}}
     players.forEach((p,i)=>{const visible=!!pair||s.view==='both'||(s.view==='reference'?i===0:i===1);p.model.parent!.visible=visible;p.model.parent!.position.x=pair?(i===0?pair.offset[0]:0):s.view==='both'?(i===0?-1.2:1.2):0;p.model.parent!.position.z=pair&&i===0?pair.offset[2]:0;
      const a=i===0?(pair?pair.action:s.reference):s.action;p.sample(a,Math.min(s.time,duration(a)),s.idle);
-     const holder=p.model.parent!;if(room&&pair){const total=duration(s.action),scale=holder.userData.scale,side=room.performers[i===1?pair.mine!:1-pair.mine!],stand=(time:number,local:THREE.Vector3)=>{const c=sceneCameraAt(room.camera,time,total),q=new THREE.Quaternion().fromArray(c.quat),inCamera=new THREE.Vector3(side.origin[0]+local.x,-sampleSeries(side.hipDown,time,total),(side.origin[1]+local.z)*c.zoom).multiplyScalar(room.distanceScale?sampleSeries(room.distanceScale,time,total):1).applyQuaternion(q);return {q,at:new THREE.Vector3(inCamera.x+c.x,local.y,inCamera.z+c.z).sub(local.clone().applyQuaternion(q))};};
+     const holder=p.model.parent!;if(room&&pair){const total=duration(s.action),scale=holder.userData.scale,index=i===1?pair.mine!:1-pair.mine!,stand=(time:number,local:THREE.Vector3)=>{const r=standInRoom(room,index,time,total,local.toArray());return {q:new THREE.Quaternion().fromArray(r.quat),at:new THREE.Vector3().fromArray(r.position)}};
       if(i===1&&roomAnchorKey!==actionId(s.action)+total){roomAnchorKey=actionId(s.action)+total;p.sample(a,0,false);const first=stand(0,p.model.position.clone().multiplyScalar(scale));roomAnchor.set(first.at.x,0,first.at.z);p.sample(a,Math.min(s.time,duration(a)),s.idle);}
       const here=stand(Math.min(s.time,total),p.model.position.clone().multiplyScalar(scale));holder.quaternion.copy(here.q);holder.position.copy(here.at).sub(roomAnchor);if(roomGroup)roomGroup.position.copy(roomAnchor).negate();}
      else holder.quaternion.identity(),holder.position.y=0;

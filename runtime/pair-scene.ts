@@ -14,7 +14,7 @@
 // model assumed means the performer is that much further off). Height stays the character's own, from its floor rule.
 export type SceneObject={name:string;shape:'box'|'cylinder'|'arch';position:number[];size:number[];rotationY?:number;rim?:number};
 export type SceneCamera={quats:number[][];positions:number[][];focal:number[]};
-export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[]}[];distanceScale?:number[]};
+export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[];lock?:number[][]}[];distanceScale?:number[]};
 // Distance from one camera is the noisiest thing the body model gives, and it shows as feet sliding toward and away from the
 // camera. distanceScale evens it out: per frame, the factor that takes the pair's mean distance from the camera (model depth
 // times lens ratio) to its average over about a second. One factor for both performers, so what lies between them is kept.
@@ -44,4 +44,45 @@ export function buildSceneObjects(T:any,objects:SceneObject[],material:any){
   else geometry=o.shape==='box'?new T.BoxGeometry(1,1,1):new T.CylinderGeometry(.5,.5,1,40);
   const mesh=new T.Mesh(geometry,material);mesh.name=o.name;if(o.shape!=='arch')mesh.scale.set(o.size[0],o.size[1],o.size[2]);mesh.position.set(o.position[0],o.position[1],o.position[2]);mesh.rotation.y=(o.rotationY??0)*Math.PI/180;mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);}
  return group;
+}
+
+export const turn=(q:number[],v:number[])=>{const [x,y,z,w]=q,cx=y*v[2]-z*v[1],cy=z*v[0]-x*v[2],cz=x*v[1]-y*v[0];return [v[0]+2*(w*cx+y*cz-z*cy),v[1]+2*(w*cy+z*cx-x*cz),v[2]+2*(w*cz+x*cy-y*cx)];};
+// Where a performer's holder goes in the room at a time. local is the character's root position in its own action (metres).
+// Returns the holder's turn and position, and inCameraY (the hips' height in the turned camera frame, for the camera's height).
+// A point of the character at p in its action then lies at turn(quat, p) + position.
+export function standInRoom(scene:PairScene,index:number,time:number,duration:number,local:number[]){
+ const c=sceneCameraAt(scene.camera,time,duration),side=scene.performers[index],even=scene.distanceScale?sampleSeries(scene.distanceScale,time,duration):1,inCamera=turn(c.quat,[(side.origin[0]+local[0])*even,-sampleSeries(side.hipDown,time,duration)*even,(side.origin[1]+local[2])*c.zoom*even]),back=turn(c.quat,local);
+ let lx=0,lz=0;if(side.lock){const {lo,hi,u}=at(side.lock.length-1,time,duration);lx=side.lock[lo][0]*(1-u)+side.lock[hi][0]*u;lz=side.lock[lo][1]*(1-u)+side.lock[hi][1]*u;}
+ return {quat:c.quat,position:[inCamera[0]+c.x+lx-back[0],local[1]-back[1],inCamera[2]+c.z+lz-back[2]],inCameraY:inCamera[1],camera:c};
+}
+// Foot sliding: how far the stillest floor-level point of a performer moves over the floor, summed over the clip.
+// points[frame] = [heel left, ball left, heel right, ball right], each [x, y, z] in the room. A point is at floor level
+// within 3 cm of its own lowest level. A dancer's foot also brushes and swivels on purpose: a figure for comparing, not an error.
+const levels=(points:number[][][])=>[0,1,2,3].map(k=>{const ys=points.map(f=>f[k][1]).sort((a,b)=>a-b);return ys[Math.floor(ys.length*.05)];});
+export function footSlide(points:number[][][]){const lv=levels(points);let total=0;for(let f=1;f<points.length;f++){let best=Infinity;for(let k=0;k<4;k++)if(points[f][k][1]<lv[k]+.03&&points[f-1][k][1]<lv[k]+.03)best=Math.min(best,Math.hypot(points[f][k][0]-points[f-1][k][0],points[f][k][2]-points[f-1][k][2]));if(best<Infinity)total+=best;}return Math.round(total*100)/100;}
+// Foot locking. Walk through the clip keeping one support point: the heel or ball of a foot that is at floor level (for at
+// least minFrames). While it stays down, the performer is shifted over the floor so that point does not move; when support
+// passes to another point, that one is held where it then is, so nothing jumps. Holding every plant this way lets the
+// performer wander from where the picture put them, so the slow part of the shift (over about `drift` seconds) is taken out
+// again: what remains keeps feet still through a step and gives way over several steps.
+// Returns the shift [dx, dz] per frame, and what it does to the slide.
+export function footLock(points:number[][][],fps:number,drift=1.5,minFrames=4){
+ const n=points.length,lv=levels(points),low=(f:number,k:number)=>points[f][k][1]-lv[k],down=[0,1,2,3].map(k=>points.map((_,f)=>low(f,k)<.03));
+ for(const d of down){let start=-1;for(let f=0;f<=n;f++){if(f<n&&d[f]){if(start<0)start=f;}else if(start>=0){if(f-start<minFrames)for(let j=start;j<f;j++)d[j]=false;start=-1;}}}
+ const shift:number[][]=[];let support=-1,anchor=[0,0],dx=0,dz=0,plants=0;
+ for(let f=0;f<n;f++){
+  if(support>=0&&!down[support][f])support=-1;
+  if(support<0){let best=-1;for(let k=0;k<4;k++)if(down[k][f]&&(best<0||low(f,k)<low(f,best)))best=k;if(best>=0){support=best;anchor=[points[f][best][0]+dx,points[f][best][2]+dz];plants++;}}
+  if(support>=0){dx=anchor[0]-points[f][support][0];dz=anchor[1]-points[f][support][2];}
+  shift.push([dx,dz]);
+ }
+ const half=Math.max(1,Math.round(drift*fps/2)),out=shift.map((v,f)=>{let sx=0,sz=0,w=0;for(let j=-half;j<=half;j++){const g=shift[Math.min(n-1,Math.max(0,f+j))],k=half+1-Math.abs(j);sx+=k*g[0];sz+=k*g[1];w+=k;}return [Math.round((v[0]-sx/w)*1e4)/1e4,Math.round((v[1]-sz/w)*1e4)/1e4];});
+ const moved=points.map((fr,f)=>fr.map(p=>[p[0]+out[f][0],p[1],p[2]+out[f][1]]));
+ return {shift:out,plants,slideBeforeMeters:footSlide(points),slideAfterMeters:footSlide(moved),largestShiftMeters:Math.round(Math.max(...out.map(v=>Math.hypot(v[0],v[1])))*1000)/1000};
+}
+// Two performers who are holding on to each other must not be shifted apart. link[frame] is 1 while they are joined (hands
+// within reach of each other), 0 while they are apart. Where joined, both get the mean of their two shifts; in between it blends.
+export function sharedLock(a:number[][],b:number[][],link:number[]){
+ const n=a.length,soft=link.map((_,f)=>{let s=0,w=0;for(let j=-6;j<=6;j++){const k=7-Math.abs(j);s+=k*link[Math.min(n-1,Math.max(0,f+j))];w+=k;}return s/w;}),r=(x:number)=>Math.round(x*1e4)/1e4;
+ return [a.map((v,f)=>v.map((x,i)=>r((x+b[f][i])/2+(1-soft[f])*(x-b[f][i])/2))),b.map((v,f)=>v.map((x,i)=>r((x+a[f][i])/2+(1-soft[f])*(x-a[f][i])/2)))];
 }

@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {CharacterPlayer} from '../../runtime/player';
-import {SceneObject,SceneCamera,sceneCameraAt,sampleSeries,buildSceneObjects} from '../../runtime/pair-scene';
+import {PairScene,SceneObject,SceneCamera,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom} from '../../runtime/pair-scene';
 // White-model render of a pair of actions, one picture per call. Cameras:
 //  source  the camera of the source video. The body model places each performer relative to that camera, and the actions keep
 //          those positions, so a camera at that origin with the model's lens (focal length = the picture's diagonal in pixels)
@@ -10,7 +10,7 @@ import {SceneObject,SceneCamera,sceneCameraAt,sampleSeries,buildSceneObjects} fr
 //  fixed   the source camera held where it was on the first frame. With a scene: a camera that stands still in the room and
 //          keeps both performers in full view for the whole clip, to show how they move over the floor (sliding feet, drift).
 //  orbit   a slow quarter circle round the pair at eye height, always looking at the point between them.
-type Payload={level?:{normal:number[],height?:number},scene?:{objects:SceneObject[],camera:SceneCamera,distanceScale?:number[]},track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
+type Payload={level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
 async function init(){
  const payload:Payload=await fetch('/payload.json').then(r=>r.json()),{width,height}=payload,scene=new T.Scene();scene.background=new T.Color('#eceeef');scene.fog=new T.Fog('#eceeef',14,40);
  const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(width,height);renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;document.body.appendChild(renderer.domElement);
@@ -36,7 +36,8 @@ async function init(){
  const hipDown=(time:number,i:number)=>{const n=payload.hips[i].length-1,k=Math.min(n,Math.max(0,time/Math.max(payload.duration,1e-6)*n)),lo=Math.floor(k),hi=Math.min(n,lo+1),u=k-lo;return payload.hips[i][lo][1]*(1-u)+payload.hips[i][hi][1]*u;};
  let cameraHeight=0;
  const place=(time:number)=>{let sum=0;if(track)trackAt(time);players.forEach((p,i)=>{p.player.sample(payload.actions[i],Math.min(time,payload.duration));
-   if(level){const local=p.root.position.clone().multiplyScalar(p.scale),inCamera=new T.Vector3(payload.origins[i][0]+local.x,-hipDown(time,i),(payload.origins[i][1]+local.z)*zoom).multiplyScalar(even).applyQuaternion(level);p.holder.quaternion.copy(level);p.holder.position.set(inCamera.x+shift.x,local.y,inCamera.z+shift.z).sub(local.clone().applyQuaternion(level));p.holder.updateMatrixWorld(true);sum+=p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()).y-inCamera.y;}
+   if(payload.scene){const local=p.root.position.clone().multiplyScalar(p.scale),s=standInRoom(payload.scene,i,time,payload.duration,local.toArray());p.holder.quaternion.fromArray(s.quat);p.holder.position.fromArray(s.position);p.holder.updateMatrixWorld(true);sum+=p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()).y-s.inCameraY;}
+   else if(level){const local=p.root.position.clone().multiplyScalar(p.scale),inCamera=new T.Vector3(payload.origins[i][0]+local.x,-hipDown(time,i),(payload.origins[i][1]+local.z)*zoom).multiplyScalar(even).applyQuaternion(level);p.holder.quaternion.copy(level);p.holder.position.set(inCamera.x+shift.x,local.y,inCamera.z+shift.z).sub(local.clone().applyQuaternion(level));p.holder.updateMatrixWorld(true);sum+=p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()).y-inCamera.y;}
    else{p.holder.position.set(payload.origins[i][0],0,payload.origins[i][1]);p.holder.updateMatrixWorld(true);}});cameraHeight=sum/players.length;return players.map(p=>p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()));};
  const heightAt=(time:number,hips:T.Vector3[])=>{if(level)return cameraHeight;const k=Math.min(payload.hips[0].length-1,Math.max(0,time/Math.max(payload.duration,1e-6)*(payload.hips[0].length-1))),lo=Math.floor(k),hi=Math.min(payload.hips[0].length-1,lo+1),u=k-lo;let sum=0;hips.forEach((h,i)=>{const down=payload.hips[i][lo][1]*(1-u)+payload.hips[i][hi][1]*u;sum+=h.y+down;});return sum/hips.length;};
  const first=place(0),height0=heightAt(0,first);

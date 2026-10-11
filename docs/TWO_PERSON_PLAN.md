@@ -283,3 +283,15 @@ Samba pair, 10 s:
 - Not done: locking a planted foot to the floor (contact detection and a root correction). That is the step that would remove sliding rather than reduce it.
 
 Pair `pair-samba` r8. Videos `.authoring/renders/pair-samba-r8-fixed-scene.mp4` and `pair-samba-r8-source-scene.mp4`.
+
+### Foot locking in the room (2026-10-11)
+
+`set_pair_scene` now locks feet by default (`footLock: false` to skip, `footLockDrift` seconds, default 1.5). Code: `footLock`, `sharedLock`, `footSlide`, `standInRoom` in `runtime/pair-scene.ts`; the service follows each performer's heels, balls of the feet, hands and hips through the clip with the character rig, in the room.
+
+- **Rule.** One support point at a time: a heel or ball within 3 cm of its own lowest level for at least 4 frames. While it stays down the performer is shifted over the floor so the point does not move; when support passes to another point, that one is held where it then is. The slow part of the shift (a 1.5 s average) is removed again so the performer does not wander from where the picture put them. Stored per frame as `performers[i].lock` and applied by the renderer and Studio through `standInRoom`.
+- **Joined performers share the shift.** Locking each alone moved the two up to 36 cm against each other (median 11 cm), which would part held hands and could push bodies together. So while any hand of one is within 30 cm of a hand of the other, or their hips are within 0.9 m (fading out by 1.3 m), both take the mean of their two shifts. 110 of 301 frames are joined on the samba pair.
+- **Samba pair, slide over 10 s** (left, right): placed in the room 10.1, 9.8 m → distance evened 8.1, 7.9 m → locked alone 4.4, 3.4 m → locked with the shared rule (stored) 5.6, 4.9 m. Largest shift of a performer 26 cm. In seconds 0–5 the slide is now 0.03–0.4 m per second; in seconds 5–10, where they hold hands, turn and run, 0.3–1.75 m per second.
+- A longer drift window holds feet stiller and lets the performers wander further: 3 s gives 4.9, 4.4 m with shifts up to 37 cm.
+- Limits: the lock moves the whole performer, it does not bend a leg, so of two joined dancers at most the mean is held; a foot brushing the floor on purpose counts as planted; the measure counts swivels and brushes as slide.
+
+Pair `pair-samba` r15. Videos `.authoring/renders/pair-samba-r15-fixed-scene.mp4` and `pair-samba-r15-source-scene.mp4`.
