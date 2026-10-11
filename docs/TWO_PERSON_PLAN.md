@@ -215,3 +215,13 @@ No "done" line yet; it depends on what step 3 shows.
 - PromptHMR: https://arxiv.org/html/2504.06397v2
 - Close human interaction from one video: https://arxiv.org/pdf/2507.02565 and https://arxiv.org/html/2404.11291v1
 - SAM 3 on Apple Silicon, conflicting reports: https://huggingface.co/facebook/sam3/discussions/11 and https://codersera.com/blog/how-to-run-sam-3-locally-2026/amp/
+
+### Stage from several frames: Depth Anything 3 Base, first check (2026-10-11)
+
+Weights `depth_anything_3_base.safetensors` (541.5 MB, Apache 2.0) in `.authoring/comfyui/models/geometry_estimation`; run headless through `LoadDA3Model(name,'fp32')` and `DA3Inference(..., 'multiview')`. Scratch only, nothing in the pipeline yet.
+
+- The default dtype gives all-NaN output on MPS; `fp32` works.
+- The returned intrinsics are at the model's working resolution (392×224 for a 1280×720 frame at 392), not the frame's. Scale them before unprojecting.
+- 8 frames over 70.7–80.7 s at 392: usable. After applying each view's own focal length the depth-to-body-model scale is 11.5 with 7% spread over views, all eight floors lie on one plane with 17 cm rms, camera height 1.2–1.7 m (MoGe on one frame: 1.62 m), pitch 0.5–11° down. `cam_dec` and `ray_pose` agree to about 10%.
+- 16 frames at 504: both pose methods return unusable cameras (zero or >130° fields of view, centres 1e5 units away). Cause not found; depth maps still look valid.
+- Weak point: the per-view field of view swings from 23° to 78° on a shot that does not zoom that much, and the camera path (2.9 m) does not match the dancers' 4.9 m approach in the body model, which assumes one fixed lens. Depth divided by focal length is the reliable quantity; the split between zoom and dolly is not.
