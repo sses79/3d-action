@@ -319,3 +319,13 @@ The `video-to-reference` steps run on `pair-kc-139` (99.77-103.6 s), as the firs
 - Foot locking: slide 1.55, 1.25 m → 0.64, 0.55 m over 3.8 s; largest shift 9 cm; 51 of 116 frames joined.
 - The fixed camera lands outside the pit behind the right wall, which covers part of the floor: its placement does not know about walls.
 - Package: `.authoring/renders/pair-kc-139-r6-reference/` (45 mm equivalent at the start, 50 mm from 1 s).
+
+### Depth straight from the video: Video Depth Anything Small, first try (2026-10-11)
+
+Question from the user: if the depth video is what the video model needs, can it come from the original video without building 3D. Research found it can (Video Depth Anything, DepthCrafter, FlashDepth), and that a published ComfyUI workflow ("Depth Dancer") feeds per-frame depth of a source clip plus one reference image to Seedance 2.0.
+
+- Installed: code in `.authoring/video-depth-anything` (github.com/DepthAnything/Video-Depth-Anything, commit 4f5ae23, Apache-2.0) and `checkpoints/video_depth_anything_vits.pth` (116 MB, Small, Apache-2.0). Base and Large are CC-BY-NC-4.0 and were not fetched.
+- Driver: `authoring/render/video-depth.py VIDEO START END OUT.mp4`. Runs in the vision venv with nothing installed: einops and tqdm are borrowed from ComfyUI's venv, easydict is stood in for, xformers is optional. Full precision on MPS.
+- Samba window, 241 frames at 1280×720: valid output, **29 minutes** on this Mac's GPU. Depth of still pixels changes 0.3% of the range from frame to frame.
+- Against the depth from our 3D scene (`.authoring/renders/direct-depth/samba-compare.mp4`, `.jpg`): the direct depth has the dancers exactly as filmed, with skirt, hair and true outlines, and a clean floor; the stage behind them is almost black, so the set barely registers. Ours shows the stage clearly and the dancers as plain figures in poses that are close but estimated.
+- So the two carry different things: direct depth is the performers and the floor; the 3D scene is the layout, the camera, the meta, and the freedom to change the set. Not tried: either one in a generation; the Large model; a faster machine.
