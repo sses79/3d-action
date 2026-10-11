@@ -261,3 +261,25 @@ Limits: a real jib move is not represented (the camera is assumed to stay in one
 - New shape `arch` (half an oval ring, `rim` its band width). The samba scene now has 27 objects (`authoring/render/scene-samba.py`): three front steps, platform, bandstand wall, roof and four posts, five stair blocks each side, seating and balcony each side, rear gallery, three arches, back screen. Pair `pair-samba` r7; video `.authoring/renders/pair-samba-r7-source-scene.mp4`.
 - **Camera tilt corrected.** The wide views fix the bandstand roof at about 2.4 m. Against the dancers' height that puts the clip's camera about 1.1 m over the floor looking 1° up, not 1.8 m looking 5° down as the previous section assumed. The floor read from the first depth view alone had said this (-1.1°, 0.99 m) and is now what `--nodal` uses. The earlier objects only matched the stills because they were too low and too near, which cancelled the wrong tilt. Bandstand centre is now 15.5 m from the camera (was 12.8 m).
 - The wide views were read by eye; no camera was solved for them. The check is still the clip's own stills (`stage-candidates/scene-check.jpg`).
+
+### Fixed-camera check: foot sliding (2026-10-11)
+
+`render_pair_video` with `camera: fixed` on a pair with a scene now gives a still camera in the room holding both performers in full view; `feet: true` writes heel and ball positions per frame, and `authoring/render/foot-slide.py` sums how far the stillest floor-level point of each performer moves (a point is "planted" within 3 cm of its own lowest level).
+
+Samba pair, 10 s:
+
+| | left | right |
+|---|---|---|
+| Slide as first placed in the room | 10.1 m | 9.8 m |
+| Of that, toward or away from the camera | 8.8 m | 9.1 m |
+| With the pair's distance evened (now stored) | 8.1 m | 7.9 m |
+| Distance held constant (best this can reach) | 7.4 m | 6.8 m |
+| Old camera-space pair view, no scene | 12.4 m | 12.4 m |
+
+- At large scale the placement holds: the dancers stay 5.0–7.3 m from the camera and 0.7–1.7 m apart, while the body model alone had them come from 7.6 m to 2.75 m (that was the zoom).
+- The slide is mostly along the line to the camera: single-camera distance noise, about 4.6 cm rms per frame at the hips. Steady-camera seconds 2–4 slide 0.2–0.4 m per second; the zoom stretches 5–9 slide 1–2 m per second.
+- **Distance evening** (`distanceScale` in the scene, computed by `set_pair_scene`): one factor per frame for both performers that takes the pair's mean distance to its average over about a second. One factor for both, so the gap between them and the hand holds are kept. Evening each performer separately would reach 7.0 m but moves them up to 10 cm against each other.
+- The measure overstates sliding for a fast samba: feet brush and swivel at floor level on purpose, and with the distance held constant 7 m remains, part real travel (they run hand in hand in the last 3 s), part pose noise. It is a figure for comparing runs, not an absolute.
+- Not done: locking a planted foot to the floor (contact detection and a root correction). That is the step that would remove sliding rather than reduce it.
+
+Pair `pair-samba` r8. Videos `.authoring/renders/pair-samba-r8-fixed-scene.mp4` and `pair-samba-r8-source-scene.mp4`.

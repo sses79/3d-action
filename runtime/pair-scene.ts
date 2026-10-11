@@ -14,7 +14,14 @@
 // model assumed means the performer is that much further off). Height stays the character's own, from its floor rule.
 export type SceneObject={name:string;shape:'box'|'cylinder'|'arch';position:number[];size:number[];rotationY?:number;rim?:number};
 export type SceneCamera={quats:number[][];positions:number[][];focal:number[]};
-export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[]}[]};
+export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[]}[];distanceScale?:number[]};
+// Distance from one camera is the noisiest thing the body model gives, and it shows as feet sliding toward and away from the
+// camera. distanceScale evens it out: per frame, the factor that takes the pair's mean distance from the camera (model depth
+// times lens ratio) to its average over about a second. One factor for both performers, so what lies between them is kept.
+export function distanceScale(depths:number[][][],camera:SceneCamera,half=15){
+ const n=depths[0].length,m=camera.focal.length-1,raw=Array.from({length:n},(_,k)=>{const f=camera.focal[Math.round(k/Math.max(n-1,1)*m)];return depths.reduce((s,h)=>s+Math.hypot(h[k][0],h[k][2]*f),0)/depths.length;});
+ return raw.map((v,k)=>{let sum=0,weight=0;for(let j=-half;j<=half;j++){const w=half+1-Math.abs(j);sum+=w*raw[Math.min(n-1,Math.max(0,k+j))];weight+=w;}return Math.round(sum/weight/v*1e4)/1e4;});
+}
 const finite=(v:any,n:number)=>Array.isArray(v)&&v.length===n&&v.every(x=>typeof x==='number'&&Number.isFinite(x));
 export function validateScene(scene:any):string|null{
  if(!scene||!Array.isArray(scene.objects)||scene.objects.length>64)return 'A scene needs up to 64 objects';

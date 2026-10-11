@@ -1,15 +1,16 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {CharacterPlayer} from '../../runtime/player';
-import {SceneObject,SceneCamera,sceneCameraAt,buildSceneObjects} from '../../runtime/pair-scene';
+import {SceneObject,SceneCamera,sceneCameraAt,sampleSeries,buildSceneObjects} from '../../runtime/pair-scene';
 // White-model render of a pair of actions, one picture per call. Cameras:
 //  source  the camera of the source video. The body model places each performer relative to that camera, and the actions keep
 //          those positions, so a camera at that origin with the model's lens (focal length = the picture's diagonal in pixels)
 //          sees the pair framed as the video framed the performers. Its height over our floor comes, per frame, from how far
 //          below the camera's axis the model put each performer's hips against how high our character's hips are.
-//  fixed   the source camera held where it was on the first frame.
+//  fixed   the source camera held where it was on the first frame. With a scene: a camera that stands still in the room and
+//          keeps both performers in full view for the whole clip, to show how they move over the floor (sliding feet, drift).
 //  orbit   a slow quarter circle round the pair at eye height, always looking at the point between them.
-type Payload={level?:{normal:number[],height?:number},scene?:{objects:SceneObject[],camera:SceneCamera},track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
+type Payload={level?:{normal:number[],height?:number},scene?:{objects:SceneObject[],camera:SceneCamera,distanceScale?:number[]},track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
 async function init(){
  const payload:Payload=await fetch('/payload.json').then(r=>r.json()),{width,height}=payload,scene=new T.Scene();scene.background=new T.Color('#eceeef');scene.fog=new T.Fog('#eceeef',14,40);
  const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(width,height);renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;document.body.appendChild(renderer.domElement);
@@ -29,13 +30,13 @@ async function init(){
  // Tracked camera (payload.track): the same, with the turn taken per frame from a track of the source camera through a fixed
  // room (its floor at y=0), plus where the camera stands on the floor and its lens (as a multiple of the body model's lens).
  // A longer lens than the model assumed puts the performers that much further away, so their depth is scaled by it.
- const track=payload.scene?.camera??payload.track,shift=new T.Vector3();let zoom=1;
- const trackAt=(time:number)=>{const c=sceneCameraAt(track!,time,payload.duration);level!.fromArray(c.quat);shift.set(c.x,0,c.z);zoom=c.zoom;};
+ const track=payload.scene?.camera??payload.track,shift=new T.Vector3();let zoom=1,even=1;
+ const trackAt=(time:number)=>{const c=sceneCameraAt(track!,time,payload.duration);level!.fromArray(c.quat);shift.set(c.x,0,c.z);zoom=c.zoom;even=payload.scene?.distanceScale?sampleSeries(payload.scene.distanceScale,time,payload.duration):1;};
  const level=track?new T.Quaternion():payload.level?new T.Quaternion().setFromUnitVectors(new T.Vector3().fromArray(payload.level.normal).normalize(),new T.Vector3(0,1,0)):null;
  const hipDown=(time:number,i:number)=>{const n=payload.hips[i].length-1,k=Math.min(n,Math.max(0,time/Math.max(payload.duration,1e-6)*n)),lo=Math.floor(k),hi=Math.min(n,lo+1),u=k-lo;return payload.hips[i][lo][1]*(1-u)+payload.hips[i][hi][1]*u;};
  let cameraHeight=0;
  const place=(time:number)=>{let sum=0;if(track)trackAt(time);players.forEach((p,i)=>{p.player.sample(payload.actions[i],Math.min(time,payload.duration));
-   if(level){const local=p.root.position.clone().multiplyScalar(p.scale),inCamera=new T.Vector3(payload.origins[i][0]+local.x,-hipDown(time,i),(payload.origins[i][1]+local.z)*zoom).applyQuaternion(level);p.holder.quaternion.copy(level);p.holder.position.set(inCamera.x+shift.x,local.y,inCamera.z+shift.z).sub(local.clone().applyQuaternion(level));p.holder.updateMatrixWorld(true);sum+=p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()).y-inCamera.y;}
+   if(level){const local=p.root.position.clone().multiplyScalar(p.scale),inCamera=new T.Vector3(payload.origins[i][0]+local.x,-hipDown(time,i),(payload.origins[i][1]+local.z)*zoom).multiplyScalar(even).applyQuaternion(level);p.holder.quaternion.copy(level);p.holder.position.set(inCamera.x+shift.x,local.y,inCamera.z+shift.z).sub(local.clone().applyQuaternion(level));p.holder.updateMatrixWorld(true);sum+=p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()).y-inCamera.y;}
    else{p.holder.position.set(payload.origins[i][0],0,payload.origins[i][1]);p.holder.updateMatrixWorld(true);}});cameraHeight=sum/players.length;return players.map(p=>p.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()));};
  const heightAt=(time:number,hips:T.Vector3[])=>{if(level)return cameraHeight;const k=Math.min(payload.hips[0].length-1,Math.max(0,time/Math.max(payload.duration,1e-6)*(payload.hips[0].length-1))),lo=Math.floor(k),hi=Math.min(payload.hips[0].length-1,lo+1),u=k-lo;let sum=0;hips.forEach((h,i)=>{const down=payload.hips[i][lo][1]*(1-u)+payload.hips[i][hi][1]*u;sum+=h.y+down;});return sum/hips.length;};
  const first=place(0),height0=heightAt(0,first);
@@ -51,8 +52,13 @@ async function init(){
    const h=payload.level!.height??lift,at=geo.getAttribute('position') as T.BufferAttribute,v=new T.Vector3(),low:boolean[]=[];for(let k=0;k<at.count;k++){v.fromBufferAttribute(at,k).applyQuaternion(level);v.y+=h;low.push(Math.abs(v.y)<.1);at.setXYZ(k,v.x,low[k]?0:v.y,v.z);}
    const keep:number[]=[],idx=payload.stage.indices;for(let k=0;k<idx.length;k+=3)if(!(low[idx[k]]&&low[idx[k+1]]&&low[idx[k+2]]))keep.push(idx[k],idx[k+1],idx[k+2]);geo.setIndex(keep);geo.computeVertexNormals();scene.add(mesh);scene.fog=null;}
   else{mesh.position.y=lift;scene.add(mesh);floor.visible=false;scene.fog=null;}}
+ // the still camera for a scene: off to one side of the ground the performers cover, far enough back to hold all of it
+ let still:{eye:T.Vector3,look:T.Vector3}|null=null;if(track&&payload.camera==='fixed'){const box=new T.Box3();for(let k=0;k<=40;k++)for(const h of place(payload.duration*k/40))box.expandByPoint(h);const mid=box.getCenter(new T.Vector3()),reach=box.getSize(new T.Vector3()).setY(0).length()/2;still={eye:new T.Vector3(mid.x+(reach+5)*.55,1.7,mid.z+(reach+5)*.83),look:new T.Vector3(mid.x,.95,mid.z)};}
+ // where the feet are in the room at a time: heel and ball of each foot, per performer (for measuring sliding)
+ (window as any).feet=(time:number)=>{place(time);return players.map(p=>['foot_l','ball_l','foot_r','ball_r'].map(n=>p.root.getObjectByName(n)!.getWorldPosition(new T.Vector3()).toArray()));};
  (window as any).renderFrame=(time:number)=>{const hips=place(time),centre=hips.reduce((s,h)=>s.add(h),new T.Vector3()).divideScalar(hips.length);
   if(payload.camera==='orbit'){const angle=-Math.PI/4+Math.PI/2*time/Math.max(payload.duration,1e-6),far=5.2;camera.position.set(centre.x+Math.sin(angle)*far,1.55,centre.z+Math.cos(angle)*far);camera.lookAt(centre.x,1,centre.z);}
+  else if(still){camera.position.copy(still.eye);camera.fov=38;camera.updateProjectionMatrix();camera.lookAt(still.look);}
   else{camera.position.set(shift.x,Math.max(.15,payload.camera==='fixed'?height0:heightAt(time,hips)),shift.z);if(level)camera.quaternion.copy(level);else camera.quaternion.identity();if(track){camera.fov=2*Math.atan(height/(2*Math.hypot(width,height)*zoom))*180/Math.PI;camera.updateProjectionMatrix();}}
   camera.updateMatrixWorld(true);sun.target.position.set(centre.x,0,centre.z);sun.position.set(centre.x+3.5,7,centre.z+4.5);sun.target.updateMatrixWorld();
   renderer.render(scene,camera);renderer.getContext().finish();return renderer.domElement.toDataURL('image/png');};
