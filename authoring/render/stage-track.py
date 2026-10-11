@@ -1,5 +1,10 @@
 # Fixed stage and camera track from a few key views with depth (Depth Anything 3) and the video itself.
-# track.py key.npz video.mp4 start out.json   (run from the repo root; reads the body model's hips for the scale)
+# .authoring/vision-venv/bin/python authoring/render/stage-track.py key.npz video.mp4 <window start s> out.json --nodal [--overlay=x0,y0,x1,y1 ...]
+# Run from the repo root after both performers of the window are built (it reads their hips from the body stage's cache).
+# --nodal: camera stays in one place, turns and zooms; solved frame against reference frame, no depth. Use it.
+# --overlay: a screen region with a channel logo or caption (pixels); mask every one or they pass for a camera that never moves.
+# Without --nodal the older map-based solve runs (camera free to travel); it trades zoom for travel on flat depth and is kept for study.
+# out.json: track {quats, positions, focal} for set_pair_scene's scene.camera, a summary, and a rough stage mesh (not used).
 import numpy as np,cv2,json,glob,os,sys
 key,video,start,out=sys.argv[1],sys.argv[2],float(sys.argv[3]),sys.argv[4]
 d=np.load(key);D=d['depth'];IM=d['frames'];TK=d['times'];CF=d['confidence'];n,H,W=D.shape;f0=float(np.hypot(W,H));KI=d['intrinsics'][0];fk=[float(KI[i,0,0]*W/(2*KI[i,0,2])) for i in range(n)]

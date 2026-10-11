@@ -1,6 +1,8 @@
-"""Trial: Depth Anything 3 (Base) on several frames of one shot through ComfyUI's nodes: depth and a camera per frame. Scratch."""
+"""Depth Anything 3 (Base) on a few frames of one shot, through ComfyUI's nodes: depth and a camera per frame, saved as .npz for stage-track.py.
+Run with ComfyUI's Python:  .authoring/comfyui/.venv/bin/python authoring/render/stage-depth.py .authoring/comfyui video.mp4 out.npz t0,t1,...,t7 [392]
+Use 8 frames at 392: 16 frames at 504 returned unusable cameras. Weights: depth_anything_3_base.safetensors in .authoring/comfyui/models/geometry_estimation."""
 import sys,os,json,time
-comfy,video,out=os.path.abspath(sys.argv[1]),os.path.abspath(sys.argv[2]),os.path.abspath(sys.argv[3]);times=[float(x) for x in sys.argv[4].split(',')];res=int(sys.argv[5]) if len(sys.argv)>5 else 504
+comfy,video,out=os.path.abspath(sys.argv[1]),os.path.abspath(sys.argv[2]),os.path.abspath(sys.argv[3]);times=[float(x) for x in sys.argv[4].split(',')];res=int(sys.argv[5]) if len(sys.argv)>5 else 392
 import numpy as np
 sys.argv=[sys.argv[0]]+(['--cpu'] if os.environ.get('DA3_CPU') else []);sys.path.insert(0,comfy);os.chdir(comfy)
 import torch,av

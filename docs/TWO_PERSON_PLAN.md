@@ -308,3 +308,14 @@ Operation `export_pair_reference {pairId}` (51 operations) writes `.authoring/re
 Renderer support: `pair-video.mjs --depth`, `--still`, `--describe`; `pair-page.ts` `setPass` (depth shader that follows the skinned figures) and `describe`.
 
 Boxes are of whole shapes and do not allow for what stands in front of what. Samba pair: 40 mm at the start, 97 mm at 7 s, 29 mm at the end; first frame "full body with room around", both performers three-quarter turned toward picture left.
+
+### Second scene: the fight pit at 1:39 (2026-10-11)
+
+The `video-to-reference` steps run on `pair-kc-139` (99.77-103.6 s), as the first use of the skill on another clip.
+
+- Camera: 8 depth key views, `stage-track.py --nodal`, no overlays in this shot. All 116 frames solved (1 reference change, median 79 points, minimum 43). Lens 1598 → 1770 px, pitch 14° down, height 2.33 m, floor flat to 1.8 cm.
+- New shape `wedge` (a box cut corner to corner) for the sloped walls. `authoring/render/scene-pit.py` writes 10 objects: four walls, four ledges, spectator blocks behind two. The far corner and both wall directions come from casting first-frame picture points onto the floor through the tracked camera; the two walls came out 95° apart, taken as square. Wall height 1.3 m at about 41° from where the top corner sits in the picture. Assumed: the pit is 6.5 m square, ledge depth, the two near walls.
+- Check against five video stills (`.authoring/renders/pair-kc-139-source-check.jpg`, made with the new `authoring/render/compare-stills.py`): floor edge, both walls and the corner sit where the video has them throughout.
+- Foot locking: slide 1.55, 1.25 m → 0.64, 0.55 m over 3.8 s; largest shift 9 cm; 51 of 116 frames joined.
+- The fixed camera lands outside the pit behind the right wall, which covers part of the floor: its placement does not know about walls.
+- Package: `.authoring/renders/pair-kc-139-r6-reference/` (45 mm equivalent at the start, 50 mm from 1 s).

@@ -5,6 +5,8 @@ description: Turn a window of a local video into a draft 3D character action in 
 
 # Video to action
 
+For two performers, a stage and a reference package for a video model, continue with the `video-to-reference` skill after building both performers here.
+
 Project: `/Users/tim/Yun/codex-3d`. The Studio service must be running (`npm run start:authoring`, port 5174). Use the `animation-studio` MCP tools, or `node authoring/cli.mjs call TOOL --args file.json`. Reference: [RECONSTRUCT_MOTION.md](/Users/tim/Yun/codex-3d/docs/RECONSTRUCT_MOTION.md).
 
 You choose the window, the options and the phase labels, and you judge the result against the video. The tools do all numerical work. Never patch joint angles or keyframes by hand to make a video-derived action look right; if the tools cannot get there, say what is wrong and stop.
