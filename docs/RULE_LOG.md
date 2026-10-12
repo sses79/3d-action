@@ -224,3 +224,7 @@ State at the line drawn on 2026-10-08 (run 34, commit after `21e7c0e`): 35 rules
 - R27's hip ranges need performer-specific values, or the pose-dependent limits of Akhter and Black (CVPR 2015, measured on gymnasts), before they can flag anything. Elbows are not yet hinged in the retarget; shoulders, neck and wrists have no range check.
 - Back sweep, and the 39 inverted or hands-on-floor tricks, are outside what the rules cover.
 - Grades are LLM judgements of still poses. The user has reviewed Pop 360 (crescent), J-step swing 540, Cheat 720, Backside 900 and Cheat 360 crescent in Studio, each in an earlier revision.
+
+## 2026-10-12 — `coarse` option for the body stage (no rule changed)
+
+`body.py --every N` (from `reconstruct_motion {coarse: true}`): the model runs on every third observed frame and the second look (R39) is skipped; despike (R38) and smoothing run on the thinner sequence, the smoothing window shortened to match. Off by default, so the default path is unchanged and the batch was not run. Measured on the samba pair only (`docs/TWO_PERSON_PLAN.md`, last section). `body.py` changed, so every body-stage cache key changed. Not checked: what despike does on a sequence three times as sparse; fast clips.

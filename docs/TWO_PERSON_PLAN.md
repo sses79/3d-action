@@ -329,3 +329,23 @@ Question from the user: if the depth video is what the video model needs, can it
 - Samba window, 241 frames at 1280×720: valid output, **29 minutes** on this Mac's GPU. Depth of still pixels changes 0.3% of the range from frame to frame.
 - Against the depth from our 3D scene (`.authoring/renders/direct-depth/samba-compare.mp4`, `.jpg`): the direct depth has the dancers exactly as filmed, with skirt, hair and true outlines, and a clean floor; the stage behind them is almost black, so the set barely registers. Ours shows the stage clearly and the dancers as plain figures in poses that are close but estimated.
 - So the two carry different things: direct depth is the performers and the floor; the 3D scene is the layout, the camera, the meta, and the freedom to change the set. Not tried: either one in a generation; the Large model; a faster machine.
+
+## A coarse build for clay references, timed on the samba pair (2026-10-12)
+
+Clay references now use plain-shape figures, so the question was whether the video path can be quicker. Measured on the samba window (70.7–80.7 s, two dancers, this Mac):
+
+| Step | Full build | Coarse build |
+|---|---|---|
+| Observe (2D boxes and pose), both dancers | 46 + 44 s | the same (was cached in this run) |
+| Body model, both dancers | 466 + 462 s (every frame, with the second look) | 186 + 174 s (every third frame, no second look) |
+| Contact, spacing and hand holds | not timed when it was built | 27 s |
+| Scene (given objects and camera) with foot lock | 4 s | 4 s |
+| Export, plain shapes, no depth | 33 s | 31 s |
+| Total of the measured steps | about 18 min (taking 27 s for contact) | about 8.5 min |
+
+- **`coarse: true` on `reconstruct_motion`** (source body only): `body.py --every 3` runs the model on every third observed frame, always with the last, and skips the second look; the smoothing window is shortened to match; the existing resampling to 30 Hz fills in between. The body stage is 2.6 times quicker, not 3: loading the model and the per-run overhead do not shrink.
+- **How different the motion is** (`pair-samba-coarse` against `pair-samba` r15, heel and ball positions from the fixed-camera render, after removing the constant offset between the two builds): median 2.6 and 2.7 cm for the two dancers, 95th percentile 12.8 and 9.9 cm, worst 29 cm at 7.93 s and 22 cm at 6.97 s. Foot speed: mean 1.07 against 1.17 m/s and 1.06 against 1.12; peak 8.4 against 8.7 and 8.1 against 9.6. Foot slide after the lock: 5.41 and 4.87 m against 5.61 and 4.94. Part of the position difference is the contact stage, which the first comparison did not run on the coarse pair.
+- **The contact stage is worth keeping.** Without it the coarse pair's hands missed each other in the hold at 7.9 s (seen in a still). With it (27 s) the same five hand-hold stretches are found as far as compared and the hands meet. So the saving is in the body model only; skipping contact would save half a minute and lose the holds.
+- **Looked at**: three moments side by side (2.0, 5.0, 7.9 s) and the hold again after the contact stage: the poses agree to the eye at clay level. Side by side: `.authoring/renders/pair-samba-full-vs-coarse.mp4` (full left, coarse right). Coarse package: `.authoring/renders/pair-samba-coarse-r4-reference/`.
+- Not measured: the camera track and the hand-made stage objects, which this option does not touch and which are the larger manual cost; a clip with faster motion than a samba (a kick's fastest frames fall between the ones looked at); `--every 2` or `4`; mini4, where the model runs about twice as fast.
+- Side effects: `body.py` changed, so every body-stage cache key changed: the next rebuild of any clip runs the model again. `pair-samba-r15-reference` was exported again in this comparison and now holds plain-shape figures without depth (the mannequin-with-depth copy is on mini4).

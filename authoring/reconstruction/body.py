@@ -2,11 +2,13 @@
 stage picked. Writes motion-ir.json for the retarget: 17 joints, hip centre and lowest body point in the picture, face direction.
 Estimated per frame, not rig ground truth. Runs in ComfyUI's own Python environment."""
 import sys,json,time,os,argparse,glob
-p=argparse.ArgumentParser();p.add_argument('--comfy',required=True);p.add_argument('--weights',required=True);p.add_argument('--pose',required=True);p.add_argument('--video',required=True);p.add_argument('--out',required=True);p.add_argument('--smooth',type=float,default=0,help='0-1: strength of ComfyUI\'s temporal smoothing (Savitzky-Golay over 7 frames, backing off during fast spins)');p.add_argument('--no-second-look',action='store_true');p.add_argument('--no-despike',action='store_true');p.add_argument('--reuse',help='folder of raw results from earlier runs; one whose frames match is used instead of running the model');args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--comfy',required=True);p.add_argument('--weights',required=True);p.add_argument('--pose',required=True);p.add_argument('--video',required=True);p.add_argument('--out',required=True);p.add_argument('--smooth',type=float,default=0,help='0-1: strength of ComfyUI\'s temporal smoothing (Savitzky-Golay over 7 frames, backing off during fast spins)');p.add_argument('--every',type=int,default=1,help='run the model on every Nth observed frame only (the first and last always); the rest is interpolated. For a coarse clay reference');p.add_argument('--no-second-look',action='store_true');p.add_argument('--no-despike',action='store_true');p.add_argument('--reuse',help='folder of raw results from earlier runs; one whose frames match is used instead of running the model');args=p.parse_args()
 pose_path,video,out,comfy=os.path.abspath(args.pose),os.path.abspath(args.video),os.path.abspath(args.out),os.path.abspath(args.comfy);reuse=os.path.abspath(args.reuse) if args.reuse else None
 started=time.perf_counter();import numpy as np
 report=json.load(open(pose_path));observed=len(report['frames']);rows=[f for f in report['frames'] if f['bbox']]
 if len(rows)<3 or len(rows)<.8*observed:raise SystemExit(f'Unsupported window: {len(rows)}/{observed} frames with a selected subject')
+# coarse: every Nth frame, always with the last, so the window's ends are observed
+if args.every>1:rows=[r for i,r in enumerate(rows) if i%args.every==0 or i==len(rows)-1]
 order=[r['frameIndex'] for r in rows];times=np.array([r['time'] for r in rows]);raw=None;timings={}
 KEEP=('pred_keypoints_3d','pred_keypoints_2d','pred_cam_t','pred_joint_coords','pred_global_rots','focal_length','global_rot','body_pose_params','hand_pose_params','scale_params','shape_params','mhr_model_params','pred_pose_raw')
 for f in sorted(glob.glob(os.path.join(reuse,'*.npz'))) if reuse else []:
@@ -113,7 +115,7 @@ if 'pred_global_rots' in raw and len(order)>4 and not args.no_despike:
 if args.smooth>0:
  used=dict(raw)
  if 'global_rot' not in used:R=used['pred_global_rots'][:,1];used['global_rot']=np.stack([np.arctan2(R[:,1,0],R[:,0,0]),np.arcsin(np.clip(-R[:,2,0],-1,1)),np.arctan2(R[:,2,1],R[:,2,2])],1).astype(np.float32)
- data={'frames':[[{k:v[i] for k,v in used.items()}] for i in range(len(order))]};smooth=SAM3DBody_Smooth.execute(data,float(args.smooth),'savgol',7,30.0).result[0]['frames'];raw={k:np.stack([np.asarray(f[0][k],dtype=np.float32) for f in smooth]) for k in used};np.savez(os.path.join(out,'body-smoothed.npz'),frameIndex=np.array(order),times=times,**raw)
+ data={'frames':[[{k:v[i] for k,v in used.items()}] for i in range(len(order))]};smooth=SAM3DBody_Smooth.execute(data,float(args.smooth),'savgol',7 if args.every<2 else max(3,(7//args.every)|1),30.0/max(1,args.every)).result[0]['frames'];raw={k:np.stack([np.asarray(f[0][k],dtype=np.float32) for f in smooth]) for k in used};np.savez(os.path.join(out,'body-smoothed.npz'),frameIndex=np.array(order),times=times,**raw)
 # MHR70 keypoints -> the 17 joints the retarget reads (H36M order). Camera axes: x right, y down, z away. Metres; the retarget
 # only uses directions, so no rescaling.
 K=raw['pred_keypoints_3d'].astype(np.float64);k2=raw['pred_keypoints_2d'].astype(np.float64)
