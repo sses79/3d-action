@@ -8,15 +8,33 @@ import {init as initClayView} from '../authoring/render/clay-view';
 const bridgeUrl=location.port==='5174'?'':'http://127.0.0.1:5174';
 async function tool(name:string,args:any){const r=await fetch(bridgeUrl+'/api/tool',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,arguments:args})}),d=await r.json();if(!r.ok||d.error)throw Error(d.error||'The service refused the request');return d.result;}
 type Figure='primitives'|'mannequin';
-type View={pairId:string;name:string;revision:number;staged:boolean;durationSeconds:number;figure:Figure;colors:string[];ids:string[];represents:(string|null)[];shots:{index:number;name:string|null;startSeconds:number;lens35:number;moving:boolean}[];beats:{start:number;end:number;text:string;speaker?:string;line?:string}[];props:{id:string;name:string;shape:string;color:string;track:{start:number;holder:number|null;fly?:number}[]}[];handovers:any[];seedance:any;payload:any};
+type View={pairId:string;name:string;revision:number;staged:boolean;durationSeconds:number;figure:Figure;colors:string[];ids:string[];represents:(string|null)[];shots:{index:number;name:string|null;startSeconds:number;lens35:number;moving:boolean}[];beats:{start:number;end:number;text:string;speaker?:string;line?:string}[];props:{id:string;name:string;shape:string;color:string;track:{start:number;holder:number|null;fly?:number}[]}[];handovers:any[];spec:any|null;seedance:any;payload:any};
 type Check={label:string;state:'ok'|'warn'|'fail'|'wait';detail:string};
 type Framing={samples:number;problems:string[];top:number;bottom:number;hidden:number;propsOut:string[]}|null;
 const whole=(x:number)=>Math.abs(x-Math.round(x))<1e-6,pct=(x:number)=>(x*100).toFixed(1)+'%',sec=(x:number)=>(Math.round(x*100)/100)+' s';
 const hex:Record<string,string>={blue:'#4a86d8',orange:'#ee8a3a',green:'#4fae5a',pink:'#f07fb0',purple:'#8d6fd1',yellow:'#e8c53a',red:'#d9534a',gray:'#8e949c'};
 
+// The floor from above: x to the right, z down the page toward the viewer of the plan, metres. Marks, camera positions and a
+// camera's own look-at point can be dragged (to the nearest 5 cm); nothing changes in the scene until Apply stages it again.
+function Plan({spec,colors,onChange}:{spec:any;colors:string[];onChange:(next:any)=>void}){
+ const svg=useRef<SVGSVGElement>(null),drag=useRef<{kind:'mark'|'cam'|'look';key:string|number}|null>(null);
+ const startOf=(id:string)=>spec.marks[spec.performers.find((p:any)=>p.id===id)?.start]??[0,0],aimOf=(c:any):number[]=>Array.isArray(c.lookAt)?[c.lookAt[0],c.lookAt[2]]:c.lookAt==='both'?[(startOf(spec.performers[0].id)[0]+startOf(spec.performers[1].id)[0])/2,(startOf(spec.performers[0].id)[1]+startOf(spec.performers[1].id)[1])/2]:spec.performers.some((p:any)=>p.id===c.lookAt)?startOf(c.lookAt):spec.marks[c.lookAt]??[0,0];
+ // the plan is fitted to the marks and cameras, with a metre around them; walls further out are cut off
+ const xs:number[]=[],zs:number[]=[];for(const m of Object.values(spec.marks) as number[][]){xs.push(m[0]);zs.push(m[1]);}for(const c of spec.cameras){xs.push(c.position[0]);zs.push(c.position[2]);}
+ const x0=Math.min(...xs)-1,x1=Math.max(...xs)+1,z0=Math.min(...zs)-1,z1=Math.max(...zs)+.6,snap=(v:number)=>Math.round(v*20)/20;
+ const at=(e:React.PointerEvent)=>{const p=svg.current!.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(svg.current!.getScreenCTM()!.inverse());return [snap(q.x),snap(q.y)];};
+ const move=(e:React.PointerEvent)=>{const d=drag.current;if(!d)return;const [x,z]=at(e),next=structuredClone(spec);if(d.kind==='mark')next.marks[d.key]=[x,z];else if(d.kind==='cam')next.cameras[d.key as number].position=[x,next.cameras[d.key as number].position[1],z];else next.cameras[d.key as number].lookAt=[x,next.cameras[d.key as number].lookAt[1],z];onChange(next);};
+ const grab=(kind:'mark'|'cam'|'look',key:string|number)=>(e:React.PointerEvent)=>{drag.current={kind,key};svg.current!.setPointerCapture(e.pointerId);e.preventDefault();};
+ return <svg ref={svg} className="clay-plan" viewBox={`${x0} ${z0} ${x1-x0} ${z1-z0}`} style={{aspectRatio:`${x1-x0}/${z1-z0}`}} onPointerMove={move} onPointerUp={()=>{drag.current=null;}} onPointerCancel={()=>{drag.current=null;}} role="img" aria-label="Floor plan">
+  {spec.objects.map((o:any,i:number)=><g key={i} transform={`translate(${o.position[0]} ${o.position[2]}) rotate(${-(o.rotationY??0)})`}><rect x={-o.size[0]/2} y={-o.size[2]/2} width={o.size[0]} height={o.size[2]} className="obj"/><title>{o.name}</title></g>)}
+  {spec.cameras.map((c:any,i:number)=>{const a=aimOf(c);return <g key={'c'+i}><line x1={c.position[0]} y1={c.position[2]} x2={a[0]} y2={a[1]} className="sight"/>{Array.isArray(c.lookAt)&&<rect x={a[0]-.07} y={a[1]-.07} width={.14} height={.14} className="look" onPointerDown={grab('look',i)}><title>Shot {i+1} looks here (drag)</title></rect>}<circle cx={c.position[0]} cy={c.position[2]} r={.16} className="cam" onPointerDown={grab('cam',i)}><title>Camera of shot {i+1} (drag)</title></circle><text x={c.position[0]} y={c.position[2]+.055} className="camn">{i+1}</text></g>;})}
+  {Object.entries(spec.marks as Record<string,number[]>).map(([name,m])=>{const who=spec.performers.findIndex((p:any)=>p.start===name);return <g key={name}><circle cx={m[0]} cy={m[1]} r={who>=0?.2:.09} className="mark" style={who>=0?{fill:hex[colors[who]]}:undefined} onPointerDown={grab('mark',name)}><title>{name} (drag)</title></circle><text x={m[0]} y={m[1]-(who>=0?.27:.15)} className="lbl">{who>=0?spec.performers[who].id:name}</text></g>;})}
+ </svg>;
+}
 function App(){
  const [pairs,setPairs]=useState<any[]>([]),[pairId,setPairId]=useState(new URLSearchParams(location.search).get('pair')||''),[figure,setFigure]=useState<Figure>('primitives');
  const [view,setView]=useState<View|null>(null),[status,setStatus]=useState('Connecting to the service'),[error,setError]=useState(''),[time,setTime]=useState(0),[playing,setPlaying]=useState(false);
+ const [draft,setDraft]=useState<any>(null),[reload,setReload]=useState(0),[applying,setApplying]=useState(false),[notice,setNotice]=useState('');
  const [framing,setFraming]=useState<Framing>(null),[depth,setDepth]=useState(false),[exporting,setExporting]=useState(false),[exported,setExported]=useState<any>(null),[copied,setCopied]=useState('');
  const mount=useRef<HTMLDivElement>(null),clay=useRef<Awaited<ReturnType<typeof initClayView>>|null>(null),clock=useRef(0),playRef=useRef(false);playRef.current=playing;
  const total=view?.durationSeconds??0,frames=Math.round(total*30),lastTime=Math.max(0,(frames-1)/30);
@@ -27,9 +45,9 @@ function App(){
  useEffect(()=>{if(!pairId)return;let gone=false;setView(null);setFraming(null);setExported(null);setPlaying(false);clock.current=0;setTime(0);setStatus('Loading the scene');
   tool('export_pair_reference',{pairId,viewOnly:true,figure}).then(async(v:View)=>{if(gone)return;clay.current?.dispose();clay.current=null;
    const made=await initClayView({payload:v.payload,mount:mount.current!,urls:{character:bridgeUrl+'/editor/assets/character.glb',characters:f=>bridgeUrl+'/editor/assets/characters/'+f,follower:id=>bridgeUrl+'/api/character-file?id='+encodeURIComponent(id)}});
-   if(gone){made.dispose();return;}clay.current=made;made.draw(0);setView(v);setStatus('');
+   if(gone){made.dispose();return;}clay.current=made;made.draw(0);setView(v);setDraft(v.spec?structuredClone(v.spec):null);setStatus('');
   }).catch(e=>{if(!gone)setError(e.message);});
-  return()=>{gone=true;};},[pairId,figure]);
+  return()=>{gone=true;};},[pairId,figure,reload]);
  useEffect(()=>()=>{clay.current?.dispose();},[]);
 
  // playback on the export's own frame times
@@ -62,6 +80,12 @@ function App(){
  const shotNow=view?1+Math.max(0,view.shots.findLastIndex(s=>s.startSeconds<=time+1e-6)):1,beatNow=view?.beats.filter(b=>time>=b.start-1e-6&&time<b.end)??[];
  const copy=(key:string,text:string)=>{navigator.clipboard?.writeText(text).then(()=>{setCopied(key);setTimeout(()=>setCopied(''),1500);}).catch(()=>setError('The browser did not allow copying'));};
  const runExport=()=>{if(!view)return;setExporting(true);setExported(null);setPlaying(false);tool('export_pair_reference',{pairId:view.pairId,figure,depth}).then(r=>setExported(r)).catch(e=>setError(e.message)).finally(()=>setExporting(false));};
+ // editing: a copy of the scene as it was asked for; Apply stages it again under the next revision
+ const dirty=!!(view?.spec&&draft&&JSON.stringify(draft)!==JSON.stringify(view.spec)),patch=(f:(d:any)=>void)=>setDraft((d:any)=>{const next=structuredClone(d);f(next);return next;});
+ const lookKind=(c:any)=>Array.isArray(c.lookAt)?'point':c.lookAt,offGrid=draft?{cuts:draft.cameras.some((c:any)=>!whole(c.start)),beats:(draft.beats??[]).some((b:any)=>!whole(b.start)||!whole(b.end))}:{cuts:false,beats:false};
+ const snapBeats=()=>patch(d=>{let prev=0;const end=Math.max(1,Math.floor(total));d.beats=(d.beats??[]).map((b:any)=>{let s=Math.max(prev,Math.round(b.start)),e=Math.round(b.end);if(e<=s)e=s+1;if(e>end){e=end;s=Math.min(s,e-1);}prev=e;return {...b,start:s,end:e};}).filter((b:any,i:number,all:any[])=>b.end>b.start&&(!i||b.start>=all[i-1].end));});
+ const snapCuts=()=>patch(d=>{d.cameras.forEach((c:any,i:number)=>{c.start=i?Math.max(d.cameras[i-1].start+1,Math.round(c.start)):0;});});
+ const apply=()=>{if(!view||!draft)return;setApplying(true);setNotice('');setPlaying(false);tool('stage_scene',{...draft,expectedRevision:view.revision}).then(r=>{setNotice(`Staged as revision ${r.revision}${r.handoverWarning?'. '+r.handoverWarning:''}`);setReload(n=>n+1);}).catch(e=>setError(e.message)).finally(()=>setApplying(false));};
  const left=(t:number)=>total?`${t/total*100}%`:'0',wide=(a:number,b:number)=>total?`${Math.max(.4,(b-a)/total*100)}%`:'0';
 
  return <><header><div className="brand"><div className="brand-icon">◈</div><div><strong>ANIMATION STUDIO</strong><small>Clay reference / what the video model receives</small></div></div><div className="header-actions"><select aria-label="Scene" value={pairId} onChange={e=>setPairId(e.target.value)}>{pairs.map(p=><option key={p.pairId} value={p.pairId}>{p.name}{p.staged?'':' (from video)'}</option>)}</select><a className="link" href="./">Action workshop</a></div></header>
@@ -81,6 +105,17 @@ function App(){
      </div>
      <p className="clay-now">{beatNow.length?beatNow.map(b=>`${b.speaker?b.speaker+': ':''}${b.text}${b.line?` “${b.line}”`:''}`).join(' · '):view.beats.length?'No beat at this time':'This pair has no written beats.'}</p>
      <p className="clay-legend"><i className="off"/> starts or ends between whole seconds</p></div>}
+    {view&&<div className="clay-edit"><div className="timeline-head"><span>EDIT THE SCENE</span><span>{!view.staged?'a pair from a video has no marks or authored cameras to edit':!draft?'staged before editing was built: stage it once more to edit here':dirty?'changed, not staged yet':'drag a mark, a camera or a look-at point'}</span></div>
+     {view.staged&&draft&&<><div className="clay-edit-grid"><Plan spec={draft} colors={view.colors} onChange={setDraft}/>
+      <div className="clay-shots"><table><thead><tr><th>Shot</th><th>Starts (s)</th><th>Lens (mm)</th><th>Height (m)</th><th>Looks at</th><th>At height (m)</th></tr></thead><tbody>{draft.cameras.map((c:any,i:number)=><tr key={i}>
+        <td>{i+1}</td><td><input type="number" step={1} min={0} disabled={!i} value={c.start} onChange={e=>patch(d=>{d.cameras[i].start=+e.target.value;})}/></td>
+        <td><input type="number" step={1} min={12} max={300} value={c.lens35} onChange={e=>patch(d=>{d.cameras[i].lens35=+e.target.value;})}/></td>
+        <td><input type="number" step={.05} min={.1} max={6} value={c.position[1]} onChange={e=>patch(d=>{d.cameras[i].position[1]=+e.target.value;})}/></td>
+        <td><select value={lookKind(c)} onChange={e=>patch(d=>{const v=e.target.value,cam=d.cameras[i];if(v==='point'){const m=d.performers.map((p:any)=>d.marks[p.start]);cam.lookAt=[(m[0][0]+m[1][0])/2,1,(m[0][1]+m[1][1])/2];delete cam.aim;}else cam.lookAt=v;})}><option value="point">a point (drag it)</option><option value="both">between the two</option>{draft.performers.map((p:any)=><option key={p.id} value={p.id}>{p.id}</option>)}{Object.keys(draft.marks).filter(m=>!draft.performers.some((p:any)=>p.id===m)).map(m=><option key={m} value={m}>mark: {m}</option>)}</select></td>
+        <td>{Array.isArray(c.lookAt)?<input type="number" step={.05} min={0} max={4} value={c.lookAt[1]} onChange={e=>patch(d=>{d.cameras[i].lookAt[1]=+e.target.value;})}/>:'—'}</td></tr>)}</tbody></table>
+       <div className="group"><button disabled={!offGrid.cuts} onClick={snapCuts}>Snap cuts to whole seconds</button><button disabled={!offGrid.beats} onClick={snapBeats}>Snap beats to whole seconds</button></div>
+       <div className="group"><button className="primary" disabled={!dirty||applying} onClick={apply}>{applying?'Staging…':'Apply: stage again'}</button><button disabled={!dirty||applying} onClick={()=>setDraft(structuredClone(view.spec))}>Discard changes</button></div>
+       <p>{notice||'Marks move where people stand, walk to and look. Nothing changes in the picture until Apply, which stages the scene again as a new revision. A camera that moves during its shot keeps its end point.'}</p></div></div></>}</div>}
    </main>
    <aside className="right">
     <h2>SEEDANCE 2.5 REQUIREMENTS</h2>

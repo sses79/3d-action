@@ -53,7 +53,7 @@ Make the parts' durations add up to the scene's length for both performers. A wa
 2. `render_pair_video` with `camera: "source"` plays the shots; `camera: "fixed", feet: true` gives a still wide view and a foot file for `authoring/render/foot-slide.py`.
 3. Look at stills at each beat and each cut. Check: do they face and look where the text says, is each named action in frame in its shot, does anyone pass through an object or the other performer, does the walk end where it should.
 4. In Studio, select either action with **Pair** and **Scene** on.
-5. Open Studio's **Clay reference** page (`/editor/clay.html`, choose the scene): it plays the scene through its cameras as the export will draw it and checks it against Seedance 2.5's requirements, live, before any render.
+5. Open Studio's **Clay reference** page (`/editor/clay.html`, choose the scene): it plays the scene through its cameras as the export will draw it and checks it against Seedance 2.5's requirements, live, before any render. Its Edit section lets the user drag marks, cameras and look-at points on a floor plan, change a shot's start, lens and height, and apply: that stages the scene again from the stored spec under a new revision, so fetch the revision again before your next `stage_scene`, and bring the change back into your spec file if you keep one.
 
 Change the spec and stage again; each call raises the revision.
 
