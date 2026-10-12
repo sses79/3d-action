@@ -5,7 +5,7 @@
   "scripts": {
     "build": "esbuild watch/main.js --bundle --minify --format=esm --outfile=watch/app.js",
     "test": "node --test tests/watch.test.mjs",
-    "build:editor": "esbuild editor/main.tsx --bundle --minify --format=esm --outfile=editor/app.js",
+    "build:editor": "esbuild editor/main.tsx --bundle --minify --format=esm --outfile=editor/app.js && esbuild editor/clay.tsx --bundle --minify --format=esm --outfile=editor/clay.js",
     "test:editor": "node --test tests/editor.test.mjs",
     "build:authoring": "esbuild authoring/core.ts --bundle --platform=node --format=esm --packages=external --outfile=authoring/core.js",
     "start:authoring": "node authoring/server.mjs",

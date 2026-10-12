@@ -32,6 +32,7 @@ export function primitiveFigure(T:any,root:any,material:any,k=1){
  const ball=(a:string,from:string,r:number,out:number,part:string)=>{const P=wp(a),d=part==='head'?up.clone():P.clone().sub(wp(from)).normalize(),m=new T.Mesh(new T.SphereGeometry(r*k,16,12),material);m.position.copy(P).addScaledVector(d,out*k);put(a,m,part);};
  root.traverse((o:any)=>{if(o.isSkinnedMesh)o.visible=false;});
  seg('pelvis','spine_02',.13);seg('spine_02','neck_01',.14);seg('neck_01','Head',.05);ball('Head','neck_01',.115,.1,'head');
+ {/* a nose, so the way the head faces can be read */const front=up.clone().cross(wp('thigh_r').sub(wp('thigh_l'))).normalize(),m=new T.Mesh(new T.SphereGeometry(.032*k,12,8),material);m.position.copy(wp('Head')).addScaledVector(up,.09*k).addScaledVector(front,.118*k);put('Head',m,'head');}
  for(const s of ['l','r']){seg('clavicle_'+s,'upperarm_'+s,.055);seg('upperarm_'+s,'lowerarm_'+s,.05);seg('lowerarm_'+s,'hand_'+s,.04);ball('hand_'+s,'lowerarm_'+s,.05,.06,'body');seg('thigh_'+s,'calf_'+s,.075);seg('calf_'+s,'foot_'+s,.055);seg('foot_'+s,'ball_'+s,.045,'foot',.05);}
  return made;
 }

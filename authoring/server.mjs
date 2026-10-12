@@ -8,7 +8,7 @@ import {Studio,toolDefinitions} from './core.js';
 const root=fileURLToPath(new URL('../',import.meta.url)),studio=new Studio(root,process.env.STUDIO_STATE_PATH||undefined);
 const port=Number(process.env.STUDIO_PORT||5174);
 const origins=new Set([`http://127.0.0.1:${port}`,`http://localhost:${port}`,'http://127.0.0.1:5173','http://localhost:5173']);
-const files={'/editor/':['editor/index.html','text/html'],'/editor/app.js':['editor/app.js','text/javascript'],'/editor/style.css':['editor/style.css','text/css'],'/editor/assets/character.glb':['editor/assets/character.glb','model/gltf-binary'],'/editor/assets/characters/superhero-female.glb':['editor/assets/characters/superhero-female.glb','model/gltf-binary'],'/editor/assets/characters/superhero-male.glb':['editor/assets/characters/superhero-male.glb','model/gltf-binary']};
+const files={'/editor/':['editor/index.html','text/html'],'/editor/app.js':['editor/app.js','text/javascript'],'/editor/clay.html':['editor/clay.html','text/html'],'/editor/clay.js':['editor/clay.js','text/javascript'],'/editor/style.css':['editor/style.css','text/css'],'/editor/assets/character.glb':['editor/assets/character.glb','model/gltf-binary'],'/editor/assets/characters/superhero-female.glb':['editor/assets/characters/superhero-female.glb','model/gltf-binary'],'/editor/assets/characters/superhero-male.glb':['editor/assets/characters/superhero-male.glb','model/gltf-binary']};
 const server=createServer(async(req,res)=>{
  const host=req.headers.host;if(![`127.0.0.1:${port}`,`localhost:${port}`].includes(host)){res.writeHead(403);res.end();return;}
  const origin=req.headers.origin;if(origin&&!origins.has(origin)){res.writeHead(403);res.end();return;}

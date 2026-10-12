@@ -21,6 +21,8 @@ EDITOR_FILES = {
     "index.html": "text/html; charset=utf-8",
     "style.css": "text/css; charset=utf-8",
     "app.js": "text/javascript; charset=utf-8",
+    "clay.html": "text/html; charset=utf-8",
+    "clay.js": "text/javascript; charset=utf-8",
     "assets/character.glb": "model/gltf-binary",
     "assets/characters/superhero-female.glb": "model/gltf-binary",
     "assets/characters/superhero-male.glb": "model/gltf-binary",

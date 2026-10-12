@@ -17,7 +17,7 @@ Three browser demos; active work is **Animation Studio** (LLM-driven movement li
 
 - `runtime/` shared deterministic player, action schema, movement compiler, diagnostics (TS)
 - `authoring/` local service (`server.mjs`, port 5174), `core.ts` operations, MCP adapter, CLI, contracts, schemas, vision and reconstruction scripts, review evidence
-- `editor/` Studio UI (React + Three.js WebGPU/WebGL2); `watch/` Watch Lab; `index.html` Citrus Jelly
+- `editor/` Studio UI (React + Three.js WebGPU/WebGL2), plus the Clay reference page (`clay.tsx`: what a video model receives, drawn by `authoring/render/clay-view.ts`, the same code as the export); `watch/` Watch Lab; `index.html` Citrus Jelly
 - `skills/` authoring workflows (also exposed to Claude via `.claude/skills`)
 - `.authoring/` live state: `project.json` (small index) with `project.json.blobs/` (content-addressed action bodies, via `authoring/project-store.mjs`) plus `.preview/.contracts/.runs` sidecars, model caches, Python venv
 - `jump/` is unused draft code
@@ -26,7 +26,7 @@ Three browser demos; active work is **Animation Studio** (LLM-driven movement li
 
 ```sh
 npm run build            # watch/app.js
-npm run build:editor     # editor/app.js
+npm run build:editor     # editor/app.js and editor/clay.js (the Clay reference page, /editor/clay.html)
 npm run build:authoring  # authoring/core.js (required after editing core.ts or runtime/)
 npm run start:authoring  # service on 127.0.0.1:5174 (set OPENROUTER_ENV_FILE or OPENROUTER_API_KEY to allow reconstruct_motion decisions:true)
 python3 serve_demo.py --host 127.0.0.1 --port 5173   # public demo server

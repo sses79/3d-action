@@ -9,7 +9,7 @@ server=ThreadingHTTPServer(('127.0.0.1',0),QuietHandler)
 thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
 base=f'http://127.0.0.1:{server.server_port}'
 try:
- for route in ['/','/watch/','/watch/app.js','/watch/style.css','/watch/assets/watch.glb','/editor/','/editor/app.js','/editor/style.css','/editor/assets/character.glb']:
+ for route in ['/','/watch/','/watch/app.js','/watch/style.css','/watch/assets/watch.glb','/editor/','/editor/app.js','/editor/clay.html','/editor/clay.js','/editor/style.css','/editor/assets/character.glb']:
   with urllib.request.urlopen(base+route) as r:
    assert r.status==200
    r.read()
