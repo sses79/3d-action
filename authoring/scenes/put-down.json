@@ -1,0 +1,182 @@
+{
+ "sceneId": "scene-put-down",
+ "name": "Put down and pick up test",
+ "objects": [
+  {
+   "name": "back wall",
+   "shape": "box",
+   "position": [
+    0,
+    1.4,
+    -2.5
+   ],
+   "size": [
+    7,
+    2.8,
+    0.15
+   ]
+  },
+  {
+   "name": "side table",
+   "shape": "box",
+   "position": [
+    0,
+    0.4,
+    -0.5
+   ],
+   "size": [
+    0.7,
+    0.8,
+    0.5
+   ]
+  }
+ ],
+ "marks": {
+  "ana mark": [
+   -0.47,
+   -0.5
+  ],
+  "ben mark": [
+   0.47,
+   -0.5
+  ],
+  "table": [
+   0,
+   -0.5
+  ]
+ },
+ "performers": [
+  {
+   "id": "ana",
+   "actionId": "put-down-ana",
+   "name": "Put down · Ana",
+   "represents": "Ana, an adult woman; on the left",
+   "height": 1.68,
+   "start": "ana mark",
+   "facing": "table",
+   "parts": [
+    {
+     "movementId": "move-idle",
+     "name": "0-2 s: holds the parcel",
+     "duration": 2
+    },
+    {
+     "movementId": "move-idle",
+     "name": "2-4 s: puts it on the table",
+     "duration": 2
+    },
+    {
+     "movementId": "move-idle",
+     "name": "4-9 s: stands",
+     "duration": 5
+    }
+   ]
+  },
+  {
+   "id": "ben",
+   "actionId": "put-down-ben",
+   "name": "Put down · Ben",
+   "represents": "Ben, an adult man; on the right",
+   "height": 1.8,
+   "start": "ben mark",
+   "facing": "table",
+   "parts": [
+    {
+     "movementId": "move-idle",
+     "name": "0-5 s: waits",
+     "duration": 5
+    },
+    {
+     "movementId": "move-idle",
+     "name": "5-7 s: picks the parcel up",
+     "duration": 2
+    },
+    {
+     "movementId": "move-idle",
+     "name": "7-9 s: holds it",
+     "duration": 2
+    }
+   ]
+  }
+ ],
+ "props": [
+  {
+   "id": "parcel",
+   "name": "parcel",
+   "shape": "box",
+   "size": [
+    0.18,
+    0.12,
+    0.12
+   ],
+   "color": "green",
+   "represents": "a small brown paper parcel tied with string",
+   "start": {
+    "heldBy": "ana",
+    "hand": "right"
+   },
+   "putDowns": [
+    {
+     "start": 2,
+     "end": 4,
+     "on": "side table"
+    }
+   ],
+   "pickUps": [
+    {
+     "start": 5,
+     "end": 7,
+     "by": "ben",
+     "hand": "left"
+    }
+   ]
+  }
+ ],
+ "cameras": [
+  {
+   "start": 0,
+   "name": "Shot 1: full-body two-shot, the table between them",
+   "position": [
+    0,
+    1.45,
+    3.3
+   ],
+   "lookAt": [
+    0,
+    0.88,
+    -0.5
+   ],
+   "lens35": 28
+  }
+ ],
+ "beats": [
+  {
+   "start": 0,
+   "end": 2,
+   "text": "Ana and Ben face each other across a small side table; Ana holds a parcel."
+  },
+  {
+   "start": 2,
+   "end": 4,
+   "text": "Ana puts the parcel on the table."
+  },
+  {
+   "start": 4,
+   "end": 5,
+   "text": "The parcel sits on the table."
+  },
+  {
+   "start": 5,
+   "end": 7,
+   "text": "Ben picks the parcel up with his left hand."
+  },
+  {
+   "start": 7,
+   "end": 9,
+   "text": "Ben holds the parcel."
+  }
+ ],
+ "notes": [
+  "Test scene for props: put down on an object, then picked up by the other performer."
+ ]
+}
