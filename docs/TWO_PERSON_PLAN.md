@@ -349,3 +349,25 @@ Clay references now use plain-shape figures, so the question was whether the vid
 - **Looked at**: three moments side by side (2.0, 5.0, 7.9 s) and the hold again after the contact stage: the poses agree to the eye at clay level. Side by side: `.authoring/renders/pair-samba-full-vs-coarse.mp4` (full left, coarse right). Coarse package: `.authoring/renders/pair-samba-coarse-r4-reference/`.
 - Not measured: the camera track and the hand-made stage objects, which this option does not touch and which are the larger manual cost; a clip with faster motion than a samba (a kick's fastest frames fall between the ones looked at); `--every 2` or `4`; mini4, where the model runs about twice as fast.
 - Side effects: `body.py` changed, so every body-stage cache key changed: the next rebuild of any clip runs the model again. `pair-samba-r15-reference` was exported again in this comparison and now holds plain-shape figures without depth (the mannequin-with-depth copy is on mini4).
+
+## Does the source need the whole body in frame? A waist-up test (2026-10-12)
+
+Every clip built so far showed full bodies. Test: the samba window re-framed as a waist-up shot (each frame cropped to a 16:9 window from above the heads to just below the hips, smoothed over time like a camera, scaled to 1280x720; a scratch file, not in the repo), built with `coarse: true` for both dancers and compared with the coarse build of the full view, which shows the same motion.
+
+- **It builds.** Both dancers were found and built without refusal (the limit is a subject in at least 80% of frames). Observe 38 and 37 s, body 166 and 168 s.
+- **Joint angles against the full-view build** (median / 90th percentile, degrees; left dancer, right dancer). For scale, the coarse build against the every-frame build of the same view gives trunk 0.5/1.2, head 1.1/3, upper arms 4/11–12, forearms 3/10–13, legs 1.3–2.1/4–7, pelvis 1.1/2.9.
+
+| Part | Left | Right |
+|---|---|---|
+| Trunk | 1.5 / 3.4 | 1.2 / 3.0 |
+| Neck and head | 3.1 / 6.1 | 2.7 / 5.3 |
+| Upper arms | 6.1 / 17.8 | 5.5 / 16.0 |
+| Forearms | 4.6 / 22.2 | 3.4 / 22.5 |
+| Whole-body turn (pelvis) | 8.5 / 17.5 | 9.2 / 18.9 |
+| Thighs | 19.2 / 30.7 | 13.8 / 21.9 |
+| Shins | 9.8 / 25.1 | 7.6 / 21.8 |
+| Feet | 18.5 / 32.4 | 12.8 / 28.6 |
+
+- **Reading.** What the camera sees comes out close to the full-view build: trunk and head within a few degrees, arms a little worse than the build-to-build noise. What it does not see is invented: the legs are 14–19 degrees off at the median, and at 5 s, where both dancers lift a knee in the full view, the waist-up build has them standing on two feet (seen in stills from an orbit). The turn of the whole body is also less sure (about 9 degrees against 1).
+- **For a clay reference from the source camera this is fine**: the clay shot is waist-up too, and stills at 1, 5 and 8 s match the re-framed picture in pose and framing. It is wrong for anything that shows the legs: another camera, a cut to a wide shot, a reusable action.
+- Not tested: the stage and camera steps on a waist-up clip (`stage-track.py` and the floor's height and tilt read the floor, and foot locking reads the feet, none of which are in the picture); real close footage, which is sharper than this upscaled crop; a body cut higher (chest-up); a performer leaving the frame or hidden by the other for long. Test entries left in the live state: `waist-samba-left`, `waist-samba-right`, `pair-waist-samba`.
