@@ -445,3 +445,17 @@ The user's remark: in the action workshop the source video sits beside a view fr
 - **Clay reference page**: it already drew a video pair through its scene's camera, travelling track included, since it shares the export's view. One fault found on the way and fixed: while the page measured framing after loading, the canvas could be left showing one of the measured moments instead of the current time.
 - Checked in a headless Chrome on `pair-behind-samba` at 3.9 s (18.0 s of the video): the workshop's Source view, the Clay page and the video frame show the same framing, the man left with his arms out and the woman right; the Front view of the same moment shows the two one behind the other, as the user described.
 - Not built: the Source camera for a staged scene's shots in the workshop (the Clay page plays those), or for a pair with no scene.
+
+## Which parts of the samba video are hardest, and a try at the worst (2026-10-12)
+
+A scan of the whole video four times a second with the pose detector (who is found, how much the two largest boxes overlap, joints and legs seen with confidence, whether a box touches the frame's edge, sharpness inside the boxes), summed per shot, and stills of the worst shots. Hardest by that: the spinning hold at 39.1–43.7 s (two found in 61% of frames, boxes overlapping by more than 0.3 in 36%, the least sharp shot); the dip behind the band at about 8.5–11.5 s (the opening shot finds two in 69% of frames; she is bent back under him, chairs and music stands hide the legs); the view over the audience's heads at about 57–59.8 s (legs seen in a third of frames, about four large people per frame). The windows built before are among the easiest (68.1–82.6 s: no overlap, 87% of joints seen).
+
+**The spinning hold, 39.15–43.65 s, coarse build.** The right dancer built (observe 23 s, body 81 s); the left was refused, found in 73 of 109 frames. It fails at the tracking, before the body model:
+
+- The tracker breaks the two dancers into six identities: 1 (39.1–41.8 s), 2 (39.1–40.9), 7 (five frames at 40.3–40.5, one box round both of them, twice the size), 12 (41.2–43.6), 27 (42.9–43.6) and a small one.
+- **The two performers are picked as the two identities with the most box area over the window: 1 and 12.** They do not overlap in time much and may be the same dancer; identity 12 first appears two seconds in, so "left" and "right" are named by where two boxes were at different moments. Identity 2 is then joined to one and 27 to the other.
+- The looks cannot be learned: the two are never five frames apart in this window (`identityEvidence` is empty), so the fallback rules ran.
+- The left chain has no box from 41.88 to 42.92 s, when one box covers both dancers.
+- What the right dancer's action is worth could not be judged: eight stills of it in the workshop show one figure turning with its arms up, but it is assembled from identities 2 and 12, and which dancer each of those is was not established.
+
+What would have to change, in order: pick the two performers from the frames where two are seen at the start, not by area over the window; learn the looks from a neighbouring shot of the same dancers when this window has no stretch apart; treat a box round both dancers as both being present, not as one missing; and only then find out what the body model does with two bodies wrapped round each other, which this try never reached. Test entry left in the live state: `spin-samba-right`.
