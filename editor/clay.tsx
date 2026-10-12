@@ -61,7 +61,8 @@ function App(){
      (row.props??[]).forEach((p:any)=>{if(!p.inFrame)propsOut.push(`${sec(t)} (${p.id})`);});
      row.performers.forEach((p:any,i:number)=>{const who=view.ids[i];if(!p.box){problems.push(`Shot ${shot}, ${sec(t)}: ${who} is out of frame`);return;}if(p.head&&p.head.croppedBy.length)problems.push(`Shot ${shot}, ${sec(t)}: ${who}'s head is cut by the ${p.head.croppedBy.join(' and ')} edge`);if(p.feet&&p.feet.croppedBy.length)problems.push(`Shot ${shot}, ${sec(t)}: ${who}'s feet are cut by the ${p.feet.croppedBy.join(' and ')} edge`);
       if(p.head)top=Math.min(top,p.head.projectedBox[1]);if(p.feet)bottom=Math.min(bottom,1-p.feet.projectedBox[3]);if(typeof p.visibleFraction==='number')hidden=Math.min(hidden,p.visibleFraction);});}
-   if(k<times.length)setTimeout(step,0);else{clay.current.draw(clock.current);setFraming({samples:times.length,problems,top,bottom,hidden,propsOut});}};
+   // the measuring draws other moments on the same canvas: put the current one back before the browser paints
+   clay.current.draw(clock.current);if(k<times.length)setTimeout(step,0);else{setFraming({samples:times.length,problems,top,bottom,hidden,propsOut});}};
   const start=setTimeout(step,300);return()=>{gone=true;clearTimeout(start);};},[view]);
 
  const checks:Check[]=useMemo(()=>{if(!view)return [];const offCuts=view.shots.filter(s=>!whole(s.startSeconds)),offBeats=view.beats.filter(b=>!whole(b.start)||!whole(b.end)),unnamed=view.ids.filter((_,i)=>!view.represents[i]);

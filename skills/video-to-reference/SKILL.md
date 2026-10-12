@@ -41,7 +41,7 @@ Read the contact sheets. Note the wide, clear views of the set anywhere in the v
 1. `reconstruct_motion` twice on the same window, `subject: "left"` and `subject: "right"`, with **`coarse: true`**: this is the default for a clay reference (the user's choice, 2026-10-12). The body model looks at every third frame: about 3 minutes per performer for 10 s here, against 8 for a full build, with feet typically under 3 cm from it on a samba. One build at a time. Leave `coarse` out (a full build, about a minute per second of video each) only when the motion is fast (kicks, spins, jumps: their peak can fall between the frames looked at; not tested), when the coarse result visibly misses something, or when the action is also meant for the library.
 2. `set_pair` with both actions.
 3. `resolve_pair_contact` with `apply: true`. `spacing` 0.20 m suits dancing and clinches, 0.10 m a kick that must land; hand holds are found from the wrists. Check the report's `after.framesInside`.
-4. Look at it in Studio (select either action, **Pair** on) before going on.
+4. Look at it in Studio (select either action, **Pair** on) before going on. Once the pair has a scene (step 4), the view bar has a **Source** camera: the video's own camera, so the 3D view lines up with the source video in Video review.
 
 ## 3. Track the camera
 
@@ -67,7 +67,7 @@ Pick 8 times spread over the window, the first at the window's start, and run:
 .authoring/vision-venv/bin/python authoring/render/stage-travel.py START END TRACK.json KEY-A.npz KEY-B.npz
 ```
 
-Eight times spread over the window per run (video seconds); the second run's first and last times are the first run's, its other six fall between. Each run takes about 20 s. Read the summary: the joins (the second shared view should agree within a few degrees), the lens per view (alike except each run's first), camera heights (believable for the shot), and the path. Then check it, because nothing in the script can: give the pair a scene with this track and render `camera: "fixed"`; the two performers must keep their formation instead of circling each other. Between key views the camera is interpolated, so feet slide more than with a still camera, and a zoom during the move is not handled. Measured on one shot (`docs/TWO_PERSON_PLAN.md`, "A camera that travels").
+Eight times spread over the window per run (video seconds); the second run's first and last times are the first run's, its other six fall between. Each run takes about 20 s. Read the summary: the joins (the second shared view should agree within a few degrees), the lens per view (alike except each run's first), camera heights (believable for the shot), and the path. Then check it, because nothing in the script can: give the pair a scene with this track and render `camera: "fixed"`; the two performers must keep their formation instead of circling each other. Between key views the camera is interpolated, so feet slide more than with a still camera: pass `footLockTogether: 6` to `set_pair_scene` with such a track (only with such a track). It puts the slow slide the two performers share down to the camera's place and moves the camera by as much, under a metre here; the performers keep their places in the picture. A zoom during the move is not handled. More key views do not help (tried). Measured on one shot (`docs/TWO_PERSON_PLAN.md`, "A camera that travels").
 
 ## 4. Make the stage objects
 

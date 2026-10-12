@@ -10,7 +10,11 @@
 # there. out.json: track {quats, positions, focal} for set_pair_scene's scene.camera, and a summary to read before using it.
 # stage-track.py --nodal is for a camera that stays in one place; this is for one that does not.
 import numpy as np,json,glob,os,sys
-start,end,out=float(sys.argv[1]),float(sys.argv[2]),sys.argv[3];files=sys.argv[4:]
+start,end,out=float(sys.argv[1]),float(sys.argv[2]),sys.argv[3];files=[a for a in sys.argv[4:] if not a.startswith('--')]
+# --smooth=seconds: with several runs the key views of different runs disagree by a few degrees and a few tenths of a metre, and a
+# curve through every one of them zigzags. Then the camera at each moment is a fit (a line in time, nearer views counting more)
+# to the key views within that many seconds either side, which averages the runs' disagreement out.
+SMOOTH=next((float(a.split('=')[1]) for a in sys.argv if a.startswith('--smooth=')),0.)
 hips={};poses={}
 for dd in sorted(glob.glob('.authoring/reconstruction-cache/body-*/'),key=os.path.getmtime):
     try:
@@ -73,9 +77,14 @@ def place(t):  # a smooth curve through the key places (Catmull-Rom), the turn b
     if t>=kt[-1]:return kq[-1],kp[-1]
     i=max(k for k in range(len(kt)-1) if kt[k]<=t);u=(t-kt[i])/(kt[i+1]-kt[i]);p0,p1,p2,p3=kp[max(0,i-1)],kp[i],kp[i+1],kp[min(len(kp)-1,i+2)]
     return slerp(kq[i],kq[i+1],u),.5*((2*p1)+(-p0+p2)*u+(2*p0-5*p1+4*p2-p3)*u*u+(-p0+3*p1-3*p2+p3)*u**3)
+KT=np.array(kt);KQ=np.array(kq);KP=np.array(kp)
+def fitted(t):
+    w=np.clip(1-(np.abs(KT-t)/SMOOTH)**3,0,None)**3
+    if (w>1e-6).sum()<3:return place(t)
+    Xm=np.stack([np.ones_like(KT),KT-t],1)*w[:,None]**.5;sol=lambda Y:np.linalg.lstsq(Xm,Y*w[:,None]**.5,rcond=None)[0][0];q=sol(KQ);return q/np.linalg.norm(q),sol(KP)
 N=round((end-start)*30)+1;quats=[];pos=[]
 for k in range(N):
-    q,p=place(start+k/30);quats.append([round(float(x),6) for x in q]);pos.append([round(float(x),4) for x in p])
+    q,p=(fitted if SMOOTH>0 else place)(start+k/30);quats.append([round(float(x),6) for x in q]);pos.append([round(float(x),4) for x in p])
 pos=np.array(pos);centre=np.array(kp);dancers=[]
 for v in views:
     for side in ('left','right'):
@@ -84,5 +93,5 @@ for v in views:
 heading=[float(np.degrees(np.arctan2(*(B@(v['R'].T@np.array([0,0,1.])))[[0,2]]))) for v in views]
 summary=dict(keyViews=len(views),keyTimes=[round(t-start,2) for t in kt],joins=joins,lensPx=round(lens),lensPxPerView=[round(v['fk']) for v in views],lens35mmEquivalent=round(lens/f0*43.3),metresPerDepthUnit=round(metres,3),metresSpread=round(spread,3),
  cameraHeightMeters=[round(float(p[1]),2) for p in kp],cameraPlaces=[[round(float(x),2) for x in p] for p in kp],headingDegrees=[round(h) for h in heading],pathMeters=round(float(np.linalg.norm(np.diff(pos,axis=0),axis=1).sum()),2),ankleLevelSpreadMeters=round(float(ank.std()),3) if len(ank) else None,performersAtKeyViews=dancers,
- note='Between key views the camera is interpolated. One lens assumed for the shot; the camera assumed level on average.')
+ smoothSeconds=SMOOTH,note='Between key views the camera is interpolated. One lens assumed for the shot; the camera assumed level on average.')
 json.dump(dict(summary=summary,track=dict(quats=quats,positions=pos.tolist(),focal=[round(lens/f0,4)]*N)),open(out,'w'));print(json.dumps({k:v for k,v in summary.items() if k!='performersAtKeyViews'}))

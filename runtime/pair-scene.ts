@@ -97,7 +97,16 @@ export function footLock(points:number[][][],fps:number,drift=1.5,minFrames=4){
  const n=points.length,{shift,plants}=plantShift(points,minFrames);
  const half=Math.max(1,Math.round(drift*fps/2)),out=shift.map((v,f)=>{let sx=0,sz=0,w=0;for(let j=-half;j<=half;j++){const g=shift[Math.min(n-1,Math.max(0,f+j))],k=half+1-Math.abs(j);sx+=k*g[0];sz+=k*g[1];w+=k;}return [Math.round((v[0]-sx/w)*1e4)/1e4,Math.round((v[1]-sz/w)*1e4)/1e4];});
  const moved=points.map((fr,f)=>fr.map(p=>[p[0]+out[f][0],p[1],p[2]+out[f][1]]));
- return {shift:out,plants,slideBeforeMeters:footSlide(points),slideAfterMeters:footSlide(moved),largestShiftMeters:Math.round(Math.max(...out.map(v=>Math.hypot(v[0],v[1])))*1000)/1000};
+ return {shift:out,raw:shift,plants,slideBeforeMeters:footSlide(points),slideAfterMeters:footSlide(moved),largestShiftMeters:Math.round(Math.max(...out.map(v=>Math.hypot(v[0],v[1])))*1000)/1000};
+}
+// Slower sliding, taken out for both performers together. The lock above lets go of anything slower than its `drift` seconds, so
+// that neither performer wanders from where the picture put them. With a camera that travels, its place between key views is
+// a guess, and that guess being off moves both performers over the floor together, slowly. The part of each performer's
+// plant shift between `drift` and `long` seconds, averaged over the two, is that: adding it to both holds their feet
+// stiller and cannot move them apart, since both get the same. raw: footLock().raw of each. Returns [dx, dz] per frame.
+export function togetherShift(a:number[][],b:number[][],fps:number,drift:number,long:number){
+ const n=Math.min(a.length,b.length),slow=(s:number[][],seconds:number)=>{const half=Math.max(1,Math.round(seconds*fps/2));return s.slice(0,n).map((_,f)=>{let x=0,z=0,w=0;for(let j=-half;j<=half;j++){const g=s[Math.min(n-1,Math.max(0,f+j))],k=half+1-Math.abs(j);x+=k*g[0];z+=k*g[1];w+=k;}return [x/w,z/w];});};
+ const sa=slow(a,drift),la=slow(a,long),sb=slow(b,drift),lb=slow(b,long);return sa.map((v,f)=>[Math.round((v[0]-la[f][0]+sb[f][0]-lb[f][0])/2*1e4)/1e4,Math.round((v[1]-la[f][1]+sb[f][1]-lb[f][1])/2*1e4)/1e4]);
 }
 // Two performers who are holding on to each other must not be shifted apart. link[frame] is 1 while they are joined (hands
 // within reach of each other), 0 while they are apart. Where joined, both get the mean of their two shifts; in between it blends.
