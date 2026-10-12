@@ -228,3 +228,7 @@ State at the line drawn on 2026-10-08 (run 34, commit after `21e7c0e`): 35 rules
 ## 2026-10-12 — `coarse` option for the body stage (no rule changed)
 
 `body.py --every N` (from `reconstruct_motion {coarse: true}`): the model runs on every third observed frame and the second look (R39) is skipped; despike (R38) and smoothing run on the thinner sequence, the smoothing window shortened to match. Off by default, so the default path is unchanged and the batch was not run. Measured on the samba pair only (`docs/TWO_PERSON_PLAN.md`, last section). `body.py` changed, so every body-stage cache key changed. Not checked: what despike does on a sequence three times as sparse; fast clips.
+
+## 2026-10-12 — Two performers: identities through a crossing (`observe.py`)
+
+Not one of the numbered reconstruction rules; it decides which box is which performer when `subject` is given. The leg-colour swap rule is kept only as the fallback. New: looks (trunk and thigh colour) learned from the longest stretch with the boxes apart, then one straight-or-exchanged path through the clip with a price on each change. Why, what it did on the shot it was made for, and the rerun on the five earlier two-performer windows (no chosen box changed): `docs/TWO_PERSON_PLAN.md`, "Identities through a crossing". Single-performer clips do not reach this code, so the batch was not run.

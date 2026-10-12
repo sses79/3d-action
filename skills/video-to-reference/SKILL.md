@@ -28,7 +28,7 @@ Never put video frames, renders or `.authoring/` into git.
 
 ## 1. Choose the window
 
-One continuous shot, up to 15 s, both performers large enough to read (not a far shot), no cut inside it. The camera may look at them from behind or from the side: that builds as well as a front view. What does not work (tested 2026-10-12): the two crossing each other in the picture at close range (their identities swap, and nothing reports it), one hidden behind the other for more than a moment (the build is refused if a performer is missing from over a fifth of the frames), and a camera that travels round them (step 3 assumes it stays in one place). Look before building:
+One continuous shot, up to 15 s, both performers large enough to read (not a far shot), no cut inside it. The camera may look at them from behind or from the side: that builds as well as a front view. The two may cross in the picture: which box is which performer is kept by the colour of trunk and thighs, as long as they look different and are apart for a stretch somewhere in the window (`identityEvidence` and `swappedFrames` in the pose report say what was done; check a still after the crossing). What does not work (tested 2026-10-12): two performers dressed alike crossing, one hidden behind the other for more than a moment (the build is refused if a performer is missing from over a fifth of the frames), and a camera that travels round them (step 3 assumes it stays in one place). Look before building:
 
 ```sh
 .authoring/vision-venv/bin/python authoring/render/stage-candidates.py VIDEO .authoring/renders/stage-candidates

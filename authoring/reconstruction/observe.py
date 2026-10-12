@@ -74,14 +74,68 @@ if args.subject:
   if len(free)!=1:continue
   side=free[0];other='right' if side=='left' else 'left'
   if np.linalg.norm(look[i]-look[pair[side]])<np.linalg.norm(look[i]-look[pair[other]]):members[side].update({n:d for n,d in where[i].items() if n not in members[side]});pieces[side].append(i)
- swapped=[];cross=[n for n in range(len(detections)) if n in members['left'] and n in members['right'] and (lambda a,b:np.linalg.norm(a-look[pair['right']])+np.linalg.norm(b-look[pair['left']])+60<np.linalg.norm(a-look[pair['left']])+np.linalg.norm(b-look[pair['right']]))(colour(n,members['left'][n]),colour(n,members['right'][n]))]
- runs=[]
- for n in cross:
-  if runs and n-runs[-1][-1]==1:runs[-1].append(n)
-  else:runs.append([n])
- for run in runs:
-  if len(run)>=3:
-   for n in run:members['left'][n],members['right'][n]=members['right'][n],members['left'][n];swapped.append(n)
+ # 2b. Swaps where the two are dressed alike below the waist (two dancers in the same blue), or where the tracker hands each
+ #     identity to the other person as they cross and never hands it back, so that each identity's own median colour is a
+ #     mix of both people. What each performer looks like is learned from the longest unbroken stretch in which their boxes
+ #     stay apart (within it the tracker cannot have exchanged them): the colour of the trunk (shoulders to hips) and of the
+ #     thighs. That stretch is taken as straight. Then every frame with both boxes is read
+ #     as straight or exchanged, whichever fits those two looks better, and one path is chosen through the clip that pays for
+ #     every change of mind, so a few muddled frames in the middle of a crossing do not flip it and a real exchange flips it
+ #     once. Lighting that changes for both at once moves both readings together and cancels.
+ def trunk(n,d):
+  f=frames[n][2];k=detections[n][1][d] if d<len(detections[n][1]) else [];x0,y0,x1,y1=detections[n][0][d]
+  if len(k)==17 and all(k[a][2]>.5 for a in (5,6,11,12)):
+   pts=[((k[5][0]+(k[6][0]-k[5][0])*u)*(1-v)+(k[11][0]+(k[12][0]-k[11][0])*u)*v,(k[5][1]+(k[6][1]-k[5][1])*u)*(1-v)+(k[11][1]+(k[12][1]-k[11][1])*u)*v) for u in (.25,.5,.75) for v in (.2,.4,.6,.8)]
+  else:pts=[(x0+(x1-x0)*u,y0+(y1-y0)*v) for u in (.4,.5,.6) for v in (.22,.3,.38,.45)]
+  px=[f[int(min(max(y,0),f.shape[0]-1)),int(min(max(x,0),f.shape[1]-1))] for x,y in pts];return np.median(np.array(px,dtype=float),0)
+ feature=lambda n,d:np.concatenate([trunk(n,d),colour(n,d)])
+ both=[n for n in range(len(detections)) if n in members['left'] and n in members['right']];apart=lambda n:iou(detections[n][0][members['left'][n]],detections[n][0][members['right'][n]])
+ stretches=[[]]
+ for n in both:
+  if apart(n)<.05 and (not stretches[-1] or n-stretches[-1][-1]<=2):stretches[-1].append(n)
+  elif apart(n)<.05:stretches.append([n])
+  elif stretches[-1]:stretches.append([])
+ clean=max(stretches,key=len);known=set(clean)
+ swapped=[];evidence=None
+ if len(clean)>=5:
+  ref={side:np.median([feature(n,members[side][n]) for n in clean],0) for side in ('left','right')};gap=float(np.linalg.norm(ref['left']-ref['right']))
+  cost=[]
+  for n in both:
+   a,b=feature(n,members['left'][n]),feature(n,members['right'][n]);cost.append((np.linalg.norm(a-ref['left'])+np.linalg.norm(b-ref['right']),np.linalg.norm(a-ref['right'])+np.linalg.norm(b-ref['left'])))
+  # a change of mind costs about as much as eight frames that clearly favour it; two looks too alike to tell are left alone
+  price=4*gap
+  if gap>=40:
+   best=[[0.,0.]];back=[]
+   for n,(straight,exchanged) in zip(both,cost):
+    if n in known:exchanged=1e18
+    p=best[-1];stay0,from1=p[0],p[1]+price;stay1,from0=p[1],p[0]+price;back.append((0 if stay0<=from1 else 1,1 if stay1<=from0 else 0));best.append([min(stay0,from1)+straight,min(stay1,from0)+exchanged])
+   state=0 if best[-1][0]<=best[-1][1] else 1;path=[]
+   for k in range(len(cost)-1,-1,-1):path.append(state);state=back[k][state]
+   path=path[::-1]
+   for n,st in zip(both,path):
+    if st:members['left'][n],members['right'][n]=members['right'][n],members['left'][n];swapped.append(n)
+   # frames with only one of the two boxes take the reading of the nearest frame that had both
+   flip=dict(zip(both,path))
+   for n in range(len(detections)):
+    if n in flip or not both:continue
+    near=min(both,key=lambda m:abs(m-n))
+    if flip[near]:
+     l,r=members['left'].pop(n,None),members['right'].pop(n,None)
+     if r is not None:members['left'][n]=r
+     if l is not None:members['right'][n]=l
+     swapped.append(n)
+  evidence={'framesLearnedFrom':len(clean),'lookDifference':round(gap,1),'changePrice':round(price,1),'learnedFromFrames':[clean[0],clean[-1]]}
+ else:
+  # too few frames with the two apart to learn from: the earlier rule, on each identity's own median leg colour
+  cross=[n for n in range(len(detections)) if n in members['left'] and n in members['right'] and (lambda a,b:np.linalg.norm(a-look[pair['right']])+np.linalg.norm(b-look[pair['left']])+60<np.linalg.norm(a-look[pair['left']])+np.linalg.norm(b-look[pair['right']]))(colour(n,members['left'][n]),colour(n,members['right'][n]))]
+  runs=[]
+  for n in cross:
+   if runs and n-runs[-1][-1]==1:runs[-1].append(n)
+   else:runs.append([n])
+  for run in runs:
+   if len(run)>=3:
+    for n in run:members['left'][n],members['right'][n]=members['right'][n],members['left'][n];swapped.append(n)
+ swapped=sorted(set(swapped))
  stitched={side:[int(i) for i in pieces[side][1:]] for side in pieces};own=members[args.subject];others=members['right' if args.subject=='left' else 'left']
 # The performer is the person who stays: boxes are chained frame to frame by overlap, bridging gaps of up to six frames, and the
 # longest chain wins (taller on a tie). A figure that fades out, such as the previous clip in a crossfade, forms a short chain.
@@ -104,5 +158,5 @@ for n,(index,t,f) in enumerate(frames):
  if selected is not None:previous=boxes[selected]
  k=[] if selected is None else keypoints[selected]
  rows.append({'frameIndex':index,'time':t,'clipTime':t-args.start,'detections':len(boxes),'selection':'longest overlap-linked chain of boxes, continued by overlap or height; not identity certification' if not pair else f'{args.subject} of the two largest tracked identities (BoT-SORT); not identity certification',**({'otherBBox':boxes[others[n]] if n in others else None} if pair else {}),'bbox':None if selected is None else boxes[selected],'keypoints':k,'missingOrAmbiguousSubject':selected is None,'predictWallSeconds':elapsed})
-report={'status':'observational 2D pose evidence; no rig ground truth','model':modelpath.name,'modelSHA256':hashlib.sha256(modelpath.read_bytes()).hexdigest(),'versions':{n:version(n) for n in ['ultralytics','torch','opencv-python']},'sourceSHA256':args.sha256,**({'subject':args.subject,'performers':{k:int(v) for k,v in pair.items()},'stitchedIdentities':stitched,'swappedFrames':swapped,'legColours':{k:[int(x) for x in look[v]] for k,v in pair.items()}} if pair else {}),'interval':[args.start,args.end],'frameSize':[int(frames[0][2].shape[1]),int(frames[0][2].shape[0])],'confidenceThreshold':.5,'keypointOrder':'COCO17; anatomical labels are model estimates and may swap','timingsSeconds':{'imports':imports,'modelLoad':load,'warmup':warmup,'predictions':prediction,'wall':time.perf_counter()-start},'frames':rows}
+report={'status':'observational 2D pose evidence; no rig ground truth','model':modelpath.name,'modelSHA256':hashlib.sha256(modelpath.read_bytes()).hexdigest(),'versions':{n:version(n) for n in ['ultralytics','torch','opencv-python']},'sourceSHA256':args.sha256,**({'subject':args.subject,'performers':{k:int(v) for k,v in pair.items()},'stitchedIdentities':stitched,'swappedFrames':swapped,'identityEvidence':evidence,'legColours':{k:[int(x) for x in look[v]] for k,v in pair.items()}} if pair else {}),'interval':[args.start,args.end],'frameSize':[int(frames[0][2].shape[1]),int(frames[0][2].shape[0])],'confidenceThreshold':.5,'keypointOrder':'COCO17; anatomical labels are model estimates and may swap','timingsSeconds':{'imports':imports,'modelLoad':load,'warmup':warmup,'predictions':prediction,'wall':time.perf_counter()-start},'frames':rows}
 out=Path(args.out);out.mkdir(parents=True,exist_ok=True);(out/'pose-report.json').write_text(json.dumps(report));print(json.dumps({'frames':len(rows),'missing':sum(x['missingOrAmbiguousSubject'] for x in rows),'timings':report['timingsSeconds']}))
