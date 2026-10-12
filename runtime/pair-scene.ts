@@ -79,7 +79,9 @@ export function footSlide(points:number[][][]){const lv=levels(points);let total
 // performer wander from where the picture put them, so the slow part of the shift (over about `drift` seconds) is taken out
 // again: what remains keeps feet still through a step and gives way over several steps.
 // Returns the shift [dx, dz] per frame, and what it does to the slide.
-export function footLock(points:number[][][],fps:number,drift=1.5,minFrames=4){
+// The shift that holds every plant, before its slow part is taken out: where the planted feet say the performer should be,
+// against where the picture put them.
+export function plantShift(points:number[][][],minFrames=4){
  const n=points.length,lv=levels(points),low=(f:number,k:number)=>points[f][k][1]-lv[k],down=[0,1,2,3].map(k=>points.map((_,f)=>low(f,k)<.03));
  for(const d of down){let start=-1;for(let f=0;f<=n;f++){if(f<n&&d[f]){if(start<0)start=f;}else if(start>=0){if(f-start<minFrames)for(let j=start;j<f;j++)d[j]=false;start=-1;}}}
  const shift:number[][]=[];let support=-1,anchor=[0,0],dx=0,dz=0,plants=0;
@@ -89,6 +91,10 @@ export function footLock(points:number[][][],fps:number,drift=1.5,minFrames=4){
   if(support>=0){dx=anchor[0]-points[f][support][0];dz=anchor[1]-points[f][support][2];}
   shift.push([dx,dz]);
  }
+ return {shift,plants};
+}
+export function footLock(points:number[][][],fps:number,drift=1.5,minFrames=4){
+ const n=points.length,{shift,plants}=plantShift(points,minFrames);
  const half=Math.max(1,Math.round(drift*fps/2)),out=shift.map((v,f)=>{let sx=0,sz=0,w=0;for(let j=-half;j<=half;j++){const g=shift[Math.min(n-1,Math.max(0,f+j))],k=half+1-Math.abs(j);sx+=k*g[0];sz+=k*g[1];w+=k;}return [Math.round((v[0]-sx/w)*1e4)/1e4,Math.round((v[1]-sz/w)*1e4)/1e4];});
  const moved=points.map((fr,f)=>fr.map(p=>[p[0]+out[f][0],p[1],p[2]+out[f][1]]));
  return {shift:out,plants,slideBeforeMeters:footSlide(points),slideAfterMeters:footSlide(moved),largestShiftMeters:Math.round(Math.max(...out.map(v=>Math.hypot(v[0],v[1])))*1000)/1000};

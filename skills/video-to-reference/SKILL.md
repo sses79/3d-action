@@ -28,7 +28,7 @@ Never put video frames, renders or `.authoring/` into git.
 
 ## 1. Choose the window
 
-One continuous shot, up to 15 s, both performers large enough to read (not a far shot), no cut inside it. The camera may look at them from behind or from the side: that builds as well as a front view. The two may cross in the picture: which box is which performer is kept by the colour of trunk and thighs, as long as they look different and are apart for a stretch somewhere in the window (`identityEvidence` and `swappedFrames` in the pose report say what was done; check a still after the crossing). One may pass behind the other and come out again: the returning figure is joined to the right performer, and the hidden stretch is bridged (a blend, not a reading). What does not work (tested 2026-10-12): two performers dressed alike crossing, a performer missing from over a fifth of the frames (the build is refused), and a camera that travels round them (step 3 assumes it stays in one place). Look before building:
+One continuous shot, up to 15 s, both performers large enough to read (not a far shot), no cut inside it. The camera may look at them from behind or from the side: that builds as well as a front view. The two may cross in the picture: which box is which performer is kept by the colour of trunk and thighs, as long as they look different and are apart for a stretch somewhere in the window (`identityEvidence` and `swappedFrames` in the pose report say what was done; check a still after the crossing). One may pass behind the other and come out again: the returning figure is joined to the right performer, and the hidden stretch is bridged (a blend, not a reading). The camera may travel (walk round them, track alongside): step 3 has a second way for that. What does not work (tested 2026-10-12): two performers dressed alike crossing, and a performer missing from over a fifth of the frames (the build is refused). Look before building:
 
 ```sh
 .authoring/vision-venv/bin/python authoring/render/stage-candidates.py VIDEO .authoring/renders/stage-candidates
@@ -56,6 +56,18 @@ Pick 8 times spread over the window, the first at the window's start, and run:
 - `--nodal` assumes the camera stays in one place and only turns and zooms. That is right for most broadcast shots. If the camera clearly travels (parallax between near and far things), say this method does not cover it.
 - Read the summary: `framesNotSolved` should be 0, `minInliers` 40 or more; `lensPx` should follow the zoom you see; `cameraPitchDown` and `cameraHeight` should be believable for the shot.
 - Keep the scratch files outside git (`.authoring/renders/` or a temp folder).
+
+### If the camera travels
+
+`--nodal` holds the camera in one place. For a camera that walks or flies through the set, take the cameras the depth model itself gives:
+
+```sh
+.authoring/comfyui/.venv/bin/python authoring/render/stage-depth.py .authoring/comfyui VIDEO KEY-A.npz t0,...,t7 392
+.authoring/comfyui/.venv/bin/python authoring/render/stage-depth.py .authoring/comfyui VIDEO KEY-B.npz t0,u1,...,u6,t7 392
+.authoring/vision-venv/bin/python authoring/render/stage-travel.py START END TRACK.json KEY-A.npz KEY-B.npz
+```
+
+Eight times spread over the window per run (video seconds); the second run's first and last times are the first run's, its other six fall between. Each run takes about 20 s. Read the summary: the joins (the second shared view should agree within a few degrees), the lens per view (alike except each run's first), camera heights (believable for the shot), and the path. Then check it, because nothing in the script can: give the pair a scene with this track and render `camera: "fixed"`; the two performers must keep their formation instead of circling each other. Between key views the camera is interpolated, so feet slide more than with a still camera, and a zoom during the move is not handled. Measured on one shot (`docs/TWO_PERSON_PLAN.md`, "A camera that travels").
 
 ## 4. Make the stage objects
 
