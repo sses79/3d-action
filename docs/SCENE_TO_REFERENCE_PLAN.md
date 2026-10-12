@@ -255,3 +255,11 @@ Reproduced in a scratch copy of the rolled-back Studio (commit `eeb96ca` plus `.
 - The file takes about 1.6 s to parse (13.7 MB FBX, 13 meshes, 188,427 vertices, 132 bones).
 - Not measured: the whole machine hanging. The measurement shows the page stopping; a browser stuck for seconds per frame on the graphics chip that also draws the desktop is the likely reason the Mac stopped responding.
 - For a retry: build the hair volume once, copy its vertices into a plain mesh, drop the face shapes at load. Better still, do both offline into a small GLB so nothing heavy happens in the page. The scratch Studio with those two changes showed the model at 64 frames per second (one still looked at: body, hair and room drawn). The user's decision of 2026-10-11 stands: the mannequin is the stand-in.
+
+### The Character Creator body is back, with the fix (2026-10-12)
+
+- Re-applied the rolled-back integration (`register_character`, `list_characters`, `/api/character-file`, Studio and renderer; 54 operations) with two changes in `prepareFollower` (`runtime/characters.ts`): the hair volume is built once and copied into a plain mesh, and the face shapes are dropped at load.
+- The renderer's framing measurement now reads the body that is drawn (the follower and its hair), not the hidden mannequin.
+- Tested first in a scratch copy, then live, each in a separate headless Chrome: Studio at 64 frames per second with the model, 0.9–1.0 GB footprint; one still looked at each time. A scratch `export_pair_reference` gave whole figures in all three shots, the head box including the hair.
+- Live state: character `woman01` is registered on this machine as a library body for future scenes (file in `.authoring/woman01-fbx/`, not in the repo; licence still for the user to check). The user wants it kept in the library only, not used in this scene: the trial scene `scene-very-grown-up-woman01` had its two actions archived the same day (the service has no operation to delete a pair, so its record remains), and `scene-very-grown-up` r17 keeps both mannequins.
+- Not done: a look in the user's own browser; the offline GLB (the FBX is still parsed in the page, about 1.6 s); forearm twist, fingers and foot contact were not looked at closely.

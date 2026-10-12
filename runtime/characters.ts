@@ -25,10 +25,28 @@ export function follow(T:any,source:any,target:any,map:string[][],prefix=''){
  source.updateMatrixWorld(true);target.updateMatrixWorld(true);
  // rest alignment: point each mapped joint at its first mapped descendant as the mannequin's does
  const childOf=(p:any)=>pairs.find(c=>{let o=c.t.parent;while(o&&o!==p.t)o=o.parent;return o===p.t&&c!==p;});
- for(const p of pairs){const c=childOf(p);if(!c||p===pairs[0])continue;const now=wp(c.t).sub(wp(p.t)).normalize(),want=wp(c.s).sub(wp(p.s)).normalize(),R=new T.Quaternion().setFromUnitVectors(now,want),parent=wq(p.t.parent);p.t.quaternion.premultiply(parent.clone().invert().multiply(R).multiply(parent));p.t.updateMatrixWorld(true);}
+ // Feet are left as they are: both bodies stand flat at rest, but ankle and toe joints sit differently in each foot, and
+ // pointing one foot's joints like the other's stood this body on tiptoe.
+ for(const p of pairs){const c=childOf(p);if(!c||p===pairs[0]||/^(foot|ball)_/.test(p.s.name))continue;const now=wp(c.t).sub(wp(p.t)).normalize(),want=wp(c.s).sub(wp(p.s)).normalize(),R=new T.Quaternion().setFromUnitVectors(now,want),parent=wq(p.t.parent);p.t.quaternion.premultiply(parent.clone().invert().multiply(R).multiply(parent));p.t.updateMatrixWorld(true);}
  const rest=pairs.map(p=>({s:wq(p.s).invert(),t:wq(p.t)})),hipS=wp(pairs[0].s).y,hipT=wp(pairs[0].t).y,hipLocal=pairs[0].t.position.clone();
  return {pairs:pairs.length,hipRatio:hipT/hipS,update(){source.updateMatrixWorld(true);
    // hips: where the mannequin's are over the floor, height in proportion; set in the target's parent space
    const at=wp(pairs[0].s);at.y*=hipT/hipS;pairs[0].t.parent.updateWorldMatrix(true,false);pairs[0].t.position.copy(pairs[0].t.parent.worldToLocal(at));void hipLocal;
    pairs.forEach((p,i)=>{const world=wq(p.s).multiply(rest[i].s).multiply(rest[i].t);p.t.parent.updateWorldMatrix(true,false);p.t.quaternion.copy(wq(p.t.parent).invert().multiply(world));p.t.updateMatrix();});target.updateMatrixWorld(true);}};
+}
+// A registered body of another skeleton (register_character): where its bones are named, which small inner meshes to hide,
+// and which meshes are card hair. prepareFollower dresses a loaded one for clay: one material, hidden parts, and the hair
+// cards replaced by one smooth volume fixed to the head (the cards' points, in the head's own space, each add a small blob to
+// a field; the surface where the field is strong enough is drawn with marching cubes). The surface is built once and copied
+// into a plain mesh: the MarchingCubes object itself takes seconds per frame in three's WebGPU renderer and stalled Studio
+// (2026-10-11). The face shapes (121 on the body) are dropped: they cost 0.4 GB and do nothing for a clay figure. Convex shells of point groups looked
+// like broken rock and fitted ellipsoids like scales. Returns the toe joints and how high they sit at rest: the file's own
+// floor is y=0, so that is their height over the sole. Call with the body in its rest pose, already scaled and in the scene.
+export type FollowerSpec={prefix:string;hide?:string[];hair?:string[]};
+export function prepareFollower(T:any,MarchingCubes:any,body:any,spec:FollowerSpec,material:()=>any,hairMaterial:()=>any){
+ body.traverse((o:any)=>{if(o.isMesh){o.geometry.morphAttributes={};o.morphTargetInfluences=undefined;o.morphTargetDictionary=undefined;o.material=material();o.castShadow=true;o.receiveShadow=true;o.frustumCulled=false;if(spec.hide?.some(h=>o.name.includes(h)))o.visible=false;}});
+ if(spec.hair?.length){const head=body.getObjectByName(spec.prefix+'Head');body.updateMatrixWorld(true);const pts:any[]=[];
+  body.traverse((m:any)=>{if(!m.isMesh||!spec.hair!.some(h=>m.name.includes(h)))return;m.visible=false;const at=m.geometry.getAttribute('position'),step=Math.max(1,Math.floor(at.count/1500));for(let k=0;k<at.count;k+=step){const v=new T.Vector3();if(m.isSkinnedMesh)m.getVertexPosition(k,v);else v.fromBufferAttribute(at,k);pts.push(head.worldToLocal(v.applyMatrix4(m.matrixWorld)));}});
+  if(pts.length&&head){const box=new T.Box3().setFromPoints(pts),size=box.getSize(new T.Vector3()),side=Math.max(size.x,size.y,size.z)*1.3,mid=box.getCenter(new T.Vector3()),field=new MarchingCubes(64,hairMaterial(),false,false,200000);field.isolation=80;field.reset();const reach=.022,strength=92*reach*reach;for(const q of pts)field.addBall((q.x-mid.x)/side+.5,(q.y-mid.y)/side+.5,(q.z-mid.z)/side+.5,strength,12);field.update();const g=new T.BufferGeometry();for(const n of ['position','normal'])g.setAttribute(n,new T.BufferAttribute(field.geometry.getAttribute(n).array.slice(0,field.count*3),3));field.geometry.dispose();const plain=new T.Mesh(g,field.material);plain.position.copy(mid);plain.scale.setScalar(side/2);plain.castShadow=true;plain.receiveShadow=true;plain.frustumCulled=false;plain.name='hair';head.add(plain);}}
+ body.updateMatrixWorld(true);const toes=[spec.prefix+'L_ToeBase',spec.prefix+'R_ToeBase'].map(n=>body.getObjectByName(n)).filter(Boolean);return {toes,rest:Math.min(...toes.map((o:any)=>o.getWorldPosition(new T.Vector3()).y))};
 }

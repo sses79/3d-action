@@ -28,6 +28,11 @@ const server=createServer(async(req,res)=>{
    if(file.endsWith('.mp4')&&req.headers.range){const match=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range);if(!match)return json(416,{error:'Invalid range'});const start=Number(match[1]),end=Math.min(bytes.length-1,match[2]?Number(match[2]):bytes.length-1);if(start>end||start>=bytes.length){res.writeHead(416,{'Content-Range':`bytes */${bytes.length}`});return res.end();}res.writeHead(206,{'Accept-Ranges':'bytes','Content-Range':`bytes ${start}-${end}/${bytes.length}`,'Content-Length':end-start+1});return res.end(bytes.subarray(start,end+1));}
    res.writeHead(200,{'Accept-Ranges':'bytes','Content-Length':bytes.length});return res.end(bytes);
   }
+  if(req.method==='GET'&&path==='/api/character-file'){
+   // Streams only a file registered as a character (register_character), and only while its size is as registered.
+   const id=url.searchParams.get('id'),c=Object.hasOwn(studio.state.characters??{},id)?studio.state.characters[id]:null;if(!c)return json(404,{error:'No such registered character'});let info;try{info=await stat(c.file);}catch{return json(404,{error:'The character file is no longer at '+c.file});}if(info.size!==c.bytes)return json(409,{error:'The character file has changed since it was registered'});
+   res.writeHead(200,{'Content-Type':'application/octet-stream','Content-Length':info.size});return createReadStream(c.file).pipe(res);
+  }
   if(req.method==='GET'&&path==='/api/video-source'){
    // Streams only a file the service itself linked to an action, and only while that file is unchanged.
    const id=url.searchParams.get('actionId'),source=Object.hasOwn(studio.state.actions,id)?studio.state.actions[id].videoSource:null;if(!source)return json(404,{error:'No source video is linked to this action'});
