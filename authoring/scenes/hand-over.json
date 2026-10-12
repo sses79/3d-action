@@ -1,0 +1,303 @@
+{
+ "sceneId": "scene-hand-over",
+ "name": "Hand-over test",
+ "objects": [
+  {
+   "name": "back wall left",
+   "shape": "box",
+   "position": [
+    -0.9,
+    1.4,
+    -3.075
+   ],
+   "size": [
+    4.2,
+    2.8,
+    0.15
+   ]
+  },
+  {
+   "name": "back wall right",
+   "shape": "box",
+   "position": [
+    2.7,
+    1.4,
+    -3.075
+   ],
+   "size": [
+    0.6,
+    2.8,
+    0.15
+   ]
+  },
+  {
+   "name": "corridor header",
+   "shape": "box",
+   "position": [
+    1.8,
+    2.5,
+    -3.075
+   ],
+   "size": [
+    1.2,
+    0.6,
+    0.15
+   ]
+  },
+  {
+   "name": "left wall",
+   "shape": "box",
+   "position": [
+    -3.075,
+    1.4,
+    -0.5
+   ],
+   "size": [
+    0.15,
+    2.8,
+    5.3
+   ]
+  },
+  {
+   "name": "right wall",
+   "shape": "box",
+   "position": [
+    3.075,
+    1.4,
+    -0.5
+   ],
+   "size": [
+    0.15,
+    2.8,
+    5.3
+   ]
+  },
+  {
+   "name": "front door",
+   "shape": "box",
+   "position": [
+    -2.96,
+    1.05,
+    0.6
+   ],
+   "size": [
+    0.08,
+    2.1,
+    1.0
+   ]
+  },
+  {
+   "name": "corridor wall left",
+   "shape": "box",
+   "position": [
+    1.125,
+    1.4,
+    -4.65
+   ],
+   "size": [
+    0.15,
+    2.8,
+    3.0
+   ]
+  },
+  {
+   "name": "corridor wall right",
+   "shape": "box",
+   "position": [
+    2.475,
+    1.4,
+    -4.65
+   ],
+   "size": [
+    0.15,
+    2.8,
+    3.0
+   ]
+  },
+  {
+   "name": "console table",
+   "shape": "box",
+   "position": [
+    -1.6,
+    0.4,
+    -2.75
+   ],
+   "size": [
+    1.3,
+    0.8,
+    0.4
+   ]
+  }
+ ],
+ "marks": {
+  "ana mark": [
+   -0.45,
+   0
+  ],
+  "ben mark": [
+   0.45,
+   0
+  ]
+ },
+ "performers": [
+  {
+   "id": "ana",
+   "actionId": "hand-over-ana",
+   "name": "Hand-over · Ana",
+   "represents": "Ana, an adult woman; screen-left at the start",
+   "height": 1.68,
+   "start": "ana mark",
+   "facing": "ben",
+   "parts": [
+    {
+     "movementId": "move-idle",
+     "name": "0-3 s: holds the parcel, waits",
+     "duration": 3
+    },
+    {
+     "movementId": "move-idle",
+     "name": "3-5 s: hands the parcel to Ben",
+     "duration": 2
+    },
+    {
+     "movementId": "move-idle",
+     "name": "5-8 s: empty-handed, watches",
+     "duration": 3
+    }
+   ],
+   "looks": [
+    {
+     "start": 0,
+     "end": 8.6,
+     "at": "ben"
+    }
+   ]
+  },
+  {
+   "id": "ben",
+   "actionId": "hand-over-ben",
+   "name": "Hand-over · Ben",
+   "represents": "Ben, an adult man; screen-right at the start",
+   "height": 1.8,
+   "start": "ben mark",
+   "facing": "ana",
+   "parts": [
+    {
+     "movementId": "move-idle",
+     "name": "0-3 s: waits",
+     "duration": 3
+    },
+    {
+     "movementId": "move-idle",
+     "name": "3-5 s: takes the parcel",
+     "duration": 2
+    },
+    {
+     "movementId": "move-idle",
+     "name": "5-8 s: holds the parcel",
+     "duration": 3
+    }
+   ],
+   "looks": [
+    {
+     "start": 0,
+     "end": 8.6,
+     "at": "ana"
+    }
+   ]
+  }
+ ],
+ "props": [
+  {
+   "id": "parcel",
+   "name": "parcel",
+   "shape": "box",
+   "size": [
+    0.18,
+    0.12,
+    0.12
+   ],
+   "color": "green",
+   "represents": "a small brown paper parcel tied with string",
+   "start": {
+    "heldBy": "ana",
+    "hand": "right"
+   },
+   "handovers": [
+    {
+     "start": 3,
+     "end": 5,
+     "to": "ben",
+     "hand": "left"
+    }
+   ]
+  }
+ ],
+ "cameras": [
+  {
+   "start": 0,
+   "name": "Shot 1: full-body two-shot",
+   "position": [
+    0,
+    1.45,
+    3.4
+   ],
+   "lookAt": [
+    0,
+    0.9,
+    0
+   ],
+   "lens35": 28
+  },
+  {
+   "start": 3,
+   "name": "Shot 2: tighter full-body two-shot on the hand-over",
+   "position": [
+    0.25,
+    1.3,
+    3.1
+   ],
+   "lookAt": [
+    0,
+    0.86,
+    0
+   ],
+   "lens35": 30
+  },
+  {
+   "start": 6,
+   "name": "Shot 3: two-shot",
+   "position": [
+    0,
+    1.45,
+    3.4
+   ],
+   "lookAt": [
+    0,
+    0.9,
+    0
+   ],
+   "lens35": 28
+  }
+ ],
+ "beats": [
+  {
+   "start": 0,
+   "end": 3,
+   "text": "Ana stands holding a parcel in her right hand; Ben waits facing her."
+  },
+  {
+   "start": 3,
+   "end": 5,
+   "text": "Ana holds the parcel out; Ben reaches with his left hand and takes it."
+  },
+  {
+   "start": 5,
+   "end": 8,
+   "text": "Ben holds the parcel; Ana lowers her arm."
+  }
+ ],
+ "notes": [
+  "Test scene for props: one hand-over. The room is borrowed from Very Grown-Up."
+ ]
+}
