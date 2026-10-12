@@ -20,11 +20,11 @@ export type StageItem={action:Action;name:string;duration?:number;speed?:number;
 export type StageLook={start:number;end:number;target:(time:number)=>number[]};
 // A reach: over start..end one hand goes to a point in the room and comes back (0.5 s out, 0.5 s back), the arm bent or
 // straightened at shoulder and elbow, with the trunk leaning a little when the point is past arm's length.
-export type StageReach={start:number;end:number;hand:'l'|'r';target:number[]};
+export type StageReach={start:number;end:number;hand:'l'|'r';target:number[];out?:number;back?:number};  // out, back: seconds to get there and to come back (0.5 each)
 export type StageReport={item:number;name:string;start:number;end:number;kind:'on the spot'|'walk';from:number[];to:number[];cycles?:number;strideScale?:number;speed:number}[];
 const FEET=['foot_l','ball_l','foot_r','ball_r'];
 export function stagePerformer(model:THREE.Object3D,clips:THREE.AnimationClip[],scale:number,id:string,name:string,start:{position:number[];facing:number[]},items:StageItem[],looks:StageLook[]=[],blend=.3,reaches:StageReach[]=[]):{action:Action;report:StageReport;duration:number;reaches:{start:number;end:number;hand:string;shortByMeters:number}[]}{
- const reached=reaches.map(r=>({start:r.start,end:r.end,hand:r.hand,shortByMeters:0,best:Infinity}));
+ const reached=reaches.map(r=>({start:r.start,end:r.end,hand:r.hand,shortByMeters:0,best:-1}));
  if(!items.length||items.length>30)throw Error('Stage 1–30 items for a performer');
  const player=new CharacterPlayer(model,clips,scale),bones:THREE.Object3D[]=[];model.traverse(b=>{if((b as THREE.Bone).isBone)bones.push(b);});
  const up=new THREE.Vector3(0,1,0),v=new THREE.Vector3(),world=(n:string)=>model.getObjectByName(n)!.getWorldPosition(new THREE.Vector3());
@@ -62,14 +62,14 @@ export function stagePerformer(model:THREE.Object3D,clips:THREE.AnimationClip[],
     const target=new THREE.Vector3().fromArray(look.target(time));let left=1;for(const [name,share] of chain){const bone=model.getObjectByName(name)!,head=headBone.getWorldPosition(new THREE.Vector3()),now=headAxis.clone().applyQuaternion(headBone.getWorldQuaternion(new THREE.Quaternion())),want=target.clone().sub(head).normalize(),angle=Math.min(now.angleTo(want),70*Math.PI/180*left),axis=now.clone().cross(want);if(axis.lengthSq()<1e-10||angle<1e-5)continue;
      const R=new THREE.Quaternion().setFromAxisAngle(axis.normalize(),angle*w*share/left),parent=bone.parent!.getWorldQuaternion(new THREE.Quaternion());bone.quaternion.premultiply(parent.clone().invert().multiply(R).multiply(parent));bone.updateMatrixWorld(true);pose.bones[boneIndex.get(name)!].q=bone.quaternion.clone();left-=share;}}}
   // reaches: with the pose stood in the room, lean the trunk if the point is far, then bend the arm so the wrist gets there
-  const reach=reaches.find(r=>time>=r.start&&time<=r.end);if(reach){const w=ease(Math.min((time-reach.start)/.5,(reach.end-time)/.5,1));if(w>0){model.position.set(p[0]/scale,p[1]/scale,p[2]/scale);model.quaternion.copy(q);pose.bones.forEach((b,j)=>{bones[j].position.copy(b.p);bones[j].quaternion.copy(b.q);bones[j].scale.copy(b.s);});model.updateMatrixWorld(true);
+  const reach=reaches.find(r=>time>=r.start&&time<=r.end);if(reach){const w=ease(Math.min((time-reach.start)/(reach.out??.5),(reach.end-time)/(reach.back??.5),1));if(w>0){model.position.set(p[0]/scale,p[1]/scale,p[2]/scale);model.quaternion.copy(q);pose.bones.forEach((b,j)=>{bones[j].position.copy(b.p);bones[j].quaternion.copy(b.q);bones[j].scale.copy(b.s);});model.updateMatrixWorld(true);
     const s=reach.hand,goal=new THREE.Vector3().fromArray(reach.target),bone=(n:string)=>model.getObjectByName(n)!,keep=(n:string)=>{pose.bones[boneIndex.get(n)!].q=bone(n).quaternion.clone();};
     const turn=(n:string,R:THREE.Quaternion)=>{const b=bone(n),parent=b.parent!.getWorldQuaternion(new THREE.Quaternion());b.quaternion.premultiply(parent.clone().invert().multiply(R).multiply(parent)).normalize();b.updateWorldMatrix(false,true);keep(n);};
     {const S=world('upperarm_'+s),arm=world('lowerarm_'+s).distanceTo(S)+world('hand_'+s).distanceTo(world('lowerarm_'+s)),to=goal.clone().sub(S),over=to.length()-arm*.95;if(over>0){const flat=to.clone().setY(0);if(flat.lengthSq()>1e-8)turn('spine_02',new THREE.Quaternion().setFromAxisAngle(up.clone().cross(flat.normalize()).normalize(),Math.min(.45,over/.22)*w));}}
     const S=world('upperarm_'+s),E=world('lowerarm_'+s),W0=world('hand_'+s),l1=E.distanceTo(S),l2=W0.distanceTo(E),aimAt=W0.clone().lerp(goal,w),to=aimAt.clone().sub(S),far=to.length();
     if(far>1e-4){const dir=to.divideScalar(far),d=Math.min(l1+l2-1e-3,Math.max(Math.abs(l1-l2)+1e-3,far)),along=(l1*l1-l2*l2+d*d)/(2*d),out=Math.sqrt(Math.max(0,l1*l1-along*along)),e0=E.clone().sub(S);let side=e0.addScaledVector(dir,-e0.dot(dir));if(side.lengthSq()<1e-8)side=new THREE.Vector3(0,-1,0).addScaledVector(dir,dir.y);side.normalize();
      const elbow=S.clone().addScaledVector(dir,along).addScaledVector(side,out),wrist=S.clone().addScaledVector(dir,d);turn('upperarm_'+s,new THREE.Quaternion().setFromUnitVectors(E.clone().sub(S).normalize(),elbow.clone().sub(S).normalize()));const E2=world('lowerarm_'+s);turn('lowerarm_'+s,new THREE.Quaternion().setFromUnitVectors(world('hand_'+s).sub(E2).normalize(),wrist.sub(E2).normalize()));}
-    const rec=reached[reaches.indexOf(reach)],off=Math.abs(time-(reach.start+reach.end)/2);if(off<rec.best){rec.best=off;rec.shortByMeters=Math.round(world('hand_'+s).distanceTo(goal)*1000)/1000;}}}
+    const rec=reached[reaches.indexOf(reach)];if(w>rec.best+1e-6){rec.best=w;rec.shortByMeters=Math.round(world('hand_'+s).distanceTo(goal)*1000)/1000;}}}
   tracks[0].keys.push({time,value:q.toArray()});tracks[1].keys.push({time,value:p});tracks[2].keys.push({time,value:pose.rootS.toArray()});
   pose.bones.forEach((b,j)=>{tracks[(j+1)*3].keys.push({time,value:b.q.clone().normalize().toArray()});tracks[(j+1)*3+1].keys.push({time,value:b.p.toArray()});tracks[(j+1)*3+2].keys.push({time,value:b.s.toArray()});});
  }
