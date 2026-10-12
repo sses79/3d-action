@@ -1,7 +1,7 @@
 """2D pose observations for one person in a video window. Observational evidence, not rig ground truth."""
 import argparse,os,time,json,hashlib,subprocess
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('--video',required=True);p.add_argument('--sha256',required=True);p.add_argument('--start',type=float,required=True);p.add_argument('--end',type=float,required=True);p.add_argument('--model',required=True);p.add_argument('--out',required=True);p.add_argument('--subject',choices=['left','right'],help='two performers in the window: which one to follow, named by where they stand in the picture at the start');args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--video',required=True);p.add_argument('--sha256',required=True);p.add_argument('--start',type=float,required=True);p.add_argument('--end',type=float,required=True);p.add_argument('--model',required=True);p.add_argument('--out',required=True);p.add_argument('--subject',choices=['left','right'],help='two performers in the window: which one to follow, named by where they stand in the picture at the start');p.add_argument('--looks',help='pose report of another window of the same two performers (a neighbouring shot where they stand apart): their looks are taken from it when this window cannot show them apart, or shows them too alike');args=p.parse_args()
 start=time.perf_counter();os.environ.setdefault('YOLO_CONFIG_DIR',str(Path('.authoring/vision-config').resolve()));os.environ.setdefault('MPLCONFIGDIR',str(Path('.authoring/vision-config/matplotlib').resolve()))
 import cv2,torch
 from ultralytics import YOLO
@@ -42,6 +42,18 @@ if args.subject:
   for d,i in enumerate(named[n]):
    if i is not None:total[i]=total.get(i,0)+area(boxes[d]);seen.setdefault(i,[]).append((boxes[d][0]+boxes[d][2])/2)
  two=sorted(total,key=total.get,reverse=True)[:2]
+ # The two performers are the two who are there at the start. Most area over the whole window is not enough where the two wrap
+ # round each other: the tracker then breaks each into several identities, and the two largest pieces can be one dancer early
+ # and the same dancer late. So: the first frame with two identities of comparable size that both go on (each in three of the
+ # next six frames, each seen five frames or more, neither a passer-by with under 15% of the largest total). If there is no
+ # such frame the two largest stand.
+ at={}
+ for n in range(len(detections)):
+  for d,i in enumerate(named[n]):
+   if i is not None:at.setdefault(i,{})[n]=d
+ for n in range(len(detections)):
+  here=sorted((i for i in at if n in at[i] and len(at[i])>=5 and total[i]>=.15*max(total.values()) and sum(m in at[i] for m in range(n,n+6))>=3),key=lambda i:-area(detections[n][0][at[i][n]]))
+  if len(here)>=2 and area(detections[n][0][at[here[1]][n]])>=.3*area(detections[n][0][at[here[0]][n]]):two=here[:2];break
  if len(two)<2:raise SystemExit('Unsupported window: fewer than two tracked people')
  two.sort(key=lambda i:sum(seen[i][:5])/len(seen[i][:5]));pair={'left':two[0],'right':two[1]};mine=pair[args.subject];theirs=pair['right' if args.subject=='left' else 'left']
  # Through a clinch. When one performer goes behind the other the tracker drops that identity and, once the performer shows
@@ -70,7 +82,8 @@ if args.subject:
  look={i:np.median([colour(n,d) for n,d in m.items()],0) for i,m in where.items()};size={i:float(np.median([area(detections[n][0][d]) for n,d in m.items()])) for i,m in where.items()}
  members={'left':dict(where[pair['left']]),'right':dict(where[pair['right']])};pieces={'left':[pair['left']],'right':[pair['right']]};usual_area=min(size[pair['left']],size[pair['right']])
  def stitch(fits):
-  for i in sorted((i for i in where if i not in two and size[i]>=.3*usual_area and len(where[i])>=3),key=lambda i:min(where[i])):
+  # (a box much larger than either performer's is one box round both of them, not one of them come back)
+  for i in sorted((i for i in where if i not in two and size[i]>=.3*usual_area and size[i]<=1.75*max(size[pair['left']],size[pair['right']]) and len(where[i])>=3),key=lambda i:min(where[i])):
    free=[side for side in ('left','right') if len(set(where[i])&set(members[side]))<=2]
    if len(free)!=1:continue
    side=free[0];other='right' if side=='left' else 'left'
@@ -107,15 +120,30 @@ if args.subject:
   for side in base:members[side].clear();members[side].update(base[side]);del pieces[side][1:]
  stitch(lambda i,side,other:True)
  both=[n for n in range(len(detections)) if n in members['left'] and n in members['right']];apart=lambda n:iou(detections[n][0][members['left'][n]],detections[n][0][members['right'][n]])
- stretches=[[]]
- for n in both:
-  if apart(n)<.05 and (not stretches[-1] or n-stretches[-1][-1]<=2):stretches[-1].append(n)
-  elif apart(n)<.05:stretches.append([n])
-  elif stretches[-1]:stretches.append([])
- clean=max(stretches,key=len);known=set(clean)
- swapped=[];evidence=None
- if len(clean)>=5:
-  ref={side:np.median([feature(n,members[side][n]) for n in clean],0) for side in ('left','right')};gap=float(np.linalg.norm(ref['left']-ref['right']))
+ def longest(limit):
+  stretches=[[]]
+  for n in both:
+   if apart(n)<limit and (not stretches[-1] or n-stretches[-1][-1]<=2):stretches[-1].append(n)
+   elif apart(n)<limit:stretches.append([n])
+   elif stretches[-1]:stretches.append([])
+  return max(stretches,key=len)
+ # where the two are never clear of each other for five frames (a hold), a stretch in which their boxes only touch at the
+ # edges will do: the trunk and thighs sampled are still each one's own
+ clean=longest(.05);loose=len(clean)<5
+ if loose:clean=longest(.15)
+ known=set(clean)
+ swapped=[];evidence=None;borrowed=None;ref=None;gap=0.
+ if len(clean)>=5:ref={side:np.median([feature(n,members[side][n]) for n in clean],0) for side in ('left','right')};gap=float(np.linalg.norm(ref['left']-ref['right']))
+ # Looks from another shot. In a hold the two are never apart, and what can be sampled of each is partly the other, so their
+ # looks come out alike. A neighbouring shot of the same two, where they stand apart, gives the two looks; which of them is
+ # this window's left and which its right is settled on this window's own clearest frames.
+ if args.looks and (loose or gap<40) and both:
+  other=json.load(open(args.looks)).get('identityEvidence') or {}
+  if other.get('looks'):
+   A,B=np.array(other['looks']['left']),np.array(other['looks']['right']);judge=clean if clean else both[:5];fl=np.median([feature(n,members['left'][n]) for n in judge],0);fr=np.median([feature(n,members['right'][n]) for n in judge],0)
+   straight=np.linalg.norm(fl-A)+np.linalg.norm(fr-B)<=np.linalg.norm(fl-B)+np.linalg.norm(fr-A);ref={'left':A,'right':B} if straight else {'left':B,'right':A};gap=float(np.linalg.norm(A-B));borrowed={'report':os.path.basename(os.path.dirname(os.path.abspath(args.looks))),'itsLeftIsThisWindows':'left' if straight else 'right'}
+   if not clean:clean=judge;known=set(clean)
+ if ref is not None:
   # a change of mind costs about as much as eight frames that clearly favour it; two looks too alike to tell are left alone
   price=4*gap
   if gap>=40:
@@ -145,7 +173,7 @@ if args.subject:
      if l is not None:members['right'][n]=l
      swapped.append(n)
   else:restore();stitch(by_legs);swap_by_legs()
-  evidence={'framesLearnedFrom':len(clean),'lookDifference':round(gap,1),'changePrice':round(price,1),'learnedFromFrames':[clean[0],clean[-1]]}
+  evidence={'framesLearnedFrom':len(clean),'lookDifference':round(gap,1),'changePrice':round(price,1),'learnedFromFrames':[clean[0],clean[-1]],**({'boxesTouching':True} if loose else {}),**({'looksBorrowed':borrowed} if borrowed else {}),'looks':{side:[round(float(x),1) for x in ref[side]] for side in ref}}
  else:
   # too few frames with the two apart to learn from: the earlier rules, on each identity's own median leg colour
   restore();stitch(by_legs);swap_by_legs()
@@ -162,6 +190,22 @@ for n,(boxes,_,_) in enumerate(detections):
 chosen=max(tracks,key=lambda k:(len(k['members']),float(sorted(detections[n][0][d][3]-detections[n][0][d][1] for n,d in k['members'].items())[len(k['members'])//2])))['members'] if tracks else {}
 if pair:chosen=dict(own)
 heights=sorted(detections[n][0][d][3]-detections[n][0][d][1] for n,d in chosen.items());usual=heights[len(heights)//2] if heights else 0;previous=None
+# One box round both. A stretch in which this performer has no box while the other has one, and which begins and ends with the
+# two in contact (boxes overlapping, or centres closer than a box is wide), is this performer hidden in the hold: behind or
+# wrapped in the other, not gone. Such frames are marked and are not counted as the performer missing.
+hidden=set()
+if pair:
+ def contact(n):
+  if n is None:return True
+  if n not in others:return False
+  a,b=detections[n][0][own[n]],detections[n][0][others[n]];return iou(a,b)>=.1 or abs((a[0]+a[2])-(b[0]+b[2]))/2<.75*max(a[2]-a[0],b[2]-b[0])
+ mine_at=sorted(own);gap=[]
+ for n in range(len(detections)+1):
+  if n<len(detections) and n not in own:gap.append(n)
+  elif gap:
+   before=max((m for m in mine_at if m<gap[0]),default=None);after=min((m for m in mine_at if m>gap[-1]),default=None)
+   if (before is not None or after is not None) and contact(before) and contact(after):hidden.update(m for m in gap if m in others)
+   gap=[]
 for n,(index,t,f) in enumerate(frames):
  boxes,keypoints,elapsed=detections[n];selected=chosen.get(n)
  # Outside the chain (a fast pose change can break the overlap), continue by overlap with the last accepted box, or take the
@@ -171,6 +215,6 @@ for n,(index,t,f) in enumerate(frames):
   selected=near if near is not None and iou(boxes[near],previous)>=.2 else tall if boxes[tall][3]-boxes[tall][1]>=.6*usual else None
  if selected is not None:previous=boxes[selected]
  k=[] if selected is None else keypoints[selected]
- rows.append({'frameIndex':index,'time':t,'clipTime':t-args.start,'detections':len(boxes),'selection':'longest overlap-linked chain of boxes, continued by overlap or height; not identity certification' if not pair else f'{args.subject} of the two largest tracked identities (BoT-SORT); not identity certification',**({'otherBBox':boxes[others[n]] if n in others else None} if pair else {}),'bbox':None if selected is None else boxes[selected],'keypoints':k,'missingOrAmbiguousSubject':selected is None,'predictWallSeconds':elapsed})
+ rows.append({'frameIndex':index,'time':t,'clipTime':t-args.start,'detections':len(boxes),'selection':'longest overlap-linked chain of boxes, continued by overlap or height; not identity certification' if not pair else f'{args.subject} of the two largest tracked identities (BoT-SORT); not identity certification',**({'otherBBox':boxes[others[n]] if n in others else None} if pair else {}),'bbox':None if selected is None else boxes[selected],**({'hiddenByOther':True} if selected is None and n in hidden else {}),'keypoints':k,'missingOrAmbiguousSubject':selected is None,'predictWallSeconds':elapsed})
 report={'status':'observational 2D pose evidence; no rig ground truth','model':modelpath.name,'modelSHA256':hashlib.sha256(modelpath.read_bytes()).hexdigest(),'versions':{n:version(n) for n in ['ultralytics','torch','opencv-python']},'sourceSHA256':args.sha256,**({'subject':args.subject,'performers':{k:int(v) for k,v in pair.items()},'stitchedIdentities':stitched,'swappedFrames':swapped,'identityEvidence':evidence,'trackedIdentities':[{'id':int(i),'firstFrame':min(m),'lastFrame':max(m),'frames':len(m),'medianArea':round(size[i])} for i,m in sorted(where.items(),key=lambda x:min(x[1]))],'legColours':{k:[int(x) for x in look[v]] for k,v in pair.items()}} if pair else {}),'interval':[args.start,args.end],'frameSize':[int(frames[0][2].shape[1]),int(frames[0][2].shape[0])],'confidenceThreshold':.5,'keypointOrder':'COCO17; anatomical labels are model estimates and may swap','timingsSeconds':{'imports':imports,'modelLoad':load,'warmup':warmup,'predictions':prediction,'wall':time.perf_counter()-start},'frames':rows}
 out=Path(args.out);out.mkdir(parents=True,exist_ok=True);(out/'pose-report.json').write_text(json.dumps(report));print(json.dumps({'frames':len(rows),'missing':sum(x['missingOrAmbiguousSubject'] for x in rows),'timings':report['timingsSeconds']}))

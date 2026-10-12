@@ -236,3 +236,7 @@ Not one of the numbered reconstruction rules; it decides which box is which perf
 ## 2026-10-12 — Two performers: a hidden performer found again (`observe.py`)
 
 Order changed: chains are joined without a colour test first (an identity of comparable size that only exists while one performer is missing), then the learned looks decide who is in each chain; the earlier leg-colour stitching and swap rules remain the fallback, on chains taken apart again. The pose report gains `trackedIdentities`. Detail, the shot it was made for and the rerun on the five earlier windows (no chosen box changed): `docs/TWO_PERSON_PLAN.md`, "A performer hidden and found again".
+
+## 2026-10-12 — Two performers in a hold (`observe.py`, `body.py`)
+
+The two performers are chosen from the opening frames; looks can be borrowed from another shot (`looksFrom`) and are learned from a stretch with the boxes only touching when there is none apart; a stretch without a box that begins and ends in contact with the other performer is `hiddenByOther` and does not count against the 80% a window needs (at least half of all frames must still have a box). Detail and the shot it was made for: `docs/TWO_PERSON_PLAN.md`, "The spinning hold builds". Twelve earlier observations rerun: no chosen box changed. Single-performer clips do not reach the changed code except `body.py`'s threshold, which is unchanged when no frame is marked hidden; the batch was not run.

@@ -5,8 +5,10 @@ import sys,json,time,os,argparse,glob
 p=argparse.ArgumentParser();p.add_argument('--comfy',required=True);p.add_argument('--weights',required=True);p.add_argument('--pose',required=True);p.add_argument('--video',required=True);p.add_argument('--out',required=True);p.add_argument('--smooth',type=float,default=0,help='0-1: strength of ComfyUI\'s temporal smoothing (Savitzky-Golay over 7 frames, backing off during fast spins)');p.add_argument('--every',type=int,default=1,help='run the model on every Nth observed frame only (the first and last always); the rest is interpolated. For a coarse clay reference');p.add_argument('--no-second-look',action='store_true');p.add_argument('--no-despike',action='store_true');p.add_argument('--reuse',help='folder of raw results from earlier runs; one whose frames match is used instead of running the model');args=p.parse_args()
 pose_path,video,out,comfy=os.path.abspath(args.pose),os.path.abspath(args.video),os.path.abspath(args.out),os.path.abspath(args.comfy);reuse=os.path.abspath(args.reuse) if args.reuse else None
 started=time.perf_counter();import numpy as np
-report=json.load(open(pose_path));observed=len(report['frames']);rows=[f for f in report['frames'] if f['bbox']]
-if len(rows)<3 or len(rows)<.8*observed:raise SystemExit(f'Unsupported window: {len(rows)}/{observed} frames with a selected subject')
+report=json.load(open(pose_path));observed=len(report['frames']);rows=[f for f in report['frames'] if f['bbox']];behind=sum(1 for f in report['frames'] if f.get('hiddenByOther'))
+# frames in which the performer is hidden by the other (one box round both) are not held against the window, as long as the
+# performer is seen in at least half of all frames; what happens in them is interpolated
+if len(rows)<3 or len(rows)<.8*(observed-behind) or len(rows)<.5*observed:raise SystemExit(f'Unsupported window: {len(rows)}/{observed} frames with a selected subject'+(f' ({behind} hidden by the other performer)' if behind else ''))
 # coarse: every Nth frame, always with the last, so the window's ends are observed
 if args.every>1:rows=[r for i,r in enumerate(rows) if i%args.every==0 or i==len(rows)-1]
 order=[r['frameIndex'] for r in rows];times=np.array([r['time'] for r in rows]);raw=None;timings={}
