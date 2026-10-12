@@ -45,7 +45,7 @@ function App(){
  useEffect(()=>{if(!pairId)return;let gone=false;setView(null);setFraming(null);setExported(null);setPlaying(false);clock.current=0;setTime(0);setStatus('Loading the scene');
   tool('export_pair_reference',{pairId,viewOnly:true,figure}).then(async(v:View)=>{if(gone)return;clay.current?.dispose();clay.current=null;
    const made=await initClayView({payload:v.payload,mount:mount.current!,urls:{character:bridgeUrl+'/editor/assets/character.glb',characters:f=>bridgeUrl+'/editor/assets/characters/'+f,follower:id=>bridgeUrl+'/api/character-file?id='+encodeURIComponent(id)}});
-   if(gone){made.dispose();return;}clay.current=made;made.draw(0);setView(v);setDraft(v.spec?structuredClone(v.spec):null);setStatus('');
+   if(gone){made.dispose();return;}clay.current=made;made.draw(clock.current);setView(v);setDraft(v.spec?structuredClone(v.spec):null);setStatus('');
   }).catch(e=>{if(!gone)setError(e.message);});
   return()=>{gone=true;};},[pairId,figure,reload]);
  useEffect(()=>()=>{clay.current?.dispose();},[]);
