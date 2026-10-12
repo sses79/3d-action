@@ -138,73 +138,73 @@
    0.7,
    -0.2
   ],
-  "corridor approach": [
-   -0.11,
-   -0.81
-  ],
-  "corridor": [
-   1.8,
-   -3.4
-  ],
   "gabi feet": [
    -0.55,
    0.05
   ]
  },
+ "notes": [
+  "10-second version of the scene; replaces the 15-second staging of revision 13, which is kept.",
+  "Standing marks unchanged from revision 13: Gabi at [-0.7, 0.0], Abby at [0.7, -0.2].",
+  "Heights 1.55 m and 1.70 m are staging choices.",
+  "Departure walk removed: nobody leaves their mark.",
+  "Silent clay export: speech windows are recorded in beats; the mannequins do not act speech or faces."
+ ],
  "performers": [
   {
    "id": "gabi",
    "actionId": "very-grown-up-gabi",
    "name": "Very Grown-Up · Gabi",
+   "represents": "Gabriella (Gabi), 13 years old; the shorter figure, screen-left at the start. Appearance comes from her character reference, not from this figure.",
    "height": 1.55,
    "start": "gabi mark",
    "facing": "abby",
    "parts": [
     {
      "movementId": "move-idle-talking",
-     "name": "0-4 s: \"I can babysit. I'm grown up.\"",
-     "duration": 4
+     "name": "0-3 s: request, composed, \"I can babysit. I'm grown up.\"",
+     "duration": 3,
+     "speed": 0.8
     },
     {
      "movementId": "move-idle",
-     "name": "4-7 s: listens",
-     "duration": 3
+     "name": "3-5 s: listens to the refusal",
+     "duration": 2
     },
     {
      "movementId": "move-idle-talking",
-     "name": "7-8 s: \"I'm not a child!\"",
-     "duration": 1
+     "name": "5-6.17 s: protest, \"I'm not a child!\"",
+     "duration": 1.17
     },
     {
      "movementId": "move-foot-stamp",
-     "name": "8-9.2 s: stamps her right foot"
+     "name": "6.17-7 s: lifts and stamps her right foot once (contact about 6.6 s), settles",
+     "duration": 0.83
     },
     {
      "movementId": "move-idle",
-     "name": "9.2-13 s: still",
-     "duration": 3.8
+     "name": "7-9 s: still, head up, listens",
+     "duration": 2
     },
     {
-     "movementId": "move-walk-formal",
-     "name": "13-15 s: careful steps toward the corridor",
-     "walkTo": "corridor approach",
-     "duration": 2,
-     "speed": 0.7
+     "movementId": "move-feet-together",
+     "name": "9-10 s: lowers her gaze, brings her feet together, holds",
+     "duration": 1
     }
    ],
    "looks": [
     {
      "start": 0,
-     "end": 12.4,
+     "end": 8.95,
      "at": "abby"
     },
     {
-     "start": 12.5,
-     "end": 13.5,
+     "start": 9.0,
+     "end": 10.6,
      "at": [
-      0.2,
-      0,
-      -0.07
+      0.5,
+      0.45,
+      -0.15
      ]
     }
    ]
@@ -213,148 +213,157 @@
    "id": "abby",
    "actionId": "very-grown-up-abby",
    "name": "Very Grown-Up · Abby",
+   "represents": "Abby Grayson, Gabi's adult mother; the taller figure, screen-right at the start. Appearance comes from her character reference, not from this figure.",
    "height": 1.7,
    "start": "abby mark",
    "facing": "gabi",
    "parts": [
     {
      "movementId": "move-ual2-idle-foldarms-loop",
-     "name": "0-4 s: listens, arms folded",
-     "duration": 4
+     "name": "0-3 s: listens, arms folded",
+     "duration": 3
     },
     {
      "movementId": "move-ual2-idle-no-loop",
-     "name": "4-7 s: \"You have diving tonight. No.\"",
-     "duration": 3
+     "name": "3-5 s: refusal, \"You have diving. No.\"",
+     "duration": 2
     },
     {
      "movementId": "move-ual2-idle-foldarms-loop",
-     "name": "7-10 s: still",
-     "duration": 3
+     "name": "5-7.9 s: still; glance at the stamped foot 7-7.6 s; pause",
+     "duration": 2.9
     },
     {
      "movementId": "move-idle-talking",
-     "name": "10-13 s: glances at the foot, \"Very grown-up.\"",
-     "duration": 3
+     "name": "7.9-9 s: punchline, \"Very grown-up.\"",
+     "duration": 1.1,
+     "speed": 0.8
     },
     {
-     "movementId": "move-ual2-idle-foldarms-loop",
-     "name": "13-15 s: stays",
-     "duration": 2
+     "movementId": "move-idle",
+     "name": "9-10 s: watches, still",
+     "duration": 1
     }
    ],
    "looks": [
     {
      "start": 0,
-     "end": 10.2,
+     "end": 6.95,
      "at": "gabi"
     },
     {
-     "start": 10.3,
-     "end": 11.4,
+     "start": 7.0,
+     "end": 7.6,
      "at": "gabi feet"
     },
     {
-     "start": 11.5,
-     "end": 14.9,
+     "start": 7.65,
+     "end": 10.6,
      "at": "gabi"
     }
-   ],
-   "character": "superhero-female"
+   ]
   }
  ],
  "cameras": [
   {
    "start": 0,
-   "name": "Wide two-shot of the hall",
+   "name": "Shot 1: eye-level full-body two-shot",
    "position": [
-    0.3,
-    1.4,
-    4.6
+    0.0,
+    1.5,
+    3.6
    ],
-   "lookAt": "both",
+   "lookAt": [
+    0.0,
+    0.88,
+    -0.1
+   ],
    "lens35": 28
   },
   {
-   "start": 7,
-   "name": "Low full-body on Gabi for the stamp",
+   "start": 5,
+   "name": "Shot 2: full body favouring Gabi, for the stamp",
    "position": [
-    1.5,
-    0.45,
-    2.7
+    -1.5,
+    1.25,
+    2.9
    ],
    "lookAt": [
-    -0.7,
-    0.6,
-    0.0
+    -0.45,
+    0.74,
+    -0.05
    ],
-   "lens35": 28,
-   "to": {
-    "position": [
-     1.3,
-     0.45,
-     2.4
-    ]
-   }
+   "lens35": 30
   },
   {
-   "start": 10,
-   "name": "Medium on Abby from beside Gabi",
+   "start": 7,
+   "name": "Shot 3: tighter full-body two-shot",
    "position": [
-    -1.3,
-    1.45,
-    0.9
+    0.0,
+    1.4,
+    2.9
    ],
-   "lookAt": "abby",
-   "aim": "head",
-   "lens35": 50
-  },
-  {
-   "start": 13,
-   "name": "Wide toward the corridor as Gabi leaves",
-   "position": [
-    -1.6,
-    1.5,
-    3.2
+   "lookAt": [
+    0.0,
+    0.79,
+    -0.1
    ],
-   "lookAt": "gabi",
-   "aim": "body",
    "lens35": 28
   }
  ],
  "beats": [
   {
    "start": 0,
-   "end": 4,
+   "end": 3,
    "text": "Gabriella faces her mother, trying to sound reasonable.",
    "speaker": "gabi",
    "line": "I can babysit. I'm grown up."
   },
   {
-   "start": 4,
-   "end": 7,
+   "start": 3,
+   "end": 5,
    "text": "Abby answers calmly.",
    "speaker": "abby",
-   "line": "You have diving tonight. No."
+   "line": "You have diving. No."
   },
   {
-   "start": 7,
-   "end": 10,
-   "text": "Gabriella stamps one foot as she protests.",
+   "start": 5,
+   "end": 6.3,
+   "text": "Gabriella protests.",
    "speaker": "gabi",
    "line": "I'm not a child!"
   },
   {
-   "start": 10,
-   "end": 13,
-   "text": "Abby glances briefly at the stamped foot, then back at Gabriella. A short pause.",
+   "start": 6.3,
+   "end": 7,
+   "text": "Gabriella stamps one foot once; contact about 6.6 s; it settles before the cut."
+  },
+  {
+   "start": 7,
+   "end": 7.6,
+   "text": "Abby glances at the stamped foot and back at Gabriella."
+  },
+  {
+   "start": 7.6,
+   "end": 7.9,
+   "text": "A brief still pause."
+  },
+  {
+   "start": 7.9,
+   "end": 9,
+   "text": "Abby delivers the punchline; Gabriella keeps her head up and listens.",
    "speaker": "abby",
    "line": "Very grown-up."
   },
   {
-   "start": 13,
-   "end": 15,
-   "text": "Gabriella looks down at her own foot, brings her feet together, presses her lips closed, and starts toward the bedroom corridor with exaggeratedly careful steps."
+   "start": 9,
+   "end": 9.8,
+   "text": "Gabriella lowers her gaze and quietly brings her feet together. Her mouth stays closed. Abby watches without an extra gesture."
+  },
+  {
+   "start": 9.8,
+   "end": 10,
+   "text": "Hold the final stance."
   }
  ]
 }

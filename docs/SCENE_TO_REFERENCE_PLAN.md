@@ -199,3 +199,41 @@ Making Woman01 a registered character and showing her in Studio was built but ne
 - What remains in the repo is the earlier renderer-only trial (`follow`, `characterCreatorMap`, `payload.followers` in `pair-page.ts`). Nothing uses it unless a render payload names a follower.
 - Cause of the hang not established. Suspects, all in the Studio path: loading and parsing a 13.7 MB FBX with 13 skinned meshes in the page, building the hair volume (marching cubes at 64 cells a side) on the main thread, and posing two skeletons every frame. The offline renderer does the same work once per frame without trouble because nothing else is waiting on it.
 - Before any retry: convert the model to a small GLB offline (hair volume baked in), and check Studio in a visible browser before asking the user to open it.
+
+### Back to the mannequin (2026-10-11)
+
+The user decided to use the original mannequin for every character. `scene-very-grown-up` is restaged with both performers on it (r13) and the example spec no longer names a character. The two Quaternius bodies stay available as an option in `stage_scene`; the skill says to leave `character` out unless asked.
+
+## "Very Grown-Up" rebuilt as 10 seconds (2026-10-11)
+
+Built to the user's requirements (`/Users/tim/Yun/s-video/outputs/gabriella-grown-up/clay-video-requirements.md`, with `scene.md` and the review of revision 13 beside it). Scene `scene-very-grown-up` r16; package `.authoring/renders/scene-very-grown-up-r16-reference/`; revision 13's package is kept.
+
+What changed in the tools:
+
+- **Exact length.** A staged scene exports duration x fps frames, frame n at n/fps, none at the end time (`exclusiveEnd`): 300 frames, 10.000 s, in both passes. Shot stills are the rendered frames at each cut (150 and 210), not extracted from the video.
+- **Framing from the posed figure.** `describe` bounds each performer by its skinned mesh vertices: `projectedBox`, `box` (inside the frame), `croppedBy`, `wholeInFrame` (true only when no frame edge cuts it), `head` and `feet` on their own, and `visibleFraction`, measured from two flat renders (figure alone, and figure with everything else black). The earlier joint-based boxes had called a cropped head whole.
+- **Depth range** for a staged scene: far is 1.2 times the farthest object from any camera (13 m here, was 40), near as before (1.8 m). One encoding for all frames, stated in the meta.
+- **Scene `notes` and performer `represents`** are carried into the meta.
+- **`move-feet-together`** (`authoring/source/build-feet-together.mjs`): from the idle, which stands staggered and wide (ankles 54 cm apart), the right ankle is sent to 13 cm beside the left at its own rest height. Three turns are solved on the rig (thigh inward 23.3 degrees, forward 20.7, knee -0.9), then the toes (7.8) to put the ball of the foot back at floor level; a 2 cm lift on the way; the pose is then held. The left leg does not move; there is no weight shift.
+
+The scene: marks unchanged; no walk. Gabi: talking 0-3 s (0.8 speed), idle 3-5, talking 5-6.17, stamp 6.17-7.0, idle 7-9, feet together 9-10; looks at Abby until 8.95 s, then at a point low in front of her. Abby: arms folded 0-3, the "no" idle 3-5, arms folded 5-7.9 with a look at Gabi's feet 7.0-7.6, talking 7.9-9 (0.8 speed), idle 9-10. Three fixed cameras on one side of the line: 28 mm two-shot, 30 mm from Gabi's front-left with Abby whole behind her, 28 mm tighter two-shot.
+
+Measured on r16:
+
+- Stamp: the right foot leaves the floor at about 6.35 s, peaks 17 cm at 6.50 s, is back within 1 cm of the floor at 6.60 s; after landing it moves under 3 mm. It is the only time in the clip that foot rises above 3 cm. The stamp part starts at 6.17 s, not 6.3 s, because the 0.3 s join had hidden the lift (it showed for 0.1 s).
+- The left foot does not move at all through the clip. Abby's feet move at most 1.3 cm.
+- Feet together: the right heel travels 0.36 m between 9.0 and 9.6 s and ends 0.11 m from the left heel, at floor level.
+- Framing, every 0.1 s: nobody is cut by a frame edge in any shot; both heads and all feet whole; least visible fraction 0.99. Free space above the tallest head / below the lowest foot: shot 1 20.7% / 13.0%, shot 2 8.4% / 8.6%, shot 3 9.6% / 8.0%.
+
+Not done or not checkable here: a spoken read-through (the line lengths were only estimated at about three words a second); balance; any facial or speech acting; the stamp and the feet-together step move one leg only. A fault seen on the way: a render that includes a frame at exactly the end time shows the first pose on that last frame (the old 451-frame export of r13 has it); exports of staged scenes no longer include that frame.
+
+### The last-frame fault, fixed (2026-10-12)
+
+Cause: `stagePerformer` wrote its last key by sampling the last part's movement at exactly a whole number of cycles, which wraps to the start of the movement. Only staged actions had it (a video pair's last frame was checked and is fine). Fixed in `runtime/stage.ts`: the last key samples just before the end of the part. The scene was staged again as revision 17; its largest change between the last two keys is now 0.005 (was a jump back to the first pose). Frames 0–299 are the same as in revision 16, so the r16 package was not exported again.
+
+## What is still open (2026-10-12)
+
+- For the user: a spoken read-through of the 10-second timings; a look at revision 17 in Studio (not checked in a visible browser by Claude).
+- Movements: every movement used is unreviewed; acting movements (a real stamp with weight shift, restrained gestures) are stand-ins. Who captures or finds better ones is undecided (milestone 2). Kimodo was left.
+- Not built: more than two performers; walks that are not straight lines or that avoid objects; a camera check (inside the room, not blocked); `director-advisor`'s shot plan format; a character choice for video-derived pairs.
+- Rolled back and dormant: the Character Creator body (renderer-only code remains; a retry needs a small offline GLB and a visible-browser check first).

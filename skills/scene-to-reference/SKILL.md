@@ -25,7 +25,7 @@ You read the scene and write the blocking; the tools do the motion. The result i
 
 ## 1. Find the movements
 
-`list_movements` (or `inspect_movement_library`). Useful for scenes: `move-idle`, `move-idle-talking`, `move-ual2-idle-foldarms-loop`, `move-ual2-idle-no-loop` (a "no"), `move-ual2-yes`, `move-walk`, `move-walk-formal`, `move-ual1-sitting-enter` / `-sitting-idle-loop` / `-sitting-talking-loop` / `-sitting-exit`, `move-ual1-interact`, `move-ual1-pickup-table`, `move-ual1-push-loop`, `move-ual1-jog-fwd-loop`, `move-foot-stamp` (made by rule; register it from `authoring/source/foot-stamp.json` with `register_movement` if this machine does not have it).
+`list_movements` (or `inspect_movement_library`). Useful for scenes: `move-idle`, `move-idle-talking`, `move-ual2-idle-foldarms-loop`, `move-ual2-idle-no-loop` (a "no"), `move-ual2-yes`, `move-walk`, `move-walk-formal`, `move-ual1-sitting-enter` / `-sitting-idle-loop` / `-sitting-talking-loop` / `-sitting-exit`, `move-ual1-interact`, `move-ual1-pickup-table`, `move-ual1-push-loop`, `move-ual1-jog-fwd-loop`, `move-foot-stamp` and `move-feet-together` (made by rule; register them from `authoring/source/foot-stamp.json` and `feet-together.json` with `register_movement` if this machine does not have them).
 
 Most are unreviewed source clips. `stage_scene` returns `movementsNotReviewed`; pass that on.
 
@@ -36,10 +36,11 @@ One JSON for `stage_scene`:
 - **`objects`**: the room as boxes, cylinders, arches and wedges, each named for what it is. Floor is y=0; x right, z toward the viewer of the plan; metres. Leave the routes the text asks for clear: nothing checks collisions.
 - **`marks`**: named floor points `[x, z]`. A mark may not share a name with a performer.
 - **`performers`** (exactly two): `id`, `actionId`, `name`, `height`, optional `character`, `start` (a mark), `facing` (a mark or the other performer), `parts`, optional `looks`.
-  - **`character`**: `mannequin` (default, a neutral jointed figure), `superhero-female` or `superhero-male` (unclothed adult base bodies, drawn as clay). Use the adult bodies for adult characters only. A child or teenager stays on the mannequin, scaled by `height`: there is no free body with a child's proportions, and an adult body scaled down is not a stand-in for a child.
+  - **`character`**: leave it out. The mannequin (a neutral jointed figure) is the standard stand-in for every character; the user chose it over the other bodies on 2026-10-11. `superhero-female` and `superhero-male` (unclothed adult base bodies, drawn as clay) exist and work, for use only when the user asks. Use the adult bodies for adult characters only. A child or teenager stays on the mannequin, scaled by `height`: there is no free body with a child's proportions, and an adult body scaled down is not a stand-in for a child.
   - **`parts`** play one after another: `{movementId, name, duration, speed, walkTo, face}`. The movement loops to fill `duration`. With `walkTo` (a mark) the performer walks there in a straight line; otherwise they stay and may turn to `face` a mark or the other performer. Put the beat's time and line in `name`: it shows on Studio's timeline.
   - **`looks`**: `{start, end, at}` turns the head toward a mark on the floor, the other performer (followed as they move) or a point `[x, y, z]`. Looking straight down at one's own feet reads as a deep bow; aim a metre ahead on the floor instead.
 - **`cameras`**: shots `{start, name, position, lookAt, aim, lens35, to}`. A new shot is a cut. `lookAt` is a point, a mark, a performer (`aim` head or body) or `"both"`. `to: {position, lens35}` moves the camera or zooms over the shot. If an action must be seen (a foot stamp), give it a shot that holds the whole body: a close-up on the face cannot show it.
+- **`represents`** on a performer (who the figure stands for) and **`notes`** on the scene (staging choices, changes from an earlier revision) go into the meta.
 - **`beats`**: `{start, end, text, speaker, line}` copied from the scene. They go into the meta for the prompt writer and do not change the motion.
 
 Make the parts' durations add up to the scene's length for both performers. A walk plays whole cycles, so its real length can differ slightly from the one asked; the reply gives the real times, the cycles and the stride scale. Keep the stride scale between about 0.8 and 1.2 by moving the mark or changing the duration.
@@ -53,9 +54,13 @@ Make the parts' durations add up to the scene's length for both performers. A wa
 
 Change the spec and stage again; each call raises the revision.
 
+Framing is checked from the posed figure, not guessed: after staging, the export's meta gives each performer per shot and per second a `projectedBox` (may run past the frame), `croppedBy` (frame edges that cut it), separate `head` and `feet` bounds, and `visibleFraction` (measured from pixels: how much of the in-frame silhouette is not hidden). A head counts as in frame only when no edge cuts it. Aim for about 5% of the picture's height free above the tallest head and below the lowest foot, through the whole shot, and re-aim the camera until the meta says so.
+
+A join blends for 0.3 s, which swallows the start of a quick action: start a stamp or a step about 0.3 s before it must be seen. A look that should hold to the end of the scene needs an `end` past the scene's length, or the head eases back up in the last frames.
+
 ## 4. Export
 
-`export_pair_reference {pairId}` (the scene's ID) writes `.authoring/renders/<scene>-r<rev>-reference/`: `clay.mp4`, `depth.mp4`, the first frame of every shot in both passes, and `reference.json` with the room's objects, the staging (marks, each performer's parts and looks, the beats and lines), the shot list (lens, framing, who is where in the first frame of each shot) and a per-second timeline. Hand `reference.json` to the prompt writer.
+A staged scene exports exactly duration x 30 frames (frame n at n/30 s, none at the end time). `export_pair_reference {pairId}` (the scene's ID) writes `.authoring/renders/<scene>-r<rev>-reference/`: `clay.mp4`, `depth.mp4`, the first frame of every shot in both passes, and `reference.json` with the room's objects, the staging (marks, each performer's parts and looks, the beats and lines), the shot list (lens, framing, who is where in the first frame of each shot) and a per-second timeline. Hand `reference.json` to the prompt writer.
 
 ## Report
 

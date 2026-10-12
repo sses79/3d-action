@@ -822,3 +822,11 @@ See "Stage from the video" in `docs/TWO_PERSON_PLAN.md`. Renderer page accepts a
 - Also this day: `video-to-reference` skill, wedge shape, pit scene for `pair-kc-139`, direct depth with Video Depth Anything Small (`authoring/render/video-depth.py`, 29 minutes for 10 s on this Mac; kept as an option, the user ranks speed first).
 - The service loader now repairs actions with repeated keyframe times instead of refusing to start (see the plan's last section for why).
 - Next in that plan: milestone 2 (capture the missing acting movements, head look-at).
+
+## 2026-10-11/12 — Scene text to reference, milestones 2–4 and the 10-second rebuild
+
+- Details in `docs/SCENE_TO_REFERENCE_PLAN.md` (one dated section each). Built: head looks, shots with cuts and moves, beats in the meta, the rig's remaining 37 UAL1 clips as movements, rule-made `move-foot-stamp` and `move-feet-together` (`authoring/source/build-*.mjs`; registered on this machine only).
+- Bodies: the two free Quaternius base bodies work (`character` on a performer) but the user chose the original mannequin for every character. A Character Creator model was tried, hung the user's Mac in Studio and was rolled back (`.authoring/woman01-studio-integration.patch` holds the reverted Studio work; renderer-only code is dormant). Kimodo was left.
+- "Very Grown-Up" rebuilt as 10 seconds: `scene-very-grown-up` r17, package `.authoring/renders/scene-very-grown-up-r16-reference/` (r13's 15-second package kept). Staged exports are now exactly duration x 30 frames, with a still per shot and framing measured from the posed mesh (`croppedBy`, `head`, `feet`, `visibleFraction`).
+- Fixed 2026-10-12: the last key of a staged action wrapped to the first pose (`runtime/stage.ts`).
+- Open items: the last section of the plan.
