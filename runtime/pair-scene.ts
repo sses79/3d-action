@@ -49,6 +49,17 @@ export function sceneCameraAt(camera:SceneCamera,time:number,duration:number){
  const {lo,hi,u}=at(camera.quats.length-1,time,duration),a=camera.quats[lo],b=camera.quats[hi],sign=a[0]*b[0]+a[1]*b[1]+a[2]*b[2]+a[3]*b[3]<0?-1:1,q=a.map((v,i)=>v*(1-u)+sign*b[i]*u),len=Math.hypot(...q)||1,p=camera.positions[lo],r=camera.positions[hi];
  return {quat:q.map(v=>v/len),x:p[0]*(1-u)+r[0]*u,y:p[1]*(1-u)+r[1]*u,z:p[2]*(1-u)+r[2]*u,zoom:camera.focal[lo]*(1-u)+camera.focal[hi]*u};
 }
+// Where a staged scene's prop is at a time. Its track says where it is from each start on: in a performer's hand or at a point
+// in the room; a change with `blend` seconds glides from the one to the other, and one with `fly` seconds is a throw: an arc
+// (`peak` metres above the straight line) from where the throwing hand is at the release to where the catching hand is at
+// the catch. anchor(segment) gives the place a segment names with the performers as they are now; anchor(segment, t) must
+// pose them at t first (the caller puts them back afterwards). The two ends of a throw are read once and kept in `flights`.
+export function propPlace(prop:{track:any[]},time:number,anchor:(segment:any,at?:number)=>number[],flights:Map<any,{from:number[];to:number[]}>):number[]{
+ const k=Math.max(0,prop.track.findLastIndex((s:any)=>s.start<=time+1e-9)),seg=prop.track[k],mix=(a:number[],b:number[],u:number)=>a.map((v,i)=>v+(b[i]-v)*u);
+ if(k>0&&seg.fly>0&&time<seg.start+seg.fly){let f=flights.get(seg);if(!f){f={from:anchor(prop.track[k-1],seg.start),to:anchor(seg,seg.start+seg.fly)};flights.set(seg,f);}const u=(time-seg.start)/seg.fly,p=mix(f.from,f.to,u);p[1]+=4*seg.peak*u*(1-u);return p;}
+ const at=anchor(seg);if(k>0&&seg.blend>0&&time<seg.start+seg.blend){const u=(time-seg.start)/seg.blend;return mix(anchor(prop.track[k-1]),at,u*u*(3-2*u));}
+ return at;
+}
 // The objects as meshes, with whichever build of three the caller uses.
 export function buildSceneObjects(T:any,objects:SceneObject[],material:any){
  const group=new T.Group();for(const o of objects){let geometry:any;

@@ -4,7 +4,7 @@ import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';
 import {MarchingCubes} from 'three/addons/objects/MarchingCubes.js';
 import {CharacterPlayer} from '../../runtime/player';
 import {figureColors,primitiveFigure,characterFiles,ownShapeClips,ownShapeAction,ballHeight,floorLift,follow,characterCreatorMap,prepareFollower,FollowerSpec} from '../../runtime/characters';
-import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom} from '../../runtime/pair-scene';
+import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom,propPlace} from '../../runtime/pair-scene';
 // White-model render of a pair of actions, one picture per call. Cameras:
 //  source  the camera of the source video. The body model places each performer relative to that camera, and the actions keep
 //          those positions, so a camera at that origin with the model's lens (focal length = the picture's diagonal in pixels)
@@ -84,12 +84,8 @@ export async function init(cfg?:ClayViewConfig){
  // performer's hand (just past the wrist) or at a point in the room; a change with blend seconds glides from the one to the other.
  const props=((payload.staged as any)?.props??[]).map((p:any)=>{const [w,h,d]=p.size,geo=p.shape==='sphere'?new T.SphereGeometry(w/2,20,14):p.shape==='cylinder'?new T.CylinderGeometry(w/2,w/2,h,20):new T.BoxGeometry(w,h,d),mesh=new T.Mesh(geo,new T.MeshStandardMaterial({color:figureColors[p.color]??'#4fae5a',roughness:.82}));mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;mesh.name=p.name;scene.add(mesh);return {spec:p,mesh};});
  const propAt=(seg:any)=>{if(seg.holder===null||seg.holder===undefined)return new T.Vector3().fromArray(seg.at);const root=players[seg.holder].root,wrist=root.getObjectByName('hand_'+seg.hand)!.getWorldPosition(new T.Vector3()),elbow=root.getObjectByName('lowerarm_'+seg.hand)!.getWorldPosition(new T.Vector3());return wrist.clone().addScaledVector(wrist.clone().sub(elbow).normalize(),.08*(payload.staged!.heights[seg.holder]/1.85));};
- // A thrown prop (fly seconds, peak metres above the straight line) leaves from where the throwing hand is at the release and
- // arrives where the catching hand is at the catch: both are read once, by posing the performers at those two times.
- const flights=new Map<any,{from:T.Vector3,to:T.Vector3}>();
- const placeProps=(time:number)=>{for(const {spec,mesh} of props){const k=Math.max(0,spec.track.findLastIndex((s:any)=>s.start<=time+1e-9)),seg=spec.track[k];
-   if(k>0&&seg.fly>0&&time<seg.start+seg.fly){let f=flights.get(seg);if(!f){place(seg.start);const from=propAt(spec.track[k-1]);place(seg.start+seg.fly);f={from,to:propAt(seg)};flights.set(seg,f);place(time);}const u=(time-seg.start)/seg.fly;mesh.position.copy(f.from).lerp(f.to,u);mesh.position.y+=4*seg.peak*u*(1-u);continue;}
-   const at=propAt(seg);if(k>0&&seg.blend>0&&time<seg.start+seg.blend){const u=(time-seg.start)/seg.blend;at.copy(propAt(spec.track[k-1]).lerp(at,u*u*(3-2*u)));}mesh.position.copy(at);}};
+ const flights=new Map<any,{from:number[];to:number[]}>();
+ const placeProps=(time:number)=>{let posed=false;for(const {spec,mesh} of props)mesh.position.fromArray(propPlace(spec,time,(seg,at)=>{if(at!==undefined){place(at);posed=true;}return propAt(seg).toArray();},flights));if(posed)place(time);};
  W.renderFrame=(time:number)=>{const hips=place(time);placeProps(time);const centre=hips.reduce((s,h)=>s.add(h),new T.Vector3()).divideScalar(hips.length);
   if(payload.camera==='orbit'){const angle=-Math.PI/4+Math.PI/2*time/Math.max(payload.duration,1e-6),far=5.2;camera.position.set(centre.x+Math.sin(angle)*far,1.55,centre.z+Math.cos(angle)*far);camera.lookAt(centre.x,1,centre.z);}
   else if(payload.staged&&!still){const shots=payload.staged.cameras,n=Math.max(0,shots.findLastIndex(c=>c.start<=time+1e-6)),shot=shots[n],until=shots[n+1]?.start??payload.duration,x=Math.min(1,Math.max(0,(time-shot.start)/Math.max(until-shot.start,1e-6))),u=x*x*(3-2*x),at=new T.Vector3().fromArray(shot.position),lens=shot.lens35+((shot.to?.lens35??shot.lens35)-shot.lens35)*u;if(shot.to?.position)at.lerp(new T.Vector3().fromArray(shot.to.position),u);

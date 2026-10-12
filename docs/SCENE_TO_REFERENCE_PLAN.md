@@ -342,5 +342,12 @@ Seedance 2.5's guide takes props in the clay video as simple shapes, mapped to a
 The workshop's **Source** camera (added for video pairs: `docs/TWO_PERSON_PLAN.md`, "The source camera in Studio") now also plays a staged scene's own shots: each shot's place, what it looks at (a point, between the two, a performer's head or body, followed as they move), its lens, its move if it has one, and the cuts, as the clay view does. The whole 16:9 picture is kept in view whatever the viewport's shape, so a wide viewport shows a little more at the sides. `set_preview` takes `camera: "Source"`.
 
 - Checked in a headless Chrome against the Clay reference page with the mannequin figure: `scene-very-grown-up` at 2, 6 and 8 s (one moment in each of its three shots) and `scene-hand-over` at 4 s give the same shot, framing and pose in both.
-- The workshop still does not draw props (the parcel is missing from its view of the hand-over) and shows the selected performer in gold and the other in blue.
+- The workshop shows the selected performer in gold and the other in blue. (It did not draw props at this point; see the next section.)
 - A fault found on the Clay page and fixed: after switching figure or scene, the picture was drawn at time 0 even if the timeline had been moved while it loaded.
+
+## Props in the action workshop (2026-10-12)
+
+The workshop now draws a staged scene's props, in their colour, whenever the pair and its scene are shown (any camera, not only Source). Where a prop is at a time is now one function, `propPlace` in `runtime/pair-scene.ts`, used by both the clay view and the workshop: held just past the wrist, gliding between hands or to a resting place, or on a throw's arc between where the two hands are at the release and at the catch.
+
+- Checked in a headless Chrome against the Clay reference page (mannequin figure, Source camera in the workshop): the parcel between the two hands at 4 s of `scene-hand-over`, the ball in the air at 3.1 s and in the catching hand at 6.5 s of `scene-throw`, and the parcel on the table at 4.5 s of `scene-put-down` are in the same places in both.
+- Not checked: a prop with a performer drawn as another body; playback (only stills were compared).
