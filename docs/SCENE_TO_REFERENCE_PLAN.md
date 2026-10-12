@@ -237,3 +237,21 @@ Cause: `stagePerformer` wrote its last key by sampling the last part's movement 
 - Movements: every movement used is unreviewed; acting movements (a real stamp with weight shift, restrained gestures) are stand-ins. Who captures or finds better ones is undecided (milestone 2). Kimodo was left.
 - Not built: more than two performers; walks that are not straight lines or that avoid objects; a camera check (inside the room, not blocked); `director-advisor`'s shot plan format; a character choice for video-derived pairs.
 - Rolled back and dormant: the Character Creator body (renderer-only code remains; a retry needs a small offline GLB and a visible-browser check first).
+
+## Why the Character Creator body stalled Studio (2026-10-12)
+
+Reproduced in a scratch copy of the rolled-back Studio (commit `eeb96ca` plus `.authoring/woman01-studio-integration.patch`, own service on port 5184, empty state), opened in a separate headless Chrome with a memory cap. Frames per second were counted in the page.
+
+| Studio variant | Frames per second | Memory footprint |
+|---|---|---|
+| Mannequins only (today's Studio) | 64 | 0.6 GB |
+| Model as it was loaded on 2026-10-11 | about 1 frame every 6 s | 1.7 GB |
+| Face shapes removed, hair volume kept | about 1 frame every 6 s | 1.3 GB |
+| Hair volume not built, face shapes kept | 64 | 1.4 GB |
+| Hair volume copied into a plain mesh, face shapes removed | 64 | 0.9 GB |
+
+- **Cause: the clay hair volume.** It was added to the scene as three's `MarchingCubes` object. Studio draws with three's WebGPU renderer (0.186.1), and that object takes about 9 s per frame there (more with shadows). In a small test page the same 82,932 vertices on a plain `Mesh` take 2 ms, also when the plain mesh uses the object's own geometry; the object itself under the WebGL2 backend takes about 5 ms. That is why the reference renderer (WebGL) drew the hair without trouble and Studio did not. What inside three's WebGPU path is slow for this object was not found.
+- **Not the cause, but a cost:** the body has 84,258 vertices with 121 face shapes (466 shapes over all meshes). They add about 0.4 GB and 2 s to the first frame and do nothing for a clay figure.
+- The file takes about 1.6 s to parse (13.7 MB FBX, 13 meshes, 188,427 vertices, 132 bones).
+- Not measured: the whole machine hanging. The measurement shows the page stopping; a browser stuck for seconds per frame on the graphics chip that also draws the desktop is the likely reason the Mac stopped responding.
+- For a retry: build the hair volume once, copy its vertices into a plain mesh, drop the face shapes at load. Better still, do both offline into a small GLB so nothing heavy happens in the page. The scratch Studio with those two changes showed the model at 64 frames per second (one still looked at: body, hair and room drawn). The user's decision of 2026-10-11 stands: the mannequin is the stand-in.
