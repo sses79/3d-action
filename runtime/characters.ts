@@ -20,6 +20,21 @@ export function floorLift(T:any,root:any,sample:(time:number)=>void,duration:num
 // Character Creator's standard export skeleton (bones prefixed e.g. EM3D_Base_ or CC_Base_):
 const side=(s:string,S:string)=>[['clavicle_'+s,S+'_Clavicle'],['upperarm_'+s,S+'_Upperarm'],['lowerarm_'+s,S+'_Forearm'],['hand_'+s,S+'_Hand'],...['thumb','index','middle','ring','pinky'].flatMap((f,k)=>[1,2,3].map(j=>[`${f}_0${j}_${s}`,`${S}_${['Thumb','Index','Mid','Ring','Pinky'][k]}${j}`])),['thigh_'+s,S+'_Thigh'],['calf_'+s,S+'_Calf'],['foot_'+s,S+'_Foot'],['ball_'+s,S+'_ToeBase']];
 export const characterCreatorMap:string[][]=[['pelvis','Hip'],['spine_01','Waist'],['spine_02','Spine01'],['spine_03','Spine02'],['neck_01','NeckTwist01'],['Head','Head'],...side('l','L'),...side('r','R')];
+// Flat colours for the clay figures, so a prompt can name each one ("the blue model"). Names are what the meta records.
+export const figureColors:Record<string,string>={blue:'#4a86d8',orange:'#ee8a3a',green:'#4fae5a',pink:'#f07fb0',purple:'#8d6fd1',yellow:'#e8c53a',red:'#d9534a',gray:'#8e949c'};
+// A figure of plain shapes on the mannequin's joints: capsules for trunk and limbs, spheres for head and hands. For a coarse
+// clay reference (Seedance 2.5's guide prefers "simple geometric primitives" for people). Call with the mannequin at rest,
+// scaled and in the scene; its own meshes are hidden and the shapes ride on its joints. k scales the thickness (height/1.85).
+export function primitiveFigure(T:any,root:any,material:any,k=1){
+ root.updateMatrixWorld(true);const made:any[]=[],B=(n:string)=>root.getObjectByName(n),wp=(n:string)=>B(n).getWorldPosition(new T.Vector3()),up=new T.Vector3(0,1,0);
+ const put=(bone:string,mesh:any,part:string)=>{mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;mesh.userData.part=part;B(bone).attach(mesh);made.push(mesh);};
+ const seg=(a:string,b:string,r:number,part='body',past=0)=>{const P=wp(a),Q=wp(b);if(part==='foot')Q.y=Math.max(Q.y,r*k);/* the sole rests on the floor */const d=Q.sub(P),len=d.length();d.normalize();const L=len+past*k,m=new T.Mesh(new T.CapsuleGeometry(r*k,L,4,12),material);m.position.copy(P).addScaledVector(d,L/2);m.quaternion.setFromUnitVectors(up,d);put(a,m,part);};
+ const ball=(a:string,from:string,r:number,out:number,part:string)=>{const P=wp(a),d=part==='head'?up.clone():P.clone().sub(wp(from)).normalize(),m=new T.Mesh(new T.SphereGeometry(r*k,16,12),material);m.position.copy(P).addScaledVector(d,out*k);put(a,m,part);};
+ root.traverse((o:any)=>{if(o.isSkinnedMesh)o.visible=false;});
+ seg('pelvis','spine_02',.13);seg('spine_02','neck_01',.14);seg('neck_01','Head',.05);ball('Head','neck_01',.115,.1,'head');
+ for(const s of ['l','r']){seg('clavicle_'+s,'upperarm_'+s,.055);seg('upperarm_'+s,'lowerarm_'+s,.05);seg('lowerarm_'+s,'hand_'+s,.04);ball('hand_'+s,'lowerarm_'+s,.05,.06,'body');seg('thigh_'+s,'calf_'+s,.075);seg('calf_'+s,'foot_'+s,.055);seg('foot_'+s,'ball_'+s,.045,'foot',.05);}
+ return made;
+}
 export function follow(T:any,source:any,target:any,map:string[][],prefix=''){
  const find=(root:any,name:string)=>{let hit:any=null;root.traverse((o:any)=>{if(!hit&&o.isBone&&o.name===name)hit=o;});return hit;},pairs=map.map(([a,b])=>({s:find(source,a),t:find(target,prefix+b)})).filter(p=>p.s&&p.t),wq=(o:any)=>o.getWorldQuaternion(new T.Quaternion()),wp=(o:any)=>o.getWorldPosition(new T.Vector3());
  source.updateMatrixWorld(true);target.updateMatrixWorld(true);

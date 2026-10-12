@@ -263,3 +263,26 @@ Reproduced in a scratch copy of the rolled-back Studio (commit `eeb96ca` plus `.
 - Tested first in a scratch copy, then live, each in a separate headless Chrome: Studio at 64 frames per second with the model, 0.9–1.0 GB footprint; one still looked at each time. A scratch `export_pair_reference` gave whole figures in all three shots, the head box including the hair.
 - Live state: character `woman01` is registered on this machine as a library body for future scenes (file in `.authoring/woman01-fbx/`, not in the repo; licence still for the user to check). The user wants it kept in the library only, not used in this scene: the trial scene `scene-very-grown-up-woman01` had its two actions archived the same day (the service has no operation to delete a pair, so its record remains), and `scene-very-grown-up` r17 keeps both mannequins.
 - Not done: a look in the user's own browser; the offline GLB (the FBX is still parsed in the page, about 1.6 s); forearm twist, fingers and foot contact were not looked at closely.
+
+## Seedance 2.5's guide for 3D clay-model references, and what changed (2026-10-12)
+
+Guide: https://docs.byteplus.com/en/docs/modelark/seedance-2-5-prompt-guide (page text read on 2026-10-12; its example videos were not looked at). What it says that bears on our package:
+
+- Coarse clay videos work better as references than detailed ones ("only simple geometric primitives"); detailed models are a separate mode for re-rendering a finished scene.
+- Characters are mapped to clay models by colour ("replace the pink model in Video 1 with … from Image 3").
+- The prompt must say which elements of the clay video to take (camera, motion, blocking, cuts; lighting only if the video has lighting changes), and its text must agree with the video.
+- Timestamps work in whole seconds only and are not for quick actions.
+- A styled keyframe image per time range goes alongside the clay video in its long example.
+- No overlays in the video. Up to 10 videos totalling 30 s and 30 images per request. A reference task does not lock the output's length or aspect ratio.
+- Depth is not an input.
+
+Built:
+
+1. **Coloured figures.** Each performer's clay figure is one flat colour (`figureColors` in `runtime/characters.ts`; blue and orange by default, `color` on a staged performer chooses another). All pair renders use them; the meta gives the colour of each performer.
+2. **`seedance` block in `reference.json`**: the assets and their roles, each character's clay model by colour, a composition still per shot for making keyframes, the sentence on what to take from the clay video, the mapping sentences, the output length and aspect ratio, a timeline in whole-second ranges (beats grouped by their midpoint, exact times kept) and the guide's rules that a prompt writer must follow.
+3. **Depth is optional** (`depth: true` on `export_pair_reference`), off by default. The 10-second scene exports in 34 s without it.
+
+`scene-very-grown-up` r17 exported this way: `.authoring/renders/scene-very-grown-up-r17-reference/` (300 frames, 10.000 s). 
+4. **A figure of plain shapes** (`figure: "primitives"` on `export_pair_reference`; `primitiveFigure` in `runtime/characters.ts`): capsules for trunk and limbs, spheres for head and hands, riding on the mannequin's joints, same colours, same motion and cameras. It writes to a folder ending `-primitives`, so the same scene can be exported both ways and compared. Exported for r17: `.authoring/renders/scene-very-grown-up-r17-reference-primitives/`; the framing figures read whole in all three shots. Renderer only: Studio still shows the mannequin, and a performer with another body keeps it. The sphere head has no face side, so where a figure looks is harder to read than on the mannequin.
+
+Not done: no generation was run with either package, so which figure Seedance follows better is not known; that comparison is the user's.
