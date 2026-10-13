@@ -849,3 +849,12 @@ Plan and every number are in `docs/MULTI_PERSON_PLAN.md`; this is the short vers
 - New: `authoring/render/sam3-track.py` (follow chosen people with SAM 3 through ComfyUI, in six-frame hops because the tracker drops its outlines after seven), `reconstruct_motion` `boxes: {file, name}` (build a performer from given boxes), `authoring/render/court-place.py` (floor positions from the feet, a jump carried through the air, hips hung from the rim during a dunk), `set_pair_scene` `place` and `scene.camera.absolute`, `$root` allowed 40 m from the origin.
 - Fixed: the retarget stage's cache key now says whether a build is placed; the editor and the Clay view no longer lose a pair in the haze when the camera is 40 m away; `archive_entry` carries pair pins to the new revision.
 - The court registration scripts are still scratch code (copies in `.authoring/team/scripts/`). Open: the ball, more than two figures, replays, two wrong poses of the ball handler on the rim, the tracker's speed (7 s a frame here).
+
+## 2026-10-13 (later) · Team clips: the ball, the other players, a second play
+
+Numbers are in `docs/MULTI_PERSON_PLAN.md`.
+- Ball: `authoring/render/sam3-find.py` (SAM 3's detector asked for "basketball" in a crop around the followed player) and `authoring/render/court-ball.py` (in a hand while near a wrist in the picture, otherwise a thrown ball's course fitted to the sightings). `set_pair_scene` takes `props` for a video pair, with a `path` part for a loose prop. Right on play 10; wrong on play 9 (left out there).
+- Others: `set_pair_scene` `extras` (more people of the clip, each an action with a place per frame and a colour), drawn by the Clay view and the editor and named in the `seedance` block. The pair stays the two key players.
+- Court scripts in the repo: `court-camera.py` (camera from the painted lines, from a few hand marks), `court-people.py` (everyone followed over the floor, as boxes for `reconstruct_motion`), `court-place.py` (now also gives hips and wrists in court metres, and counts a hand at the rim as off the floor).
+- Live: `pair-nba-play10` (seven players and the ball), `pair-nba-play9` (five players, no ball). Inputs and results of both are in untracked `.authoring/team/`.
+- Open: play 9's ball; players who come and go; replays; turnaround (an hour of machine time a play, most of it SAM 3 tracking at 7 s a frame and body builds at 3.5 min a player).

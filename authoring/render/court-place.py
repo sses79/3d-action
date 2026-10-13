@@ -9,11 +9,13 @@ On the floor a player's place is read from the lower ankle: the line of sight th
 where the body model has them from that ankle, with the model's body scaled to the player's size in the picture (the median
 over the clip of hip-to-ankle in the picture against the model's). In the air that reading is wrong (the feet are up, so the floor point lands
 metres behind). A span in the air is taken from where the floor reading moves faster than --fast m/s (a person cannot), from
-the frame before the first such frame to the last, joined when less than 0.8 s apart; --air gives it by hand. Inside it the
+the frame before the first such frame to the last, joined when less than 0.8 s apart; --air gives it by hand. A hand at the rim
+in the picture while the feet read more than a metre from under it also counts, from 0.4 s before to 0.5 s after. Inside it the
 place over the floor runs straight from take-off to landing, through every frame where a wrist is at the rim (there the hips
 are where the body model has them from that wrist, hung on the rim of the basket on --side), and the height is where the line
 of sight through the hips passes that place. OUT.json: {camera: {quats, positions, focal, absolute}, place: [[x, lift, z] per
-frame for each player], summary}; room axes x = court x, y up, z = toward the main camera. Limits: a jump shorter than the
+frame for each player], court: for each player the hips and the two wrists per frame in court metres (for court-ball.py),
+times, summary}; room axes x = court x, y up, z = toward the main camera. Limits: a jump shorter than the
 speed test notices is left on the floor; a hop of the camera fit shows as a hop of the players."""
 import sys,json,numpy as np,cv2
 cam_file,out=sys.argv[1],sys.argv[2];players=[a.split('=',1) for a in sys.argv[3:] if not a.startswith('--')]
@@ -32,7 +34,7 @@ def read(name,file,size=1.):
         hang=None;rim=pixel(k,RIM);reach=1.6*.23*LENS[k]/np.linalg.norm(RIM-C)
         for w in (41,62):
             if np.linalg.norm(j2[w]-rim)<reach and (hang is None or j2[w][1]<hang[1]):hang=(RIM-size*(R.T@(j3[w]-hip3)),j2[w][1])
-        rows.append(dict(t=float(t),k=k,hip=hip,stand=stand,sight=ray(k,hip2),hang=None if hang is None else hang[0]))
+        rows.append(dict(t=float(t),k=k,hip=hip,stand=stand,wrists=[size*(R.T@(j3[w]-hip3)) for w in (62,41)],sight=ray(k,hip2),hang=None if hang is None else hang[0]))
     return rows,float(np.median(ratio))
 def spans(rows,name):
     if name in given:return [(min(range(len(rows)),key=lambda i:abs(rows[i]['t']-a)),min(range(len(rows)),key=lambda i:abs(rows[i]['t']-b))) for a,b in given[name]]
@@ -40,7 +42,18 @@ def spans(rows,name):
     for i in fast:
         if res and rows[i]['t']-rows[res[-1][1]]['t']<.8:res[-1][1]=i
         else:res.append([i-1,i])
-    return [tuple(s) for s in res if s[1]-s[0]>1]
+    res=[s for s in res if s[1]-s[0]>1]
+    # a hand at the rim in the picture while the feet read more than a metre from under it: off the floor, from 0.4 s before to 0.5 s after
+    hung=[i for i,r in enumerate(rows) if r['hang'] is not None and np.linalg.norm(r['hang'][:2]-r['hip'][:2])>1.];near=lambda t:min(range(len(rows)),key=lambda i:abs(rows[i]['t']-t))
+    for i in hung:
+        if res and any(a<=i<=b for a,b in res):continue
+        if res and rows[i]['t']-rows[res[-1][1]]['t']<.9 and res[-1][1]<i:res[-1][1]=near(rows[i]['t']+.5)
+        else:res.append([near(rows[i]['t']-.4),near(rows[i]['t']+.5)])
+    res.sort();merged=[]
+    for a,b in res:
+        if merged and a<=merged[-1][1]:merged[-1][1]=max(b,merged[-1][1])
+        else:merged.append([a,b])
+    return [tuple(s) for s in merged]
 def placed(rows,name):
     n=len(rows);P=np.array([[r['hip'][0],r['hip'][1],0.] for r in rows]);air=spans(rows,name);up=np.zeros(n,bool);hung=0
     for a,b in air:
@@ -56,7 +69,8 @@ def placed(rows,name):
     for _ in range(2):S[1:-1,:2]=.25*S[:-2,:2]+.5*S[1:-1,:2]+.25*S[2:,:2];S[1:-1,2]=np.where(up[1:-1],.25*S[:-2,2]+.5*S[1:-1,2]+.25*S[2:,2],S[1:-1,2])
     T=np.array([r['t'] for r in rows]);ft=t0+np.arange(F)/fps;series=np.stack([np.interp(ft,T,S[:,c]) for c in range(3)],1)
     step=np.linalg.norm(np.diff(S[:,:2],axis=0),axis=1)/np.diff(T)
-    return series,dict(name=name,airborne=[[round(rows[a]['t'],2),round(rows[b]['t'],2)] for a,b in air],framesHungOnRim=hung,peakLiftMeters=round(float(S[:,2].max()),2),courtStart=[round(float(x),2) for x in S[0,:2]],courtEnd=[round(float(x),2) for x in S[-1,:2]],fastestMetersPerSecond=round(float(step.max()),1),travelMeters=round(float(step@np.diff(T)),1))
+    hips=np.stack([S[:,0],S[:,1],S[:,2]+[r['stand'] for r in rows]],1);each=lambda A:np.stack([np.interp(ft,T,A[:,c]) for c in range(3)],1).round(3).tolist()
+    return series,dict(hips=each(hips),left=each(hips+[r['wrists'][0] for r in rows]),right=each(hips+[r['wrists'][1] for r in rows])),dict(name=name,airborne=[[round(rows[a]['t'],2),round(rows[b]['t'],2)] for a,b in air],framesHungOnRim=hung,peakLiftMeters=round(float(S[:,2].max()),2),courtStart=[round(float(x),2) for x in S[0,:2]],courtEnd=[round(float(x),2) for x in S[-1,:2]],fastestMetersPerSecond=round(float(step.max()),1),travelMeters=round(float(step@np.diff(T)),1))
 def quat(M):
     q=np.empty(4);tr=np.trace(M)
     if tr>0:s=np.sqrt(tr+1)*2;q[:]=[(M[2,1]-M[1,2])/s,(M[0,2]-M[2,0])/s,(M[1,0]-M[0,1])/s,s/4]
@@ -66,7 +80,7 @@ def quat(M):
 B=np.array([[1.,0,0],[0,0,1],[0,-1,0]]);Fl=np.diag([1.,-1,-1]);quats=[quat(B@R.T@Fl) for R in ROT]
 for i in range(1,F):
     if quats[i]@quats[i-1]<0:quats[i]=-quats[i]
-place=[];summary=[]
+place=[];summary=[];court={}
 for name,file in players:
-    size=read(name,file)[1];s,info=placed(read(name,file,size)[0],name);info['bodySizeAgainstModel']=round(size,3);place.append([[round(float(p[0]),3),round(float(p[2]),3),round(float(-p[1]),3)] for p in s]);summary.append(info)
-json.dump(dict(camera=dict(quats=[[round(float(x),6) for x in q] for q in quats],positions=[[round(float(x),4) for x in B@C]]*F,focal=[round(l/float(np.hypot(W,H)),4) for l in LENS],absolute=True),place=place,summary=summary),open(out,'w'));print(json.dumps(summary))
+    size=read(name,file)[1];s,court[name],info=placed(read(name,file,size)[0],name);info['bodySizeAgainstModel']=round(size,3);place.append([[round(float(p[0]),3),round(float(p[2]),3),round(float(-p[1]),3)] for p in s]);summary.append(info)
+json.dump(dict(camera=dict(quats=[[round(float(x),6) for x in q] for q in quats],positions=[[round(float(x),4) for x in B@C]]*F,focal=[round(l/float(np.hypot(W,H)),4) for l in LENS],absolute=True),place=place,court=court,times=[round(t0+k/fps,4) for k in range(F)],summary=summary),open(out,'w'));print(json.dumps(summary))

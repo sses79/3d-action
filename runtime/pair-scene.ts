@@ -23,7 +23,7 @@ export type SceneCamera={quats:number[][];positions:number[][];focal:number[];ab
 // lookAt is a point, or {performer, aim} to keep a performer's head or body in the middle, or {between:true} for the point
 // between the two. `to` moves the camera and/or changes the lens over the shot, eased, until the next shot starts.
 export type StagedShot={start:number;position:number[];lookAt:number[]|{performer:number;aim?:'head'|'body'}|{between:true};lens35:number;to?:{position?:number[];lens35?:number}};
-export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[];lock?:number[][];/* place: where the performer's root is in the room per frame, [x, lift, z]: x and z over the floor, lift above the action's own height (a jump). Given when the floor is known (a court): then the body model's own distance is not used. */place?:number[][]}[];distanceScale?:number[];staged?:{heights:number[];cameras:StagedShot[]}};
+export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[];lock?:number[][];/* place: where the performer's root is in the room per frame, [x, lift, z]: x and z over the floor, lift above the action's own height (a jump). Given when the floor is known (a court): then the body model's own distance is not used. */place?:number[][]}[];distanceScale?:number[];props?:any[];/* extras: more people of the clip (other players), each an action with its own place per frame [x, lift, z], a colour name and, if they are not in the picture throughout, visible [from, to] seconds */extras?:{actionId:string;revision:number;name:string;color:string;place:number[][];visible?:number[]}[];staged?:{heights:number[];cameras:StagedShot[]}};
 // Distance from one camera is the noisiest thing the body model gives, and it shows as feet sliding toward and away from the
 // camera. distanceScale evens it out: per frame, the factor that takes the pair's mean distance from the camera (model depth
 // times lens ratio) to its average over about a second. One factor for both performers, so what lies between them is kept.
@@ -35,6 +35,15 @@ const finite=(v:any,n:number)=>Array.isArray(v)&&v.length===n&&v.every(x=>typeof
 export function validateObjects(objects:any):string|null{
  if(!Array.isArray(objects)||objects.length>64)return 'A scene needs up to 64 objects';
   const names=new Set<string>();for(const o of objects){if(typeof o?.name!=='string'||!/^[a-z0-9][a-z0-9 -]{0,39}$/.test(o.name)||names.has(o.name))return 'Each object needs its own short lower-case name';names.add(o.name);if(!['box','cylinder','arch','wedge'].includes(o.shape))return `${o.name}: shape is box, cylinder, arch or wedge`;if(o.rim!==undefined&&!(o.shape==='arch'&&typeof o.rim==='number'&&o.rim>0&&o.rim<Math.min(o.size?.[0]/2,o.size?.[1])))return `${o.name}: rim is the band width of an arch, less than its half width and its height`;if(!finite(o.position,3)||o.position.some((x:number)=>Math.abs(x)>200))return `${o.name}: position is [x, y, z] in metres`;if(!finite(o.size,3)||o.size.some((x:number)=>x<=0||x>200))return `${o.name}: size is [width, height, depth] in metres`;if(o.rotationY!==undefined&&!(typeof o.rotationY==='number'&&Math.abs(o.rotationY)<=360))return `${o.name}: rotationY is in degrees`;}
+ return null;
+}
+// Props of a pair from a video: small plain shapes with a track of where they are from each start on: in a performer's hand
+// ({holder 0|1, hand l|r}), at a point ({at}) or on a measured course ({path: [seconds, x, y, z] rows}); blend seconds glides in.
+export function validateProps(props:any):string|null{
+ if(!Array.isArray(props)||props.length>6)return 'props: up to 6';const ids=new Set<string>();
+ for(const p of props){if(typeof p?.id!=='string'||!/^[a-z][a-z0-9-]{0,23}$/.test(p.id)||ids.has(p.id))return 'Each prop needs its own short lower-case id';ids.add(p.id);if(typeof p.name!=='string'||!p.name.trim()||p.name.length>60||!['box','sphere','cylinder'].includes(p.shape)||!finite(p.size,3)||p.size.some((x:number)=>x<.02||x>1.5)||typeof p.color!=='string'||(p.represents!==undefined&&(typeof p.represents!=='string'||p.represents.length>200)))return `${p.id}: {id, name, shape box|sphere|cylinder, size [width, height, depth] 0.02–1.5 m, color, represents, track}`;
+  if(!Array.isArray(p.track)||!p.track.length||p.track.length>60||p.track[0].start!==0)return `${p.id}: track starts at 0 and has up to 60 parts`;let last=-1;
+  for(const s of p.track){if(typeof s?.start!=='number'||!(s.start>last)||(s.blend!==undefined&&!(typeof s.blend==='number'&&s.blend>=0&&s.blend<=2)))return `${p.id}: each part of the track starts later than the one before`;last=s.start;const kinds=+(s.holder===0||s.holder===1)+ +(s.at!==undefined)+ +(s.path!==undefined);if(kinds!==1)return `${p.id}: a part is {holder, hand}, {at} or {path}`;if(s.path!==undefined&&(!Array.isArray(s.path)||s.path.length<2||s.path.length>900||s.path.some((q:any,i:number)=>!finite(q,4)||Math.abs(q[1])>200||Math.abs(q[2])>200||Math.abs(q[3])>200||(i>0&&!(q[0]>s.path[i-1][0])))))return `${p.id}: path is [seconds, x, y, z] rows in time order`;if(s.at!==undefined&&!finite(s.at,3))return `${p.id}: at is [x, y, z]`;if(s.path===undefined&&s.at===undefined&&!['l','r'].includes(s.hand))return `${p.id}: hand is l or r`;}}
  return null;
 }
 export function validateScene(scene:any):string|null{
@@ -55,7 +64,9 @@ export function sceneCameraAt(camera:SceneCamera,time:number,duration:number){
 // (`peak` metres above the straight line) from where the throwing hand is at the release to where the catching hand is at
 // the catch. anchor(segment) gives the place a segment names with the performers as they are now; anchor(segment, t) must
 // pose them at t first (the caller puts them back afterwards). The two ends of a throw are read once and kept in `flights`.
-export function propPlace(prop:{track:any[]},time:number,anchor:(segment:any,at?:number)=>number[],flights:Map<any,{from:number[];to:number[]}>):number[]{
+// A segment with `path` ([seconds, x, y, z] rows) is a prop loose in the room on a measured course (a ball off the hand, from a video).
+export function propPlace(prop:{track:any[]},time:number,held:(segment:any,at?:number)=>number[],flights:Map<any,{from:number[];to:number[]}>):number[]{
+ const anchor=(s:any,t?:number)=>{if(!s.path)return held(s,t);const P=s.path as number[][],x=t??time;let i=P.findLastIndex(q=>q[0]<=x);if(i<0)return P[0].slice(1);if(i>=P.length-1)return P[P.length-1].slice(1);const u=(x-P[i][0])/Math.max(P[i+1][0]-P[i][0],1e-6);return [1,2,3].map(c=>P[i][c]+(P[i+1][c]-P[i][c])*u);};
  const k=Math.max(0,prop.track.findLastIndex((s:any)=>s.start<=time+1e-9)),seg=prop.track[k],mix=(a:number[],b:number[],u:number)=>a.map((v,i)=>v+(b[i]-v)*u);
  if(k>0&&seg.fly>0&&time<seg.start+seg.fly){let f=flights.get(seg);if(!f){f={from:anchor(prop.track[k-1],seg.start),to:anchor(seg,seg.start+seg.fly)};flights.set(seg,f);}const u=(time-seg.start)/seg.fly,p=mix(f.from,f.to,u);p[1]+=4*seg.peak*u*(1-u);return p;}
  const at=anchor(seg);if(k>0&&seg.blend>0&&time<seg.start+seg.blend){const u=(time-seg.start)/seg.blend;return mix(anchor(prop.track[k-1]),at,u*u*(3-2*u));}
@@ -75,6 +86,8 @@ export const turn=(q:number[],v:number[])=>{const [x,y,z,w]=q,cx=y*v[2]-z*v[1],c
 // Where a performer's holder goes in the room at a time. local is the character's root position in its own action (metres).
 // Returns the holder's turn and position, and inCameraY (the hips' height in the turned camera frame, for the camera's height).
 // A point of the character at p in its action then lies at turn(quat, p) + position.
+// The same for someone placed by a series of [x, lift, z] alone (a scene's extras).
+export function standAt(camera:SceneCamera,place:number[][],time:number,duration:number,local:number[]){return standInRoom({objects:[],camera,performers:[{origin:[0,0],hipDown:[0,0],place}]},0,time,duration,local);}
 export function standInRoom(scene:PairScene,index:number,time:number,duration:number,local:number[]){
  const c=sceneCameraAt(scene.camera,time,duration),side=scene.performers[index],even=scene.distanceScale?sampleSeries(scene.distanceScale,time,duration):1,inCamera=turn(c.quat,[(side.origin[0]+local[0])*even,-sampleSeries(side.hipDown,time,duration)*even,(side.origin[1]+local[2])*c.zoom*even]),back=turn(c.quat,local);
  if(side.place){const {lo,hi,u}=at(side.place.length-1,time,duration),a=side.place[lo],b=side.place[hi],back=turn(c.quat,local);return {quat:c.quat,position:[a[0]*(1-u)+b[0]*u-back[0],local[1]+a[1]*(1-u)+b[1]*u-back[1],a[2]*(1-u)+b[2]*u-back[2]],inCameraY:0,camera:c};}
