@@ -15,6 +15,9 @@ start,end,out=float(sys.argv[1]),float(sys.argv[2]),sys.argv[3];files=[a for a i
 # curve through every one of them zigzags. Then the camera at each moment is a fit (a line in time, nearer views counting more)
 # to the key views within that many seconds either side, which averages the runs' disagreement out.
 SMOOTH=next((float(a.split('=')[1]) for a in sys.argv if a.startswith('--smooth=')),0.)
+# --zoom: the lens changes during the shot. Each key view's own lens is used (evened over three neighbours) and interpolated,
+# instead of one lens for the whole shot. Use it when the summary's lensPxPerView runs steadily up or down, not when it only scatters.
+ZOOM='--zoom' in sys.argv
 hips={};poses={}
 for dd in sorted(glob.glob('.authoring/reconstruction-cache/body-*/'),key=os.path.getmtime):
     try:
@@ -36,6 +39,7 @@ for r,f in enumerate(files[1:],1):
     for j,t in enumerate(B['T']):
         if t not in A['T']:views.append(dict(t=t,R=B['R'][j]@Rab.T,C=s*Rab@B['C'][j]+tab,D=B['D'][j]/1,fk=B['fk'][j],first=j==0,run=r,depthScale=s))
 views.sort(key=lambda v:v['t']);lens=float(np.median([v['fk'] for v in views if not v['first']]))
+for i,v in enumerate(views):v['lens']=float(np.median([w['fk'] for w in views[max(0,i-1):i+2]])) if ZOOM else lens
 frame_at=lambda side,t:min(poses[side],key=lambda f:abs(f['time']-t));unit=1.
 def world(v,u,w):  # a pixel's point in the common space (depth units until the metres are known, then metres), and its depth
     z=float(np.median(v['D'][max(0,int(w)-6):int(w)+6,max(0,int(u)-6):int(u)+6]))*v.get('depthScale',1);X=np.array([(u-W/2)*z/v['fk'],(w-H/2)*z/v['fk'],z])*unit;return v['R'].T@X+v['C'],z
@@ -45,7 +49,7 @@ for v in views:
     for side in ('left','right'):
         fr=frame_at(side,v['t'])
         if not fr['bbox'] or len(fr['keypoints'])!=17:continue
-        kp=np.array(fr['keypoints']);u,w=kp[[11,12],0].mean(),kp[[11,12],1].mean();_,z=world(v,u,w);k=min(len(hips[side])-1,int(round((v['t']-start)*30)));ratios.append(hips[side][k][2]*lens/f0/z)
+        kp=np.array(fr['keypoints']);u,w=kp[[11,12],0].mean(),kp[[11,12],1].mean();_,z=world(v,u,w);k=min(len(hips[side])-1,int(round((v['t']-start)*30)));ratios.append(hips[side][k][2]*v['lens']/f0/z)
 metres=float(np.median(ratios));spread=float(np.percentile(ratios,84)-np.percentile(ratios,16))/2/metres
 for v in views:v['C']=v['C']*metres
 unit=metres
@@ -91,7 +95,7 @@ for v in views:
         fr=frame_at(side,v['t'])
         if fr['bbox'] and len(fr['keypoints'])==17:kpx=np.array(fr['keypoints']);p,_=world(v,kpx[[11,12],0].mean(),kpx[[11,12],1].mean());dancers.append(dict(t=round(v['t']-start,2),side=side,room=[round(float(x),2) for x in B@(p-o)]))
 heading=[float(np.degrees(np.arctan2(*(B@(v['R'].T@np.array([0,0,1.])))[[0,2]]))) for v in views]
-summary=dict(keyViews=len(views),keyTimes=[round(t-start,2) for t in kt],joins=joins,lensPx=round(lens),lensPxPerView=[round(v['fk']) for v in views],lens35mmEquivalent=round(lens/f0*43.3),metresPerDepthUnit=round(metres,3),metresSpread=round(spread,3),
+summary=dict(keyViews=len(views),keyTimes=[round(t-start,2) for t in kt],joins=joins,lensPx=round(lens),zoom=ZOOM,lensPxPerView=[round(v['fk']) for v in views],lens35mmEquivalent=round(lens/f0*43.3),metresPerDepthUnit=round(metres,3),metresSpread=round(spread,3),
  cameraHeightMeters=[round(float(p[1]),2) for p in kp],cameraPlaces=[[round(float(x),2) for x in p] for p in kp],headingDegrees=[round(h) for h in heading],pathMeters=round(float(np.linalg.norm(np.diff(pos,axis=0),axis=1).sum()),2),ankleLevelSpreadMeters=round(float(ank.std()),3) if len(ank) else None,performersAtKeyViews=dancers,
  smoothSeconds=SMOOTH,note='Between key views the camera is interpolated. One lens assumed for the shot; the camera assumed level on average.')
-json.dump(dict(summary=summary,track=dict(quats=quats,positions=pos.tolist(),focal=[round(lens/f0,4)]*N)),open(out,'w'));print(json.dumps({k:v for k,v in summary.items() if k!='performersAtKeyViews'}))
+json.dump(dict(summary=summary,track=dict(quats=quats,positions=pos.tolist(),focal=[round(float(np.interp(start+k/30,kt,[v['lens'] for v in views]))/f0,4) for k in range(N)])),open(out,'w'));print(json.dumps({k:v for k,v in summary.items() if k!='performersAtKeyViews'}))

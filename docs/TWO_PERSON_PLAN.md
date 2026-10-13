@@ -473,3 +473,29 @@ On this window: the pair is identities 1 and 2; identity 12 joins the right danc
 **What the body model made of it.** Eight moments, clay from the source camera under the video: who is in front agrees in all eight (the woman in front at the start, the man in front with his back to the camera at 41.15 s, the woman in front again from 41.75 s), as do the raised arm at 39.95 s and both dancers' arms out at the end. So at clay level the wrapped bodies were not the wall expected. Not established: the limbs inside the hold, which nothing here can check; and for the second the left dancer is hidden, his pose is a blend between the frames either side, not a reading.
 
 The six earlier two-performer windows (twelve observations, the travelling-camera shot among them) give the same chosen boxes as before. `observe.py` and `body.py` changed, so their cache keys changed again.
+
+## A second demo clip with a travelling camera: 89.7–93.25 s (2026-10-13)
+
+Chosen from the scan of the whole video as the cleanest unused shot in which the camera travels (both dancers found in every scanned frame, no heavy overlap, a body cut by the frame in 6%). They start in a hold, open out side by side with their arms out and step forward; the camera zooms out over the first second and then travels round to the side.
+
+- **Build** (coarse): observe 22 and 20 s, body 75 and 73 s; a box in every one of 85 frames for both, no exchange, looks 97 apart learned from 13 frames with the boxes touching. `pair-samba-arc`: five hand-hold stretches; limbs inside the other body in 28 frames before the contact rule, 3 after (3.3 cm).
+- **Camera.** `stage-travel.py` gained `--zoom`: each key view's own lens (evened over three neighbours) instead of one for the shot. Here the lens runs 2174, 2087, 1904, 1652 px over the first second and then holds near 1400. With it the left dancer sits at about x -0.6, z -4.0 in the room at every key view; metres per depth unit spread 13%.
+- **One run of key views is better than two interleaved.** With 14 views from two runs (one every 0.25 s) the feet slid 6.4 and 7.1 m before the lock; with the first run's 8 views alone 3.2 and 3.9 m; smoothing the 14 (0.5 or 0.8 s) gave 3.5–4.0 m. The runs disagree with each other by more than the camera moves in a quarter of a second, so drawing the camera through both makes it zigzag. This corrects what the skill said (two interleaved runs); on the 11-second shot the two runs were 0.75 s apart and the harm was not seen. For a long shot, runs end to end sharing two views should be better than interleaved ones: not tried.
+- **Result** (`pair-samba-arc` r10, 8 key views, `footLockTogether` 3): slide 2.65 and 2.69 m after the lock, the camera moved by up to 0.13 m; each dancer's range over the floor 0.4 x 0.4 and 0.4 x 0.8 m. With the camera held still the slide is about the same (2.8 and 2.2 m after the lock) but the dancers travel 2.3 m in depth over the floor, which they do not in the video.
+- **Looked at**: eight moments, video above clay from the solved camera: the hold, the woman's arm going up and the man's lifted knee at 91.8 s, both with arms out, and the framing through the zoom agree. In a fixed view the two stay in one place in front of the seating.
+- **Stage**: four plain boxes for the seating round the floor, placed by eye from the picture; not measured.
+- Package: `.authoring/renders/pair-samba-arc-r10-reference/` (107 frames, plain-shape figures, exported in 12 s).
+
+Also fixed on the way: **archiving an entry no longer breaks its pair.** `archive_entry` raised the revision and left the pair, the build record and the source-video link pointing at the old one, so an archived and restored action could not be shown in its pair or paired again without rebuilding. Those links are now carried to the new revision, and bringing an entry back also carries what pointed at it before it was archived. `behind-samba-left` and `-right`, archived at the user's request the day before, were restored this way: `pair-behind-samba` r26 is current again with its scene.
+
+## A third demo clip: side by side, 59.9–66.6 s (2026-10-13)
+
+The alternative from the same search: the two dance side by side facing the camera, the longest clean shot. It was ranked second because the dancers are cut at the knee for the first three seconds and because the camera zooms out while it moves; `--zoom`, added for the clip before, deals with the second.
+
+- **Build** (coarse): observe 31 and 34 s, body 121 and 124 s; the left dancer has a box in all 162 frames, the right in 156 with the other 6 marked hidden; no exchange; looks 152 apart learned from 99 frames. `pair-samba-side`: no hand holds and no limb inside the other body.
+- **Camera** (one run of 8 key views, `--zoom`): the lens runs 1863, 1546, 1272, 1137 px and then holds near 1100; the camera moves 3.7 m, about 3 m to the left, turning 32 degrees, at 1.0–1.1 m high. Metres per depth unit spread 7.6% with `--zoom`, 20% without.
+- **Result** (`pair-samba-side` r5, `footLockTogether` 3): slide 3.13 and 2.35 m after the lock over 6.7 s, the camera moved by up to 0.08 m. With the camera held still 4.35 and 2.08 m.
+- **Looked at**: eight moments, video above clay from the solved camera: hands up by the head, the wide stance with arms out, the man turned side-on at 63.7 s, both with arms straight up at 64.6 s, the two coming together at the end; the framing through the zoom agrees. In a fixed view they stay in front of the bandstand.
+- **Not checkable**: the legs in the first three seconds, where the picture cuts them at the knee; the clay from the source camera cuts them there too, so it does not show.
+- **Stage**: four plain boxes (a bandstand platform and back wall, seating either side), placed by eye.
+- Package: `.authoring/renders/pair-samba-side-r5-reference/` (202 frames, exported in 19 s).

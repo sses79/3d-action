@@ -52,7 +52,7 @@ export async function init(cfg?:ClayViewConfig){
  // room (its floor at y=0), plus where the camera stands on the floor and its lens (as a multiple of the body model's lens).
  // A longer lens than the model assumed puts the performers that much further away, so their depth is scaled by it.
  const track=payload.scene?.camera??payload.track,shift=new T.Vector3();let zoom=1,even=1;
- const trackAt=(time:number)=>{const c=sceneCameraAt(track!,time,payload.duration);level!.fromArray(c.quat);shift.set(c.x,0,c.z);zoom=c.zoom;even=payload.scene?.distanceScale?sampleSeries(payload.scene.distanceScale,time,payload.duration):1;};
+ let ownHeight:number|null=null;const trackAt=(time:number)=>{const c=sceneCameraAt(track!,time,payload.duration);level!.fromArray(c.quat);shift.set(c.x,0,c.z);ownHeight=(track as any).absolute?c.y:null;zoom=c.zoom;even=payload.scene?.distanceScale?sampleSeries(payload.scene.distanceScale,time,payload.duration):1;};
  const level=track?new T.Quaternion():payload.level?new T.Quaternion().setFromUnitVectors(new T.Vector3().fromArray(payload.level.normal).normalize(),new T.Vector3(0,1,0)):null;
  const hipDown=(time:number,i:number)=>{const n=payload.hips[i].length-1,k=Math.min(n,Math.max(0,time/Math.max(payload.duration,1e-6)*n)),lo=Math.floor(k),hi=Math.min(n,lo+1),u=k-lo;return payload.hips[i][lo][1]*(1-u)+payload.hips[i][hi][1]*u;};
  let cameraHeight=0;
@@ -92,8 +92,9 @@ export async function init(cfg?:ClayViewConfig){
    const part=(i:number,aim?:string)=>players[i].root.getObjectByName(aim==='head'?'Head':'spine_02')!.getWorldPosition(new T.Vector3()),look=Array.isArray(shot.lookAt)?new T.Vector3().fromArray(shot.lookAt):'between' in shot.lookAt?part(0).add(part(1)).multiplyScalar(.5):part(shot.lookAt.performer,shot.lookAt.aim);
    camera.position.copy(at);camera.fov=2*Math.atan(Math.tan(Math.atan(18/lens))/camera.aspect)*180/Math.PI;camera.updateProjectionMatrix();camera.lookAt(look);}
   else if(still){camera.position.copy(still.eye);camera.fov=38;camera.updateProjectionMatrix();camera.lookAt(still.look);}
-  else{camera.position.set(shift.x,Math.max(.15,payload.camera==='fixed'?height0:heightAt(time,hips)),shift.z);if(level)camera.quaternion.copy(level);else camera.quaternion.identity();if(track){camera.fov=2*Math.atan(height/(2*Math.hypot(width,height)*zoom))*180/Math.PI;camera.updateProjectionMatrix();}}
-  camera.updateMatrixWorld(true);sun.target.position.set(centre.x,0,centre.z);sun.position.set(centre.x+3.5,7,centre.z+4.5);sun.target.updateMatrixWorld();
+  else{camera.position.set(shift.x,Math.max(.15,payload.camera==='fixed'?height0:ownHeight??heightAt(time,hips)),shift.z);if(level)camera.quaternion.copy(level);else camera.quaternion.identity();if(track){camera.fov=2*Math.atan(height/(2*Math.hypot(width,height)*zoom))*180/Math.PI;camera.updateProjectionMatrix();}}
+  {const far=camera.position.distanceTo(centre),fog=scene.fog as T.Fog|null,reach=Math.max(camera.userData.far??=camera.far,far*5);if(fog){fog.near=Math.max(14,far*1.4);fog.far=Math.max(40,far*4);}if(camera.far!==reach){camera.far=reach;camera.updateProjectionMatrix();}}  // a camera far from the performers (a court's, 40 m off) must not lose them in the haze or past the far plane
+   camera.updateMatrixWorld(true);sun.target.position.set(centre.x,0,centre.z);sun.position.set(centre.x+3.5,7,centre.z+4.5);sun.target.updateMatrixWorld();
   renderer.render(scene,camera);if(cfg)return '';renderer.getContext().finish();return renderer.domElement.toDataURL('image/png');};
  // Depth pass: every surface drawn by how far it is from the camera, as inverse distance (white at `near`, black at `far` and
  // beyond, linear in 1/distance between), the form depth-guided video models are fed.

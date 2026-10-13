@@ -15,14 +15,15 @@
 // the camera's turn for that frame, moved to where the camera is, and pushed away by the lens ratio (a longer lens than the
 // model assumed means the performer is that much further off). Height stays the character's own, from its floor rule.
 export type SceneObject={name:string;shape:'box'|'cylinder'|'arch'|'wedge';position:number[];size:number[];rotationY?:number;rim?:number};
-export type SceneCamera={quats:number[][];positions:number[][];focal:number[]};
+// absolute: the track's own height is the camera's (a camera solved from a known court), not read back from the performers.
+export type SceneCamera={quats:number[][];positions:number[][];focal:number[];absolute?:boolean};
 // A staged scene (stage_scene) has no source camera: its two actions are already in the room's coordinates, so nothing is
 // re-placed. `staged` then holds each performer's height (the figure is scaled to it) and the cameras as shots: from `start`
 // seconds a camera at `position` looking at `lookAt` with a 35 mm-equivalent lens. A new shot is a cut.
 // lookAt is a point, or {performer, aim} to keep a performer's head or body in the middle, or {between:true} for the point
 // between the two. `to` moves the camera and/or changes the lens over the shot, eased, until the next shot starts.
 export type StagedShot={start:number;position:number[];lookAt:number[]|{performer:number;aim?:'head'|'body'}|{between:true};lens35:number;to?:{position?:number[];lens35?:number}};
-export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[];lock?:number[][]}[];distanceScale?:number[];staged?:{heights:number[];cameras:StagedShot[]}};
+export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[];lock?:number[][];/* place: where the performer's root is in the room per frame, [x, lift, z]: x and z over the floor, lift above the action's own height (a jump). Given when the floor is known (a court): then the body model's own distance is not used. */place?:number[][]}[];distanceScale?:number[];staged?:{heights:number[];cameras:StagedShot[]}};
 // Distance from one camera is the noisiest thing the body model gives, and it shows as feet sliding toward and away from the
 // camera. distanceScale evens it out: per frame, the factor that takes the pair's mean distance from the camera (model depth
 // times lens ratio) to its average over about a second. One factor for both performers, so what lies between them is kept.
@@ -76,6 +77,7 @@ export const turn=(q:number[],v:number[])=>{const [x,y,z,w]=q,cx=y*v[2]-z*v[1],c
 // A point of the character at p in its action then lies at turn(quat, p) + position.
 export function standInRoom(scene:PairScene,index:number,time:number,duration:number,local:number[]){
  const c=sceneCameraAt(scene.camera,time,duration),side=scene.performers[index],even=scene.distanceScale?sampleSeries(scene.distanceScale,time,duration):1,inCamera=turn(c.quat,[(side.origin[0]+local[0])*even,-sampleSeries(side.hipDown,time,duration)*even,(side.origin[1]+local[2])*c.zoom*even]),back=turn(c.quat,local);
+ if(side.place){const {lo,hi,u}=at(side.place.length-1,time,duration),a=side.place[lo],b=side.place[hi],back=turn(c.quat,local);return {quat:c.quat,position:[a[0]*(1-u)+b[0]*u-back[0],local[1]+a[1]*(1-u)+b[1]*u-back[1],a[2]*(1-u)+b[2]*u-back[2]],inCameraY:0,camera:c};}
  let lx=0,lz=0;if(side.lock){const {lo,hi,u}=at(side.lock.length-1,time,duration);lx=side.lock[lo][0]*(1-u)+side.lock[hi][0]*u;lz=side.lock[lo][1]*(1-u)+side.lock[hi][1]*u;}
  return {quat:c.quat,position:[inCamera[0]+c.x+lx-back[0],local[1]-back[1],inCamera[2]+c.z+lz-back[2]],inCameraY:inCamera[1],camera:c};
 }

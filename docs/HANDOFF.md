@@ -830,3 +830,22 @@ See "Stage from the video" in `docs/TWO_PERSON_PLAN.md`. Renderer page accepts a
 - "Very Grown-Up" rebuilt as 10 seconds: `scene-very-grown-up` r17, package `.authoring/renders/scene-very-grown-up-r16-reference/` (r13's 15-second package kept). Staged exports are now exactly duration x 30 frames, with a still per shot and framing measured from the posed mesh (`croppedBy`, `head`, `feet`, `visibleFraction`).
 - Fixed 2026-10-12: the last key of a staged action wrapped to the first pose (`runtime/stage.ts`).
 - Open items: the last section of the plan.
+
+## 2026-10-12/13 — Clay references to Seedance 2.5's guide; props; Clay reference page; video pairs in harder shots
+
+- Details are in `docs/SCENE_TO_REFERENCE_PLAN.md` (from "Seedance 2.5's guide" on) and `docs/TWO_PERSON_PLAN.md` (from "A coarse build" on), one dated section per piece.
+- Clay package: one flat colour per figure, plain-shape figures by default (`figure: "mannequin"` for the other), a `seedance` block in `reference.json`, depth only on request.
+- Staged scenes: props (hand-over, throw, put down, pick up) with arm reaches baked into the actions; the spec is stored with the scene.
+- Studio: the Clay reference page (`editor/clay.tsx`, `/editor/clay.html`) plays what an export draws, checks it against the guide, edits marks and cameras and stages again; the action workshop has a Source camera (video pairs with a scene, and staged scenes' shots) and draws props.
+- Video pairs: `coarse: true` is the default for clay; identities are kept through a crossing, a performer hidden and found again, and a hold (`looksFrom`); a travelling camera gets its track from the depth model's own cameras (`authoring/render/stage-travel.py`, `--zoom`, `footLockTogether`).
+- The Character Creator body is registered as `woman01` and used by no scene. Its Studio stall was three's MarchingCubes object under WebGPU.
+- Live test pairs: `pair-behind-samba` (travelling camera, a full turn), `pair-samba-arc` (zoom then travel, the second demo), `pair-samba-coarse`; `pair-waist-samba` and `pair-spin-samba` have archived actions.
+- Open: the stage objects of a video pair are still made by hand; a performer missing from over a fifth of the frames is refused; two performers dressed alike cannot be told apart; no generation has been run with any package.
+
+## 2026-10-13 · Team sport clips: court camera, two key players on the court
+
+Plan and every number are in `docs/MULTI_PERSON_PLAN.md`; this is the short version.
+- Test clip: play 10's wide shot (3.07–7.6 s) of an NBA top-10 video kept outside the repo. Steps 1 and 2 are done for it: the court camera (fitted to the painted lines) and the two key players (`pair-nba-play10`: `nba10-handler`, `nba10-defender`).
+- New: `authoring/render/sam3-track.py` (follow chosen people with SAM 3 through ComfyUI, in six-frame hops because the tracker drops its outlines after seven), `reconstruct_motion` `boxes: {file, name}` (build a performer from given boxes), `authoring/render/court-place.py` (floor positions from the feet, a jump carried through the air, hips hung from the rim during a dunk), `set_pair_scene` `place` and `scene.camera.absolute`, `$root` allowed 40 m from the origin.
+- Fixed: the retarget stage's cache key now says whether a build is placed; the editor and the Clay view no longer lose a pair in the haze when the camera is 40 m away; `archive_entry` carries pair pins to the new revision.
+- The court registration scripts are still scratch code (copies in `.authoring/team/scripts/`). Open: the ball, more than two figures, replays, two wrong poses of the ball handler on the rim, the tracker's speed (7 s a frame here).

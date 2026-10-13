@@ -1,7 +1,7 @@
 """2D pose observations for one person in a video window. Observational evidence, not rig ground truth."""
 import argparse,os,time,json,hashlib,subprocess
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('--video',required=True);p.add_argument('--sha256',required=True);p.add_argument('--start',type=float,required=True);p.add_argument('--end',type=float,required=True);p.add_argument('--model',required=True);p.add_argument('--out',required=True);p.add_argument('--subject',choices=['left','right'],help='two performers in the window: which one to follow, named by where they stand in the picture at the start');p.add_argument('--looks',help='pose report of another window of the same two performers (a neighbouring shot where they stand apart): their looks are taken from it when this window cannot show them apart, or shows them too alike');args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--video',required=True);p.add_argument('--sha256',required=True);p.add_argument('--start',type=float,required=True);p.add_argument('--end',type=float,required=True);p.add_argument('--model',required=True);p.add_argument('--out',required=True);p.add_argument('--subject',choices=['left','right'],help='two performers in the window: which one to follow, named by where they stand in the picture at the start');p.add_argument('--boxes',help='FILE:NAME, the performer\'s box per frame from authoring/render/sam3-track.py (a person chosen by a point and followed by SAM 3): used as it is, in place of this script\'s own choice of who to follow. For a clip with many people');p.add_argument('--looks',help='pose report of another window of the same two performers (a neighbouring shot where they stand apart): their looks are taken from it when this window cannot show them apart, or shows them too alike');args=p.parse_args()
 start=time.perf_counter();os.environ.setdefault('YOLO_CONFIG_DIR',str(Path('.authoring/vision-config').resolve()));os.environ.setdefault('MPLCONFIGDIR',str(Path('.authoring/vision-config/matplotlib').resolve()))
 import cv2,torch
 from ultralytics import YOLO
@@ -33,6 +33,7 @@ for index,t,f in frames:
  a=time.perf_counter()
  if args.subject:
   r=model.track(f,persist=True,tracker='botsort.yaml',device='cpu',imgsz=960,verbose=False)[0];named.append(r.boxes.id.int().tolist() if r.boxes.id is not None else [None]*len(r.boxes))
+ elif args.boxes:r=model.predict(f,device='cpu',imgsz=1920,verbose=False,conf=.2)[0]  # small figures in a wide shot: the detector at full size, for their joints
  else:r=model.predict(f,device='cpu',imgsz=640,verbose=False)[0]
  elapsed=time.perf_counter()-a;prediction+=elapsed;detections.append((r.boxes.xyxy.cpu().tolist(),r.keypoints.data.cpu().tolist() if len(r.boxes) else [],elapsed))
 pair=None
@@ -189,6 +190,20 @@ for n,(boxes,_,_) in enumerate(detections):
   else:tracks.append({'box':boxes[d],'frame':n,'members':{n:d}});taken.add(len(tracks)-1)
 chosen=max(tracks,key=lambda k:(len(k['members']),float(sorted(detections[n][0][d][3]-detections[n][0][d][1] for n,d in k['members'].items())[len(k['members'])//2])))['members'] if tracks else {}
 if pair:chosen=dict(own)
+# Boxes given from outside: each frame's box is added as a detection of its own (with the joints of whichever detected person
+# it overlaps most, if any) and chosen. A box far larger than its neighbours in time is the outline having leaked onto other
+# people for a moment; it is dropped and bridged like a missing frame.
+given=None;import numpy as np
+if args.boxes:
+ fn,name=args.boxes.rsplit(':',1);tk=json.load(open(fn));tt=np.array(tk['times']);bx=tk['tracks'][name];ar=[b['area'] if b else np.nan for b in bx];given={}
+ for n,(index,t,f) in enumerate(frames):
+  k=int(np.argmin(np.abs(tt-t)))
+  if abs(tt[k]-t)>.02 or not bx[k]:continue
+  near=[a for a in ar[max(0,k-8):k+9] if a==a]
+  if bx[k]['area']>1.9*np.median(near):continue
+  b=bx[k]['box'];w,h=b[2]-b[0],b[3]-b[1];b=[max(0,b[0]-.04*w),max(0,b[1]-.04*h),b[2]+.04*w,b[3]+.04*h];boxes,kps,el=detections[n];best=max(range(len(boxes)),key=lambda d:iou(boxes[d],b),default=None)
+  detections[n]=(boxes+[b],kps+[kps[best] if best is not None and iou(boxes[best],b)>.4 else []],el);given[n]=len(boxes)
+ chosen=given
 heights=sorted(detections[n][0][d][3]-detections[n][0][d][1] for n,d in chosen.items());usual=heights[len(heights)//2] if heights else 0;previous=None
 # One box round both. A stretch in which this performer has no box while the other has one, and which begins and ends with the
 # two in contact (boxes overlapping, or centres closer than a box is wide), is this performer hidden in the hold: behind or
@@ -210,7 +225,7 @@ for n,(index,t,f) in enumerate(frames):
  boxes,keypoints,elapsed=detections[n];selected=chosen.get(n)
  # Outside the chain (a fast pose change can break the overlap), continue by overlap with the last accepted box, or take the
  # tallest figure when it is at least 60% of the performer's usual height.
- if selected is None and boxes and not pair:
+ if selected is None and boxes and not pair and given is None:
   near=max(range(len(boxes)),key=lambda d:iou(boxes[d],previous)) if previous else None;tall=max(range(len(boxes)),key=lambda d:boxes[d][3]-boxes[d][1])
   selected=near if near is not None and iou(boxes[near],previous)>=.2 else tall if boxes[tall][3]-boxes[tall][1]>=.6*usual else None
  if selected is not None:previous=boxes[selected]
