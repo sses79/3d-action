@@ -858,3 +858,12 @@ Numbers are in `docs/MULTI_PERSON_PLAN.md`.
 - Court scripts in the repo: `court-camera.py` (camera from the painted lines, from a few hand marks), `court-people.py` (everyone followed over the floor, as boxes for `reconstruct_motion`), `court-place.py` (now also gives hips and wrists in court metres, and counts a hand at the rim as off the floor).
 - Live: `pair-nba-play10` (seven players and the ball), `pair-nba-play9` (five players, no ball). Inputs and results of both are in untracked `.authoring/team/`.
 - Open: play 9's ball; players who come and go; replays; turnaround (an hour of machine time a play, most of it SAM 3 tracking at 7 s a frame and body builds at 3.5 min a player).
+
+## 2026-10-13 (evening) · Team clips: turnaround, and play 9 put right
+
+Numbers are in `docs/MULTI_PERSON_PLAN.md` (Turnaround and the sections after it).
+- Quicker: `sam3-track.py --every=3` (7.2 min against 19 for play 10's shot) with each outline's box taken from its main patch; each frame's full-size detection is kept and shared by `court-people.py` and every player's observe stage (a player's build 111 s against about 200). The body model, about 90 s a player, is now the largest part.
+- `court-people.py --not=SAM.json` keeps a followed player's detections away from everyone else (two players had one pose and place at the start of play 9); `--least=0.15` lists short pieces, which are joined by hand.
+- A frame for which a given `boxes` track has no box counts as hidden, so a player seen in two pieces can be built.
+- `court-ball.py`: a player holds the ball only with three sightings at their wrist; the loose course caps each sighting's error.
+- Live: `pair-nba-play9` r8 has six players and the ball. Its ball is a guess after about 2.8 s; dribble bounces are not shown in either play.

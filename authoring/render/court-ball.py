@@ -7,7 +7,8 @@ wrists of the two players per frame, court metres), SIGHTINGS.json is where the 
 A sighting is kept when it is as large as a ball would be at the players' distance, round, and not white or grey (a
 wristband, a shoe and a hand were taken for the ball otherwise). The ball is in a hand while its
 sighting is within --reach ball widths of that wrist in the picture (the nearest wrist of either player), and frames without
-a sighting between two frames in the same player's hands stay in those hands. Before its first sighting it is taken to be
+a sighting between two frames in the same player's hands stay in those hands. A stretch in a
+player's hands needs three sightings at their wrist; with fewer it is a loose ball. Before its first sighting it is taken to be
 in the hands that have it next, and the other player's hand near it for under 0.4 s is not a change of hands. Elsewhere it is loose: its course is a thrown
 ball's (gravity, bouncing off the floor) from the wrist that let go, fitted to the sightings, and to the wrist that takes it
 if one does. A short loose stretch that returns to the same player (a dribble) and that the fit misses by more than two
@@ -61,6 +62,9 @@ for a,b in runs(who):  # the other player's hand passing the ball in the picture
         side=[state[k] for k in (a-1,b+1) if 0<=k<F and state[k]!='loose' and state[k][0]!=state[a][0]]
         if side:
             for k in range(a,b+1):state[k]=side[0]
+for a,b in runs(who):  # a player has the ball only where it is seen at their wrist at least three times; fewer (one sighting beside a bystander) is a loose ball
+    if state[a]!='loose' and any(k in seen for k in range(a,b+1)) and sum(1 for k in range(a,b+1) if k in seen and near[k][0]<REACH and near[k][1]==state[a][0])<3:
+        for k in range(a,b+1):state[k]='loose'
 for a,b in runs(who):  # one hand per stretch of at least 0.4 s
     if state[a]=='loose':continue
     seg=[];c=a
@@ -99,11 +103,12 @@ for a,b in runs(lambda s:s):
     obs=[k for k in range(a,b+1) if k in seen];
     if not obs and a==0:continue
     n=b-a+2;k0=max(a-1,0);start=wrist(k0) if a>0 else None;end=wrist(b+1) if b<F-1 else None
+    cap=3*BALL*LENS[a]/np.linalg.norm(np.array(court[0]['hips'][a])-C)
     def unpack(x):
         if start is not None:return start,x
         d=ray(a,seen[obs[0]]);return C+x[3]*d/np.linalg.norm(d),x[:3]
     def cost(x):
-        p0,v0=unpack(x);P=course(p0,v0,n,1/fps);e=[np.linalg.norm(pixel(k,P[k-k0])-seen[k]) for k in obs if k-k0<len(P)];c=float(np.mean(e)) if e else 0.
+        p0,v0=unpack(x);P=course(p0,v0,n,1/fps);e=[min(cap,np.linalg.norm(pixel(k,P[k-k0])-seen[k])) for k in obs if k-k0<len(P)];c=float(np.mean(e)) if e else 0.  # capped: one wrong sighting must not pull the course
         if end is not None:c+=np.linalg.norm(pixel(b+1,P[-1])-pixel(b+1,end))+40*np.linalg.norm(P[-1]-end)
         return c
     best=None
@@ -119,7 +124,7 @@ for a,b in runs(lambda s:s):
         if state[b+1][1]!=state[k0][1]:parts.append(dict(start=round((b+1)/fps,3),holder=int(state[b+1][0]),hand=state[b+1][1],blend=.07))
         continue
     parts.append(dict(start=round(a/fps,3),path=[[round((k0+i)/fps,3)]+room(P[i]) for i in range(len(P))]))
-    flights.append(dict(fromSeconds=round(a/fps,2),toSeconds=round(b/fps,2),sightings=len(obs),fromHandOf=names[state[k0][0]] if a>0 else None,toHandOf=names[state[b+1][0]] if b<F-1 else None,meanPixelsOffSightings=round(float(np.mean(off)),1) if off else None,worstPixels=round(max(off),1) if off else None,speedAtStartMetersPerSecond=round(float(np.linalg.norm(v0)),1),highestMeters=round(float(P[:,2].max()),2)))
+    flights.append(dict(fromSeconds=round(a/fps,2),toSeconds=round(b/fps,2),sightings=len(obs),fromHandOf=names[state[k0][0]] if a>0 else None,toHandOf=names[state[b+1][0]] if b<F-1 else None,meanPixelsOffSightings=round(float(np.mean(off)),1) if off else None,medianPixels=round(float(np.median(off)),1) if off else None,sightingsAtSeconds=[round(k/fps,2) for k in obs],worstPixels=round(max(off),1) if off else None,speedAtStartMetersPerSecond=round(float(np.linalg.norm(v0)),1),highestMeters=round(float(P[:,2].max()),2)))
 if parts[0]['start']!=0:parts[0]['start']=0
 held=[k for k in seen if state[k]!='loose'];gap=[float(near[k][0]) for k in held]
 summary=dict(frames=F,framesWithSighting=len(seen),held=[dict(fromSeconds=p['start'],by=names[p['holder']],hand='left' if p['hand']=='l' else 'right') for p in parts if 'holder' in p],loose=flights,bouncesLeftInHand=kept,sightingFromWristInBallWidths=dict(median=round(float(np.median(gap)),2),worst=round(max(gap),2)) if gap else None)

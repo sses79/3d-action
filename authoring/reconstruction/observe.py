@@ -11,10 +11,13 @@ probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-select_stream
 if not pts or args.start<pts[0]-.05 or args.end>pts[-1]+.05:raise SystemExit(f'Window {args.start}-{args.end}s is outside the video ({pts[0] if pts else 0}-{pts[-1] if pts else 0}s)')
 # Retain actual frames near a 30Hz target grid; no duplicate/interpolated frames.
 count=round((args.end-args.start)*30)+1;indices=sorted(set(min(range(len(pts)),key=lambda i:abs(pts[i]-(args.start+n/30))) for n in range(count)));wanted=set(indices);cap=cv2.VideoCapture(args.video);frames=[];i=0
-while True:
- ok,f=cap.read()
- if not ok:break
- if i in wanted:frames.append((i,pts[i],f))
+last=max(wanted)
+while i<=last:  # frames before the window are stepped over without being unpacked, and reading stops at its end
+ if i in wanted:
+  ok,f=cap.read()
+  if not ok:break
+  frames.append((i,pts[i],f))
+ elif not cap.grab():break
  i+=1
 cap.release()
 if len(frames)<3:raise SystemExit('Fewer than three decodable frames in the window')
@@ -29,11 +32,18 @@ rows=[];prediction=0;detections=[];tracks=[];named=[]
 # right by where their boxes' centres are, on average, over the first five frames each is seen. Pictures go in at 960 pixels
 # because each of two people fills less of the frame than one. Tried on one clip of two fighters with a kick: both identities
 # held for 51 frames. Not tried where the two cross over or clinch.
+reused=0
 for index,t,f in frames:
  a=time.perf_counter()
  if args.subject:
   r=model.track(f,persist=True,tracker='botsort.yaml',device='cpu',imgsz=960,verbose=False)[0];named.append(r.boxes.id.int().tolist() if r.boxes.id is not None else [None]*len(r.boxes))
- elif args.boxes:r=model.predict(f,device='cpu',imgsz=1920,verbose=False,conf=.2)[0]  # small figures in a wide shot: the detector at full size, for their joints
+ elif args.boxes:
+  # small figures in a wide shot: the detector at full size, for their joints. Every player of the clip asks for the same
+  # frames, so each frame's result is kept (also written by authoring/render/court-people.py) and read back by the next build.
+  kept=Path('.authoring/reconstruction-cache')/f'detections-{args.sha256[:16]}-{modelpath.stem}-1920'/f'{index}.json'
+  if kept.exists():
+   d=json.loads(kept.read_text());elapsed=time.perf_counter()-a;prediction+=elapsed;detections.append((d['boxes'],d['keypoints'],elapsed));reused+=1;continue
+  r=model.predict(f,device='cpu',imgsz=1920,verbose=False,conf=.2)[0];kept.parent.mkdir(parents=True,exist_ok=True);tmp=kept.with_suffix(f'.{os.getpid()}.tmp');tmp.write_text(json.dumps({'boxes':r.boxes.xyxy.cpu().tolist(),'keypoints':r.keypoints.data.cpu().tolist() if len(r.boxes) else []}));os.replace(tmp,kept)
  else:r=model.predict(f,device='cpu',imgsz=640,verbose=False)[0]
  elapsed=time.perf_counter()-a;prediction+=elapsed;detections.append((r.boxes.xyxy.cpu().tolist(),r.keypoints.data.cpu().tolist() if len(r.boxes) else [],elapsed))
 pair=None
@@ -203,7 +213,7 @@ if args.boxes:
   if bx[k]['area']>1.9*np.median(near):continue
   b=bx[k]['box'];w,h=b[2]-b[0],b[3]-b[1];b=[max(0,b[0]-.04*w),max(0,b[1]-.04*h),b[2]+.04*w,b[3]+.04*h];boxes,kps,el=detections[n];best=max(range(len(boxes)),key=lambda d:iou(boxes[d],b),default=None)
   detections[n]=(boxes+[b],kps+[kps[best] if best is not None and iou(boxes[best],b)>.4 else []],el);given[n]=len(boxes)
- chosen=given
+ chosen=given  # a frame for which the given track has no box is the tracker saying the person is hidden there: marked like a pair's hidden performer below
 heights=sorted(detections[n][0][d][3]-detections[n][0][d][1] for n,d in chosen.items());usual=heights[len(heights)//2] if heights else 0;previous=None
 # One box round both. A stretch in which this performer has no box while the other has one, and which begins and ends with the
 # two in contact (boxes overlapping, or centres closer than a box is wide), is this performer hidden in the hold: behind or
@@ -230,6 +240,6 @@ for n,(index,t,f) in enumerate(frames):
   selected=near if near is not None and iou(boxes[near],previous)>=.2 else tall if boxes[tall][3]-boxes[tall][1]>=.6*usual else None
  if selected is not None:previous=boxes[selected]
  k=[] if selected is None else keypoints[selected]
- rows.append({'frameIndex':index,'time':t,'clipTime':t-args.start,'detections':len(boxes),'selection':'longest overlap-linked chain of boxes, continued by overlap or height; not identity certification' if not pair else f'{args.subject} of the two largest tracked identities (BoT-SORT); not identity certification',**({'otherBBox':boxes[others[n]] if n in others else None} if pair else {}),'bbox':None if selected is None else boxes[selected],**({'hiddenByOther':True} if selected is None and n in hidden else {}),'keypoints':k,'missingOrAmbiguousSubject':selected is None,'predictWallSeconds':elapsed})
+ rows.append({'frameIndex':index,'time':t,'clipTime':t-args.start,'detections':len(boxes),'selection':'longest overlap-linked chain of boxes, continued by overlap or height; not identity certification' if not pair else f'{args.subject} of the two largest tracked identities (BoT-SORT); not identity certification',**({'otherBBox':boxes[others[n]] if n in others else None} if pair else {}),'bbox':None if selected is None else boxes[selected],**({'hiddenByOther':True} if selected is None and (n in hidden or args.boxes) else {}),'keypoints':k,'missingOrAmbiguousSubject':selected is None,'predictWallSeconds':elapsed})
 report={'status':'observational 2D pose evidence; no rig ground truth','model':modelpath.name,'modelSHA256':hashlib.sha256(modelpath.read_bytes()).hexdigest(),'versions':{n:version(n) for n in ['ultralytics','torch','opencv-python']},'sourceSHA256':args.sha256,**({'subject':args.subject,'performers':{k:int(v) for k,v in pair.items()},'stitchedIdentities':stitched,'swappedFrames':swapped,'identityEvidence':evidence,'trackedIdentities':[{'id':int(i),'firstFrame':min(m),'lastFrame':max(m),'frames':len(m),'medianArea':round(size[i])} for i,m in sorted(where.items(),key=lambda x:min(x[1]))],'legColours':{k:[int(x) for x in look[v]] for k,v in pair.items()}} if pair else {}),'interval':[args.start,args.end],'frameSize':[int(frames[0][2].shape[1]),int(frames[0][2].shape[0])],'confidenceThreshold':.5,'keypointOrder':'COCO17; anatomical labels are model estimates and may swap','timingsSeconds':{'imports':imports,'modelLoad':load,'warmup':warmup,'predictions':prediction,'wall':time.perf_counter()-start},'frames':rows}
 out=Path(args.out);out.mkdir(parents=True,exist_ok=True);(out/'pose-report.json').write_text(json.dumps(report));print(json.dumps({'frames':len(rows),'missing':sum(x['missingOrAmbiguousSubject'] for x in rows),'timings':report['timingsSeconds']}))

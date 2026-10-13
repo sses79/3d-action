@@ -1,16 +1,18 @@
 """Follow chosen people (or things named in words) through a video window with SAM 3's video tracker, through ComfyUI's nodes.
 Run with ComfyUI's Python:
-  .authoring/comfyui/.venv/bin/python authoring/render/sam3-track.py .authoring/comfyui VIDEO START END OUT.json name:time:x:y [name:time:x:y ...] [--text=basketball] [--width=1280]
+  .authoring/comfyui/.venv/bin/python authoring/render/sam3-track.py .authoring/comfyui VIDEO START END OUT.json name:time:x:y [name:time:x:y ...] [--text=basketball] [--width=1280] [--every=3]
 A point (video seconds, pixels of the original picture) picks the person under it in that frame; the tracker then carries that
 person's outline forward to the end of the window and backward to its start, remembering what they look like. Several points
-at one time are followed together. --text follows whatever the words name, found by the model itself (for a ball).
+at one time are followed together. --every=3 follows every third frame and moves the box evenly between (three times
+quicker; the body build reads every third frame anyway). --text follows whatever the words name, found by the model itself (for a ball).
 OUT.json: for each name, per frame of the window, the outline's box in original pixels and its area; frames where the
 tracker has no outline are left out. Weights: sam3.1_multiplex_fp16.safetensors in .authoring/comfyui/models/checkpoints.
 Frames are scaled to --width before tracking (the model works at 1008 px anyway; full 1080p frames for a few seconds do not fit in memory)."""
 import sys,os,json,time
 comfy_dir,video,start,end,out=os.path.abspath(sys.argv[1]),os.path.abspath(sys.argv[2]),float(sys.argv[3]),float(sys.argv[4]),os.path.abspath(sys.argv[5])
-seeds=[a.split(':') for a in sys.argv[6:] if not a.startswith('--')];text=next((a.split('=',1)[1] for a in sys.argv if a.startswith('--text=')),None);width=int(next((a.split('=')[1] for a in sys.argv if a.startswith('--width=')),1280))
+seeds=[a.split(':') for a in sys.argv[6:] if not a.startswith('--')];text=next((a.split('=',1)[1] for a in sys.argv if a.startswith('--text=')),None);width=int(next((a.split('=')[1] for a in sys.argv if a.startswith('--width=')),1280));EVERY=int(next((a.split('=')[1] for a in sys.argv if a.startswith('--every=')),1))
 import numpy as np
+from scipy.ndimage import label
 sys.argv=[sys.argv[0]];sys.path.insert(0,comfy_dir);os.chdir(comfy_dir)
 import torch,av
 import comfy.sd,comfy.model_management as mm,folder_paths
@@ -26,8 +28,16 @@ t0=time.perf_counter();model,clip=comfy.sd.load_checkpoint_guess_config(folder_p
 def boxes(masks):  # [frames, h, w] -> per frame box in original pixels and area, or None
     res=[]
     for m in masks:
+        if m.sum()<20:res.append(None);continue
+        # the outline sometimes carries stray patches far from the person, which made a box many times too large: the largest
+        # patch is kept, with those that reach into its box widened by a third
+        lab,n=label(m)
+        if n>1:
+            size=np.bincount(lab.ravel())[1:];big=int(size.argmax())+1;by,bx=np.nonzero(lab==big);w,h=bx.max()-bx.min()+1,by.max()-by.min()+1;x0,x1,y0,y1=bx.min()-w/3,bx.max()+w/3,by.min()-h/3,by.max()+h/3;keep=np.zeros(n+1,bool);keep[big]=True
+            for i in range(1,n+1):
+                if i!=big:py,px=np.nonzero(lab==i);keep[i]=px.max()>=x0 and px.min()<=x1 and py.max()>=y0 and py.min()<=y1
+            m=keep[lab]
         ys,xs=np.nonzero(m)
-        if len(xs)<20:res.append(None);continue
         kx,ky=W0/m.shape[1],H0/m.shape[0];res.append(dict(box=[float(xs.min()*kx),float(ys.min()*ky),float((xs.max()+1)*kx),float((ys.max()+1)*ky)],area=float(len(xs)*kx*ky)))
     return res
 def run(imgs,init=None,cond=None,max_objects=0):
@@ -58,14 +68,20 @@ for t in sorted({float(x[1]) for x in seeds}):
     for name,_,x,y in mine:
         with torch.no_grad():m=SAM3_Detect.execute(model,images[k0:k0+1],positive_coords=json.dumps([{'x':float(x)/scale,'y':float(y)/scale}])).result[0]
         init.append(m[0] if m.dim()==3 else m);print(name,'outline at the point:',int((m>0.5).sum()),'px',flush=True)
-    init=torch.stack(init).float();a=time.perf_counter();fwd=track(images[k0:],init);back=track(images[:k0+1].flip(0),init) if k0>0 else None;print('tracked from',round(times[k0],2),'s in',round(time.perf_counter()-a,1),'s',flush=True)
+    init=torch.stack(init).float();a=time.perf_counter();ahead=list(range(k0,N,EVERY));behind=list(range(k0,-1,-EVERY));fwd=track(images[ahead],init) if len(ahead)>1 else None;back=track(images[behind],init) if len(behind)>1 else None;print('tracked from',round(times[k0],2),'s in',round(time.perf_counter()-a,1),'s',flush=True)
     for i,(name,_,_,_) in enumerate(mine):
         per=[None]*N
         if fwd is not None and i<len(fwd):
-            for j,b in enumerate(boxes(fwd[i])):per[k0+j]=b
+            for j,b in enumerate(boxes(fwd[i])):per[ahead[j]]=b
         if back is not None and i<len(back):
             for j,b in enumerate(boxes(back[i])):
-                if j>0:per[k0-j]=b
+                if j>0:per[behind[j]]=b
+        got=[k for k in range(N) if per[k]]
+        for a_,b_ in zip(got,got[1:]):  # frames between two followed ones (--every): the box moves evenly from the one to the other
+            if b_-a_<=EVERY:
+                for k in range(a_+1,b_):u=(k-a_)/(b_-a_);per[k]=dict(box=[per[a_]['box'][c]*(1-u)+per[b_]['box'][c]*u for c in range(4)],area=per[a_]['area']*(1-u)+per[b_]['area']*u)
+        if EVERY>1 and got:  # the window's ends, short of a full step from the last followed frame, keep that frame's box
+            for k in list(range(max(0,got[0]-EVERY+1),got[0]))+list(range(got[-1]+1,min(N,got[-1]+EVERY))):per[k]=per[got[0] if k<got[0] else got[-1]]
         result.setdefault(name,[]).append((k0,per))
 final={}
 for name,runs in result.items():  # several points for one name: each frame takes the run whose point is nearest in time

@@ -1,5 +1,5 @@
 """Everyone on a basketball court in a broadcast shot, followed over the floor, as boxes for reconstruct_motion.
-  .authoring/vision-venv/bin/python authoring/render/court-people.py VIDEO CAMERA.json OUT.json [--least=0.8] [--model=.authoring/vision-models/yolo26s-pose.pt]
+  .authoring/vision-venv/bin/python authoring/render/court-people.py VIDEO CAMERA.json OUT.json [--least=0.8] [--not=SAM.json] [--model=.authoring/vision-models/yolo26s-pose.pt]
 CAMERA.json is court-camera.py's result for the window. In every frame the pose detector (at 1920 px: at 1280 it misses
 players in a wide shot) finds people; each one's feet are put on the floor through the camera, and those off the court are
 dropped (the crowd, the benches), as are boxes under half a standing person's height there (people seated at the side). People are joined from frame to frame by who is nearest on the floor to where each track
@@ -15,6 +15,14 @@ import cv2,numpy as np,json,sys
 from ultralytics import YOLO
 video,trk,out=sys.argv[1],json.load(open(sys.argv[2])),sys.argv[3];opt=lambda k,d:next((a.split('=',1)[1] for a in sys.argv if a.startswith('--'+k+'=')),d);LEAST=float(opt('least',.8))
 cap=cv2.VideoCapture(video);fps=trk["fps"];cap.set(1,trk["first"]);C=np.array(trk["C"]);model=YOLO(opt('model','.authoring/vision-models/yolo26s-pose.pt'));frames=[];dets=[]
+# each frame's detections are kept where reconstruct_motion's observe stage looks for them, so the players' builds do not detect again
+import hashlib,pathlib
+keep_dir=pathlib.Path('.authoring/reconstruction-cache')/('detections-%s-%s-1920'%(hashlib.sha256(open(video,'rb').read()).hexdigest()[:16],pathlib.Path(opt('model','.authoring/vision-models/yolo26s-pose.pt')).stem))
+# --not=FILE: boxes of people already followed another way (sam3-track.py's result). A detection that overlaps one of them is
+# theirs: without this, a defender hidden behind the ball handler was given the handler's box, pose and place.
+others=[t for f in sys.argv if f.startswith('--not=') for t in json.load(open(f[6:]))['tracks'].values()]
+def overlap(a,b):
+    i=max(0,min(a[2],b[2])-max(a[0],b[0]))*max(0,min(a[3],b[3])-max(a[1],b[1]));return i/((a[2]-a[0])*(a[3]-a[1])+(b[2]-b[0])*(b[3]-b[1])-i+1e-9)
 def with_place(q,C):
     R=cv2.Rodrigues(np.array(q[1:4]))[0];return np.concatenate([q[:4],-R@C])
 def floor(p,uv,W,H):  # where a pixel's line of sight meets the floor
@@ -22,9 +30,14 @@ def floor(p,uv,W,H):  # where a pixel's line of sight meets the floor
 for k,fr in enumerate(trk["frames"]):
     ok,f=cap.read()
     if not ok:break
-    H,W=f.shape[:2];p=with_place(np.array(fr["q"]),C);r=model.predict(f,device='cpu',imgsz=1920,verbose=False,conf=.2)[0];b=r.boxes.xyxy.cpu().numpy();kp=r.keypoints.data.cpu().numpy() if len(b) else np.zeros((0,17,3));here=[]
+    H,W=f.shape[:2];p=with_place(np.array(fr["q"]),C);kept=keep_dir/('%d.json'%(trk["first"]+k))
+    if kept.exists():d=json.loads(kept.read_text());b=np.array(d['boxes'],float).reshape(-1,4);kp=np.array(d['keypoints'],float).reshape(-1,17,3)
+    else:
+        r=model.predict(f,device='cpu',imgsz=1920,verbose=False,conf=.2)[0];b=r.boxes.xyxy.cpu().numpy();kp=r.keypoints.data.cpu().numpy() if len(b) else np.zeros((0,17,3));keep_dir.mkdir(parents=True,exist_ok=True);kept.write_text(json.dumps({'boxes':b.tolist(),'keypoints':kp.tolist() if len(b) else []}))
+    here=[];theirs=[t[k]['box'] for t in others if k<len(t) and t[k]]
     for i in range(len(b)):
         an=[kp[i,a,:2] for a in (15,16) if kp[i,a,2]>.5];foot=np.mean(an,0)+[0,.03*(b[i,3]-b[i,1])] if len(an)==2 else np.array([(b[i,0]+b[i,2])/2,b[i,3]])
+        if any(overlap(b[i],o)>.5 for o in theirs):continue  # someone followed otherwise (--not) owns this detection
         xy=floor(p,foot,W,H)
         if abs(xy[0])>15.3 or abs(xy[1])>8.4:continue
         if b[i,3]-b[i,1]<.5*1.9*np.exp(p[0])/np.linalg.norm(np.array([xy[0],xy[1],0.])-C):continue  # half a standing person's height at that distance: someone seated at the side
