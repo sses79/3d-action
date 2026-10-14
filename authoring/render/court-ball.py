@@ -4,7 +4,8 @@ CAMERA.json is the court camera (as for court-place.py), PLACE.json is court-pla
 wrists of the two players per frame, court metres), SIGHTINGS.json is where the ball was found in the picture:
 {frames: [{k: frame of the window, t, found: [{centre: [x, y] pixels, size: [w, h], fill, hsv}]}]} (authoring/render/sam3-find.py); frames may be missing.
 
-A sighting is kept when it is as large as a ball would be at the players' distance, round, and not white or grey (a
+A sighting is kept when it is no larger than a ball would be at the players' distance, at least half as wide (a ball
+partly hidden by a hand), not long and thin, and not white or grey (a
 wristband, a shoe and a hand were taken for the ball otherwise). The ball is in a hand while its
 sighting is within --reach ball widths of that wrist in the picture (the nearest wrist of either player), and frames without
 a sighting between two frames in the same player's hands stay in those hands. A stretch in a
@@ -30,7 +31,7 @@ seen={};last=None
 for fr in sorted(json.load(open(sight_file))['frames'],key=lambda f:f['k']):
     k=fr['k']
     if k>=F:continue
-    wide=BALL*LENS[k]/np.linalg.norm(np.array(court[0]['hips'][k])-C);ok=[np.array(q['centre']) for q in fr['found'] if .8*wide<min(q['size']) and max(q['size'])<1.45*wide and max(q['size'])<1.4*min(q['size']) and q.get('fill',1)>=.6 and q.get('hsv',[0,255,0])[1]>=50]
+    wide=BALL*LENS[k]/np.linalg.norm(np.array(court[0]['hips'][k])-C);ok=[np.array(q['centre']) for q in fr['found'] if .45*wide<min(q['size']) and max(q['size'])<1.45*wide and max(q['size'])<2.2*min(q['size']) and q.get('fill',1)>=.5 and q.get('hsv',[0,255,0])[1]>=50]
     if not ok:continue
     pick=min(ok,key=lambda c:np.linalg.norm(c-last[1])/max(1,k-last[0])) if last is not None else ok[0]
     if last is not None and np.linalg.norm(pick-last[1])>(k-last[0])*4*wide+2*wide:continue  # a jump no ball makes: something else that looks like one
@@ -68,6 +69,9 @@ for a,b in runs(who):  # the other player's hand passing the ball in the picture
 for a,b in runs(who):  # a player has the ball only where it is seen at their wrist at least three times; fewer (one sighting beside a bystander) is a loose ball
     if state[a]!='loose' and any(k in seen for k in range(a,b+1)) and sum(1 for k in range(a,b+1) if k in seen and near[k][0]<REACH and near[k][1]==state[a][0])<3:
         for k in range(a,b+1):state[k]='loose'
+r0=runs(who)  # a loose start with under three sightings that ends in a player's hands: the clip began with the ball in those hands
+if len(r0)>1 and state[0]=='loose' and sum(1 for k in range(r0[0][0],r0[0][1]+1) if k in seen)<3:
+    for k in range(r0[0][0],r0[0][1]+1):state[k]=state[r0[1][0]]
 for a,b in runs(who):  # one hand per stretch of at least 0.4 s
     if state[a]=='loose':continue
     seg=[];c=a
