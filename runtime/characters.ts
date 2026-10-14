@@ -21,7 +21,7 @@ export function floorLift(T:any,root:any,sample:(time:number)=>void,duration:num
 const side=(s:string,S:string)=>[['clavicle_'+s,S+'_Clavicle'],['upperarm_'+s,S+'_Upperarm'],['lowerarm_'+s,S+'_Forearm'],['hand_'+s,S+'_Hand'],...['thumb','index','middle','ring','pinky'].flatMap((f,k)=>[1,2,3].map(j=>[`${f}_0${j}_${s}`,`${S}_${['Thumb','Index','Mid','Ring','Pinky'][k]}${j}`])),['thigh_'+s,S+'_Thigh'],['calf_'+s,S+'_Calf'],['foot_'+s,S+'_Foot'],['ball_'+s,S+'_ToeBase']];
 export const characterCreatorMap:string[][]=[['pelvis','Hip'],['spine_01','Waist'],['spine_02','Spine01'],['spine_03','Spine02'],['neck_01','NeckTwist01'],['Head','Head'],...side('l','L'),...side('r','R')];
 // Flat colours for the clay figures, so a prompt can name each one ("the blue model"). Names are what the meta records.
-export const figureColors:Record<string,string>={blue:'#4a86d8',orange:'#ee8a3a',green:'#4fae5a',pink:'#f07fb0',purple:'#8d6fd1',yellow:'#e8c53a',red:'#d9534a',gray:'#8e949c'};
+export const figureColors:Record<string,string>={blue:'#4a86d8',orange:'#ee8a3a',green:'#4fae5a',pink:'#f07fb0',purple:'#8d6fd1',yellow:'#e8c53a',red:'#d9534a',gray:'#8e949c',white:'#f7f5ef',crimson:'#a3232b'};
 // A figure of plain shapes on the mannequin's joints: capsules for trunk and limbs, spheres for head and hands. For a coarse
 // clay reference (Seedance 2.5's guide prefers "simple geometric primitives" for people). Call with the mannequin at rest,
 // scaled and in the scene; its own meshes are hidden and the shapes ride on its joints. k scales the thickness (height/1.85).

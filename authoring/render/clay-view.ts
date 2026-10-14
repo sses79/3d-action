@@ -70,6 +70,8 @@ export async function init(cfg?:ClayViewConfig){
  let objectGroup:T.Group|null=null;
  if(payload.staged){objectGroup=buildSceneObjects(T,payload.staged.objects,new T.MeshStandardMaterial({color:'#b9bdc1',roughness:.9}));scene.add(objectGroup!);(floor.material as T.MeshStandardMaterial).color.set('#cfd2d4');scene.fog=null;}
  if(payload.scene){const grey=new T.MeshStandardMaterial({color:'#b9bdc1',roughness:.9});objectGroup=buildSceneObjects(T,payload.scene.objects,grey);scene.add(objectGroup!);(floor.material as T.MeshStandardMaterial).color.set('#cfd2d4');scene.fog=null;}
+ // a white figure does not show on the pale floor: the floor goes a mid grey when one is in the scene
+ if([...((payload as any).colors??[]),...(((payload as any).extras??[]) as any[]).map(x=>x.color)].some((c:string)=>c===figureColors.white))(floor.material as T.MeshStandardMaterial).color.set('#8f949b');
  // A stage: a coarse mesh of the set from the source video, given in the camera's space at one moment (x right, y up, z toward
  // the camera, metres). It is stood in our scene by raising it by the camera's height at that moment, and replaces the plain floor.
  // It is only right for that moment's camera position: the source camera moves and the mesh does not follow it.

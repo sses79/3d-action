@@ -10,7 +10,8 @@ where the body model has them from that ankle, with the model's body scaled to t
 over the clip of hip-to-ankle in the picture against the model's). In the air that reading is wrong (the feet are up, so the floor point lands
 metres behind). A span in the air is taken from where the floor reading moves faster than --fast m/s (a person cannot), from
 the frame before the first such frame to the last, joined when less than 0.8 s apart; --air gives it by hand. A hand at the rim
-in the picture while the feet read more than a metre from under it also counts, from 0.4 s before to 0.5 s after. Inside it the
+in the picture while the feet read more than a metre from under it also counts, from 0.4 s before to 0.5 s after. So does a bump of
+the floor reading away from the camera (over 0.3 m against the readings 0.4 s either side, two or more in a row). Inside it the
 place over the floor runs straight from take-off to landing, through every frame where a wrist is at the rim (there the hips
 are where the body model has them from that wrist, hung on the rim of the basket on --side), and the height is where the line
 of sight through the hips passes that place. OUT.json: {camera: {quats, positions, focal, absolute}, place: [[x, lift, z] per
@@ -43,6 +44,17 @@ def spans(rows,name):
         if res and rows[i]['t']-rows[res[-1][1]]['t']<.8:res[-1][1]=i
         else:res.append([i-1,i])
     res=[s for s in res if s[1]-s[0]>1]
+    # feet off the floor read as a place further from the camera: a bump of the floor reading away from the camera, against the
+    # middle of the readings 0.4 s either side, over 0.3 m in two or more readings in a row (a layup goes up across the picture,
+    # where the speed test sees nothing)
+    H=np.array([r['hip'][:2] for r in rows]);away=[]
+    for i in range(len(rows)):
+        d=H[i]-C[:2];away.append(float((H[i]-np.median(H[max(0,i-4):i+5],0))@(d/np.linalg.norm(d))))
+    up=[i for i,v in enumerate(away) if v>.3];grp=[]
+    for i in up:
+        if grp and i-grp[-1][1]<=2:grp[-1][1]=i
+        else:grp.append([i,i])
+    res+=[[max(0,a-1),min(len(rows)-1,b+1)] for a,b in grp if b>a]
     # a hand at the rim in the picture while the feet read more than a metre from under it: off the floor, from 0.4 s before to 0.5 s after
     hung=[i for i,r in enumerate(rows) if r['hang'] is not None and np.linalg.norm(r['hang'][:2]-r['hip'][:2])>1.];near=lambda t:min(range(len(rows)),key=lambda i:abs(rows[i]['t']-t))
     for i in hung:
