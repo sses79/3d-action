@@ -1,5 +1,5 @@
 """A ball's track through a court clip, for set_pair_scene's props: in whose hand it is, and its course when it is loose.
-  .authoring/vision-venv/bin/python authoring/render/court-ball.py CAMERA.json PLACE.json SIGHTINGS.json OUT.json [--color=green] [--reach=1.6] [--holders=name,name] [--dribble=0.5]
+  .authoring/vision-venv/bin/python authoring/render/court-ball.py CAMERA.json PLACE.json SIGHTINGS.json OUT.json [--color=green] [--reach=1.6] [--holders=name,name] [--held=NAME:FROM:TO ...] [--dribble=0.5]
 CAMERA.json is the court camera (as for court-place.py), PLACE.json is court-place.py's result (its `court` block: hips and
 wrists of the two players per frame, court metres), SIGHTINGS.json is where the ball was found in the picture:
 {frames: [{k: frame of the window, t, found: [{centre: [x, y] pixels, size: [w, h], fill, hsv}]}]} (authoring/render/sam3-find.py); frames may be missing.
@@ -83,6 +83,11 @@ for a,b in runs(who):  # one hand per stretch of at least 0.4 s
         if d-c+1<round(.4*fps) and len(seg)>1:
             other=state[seg[i-1][0]] if i>0 else state[seg[i+1][0]]
             for k in range(c,d+1):state[k]=other
+# --held=NAME:FROM:TO (seconds of the window, repeatable) puts the ball in that player's hands over that stretch, whatever the
+# sightings say (a pass seen by eye); one hand, the one most often nearest the ball where it is seen, otherwise the right
+for g in [x[7:].split(':') for x in sys.argv if x.startswith('--held=')]:
+    who_=names.index(g[0]);k0,k1=round(float(g[1])*fps),min(F-1,round(float(g[2])*fps));votes=[min((np.linalg.norm(pixel(k,court[who_][sd][k])-seen[k]),h) for h,sd in (('l','left'),('r','right')))[1] for k in range(k0,k1+1) if k in seen];hand_=max(set(votes),key=votes.count) if votes else 'r'
+    for k in range(k0,k1+1):state[k]=(who_,hand_)
 # 3. loose: a thrown ball's course from the wrist that let go, fitted to the sightings
 def course(p0,v0,n,dt):
     P=[];p=np.array(p0,float);v=np.array(v0,float);sub=4
