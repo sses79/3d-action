@@ -1,5 +1,5 @@
 """A ball's track through a court clip, for set_pair_scene's props: in whose hand it is, and its course when it is loose.
-  .authoring/vision-venv/bin/python authoring/render/court-ball.py CAMERA.json PLACE.json SIGHTINGS.json OUT.json [--color=green] [--reach=1.6]
+  .authoring/vision-venv/bin/python authoring/render/court-ball.py CAMERA.json PLACE.json SIGHTINGS.json OUT.json [--color=green] [--reach=1.6] [--holders=name,name] [--dribble=0.5]
 CAMERA.json is the court camera (as for court-place.py), PLACE.json is court-place.py's result (its `court` block: hips and
 wrists of the two players per frame, court metres), SIGHTINGS.json is where the ball was found in the picture:
 {frames: [{k: frame of the window, t, found: [{centre: [x, y] pixels, size: [w, h], fill, hsv}]}]} (authoring/render/sam3-find.py); frames may be missing.
@@ -18,10 +18,11 @@ ball bounces: it leaves the hand, meets the floor under it and comes back up int
 the floor (over 1.5 m/s) holding the ball with no bounce found is dribbling too: a bounce every --dribble seconds (0.5),
 timed to fit the sightings, until half a second before the ball leaves for good or the player leaves the floor. With one camera a loose ball's distance is not seen, only inferred from that fit: the result gives how far the
 fitted course is from the sightings, in pixels. OUT.json: {prop: {id, name, shape, size, color, represents, track}, summary};
-track times are seconds from the window's start, places in room axes (x = court x, y up, z toward the main camera)."""
+--holders names the only players who may hold the ball (a defender whose hands overlap the ball handler's in
+the picture is otherwise taken for the holder); track times are seconds from the window's start, places in room axes (x = court x, y up, z toward the main camera)."""
 import sys,json,numpy as np,cv2
 cam_file,place_file,sight_file,out=sys.argv[1:5];opt=lambda k,d:next((a.split('=',1)[1] for a in sys.argv if a.startswith('--'+k+'=')),d);REACH=float(opt('reach',1.6));COLOR=opt('color','green')
-DRIBBLE=float(opt('dribble',.5));track=json.load(open(cam_file));W,H=track.get('size',[1920,1080]);C=np.array(track['C']);fps=track['fps'];F=len(track['frames']);BALL=.24;G=9.81
+DRIBBLE=float(opt('dribble',.5));HOLDERS=[x for x in opt('holders','').split(',') if x];track=json.load(open(cam_file));W,H=track.get('size',[1920,1080]);C=np.array(track['C']);fps=track['fps'];F=len(track['frames']);BALL=.24;G=9.81
 LENS=[float(np.exp(f['q'][0])) for f in track['frames']];ROT=[cv2.Rodrigues(np.array(f['q'][1:4]))[0] for f in track['frames']]
 def pixel(k,X):c=ROT[k]@(np.asarray(X,float)-C);return np.array([LENS[k]*c[0]/c[2]+W/2,LENS[k]*c[1]/c[2]+H/2])
 ray=lambda k,uv:ROT[k].T@np.array([(uv[0]-W/2)/LENS[k],(uv[1]-H/2)/LENS[k],1.])
@@ -40,6 +41,7 @@ for fr in sorted(json.load(open(sight_file))['frames'],key=lambda f:f['k']):
 def nearest(k):
     wide=BALL*LENS[k]/np.linalg.norm(np.array(court[0]['hips'][k])-C);best=None
     for p in range(len(court)):
+        if HOLDERS and names[p] not in HOLDERS:continue
         for h,side in (('l','left'),('r','right')):
             d=np.linalg.norm(pixel(k,court[p][side][k])-seen[k])/wide
             if best is None or d<best[0]:best=(d,p,h)
