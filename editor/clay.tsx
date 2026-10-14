@@ -32,7 +32,8 @@ function Plan({spec,colors,onChange}:{spec:any;colors:string[];onChange:(next:an
  </svg>;
 }
 function App(){
- const [pairs,setPairs]=useState<any[]>([]),[pairId,setPairId]=useState(new URLSearchParams(location.search).get('pair')||''),[figure,setFigure]=useState<Figure>('primitives');
+ const [pairs,setPairs]=useState<any[]>([]),[pairId,setPairId]=useState(new URLSearchParams(location.search).get('pair')||''),[figure,setFigure]=useState<Figure>('primitives'),[cam,setCam]=useState<'source'|'replay'|'travel'>('source');
+ useEffect(()=>setCam('source'),[pairId]);  // another pair may have no replay camera
  const [view,setView]=useState<View|null>(null),[status,setStatus]=useState('Connecting to the service'),[error,setError]=useState(''),[time,setTime]=useState(0),[playing,setPlaying]=useState(false);
  const [draft,setDraft]=useState<any>(null),[reload,setReload]=useState(0),[applying,setApplying]=useState(false),[notice,setNotice]=useState('');
  const [framing,setFraming]=useState<Framing>(null),[depth,setDepth]=useState(false),[exporting,setExporting]=useState(false),[exported,setExported]=useState<any>(null),[copied,setCopied]=useState('');
@@ -43,11 +44,11 @@ function App(){
 
  // load the pair: what an export would draw, then the same view code draws it here
  useEffect(()=>{if(!pairId)return;let gone=false;setView(null);setFraming(null);setExported(null);setPlaying(false);clock.current=0;setTime(0);setStatus('Loading the scene');
-  tool('export_pair_reference',{pairId,viewOnly:true,figure}).then(async(v:View)=>{if(gone)return;clay.current?.dispose();clay.current=null;
+  tool('export_pair_reference',{pairId,viewOnly:true,figure,...(cam!=='source'?{camera:cam}:{})}).then(async(v:View)=>{if(gone)return;clay.current?.dispose();clay.current=null;
    const made=await initClayView({payload:v.payload,mount:mount.current!,urls:{character:bridgeUrl+'/editor/assets/character.glb',characters:f=>bridgeUrl+'/editor/assets/characters/'+f,follower:id=>bridgeUrl+'/api/character-file?id='+encodeURIComponent(id)}});
    if(gone){made.dispose();return;}clay.current=made;made.draw(clock.current);setView(v);setDraft(v.spec?structuredClone(v.spec):null);setStatus('');
   }).catch(e=>{if(!gone)setError(e.message);});
-  return()=>{gone=true;};},[pairId,figure,reload]);
+  return()=>{gone=true;};},[pairId,figure,cam,reload]);
  useEffect(()=>()=>{clay.current?.dispose();},[]);
 
  // playback on the export's own frame times
@@ -80,7 +81,7 @@ function App(){
 
  const shotNow=view?1+Math.max(0,view.shots.findLastIndex(s=>s.startSeconds<=time+1e-6)):1,beatNow=view?.beats.filter(b=>time>=b.start-1e-6&&time<b.end)??[];
  const copy=(key:string,text:string)=>{navigator.clipboard?.writeText(text).then(()=>{setCopied(key);setTimeout(()=>setCopied(''),1500);}).catch(()=>setError('The browser did not allow copying'));};
- const runExport=()=>{if(!view)return;setExporting(true);setExported(null);setPlaying(false);tool('export_pair_reference',{pairId:view.pairId,figure,depth}).then(r=>setExported(r)).catch(e=>setError(e.message)).finally(()=>setExporting(false));};
+ const runExport=()=>{if(!view)return;setExporting(true);setExported(null);setPlaying(false);tool('export_pair_reference',{pairId:view.pairId,figure,depth,...(cam!=='source'?{camera:cam}:{})}).then(r=>setExported(r)).catch(e=>setError(e.message)).finally(()=>setExporting(false));};
  // editing: a copy of the scene as it was asked for; Apply stages it again under the next revision
  const dirty=!!(view?.spec&&draft&&JSON.stringify(draft)!==JSON.stringify(view.spec)),patch=(f:(d:any)=>void)=>setDraft((d:any)=>{const next=structuredClone(d);f(next);return next;});
  const lookKind=(c:any)=>Array.isArray(c.lookAt)?'point':c.lookAt,offGrid=draft?{cuts:draft.cameras.some((c:any)=>!whole(c.start)),beats:(draft.beats??[]).some((b:any)=>!whole(b.start)||!whole(b.end))}:{cuts:false,beats:false};
@@ -94,7 +95,7 @@ function App(){
   <div className="clay-layout"><main>
     <div className="clay-stage"><div className="clay-canvas" ref={mount}/>{status&&<div className="loading">{status}</div>}
      {view&&<div className="clay-tags"><span>{view.shots[shotNow-1]?.name||`Shot ${shotNow}`}{view.shots[shotNow-1]?` · ${view.shots[shotNow-1].lens35} mm`:''}</span>{view.ids.map((d,i)=><span key={d}><i style={{background:hex[view.colors[i]]}}/>{d} · {view.colors[i]}</span>)}{view.props.map(p=><span key={p.id}><i style={{background:hex[p.color],borderRadius:2}}/>{p.name} · {p.color} {p.shape}</span>)}{[...new Set((view.extras??[]).map(x=>x.color))].map(c=><span key={'x'+c}><i style={{background:hex[c]}}/>{(view.extras??[]).filter(x=>x.color===c).length} others · {c}</span>)}</div>}</div>
-    <div className="transport"><div className="group"><button className="primary" disabled={!view} onClick={()=>setPlaying(p=>!p)}>{playing?'Pause':'Play'}</button><button disabled={!view} onClick={()=>seek(time-1/30)}>‹ frame</button><button disabled={!view} onClick={()=>seek(time+1/30)}>frame ›</button></div><div className="group"><button className={figure==='primitives'?'active':''} onClick={()=>setFigure('primitives')}>Plain shapes</button><button className={figure==='mannequin'?'active':''} onClick={()=>setFigure('mannequin')}>Mannequin</button></div><span className="time">frame {Math.round(time*30)} / {Math.max(0,frames-1)} · {time.toFixed(2)} / {total.toFixed(2)} s</span></div>
+    <div className="transport"><div className="group"><button className="primary" disabled={!view} onClick={()=>setPlaying(p=>!p)}>{playing?'Pause':'Play'}</button><button disabled={!view} onClick={()=>seek(time-1/30)}>‹ frame</button><button disabled={!view} onClick={()=>seek(time+1/30)}>frame ›</button></div><div className="group"><button className={figure==='primitives'?'active':''} onClick={()=>setFigure('primitives')}>Plain shapes</button><button className={figure==='mannequin'?'active':''} onClick={()=>setFigure('mannequin')}>Mannequin</button></div>{view?.payload?.scene?.replay&&<div className="group">{(['source','replay','travel'] as const).map(c=><button key={c} className={cam===c?'active':''} title={c==='source'?'The source video\'s camera':c==='replay'?'The replay\'s camera over the part of the clip it shows':'The source camera, moving in close, then flying to the replay camera as the replay\'s shot begins'} onClick={()=>setCam(c)}>{c[0].toUpperCase()+c.slice(1)}</button>)}</div>}<span className="time">frame {Math.round(time*30)} / {Math.max(0,frames-1)} · {time.toFixed(2)} / {total.toFixed(2)} s</span></div>
     {view&&<div className="timeline"><div className="timeline-head"><span>WHOLE-SECOND TIMELINE</span><span>{view.staged?'staged from a written scene':'from a source video'} · revision {view.revision}</span></div>
      <input className="scrub" type="range" aria-label="Time" min={0} max={Math.max(0,frames-1)} step={1} value={Math.round(time*30)} onChange={e=>{setPlaying(false);seek(+e.target.value/30);}}/>
      <div className="clay-rows">

@@ -59,6 +59,36 @@ export function sceneCameraAt(camera:SceneCamera,time:number,duration:number){
  const {lo,hi,u}=at(camera.quats.length-1,time,duration),a=camera.quats[lo],b=camera.quats[hi],sign=a[0]*b[0]+a[1]*b[1]+a[2]*b[2]+a[3]*b[3]<0?-1:1,q=a.map((v,i)=>v*(1-u)+sign*b[i]*u),len=Math.hypot(...q)||1,p=camera.positions[lo],r=camera.positions[hi];
  return {quat:q.map(v=>v/len),x:p[0]*(1-u)+r[0]*u,y:p[1]*(1-u)+r[1]*u,z:p[2]*(1-u)+r[2]*u,zoom:camera.focal[lo]*(1-u)+camera.focal[hi]*u};
 }
+// Cameras of a scene with a replay (scene.replay, another camera of the same moment over [from, to] of the clip), shared by the
+// action workshop and the clay view. 'replay': the replay camera over its stretch, holding its first and last view outside it.
+// 'travel': the source camera; during TRAVEL.close (seconds of the clip) an eased move in along its line of sight to TRAVEL.near
+// metres from the performer, turning to face them, the lens shortened by the square root of the distance ratio; it stays there,
+// facing them, and then flies (place, turn and lens; at most TRAVEL.flight seconds) to land on the replay camera exactly when the
+// replay's shot begins. Halfway a blend of the two turns looks past the players, so mid-flight the view is turned toward the
+// performer, fully at the middle and not at all at either end. src(t) is the source camera at a time (its height included);
+// performer.now is the performer's hips in the room now, performer.at(t) where they are at another time.
+export type ViewCamera={x:number;y:number;z:number;quat:number[];zoom:number};
+export const TRAVEL={close:[.1,.7],near:12,flight:1.2};
+const qmul=(a:number[],b:number[])=>[a[3]*b[0]+a[0]*b[3]+a[1]*b[2]-a[2]*b[1],a[3]*b[1]-a[0]*b[2]+a[1]*b[3]+a[2]*b[0],a[3]*b[2]+a[0]*b[1]-a[1]*b[0]+a[2]*b[3],a[3]*b[3]-a[0]*b[0]-a[1]*b[1]-a[2]*b[2]];
+const unit=(v:number[])=>{const n=Math.hypot(...v)||1;return v.map(x=>x/n);};
+function qslerp(a:number[],b:number[],u:number){let d=a[0]*b[0]+a[1]*b[1]+a[2]*b[2]+a[3]*b[3];const c=d<0?b.map(x=>-x):b;d=Math.abs(d);if(d>.9995)return unit(a.map((x,i)=>x+(c[i]-x)*u));const t=Math.acos(d),s=Math.sin(t),wa=Math.sin((1-u)*t)/s,wb=Math.sin(u*t)/s;return a.map((x,i)=>x*wa+c[i]*wb);}
+function qbasis(x:number[],y:number[],z:number[]){const [m00,m01,m02,m10,m11,m12,m20,m21,m22]=[x[0],y[0],z[0],x[1],y[1],z[1],x[2],y[2],z[2]],tr=m00+m11+m22;let q:number[];
+ if(tr>0){const s=.5/Math.sqrt(tr+1);q=[(m21-m12)*s,(m02-m20)*s,(m10-m01)*s,.25/s];}else if(m00>m11&&m00>m22){const s=2*Math.sqrt(1+m00-m11-m22);q=[.25*s,(m01+m10)/s,(m02+m20)/s,(m21-m12)/s];}else if(m11>m22){const s=2*Math.sqrt(1+m11-m00-m22);q=[(m01+m10)/s,.25*s,(m12+m21)/s,(m02-m20)/s];}else{const s=2*Math.sqrt(1+m22-m00-m11);q=[(m02+m20)/s,(m12+m21)/s,.25*s,(m10-m01)/s];}return unit(q);}
+const cross=(a:number[],b:number[])=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+function qlook(eye:number[],target:number[]){const z=unit(eye.map((v,i)=>v-target[i])),x=unit(cross([0,1,0],z)),y=cross(z,x);return qbasis(x,y,z);}  // a camera at eye looking at target, level
+function qturn(u:number[],v:number[]){const d=u[0]*v[0]+u[1]*v[1]+u[2]*v[2];if(d<-.999999)return [0,1,0,0];return unit([...cross(u,v),1+d]);}
+export function replayView(kind:'replay'|'travel',scene:PairScene,time:number,duration:number,src:(t:number)=>ViewCamera,performer:{now:number[];at:(t:number)=>number[]}):ViewCamera{
+ const rp0=(scene as any).replay,span=rp0.to-rp0.from,rp=sceneCameraAt(rp0.camera,Math.min(span,Math.max(0,time-rp0.from)),span);
+ if(kind==='replay')return rp;
+ const ease=(x:number)=>{x=Math.min(1,Math.max(0,x));return x*x*x*(x*(6*x-15)+10);},[c0,c1]=TRAVEL.close,s1=src(c1),aim1=performer.at(c1),e1=[s1.x,s1.y,s1.z],k1=Math.min(1,TRAVEL.near/Math.max(Math.hypot(...e1.map((v,i)=>v-aim1[i])),1e-6)),p1=aim1.map((v,i)=>v+(e1[i]-v)*k1),z1=s1.zoom*Math.sqrt(k1);
+ const cur=src(time),w1=ease((time-c0)/(c1-c0)),eye=[cur.x,cur.y,cur.z].map((v,i)=>v+(p1[i]-v)*w1),here={x:eye[0],y:eye[1],z:eye[2],quat:qslerp(cur.quat,qlook(eye,performer.now),w1),zoom:Math.exp(Math.log(cur.zoom)+(Math.log(z1)-Math.log(cur.zoom))*w1)};
+ const start=Math.max(c1,rp0.from-TRAVEL.flight),w=rp0.from>start?ease((time-start)/(rp0.from-start)):time>=rp0.from?1:0;if(w<=0)return here;
+ const out={x:here.x+(rp.x-here.x)*w,y:here.y+(rp.y-here.y)*w,z:here.z+(rp.z-here.z)*w,quat:qslerp(here.quat,rp.quat,w),zoom:Math.exp(Math.log(here.zoom)+(Math.log(rp.zoom)-Math.log(here.zoom))*w)};
+ if(w<1){const fwd=turn(out.quat,[0,0,-1]),aim=unit(performer.now.map((v,i)=>v-[out.x,out.y,out.z][i])),k=Math.sqrt(Math.sin(Math.PI*w));out.quat=unit(qmul(qslerp([0,0,0,1],qturn(fwd,aim),k),out.quat));}
+ return out;
+}
+// Where a performer's hips are in the room at a time from a scene's place series ([x, lift, z]), about a metre over the floor.
+export function placedAt(scene:PairScene,index:number,time:number,duration:number):number[]|null{const pl=scene.performers?.[index]?.place;if(!pl)return null;const {lo,hi,u}=at(pl.length-1,time,duration),a=pl[lo],b=pl[hi];return [a[0]+(b[0]-a[0])*u,1+a[1]+(b[1]-a[1])*u,a[2]+(b[2]-a[2])*u];}
 // Where a staged scene's prop is at a time. Its track says where it is from each start on: in a performer's hand or at a point
 // in the room; a change with `blend` seconds glides from the one to the other, and one with `fly` seconds is a throw: an arc
 // (`peak` metres above the straight line) from where the throwing hand is at the release to where the catching hand is at

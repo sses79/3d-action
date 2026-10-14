@@ -12,12 +12,15 @@ player's hands needs three sightings at their wrist; with fewer it is a loose ba
 in the hands that have it next, and the other player's hand near it for under 0.4 s is not a change of hands. Elsewhere it is loose: its course is a thrown
 ball's (gravity, bouncing off the floor) from the wrist that let go, fitted to the sightings, and to the wrist that takes it
 if one does. A short loose stretch that returns to the same player (a dribble) and that the fit misses by more than two
-ball widths is left in the hand and listed. With one camera a loose ball's distance is not seen, only inferred from that fit: the result gives how far the
+ball widths is left in the hand and listed. While the hand that has the ball is down at the hips or lower, the
+ball bounces: it leaves the hand, meets the floor under it and comes back up into it (listed under dribbles). A player who moves over
+the floor (over 1.5 m/s) holding the ball with no bounce found is dribbling too: a bounce every --dribble seconds (0.5),
+timed to fit the sightings, until half a second before the ball leaves for good or the player leaves the floor. With one camera a loose ball's distance is not seen, only inferred from that fit: the result gives how far the
 fitted course is from the sightings, in pixels. OUT.json: {prop: {id, name, shape, size, color, represents, track}, summary};
 track times are seconds from the window's start, places in room axes (x = court x, y up, z toward the main camera)."""
 import sys,json,numpy as np,cv2
 cam_file,place_file,sight_file,out=sys.argv[1:5];opt=lambda k,d:next((a.split('=',1)[1] for a in sys.argv if a.startswith('--'+k+'=')),d);REACH=float(opt('reach',1.6));COLOR=opt('color','green')
-track=json.load(open(cam_file));W,H=track.get('size',[1920,1080]);C=np.array(track['C']);fps=track['fps'];F=len(track['frames']);BALL=.24;G=9.81
+DRIBBLE=float(opt('dribble',.5));track=json.load(open(cam_file));W,H=track.get('size',[1920,1080]);C=np.array(track['C']);fps=track['fps'];F=len(track['frames']);BALL=.24;G=9.81
 LENS=[float(np.exp(f['q'][0])) for f in track['frames']];ROT=[cv2.Rodrigues(np.array(f['q'][1:4]))[0] for f in track['frames']]
 def pixel(k,X):c=ROT[k]@(np.asarray(X,float)-C);return np.array([LENS[k]*c[0]/c[2]+W/2,LENS[k]*c[1]/c[2]+H/2])
 ray=lambda k,uv:ROT[k].T@np.array([(uv[0]-W/2)/LENS[k],(uv[1]-H/2)/LENS[k],1.])
@@ -126,6 +129,58 @@ for a,b in runs(lambda s:s):
     parts.append(dict(start=round(a/fps,3),path=[[round((k0+i)/fps,3)]+room(P[i]) for i in range(len(P))]))
     flights.append(dict(fromSeconds=round(a/fps,2),toSeconds=round(b/fps,2),sightings=len(obs),fromHandOf=names[state[k0][0]] if a>0 else None,toHandOf=names[state[b+1][0]] if b<F-1 else None,meanPixelsOffSightings=round(float(np.mean(off)),1) if off else None,medianPixels=round(float(np.median(off)),1) if off else None,sightingsAtSeconds=[round(k/fps,2) for k in obs],worstPixels=round(max(off),1) if off else None,speedAtStartMetersPerSecond=round(float(np.linalg.norm(v0)),1),highestMeters=round(float(P[:,2].max()),2)))
 if parts[0]['start']!=0:parts[0]['start']=0
+# Dribbles: while the hand that has the ball is down at the hips or lower, the ball is not in it but bouncing. Each such stretch
+# becomes one bounce: the ball leaves the hand as it goes down, meets the floor under the hand at the stretch's lowest point and
+# comes back up into it (down at an even speed, up slowing into the hand), at least 0.35 s and at most 0.6 s from hand to hand.
+dribbles=[];airborne={x['name']:[(a-place['times'][0],b-place['times'][0]) for a,b in x.get('airborne',[])] for x in place.get('summary',[])}
+def ballAt(t,hand,cyc):  # where the ball is at a time, given the bounces (leave, floor, back) of a stretch in one hand
+    for t0,tm,t1 in cyc:
+        if t0<=t<=t1:
+            w0,w1=np.array(hand[min(F-1,round(t0*fps))]),np.array(hand[min(F-1,round(t1*fps))]);m=hand[min(F-1,round(tm*fps))];fl=np.array([m[0],m[1],BALL/2])
+            if t<=tm:return w0+(fl-w0)*((t-t0)/max(tm-t0,1e-6))
+            u=(t-tm)/max(t1-tm,1e-6);return fl+(w1-fl)*(1-(1-u)**2)
+    return np.array(hand[min(F-1,round(t*fps))])
+def bounces(parts):
+    out=[]
+    for n,p in enumerate(parts):
+        if 'holder' not in p:out.append(p);continue
+        a=round(p['start']*fps);b=round(parts[n+1]['start']*fps) if n+1<len(parts) else F;who=p['holder'];hand=court[who]['left' if p['hand']=='l' else 'right'];hips=court[who]['hips'];cyc=[];why={}
+        # 1. the hand that has the ball is down at the hips or lower: one bounce round its lowest point
+        low=[k for k in range(a,b) if hand[k][2]<=hips[k][2]];runs_=[]
+        for k in low:
+            if runs_ and k-runs_[-1][1]<=3:runs_[-1][1]=k
+            else:runs_.append([k,k])
+        for r0,r1 in runs_:
+            mid=min(range(r0,r1+1),key=lambda k:hand[k][2]);half=min(.3,max(.175,(r1-r0+1)/fps/2+.1));t0,t1=max(mid/fps-half,(cyc[-1][2] if cyc else p['start'])+.1),min(mid/fps+half,b/fps-.05)
+            if t1-t0>=.3:cyc.append((t0,mid/fps,t1));why[cyc[-1]]='hand down'
+        # 2. a player who moves over the floor with the ball is dribbling it, whether or not the body model saw the hand go down:
+        # bounces every DRIBBLE seconds (in the hand for a tenth of a second), timed to fit the sightings, up to half a second
+        # before the ball leaves for good (a shot or a pass) or the player leaves the floor
+        end=b/fps-(.5 if n+1<len(parts) and 'path' in parts[n+1] else 0)
+        for a_,b_ in airborne.get(names[who],[]):
+            if a_<end and b_>p['start']:end=min(end,a_-.5)
+        sp=[np.linalg.norm(np.array(hips[min(F-1,k+3)][:2])-np.array(hips[max(0,k-3)][:2]))/((min(F-1,k+3)-max(0,k-3))/fps) for k in range(F)]
+        free=[k for k in range(a,min(b,round(end*fps))) if sp[k]>1.5 and not any(c[0]-.05<=k/fps<=c[2]+.05 for c in cyc)];runs_=[]
+        for k in free:
+            if runs_ and k-runs_[-1][1]<=1:runs_[-1][1]=k
+            else:runs_.append([k,k])
+        for r0,r1 in runs_:
+            if (r1-r0)/fps<.6:continue
+            best=None
+            for ph in np.arange(0,DRIBBLE,1/fps):
+                c=[(t,t+(DRIBBLE-.1)/2,t+DRIBBLE-.1) for t in np.arange(r0/fps+ph,r1/fps-DRIBBLE+.1+1e-6,DRIBBLE)]
+                if not c:continue
+                wide=lambda k:BALL*LENS[k]/np.linalg.norm(np.array(court[0]['hips'][k])-C);e=[min(3*wide(k),np.linalg.norm(pixel(k,ballAt(k/fps,hand,c))-seen[k])) for k in range(r0,r1+1) if k in seen]
+                score=(np.mean(e) if e else 0)-.001*len(c)
+                if best is None or score<best[0]:best=(score,c,len(e))
+            if best:
+                for c in best[1]:cyc.append(c);why[c]='moving with the ball, %d sightings'%best[2]
+        cyc.sort();cur=p['start'];out.append(p)
+        for t0,tm,t1 in cyc:
+            k0,k1=round(t0*fps),min(F-1,round(t1*fps));out.append(dict(start=round(t0,3),path=[[round(k/fps,3)]+room(ballAt(k/fps,hand,[(t0,tm,t1)])) for k in range(k0,k1+1)],blend=.06));out.append(dict(start=round(t1,3),holder=who,hand=p['hand'],blend=.05))
+            m=hand[min(F-1,round(tm*fps))];dribbles.append(dict(by=names[who],hand='left' if p['hand']=='l' else 'right',why=why[(t0,tm,t1)],leavesHandAt=round(t0,2),floorAt=round(tm,2),backInHandAt=round(t1,2),floorMeters=[round(float(m[0]),2),round(float(m[1]),2)]))
+    return out
+parts=bounces(parts)
 held=[k for k in seen if state[k]!='loose'];gap=[float(near[k][0]) for k in held]
-summary=dict(frames=F,framesWithSighting=len(seen),held=[dict(fromSeconds=p['start'],by=names[p['holder']],hand='left' if p['hand']=='l' else 'right') for p in parts if 'holder' in p],loose=flights,bouncesLeftInHand=kept,sightingFromWristInBallWidths=dict(median=round(float(np.median(gap)),2),worst=round(max(gap),2)) if gap else None)
+summary=dict(frames=F,framesWithSighting=len(seen),held=[dict(fromSeconds=p['start'],by=names[p['holder']],hand='left' if p['hand']=='l' else 'right') for p in parts if 'holder' in p],loose=flights,bouncesLeftInHand=kept,dribbles=dribbles,sightingFromWristInBallWidths=dict(median=round(float(np.median(gap)),2),worst=round(max(gap),2)) if gap else None)
 json.dump(dict(prop=dict(id='ball',name='ball',shape='sphere',size=[BALL,BALL,BALL],color=COLOR,represents='the basketball',track=parts),summary=summary),open(out,'w'));print(json.dumps(summary))

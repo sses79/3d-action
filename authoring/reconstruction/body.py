@@ -8,7 +8,7 @@ started=time.perf_counter();import numpy as np
 report=json.load(open(pose_path));observed=len(report['frames']);rows=[f for f in report['frames'] if f['bbox']];behind=sum(1 for f in report['frames'] if f.get('hiddenByOther'))
 # frames in which the performer is hidden by the other (one box round both) are not held against the window, as long as the
 # performer is seen in at least half of all frames; what happens in them is interpolated
-if len(rows)<3 or len(rows)<.8*(observed-behind) or len(rows)<.5*observed:raise SystemExit(f'Unsupported window: {len(rows)}/{observed} frames with a selected subject'+(f' ({behind} hidden by the other performer)' if behind else ''))
+if len(rows)<3 or len(rows)<.8*(observed-behind) or len(rows)<(.3 if report.get('givenTrack') else .5)*observed:raise SystemExit(f'Unsupported window: {len(rows)}/{observed} frames with a selected subject'+(f' ({behind} hidden by the other performer)' if behind else ''))
 # coarse: every Nth frame, always with the last, so the window's ends are observed
 if args.every>1:rows=[r for i,r in enumerate(rows) if i%args.every==0 or i==len(rows)-1]
 order=[r['frameIndex'] for r in rows];times=np.array([r['time'] for r in rows]);raw=None;timings={}

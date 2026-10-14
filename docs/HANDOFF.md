@@ -867,3 +867,12 @@ Numbers are in `docs/MULTI_PERSON_PLAN.md` (Turnaround and the sections after it
 - A frame for which a given `boxes` track has no box counts as hidden, so a player seen in two pieces can be built.
 - `court-ball.py`: a player holds the ball only with three sightings at their wrist; the loose course caps each sighting's error.
 - Live: `pair-nba-play9` r8 has six players and the ball. Its ball is a guess after about 2.8 s; dribble bounces are not shown in either play.
+
+## 2026-10-14 · Replay of play 10, Replay and Travel cameras, dribbles
+
+Numbers are in `docs/MULTI_PERSON_PLAN.md` (from "One player from two cameras" on).
+- The first replay after play 10 built as its own clip and compared with the wide shot (`authoring/render/compare-views.py`): poses 9.9 cm apart per joint at the fitted clock (replay at 0.68 speed). Its camera was solved from that match plus the wide shot's court places (2.2 m behind the baseline, 0.42 m up); `pair-nba-play10-replay` has three players placed through it.
+- Cameras: a scene may carry `replay` (another camera of the same moment); the action workshop, Clay page, renders and exports offer Replay and Travel (the source camera, a move in to 12 m during 0.1–0.7 s, a flight landing on the replay camera as its shot begins). One rule for all of them: `runtime/pair-scene.ts` `replayView`.
+- Ball: a hand down at the hips means a bounce; a player moving over the floor with the ball bounces it every 0.5 s, timed to the sightings.
+- A given track may be seen in as little as 30% of its frames (`givenTrack` in the observe report).
+- The replay's camera solve, placing and joining of track pieces are still scratch scripts in `.authoring/team/scripts/`.

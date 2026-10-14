@@ -4,7 +4,7 @@ import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';
 import {MarchingCubes} from 'three/addons/objects/MarchingCubes.js';
 import {CharacterPlayer} from '../../runtime/player';
 import {figureColors,primitiveFigure,characterFiles,ownShapeClips,ownShapeAction,ballHeight,floorLift,follow,characterCreatorMap,prepareFollower,FollowerSpec} from '../../runtime/characters';
-import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom,standAt,propPlace} from '../../runtime/pair-scene';
+import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom,standAt,replayView,placedAt,propPlace} from '../../runtime/pair-scene';
 // White-model render of a pair of actions, one picture per call. Cameras:
 //  source  the camera of the source video. The body model places each performer relative to that camera, and the actions keep
 //          those positions, so a camera at that origin with the model's lens (focal length = the picture's diagonal in pixels)
@@ -15,7 +15,7 @@ import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,
 //  orbit   a slow quarter circle round the pair at eye height, always looking at the point between them.
 //  staged  (payload.staged) a scene staged from text: the actions are already in the room, each figure is scaled to its
 //          performer's height, and the camera is the scene's shot for the time. 'fixed' is the still check camera as above.
-type Payload={followers?:Record<string,FollowerSpec>,staged?:{objects:SceneObject[],heights:number[],cameras:StagedShot[],characters?:string[]},level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'};
+type Payload={followers?:Record<string,FollowerSpec>,staged?:{objects:SceneObject[],heights:number[],cameras:StagedShot[],characters?:string[]},level?:{normal:number[],height?:number},scene?:PairScene,track?:SceneCamera,stage?:{positions:number[],indices:number[],time:number,room?:boolean},actions:any[],origins:number[][],hips:number[][][],duration:number,width:number,height:number,camera:'source'|'fixed'|'orbit'|'replay'|'travel'};
 // init() with nothing is the render page (pair-page.ts: payload and files from pair-video.mjs's little server, canvas on the
 // body). Studio's Clay reference page passes its own payload, where the files are and where to put the canvas, and gets the
 // same picture: what it shows is what an export draws.
@@ -96,6 +96,9 @@ export async function init(cfg?:ClayViewConfig){
    const part=(i:number,aim?:string)=>players[i].root.getObjectByName(aim==='head'?'Head':'spine_02')!.getWorldPosition(new T.Vector3()),look=Array.isArray(shot.lookAt)?new T.Vector3().fromArray(shot.lookAt):'between' in shot.lookAt?part(0).add(part(1)).multiplyScalar(.5):part(shot.lookAt.performer,shot.lookAt.aim);
    camera.position.copy(at);camera.fov=2*Math.atan(Math.tan(Math.atan(18/lens))/camera.aspect)*180/Math.PI;camera.updateProjectionMatrix();camera.lookAt(look);}
   else if(still){camera.position.copy(still.eye);camera.fov=38;camera.updateProjectionMatrix();camera.lookAt(still.look);}
+  else if((payload.camera==='replay'||payload.camera==='travel')&&(payload.scene as any)?.replay){  // another camera of the same moment, and the flight to it: the same rule as the action workshop
+   const sc=payload.scene!,abs=!!(sc.camera as any).absolute,src=(t:number)=>{const c=sceneCameraAt(sc.camera,t,payload.duration);return {...c,y:abs?c.y:height0};},who=(payload as any).aim??0,now=players[who].root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()).toArray(),v=replayView(payload.camera,sc,time,payload.duration,src,{now,at:t=>placedAt(sc,who,t,payload.duration)??now});
+   camera.position.set(v.x,Math.max(.15,v.y),v.z);camera.quaternion.fromArray(v.quat);camera.fov=2*Math.atan(height/(2*Math.hypot(width,height)*v.zoom))*180/Math.PI;camera.updateProjectionMatrix();}
   else{camera.position.set(shift.x,Math.max(.15,payload.camera==='fixed'?height0:ownHeight??heightAt(time,hips)),shift.z);if(level)camera.quaternion.copy(level);else camera.quaternion.identity();if(track){camera.fov=2*Math.atan(height/(2*Math.hypot(width,height)*zoom))*180/Math.PI;camera.updateProjectionMatrix();}}
   {const far=camera.position.distanceTo(centre),fog=scene.fog as T.Fog|null,reach=Math.max(camera.userData.far??=camera.far,far*5);if(fog){fog.near=Math.max(14,far*1.4);fog.far=Math.max(40,far*4);}if(camera.far!==reach){camera.far=reach;camera.updateProjectionMatrix();}}  // a camera far from the performers (a court's, 40 m off) must not lose them in the haze or past the far plane
    camera.updateMatrixWorld(true);sun.target.position.set(centre.x,0,centre.z);sun.position.set(centre.x+3.5,7,centre.z+4.5);sun.target.updateMatrixWorld();
