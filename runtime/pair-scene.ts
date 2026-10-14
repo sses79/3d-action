@@ -80,12 +80,29 @@ function qturn(u:number[],v:number[]){const d=u[0]*v[0]+u[1]*v[1]+u[2]*v[2];if(d
 export function replayView(kind:'replay'|'travel',scene:PairScene,time:number,duration:number,src:(t:number)=>ViewCamera,performer:{now:number[];at:(t:number)=>number[]}):ViewCamera{
  const rp0=(scene as any).replay,span=rp0.to-rp0.from,rp=sceneCameraAt(rp0.camera,Math.min(span,Math.max(0,time-rp0.from)),span);
  if(kind==='replay')return rp;
- const ease=(x:number)=>{x=Math.min(1,Math.max(0,x));return x*x*x*(x*(6*x-15)+10);},[c0,c1]=TRAVEL.close,s1=src(c1),aim1=performer.at(c1),e1=[s1.x,s1.y,s1.z],k1=Math.min(1,TRAVEL.near/Math.max(Math.hypot(...e1.map((v,i)=>v-aim1[i])),1e-6)),p1=aim1.map((v,i)=>v+(e1[i]-v)*k1),z1=s1.zoom*Math.sqrt(k1);
- const cur=src(time),w1=ease((time-c0)/(c1-c0)),eye=[cur.x,cur.y,cur.z].map((v,i)=>v+(p1[i]-v)*w1),here={x:eye[0],y:eye[1],z:eye[2],quat:qslerp(cur.quat,qlook(eye,performer.now),w1),zoom:Math.exp(Math.log(cur.zoom)+(Math.log(z1)-Math.log(cur.zoom))*w1)};
- const start=Math.max(c1,rp0.from-TRAVEL.flight),w=rp0.from>start?ease((time-start)/(rp0.from-start)):time>=rp0.from?1:0;if(w<=0)return here;
- const out={x:here.x+(rp.x-here.x)*w,y:here.y+(rp.y-here.y)*w,z:here.z+(rp.z-here.z)*w,quat:qslerp(here.quat,rp.quat,w),zoom:Math.exp(Math.log(here.zoom)+(Math.log(rp.zoom)-Math.log(here.zoom))*w)};
- if(w<1){const fwd=turn(out.quat,[0,0,-1]),aim=unit(performer.now.map((v,i)=>v-[out.x,out.y,out.z][i])),k=Math.sqrt(Math.sin(Math.PI*w));out.quat=unit(qmul(qslerp([0,0,0,1],qturn(fwd,aim),k),out.quat));}
- return out;
+ const ease=(x:number)=>{x=Math.min(1,Math.max(0,x));return x*x*x*(x*(6*x-15)+10);},[c0,c1]=TRAVEL.close;
+ // where the camera looks while it travels: the performer's place averaged over 0.8 s, so the view pans steadily instead of
+ // following every sway of the body; held still past the clip's ends
+ const aim=(t:number)=>{let x=0,y=0,z=0;for(let k=-4;k<=4;k++){const p=performer.at(Math.min(duration,Math.max(0,t+k*.1)));x+=p[0];y+=p[1];z+=p[2];}return [x/9,y/9,z/9];};
+ const s1=src(c1),a1=aim(c1),e1=[s1.x,s1.y,s1.z],k1=Math.min(1,TRAVEL.near/Math.max(Math.hypot(...e1.map((v,i)=>v-a1[i])),1e-6)),p1=a1.map((v,i)=>v+(e1[i]-v)*k1),z1=s1.zoom*Math.sqrt(k1);
+ // a replay camera far away with a long lens (a zoom from the broadcast mount): Travel stays close and lands on the same view from
+ // nearer, on the replay camera's line of sight to the performer with the lens widened to match, instead of flying back out
+ const closeRp=(t:number)=>{const r=sceneCameraAt(rp0.camera,Math.min(span,Math.max(0,t-rp0.from)),span),a=aim(t),d=Math.hypot(r.x-a[0],r.y-a[1],r.z-a[2]);if(d<=1.5*TRAVEL.near)return r;const k=Math.max(TRAVEL.near*.6,d*Math.min(1,z1/r.zoom))/d;return {...r,x:a[0]+(r.x-a[0])*k,y:a[1]+(r.y-a[1])*k,z:a[2]+(r.z-a[2])*k,zoom:r.zoom*k};};
+ const start=Math.max(c1,rp0.from-TRAVEL.flight),w1=ease((time-c0)/(c1-c0)),w=rp0.from>start?ease((time-start)/(rp0.from-start)):time>=rp0.from?1:0,cur=src(time);
+ // the move in: from the source camera along its line of sight to p1, turning from the source camera's turn to a level look at the
+ // averaged place
+ const near=(t:number)=>{const c=src(t),u=ease((t-c0)/(c1-c0)),e=[c.x,c.y,c.z].map((v,i)=>v+(p1[i]-v)*u);return {e,q:qslerp(c.quat,qlook(e,aim(t)),u),c};};
+ const zoomIn=(c:ViewCamera,u:number)=>Math.exp(Math.log(c.zoom)+(Math.log(z1)-Math.log(c.zoom))*u);
+ if(w<=0){const n=near(time);return {x:n.e[0],y:n.e[1],z:n.e[2],quat:n.q,zoom:zoomIn(n.c,w1)};}
+ if(time>=rp0.from)return closeRp(time);
+ // the flight: the camera circles round the performer from where it stood to the replay camera, its bearing, distance and height
+ // eased together (a gentle sine ease, so the turn is spread out), always looking at the averaged place (so the view turns one way, as fast as the circle, and keeps the performer
+ // in the picture); over the last 40% it eases from that look onto the replay camera's own turn
+ const n0=near(start),a0=aim(start),a=aim(time),aEnd=aim(rp0.from),v0=n0.e.map((x,i)=>x-a0[i]),rpE=closeRp(rp0.from),v1=[rpE.x-aEnd[0],rpE.y-aEnd[1],rpE.z-aEnd[2]];
+ const b0=Math.atan2(v0[0],v0[2]),b1=Math.atan2(v1[0],v1[2]),db=((b1-b0+3*Math.PI)%(2*Math.PI))-Math.PI,r0=Math.hypot(v0[0],v0[2]),r1=Math.hypot(v1[0],v1[2]);
+ const ws=rp0.from>start?.5-.5*Math.cos(Math.PI*Math.min(1,Math.max(0,(time-start)/(rp0.from-start)))):1,b=b0+db*ws,r=Math.exp(Math.log(Math.max(r0,.1))+(Math.log(Math.max(r1,.1))-Math.log(Math.max(r0,.1)))*w),h=v0[1]+(v1[1]-v0[1])*w,eye=[a[0]+Math.sin(b)*r,a[1]+h,a[2]+Math.cos(b)*r];
+ const quat=qslerp(qlook(eye,a),closeRp(time).quat,ease((ws-.6)/.4)),zoom=Math.exp(Math.log(zoomIn(n0.c,1))+(Math.log(closeRp(time).zoom)-Math.log(zoomIn(n0.c,1)))*w);
+ return {x:eye[0],y:eye[1],z:eye[2],quat,zoom};
 }
 // Where a performer's hips are in the room at a time from a scene's place series ([x, lift, z]), about a metre over the floor.
 export function placedAt(scene:PairScene,index:number,time:number,duration:number):number[]|null{const pl=scene.performers?.[index]?.place;if(!pl)return null;const {lo,hi,u}=at(pl.length-1,time,duration),a=pl[lo],b=pl[hi];return [a[0]+(b[0]-a[0])*u,1+a[1]+(b[1]-a[1])*u,a[2]+(b[2]-a[2])*u];}
