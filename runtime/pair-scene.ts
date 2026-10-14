@@ -77,7 +77,29 @@ function qbasis(x:number[],y:number[],z:number[]){const [m00,m01,m02,m10,m11,m12
 const cross=(a:number[],b:number[])=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 function qlook(eye:number[],target:number[]){const z=unit(eye.map((v,i)=>v-target[i])),x=unit(cross([0,1,0],z)),y=cross(z,x);return qbasis(x,y,z);}  // a camera at eye looking at target, level
 function qturn(u:number[],v:number[]){const d=u[0]*v[0]+u[1]*v[1]+u[2]*v[2];if(d<-.999999)return [0,1,0,0];return unit([...cross(u,v),1+d]);}
+// Replay and Travel keep the basket in the picture: when the scene has an object named rim, the view turns as little as it must
+// and widens as much as it must to hold the rim and the performer (head and feet) inside 80% of the frame, eased in over the 0.8 s
+// before the replay's stretch begins; and after the performer's highest point in the stretch (a dunk) it eases out to 1.3 times wider
+// over 0.6 s, to show the basket and the landing.
 export function replayView(kind:'replay'|'travel',scene:PairScene,time:number,duration:number,src:(t:number)=>ViewCamera,performer:{now:number[];at:(t:number)=>number[]}):ViewCamera{
+ const one=(time:number):ViewCamera=>{
+ const v=replayViewRaw(kind,scene,time,duration,src,performer),rp0=(scene as any).replay,rim=scene.objects?.find(o=>o.name==='rim');
+ const ease=(x:number)=>{x=Math.min(1,Math.max(0,x));return x*x*x*(x*(6*x-15)+10);},wk=ease((time-(rp0.from-.8))/.8);if(wk<=0)return v;
+ const avg=(t:number)=>{let x=0,y=0,z=0;for(let k=-4;k<=4;k++){const p=performer.at(Math.min(duration,Math.max(0,t+k*.1)));x+=p[0];y+=p[1];z+=p[2];}return [x/9,y/9,z/9];};
+ let peak=rp0.from,top=-Infinity;for(let t=rp0.from;t<=rp0.to;t+=.05){const y=performer.at(t)[1];if(y>top){top=y;peak=t;}}
+ let zoom=v.zoom/(1+.3*ease((time-peak)/.6)),quat=v.quat;
+ if(rim){const m=avg(time),lift=performer.at(time)[1]-1,pts=[[m[0],m[1]+.8,m[2]],[m[0],Math.max(.05,lift),m[2]],rim.position],inv=[-quat[0],-quat[1],-quat[2],quat[3]],ang=pts.map(p=>{const d=turn(inv,[p[0]-v.x,p[1]-v.y,p[2]-v.z]),f=Math.max(-d[2],1e-3);return [Math.atan2(d[0],f),Math.atan2(d[1],f)];});
+  for(let pass=0;pass<2;pass++){const hx=.8*Math.atan(960/(zoom*2203)),hy=.8*Math.atan(540/(zoom*2203)),lo=[Math.min(...ang.map(a=>a[0])),Math.min(...ang.map(a=>a[1]))],hi=[Math.max(...ang.map(a=>a[0])),Math.max(...ang.map(a=>a[1]))],h=[hx,hy];
+   const shift=[0,1].map(i=>hi[i]-lo[i]>2*h[i]?(hi[i]+lo[i])/2:hi[i]>h[i]?hi[i]-h[i]:lo[i]<-h[i]?lo[i]+h[i]:0);
+   if(pass===0&&(shift[0]||shift[1])){const yaw=[0,Math.sin(-shift[0]/2),0,Math.cos(-shift[0]/2)],pitch=[Math.sin(shift[1]/2),0,0,Math.cos(shift[1]/2)];quat=unit(qmul(qmul(quat,yaw),pitch));ang.forEach(a=>{a[0]-=shift[0];a[1]-=shift[1];});}
+   const need=[Math.max(Math.abs(lo[0]-shift[0]),Math.abs(hi[0]-shift[0]))/.8,Math.max(Math.abs(lo[1]-shift[1]),Math.abs(hi[1]-shift[1]))/.8];
+   zoom=Math.min(zoom,960/(2203*Math.tan(Math.min(1.4,need[0]))),540/(2203*Math.tan(Math.min(1.4,need[1]))));}}
+ return {...v,quat:qslerp(v.quat,quat,wk),zoom:Math.exp(Math.log(v.zoom)+(Math.log(zoom)-Math.log(v.zoom))*wk)};
+ };
+ // the widening follows the players' movement frame by frame: it is averaged over 0.2 s so the zoom does not jump
+ const v=one(time);let lz=0;for(let k=-2;k<=2;k++)lz+=Math.log(one(Math.min(duration,Math.max(0,time+k*.05))).zoom);return {...v,zoom:Math.exp(lz/5)};
+}
+function replayViewRaw(kind:'replay'|'travel',scene:PairScene,time:number,duration:number,src:(t:number)=>ViewCamera,performer:{now:number[];at:(t:number)=>number[]}):ViewCamera{
  const rp0=(scene as any).replay,span=rp0.to-rp0.from,rp=sceneCameraAt(rp0.camera,Math.min(span,Math.max(0,time-rp0.from)),span);
  if(kind==='replay')return rp;
  const ease=(x:number)=>{x=Math.min(1,Math.max(0,x));return x*x*x*(x*(6*x-15)+10);},[c0,c1]=TRAVEL.close;
