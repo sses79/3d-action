@@ -4,7 +4,7 @@ import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';
 import {MarchingCubes} from 'three/addons/objects/MarchingCubes.js';
 import {CharacterPlayer} from '../../runtime/player';
 import {figureColors,primitiveFigure,characterFiles,ownShapeClips,ownShapeAction,ballHeight,floorLift,follow,characterCreatorMap,prepareFollower,FollowerSpec} from '../../runtime/characters';
-import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom,standAt,replayView,placedAt,propPlace} from '../../runtime/pair-scene';
+import {PairScene,SceneObject,SceneCamera,StagedShot,sceneCameraAt,sampleSeries,buildSceneObjects,standInRoom,standAt,buildFloorLines,replayView,placedAt,propPlace} from '../../runtime/pair-scene';
 // White-model render of a pair of actions, one picture per call. Cameras:
 //  source  the camera of the source video. The body model places each performer relative to that camera, and the actions keep
 //          those positions, so a camera at that origin with the model's lens (focal length = the picture's diagonal in pixels)
@@ -69,7 +69,7 @@ export async function init(cfg?:ClayViewConfig){
  // A scene's objects: plain clay shapes standing for the set, a shade darker than the performers so the two read apart.
  let objectGroup:T.Group|null=null;
  if(payload.staged){objectGroup=buildSceneObjects(T,payload.staged.objects,new T.MeshStandardMaterial({color:'#b9bdc1',roughness:.9}));scene.add(objectGroup!);(floor.material as T.MeshStandardMaterial).color.set('#cfd2d4');scene.fog=null;}
- if(payload.scene){const grey=new T.MeshStandardMaterial({color:'#b9bdc1',roughness:.9});objectGroup=buildSceneObjects(T,payload.scene.objects,grey);scene.add(objectGroup!);(floor.material as T.MeshStandardMaterial).color.set('#cfd2d4');scene.fog=null;}
+ if(payload.scene){const grey=new T.MeshStandardMaterial({color:'#b9bdc1',roughness:.9});objectGroup=buildSceneObjects(T,payload.scene.objects,grey);scene.add(objectGroup!);if((payload.scene as any).lines?.length)scene.add(buildFloorLines(T,(payload.scene as any).lines,new T.MeshStandardMaterial({color:'#5d6168',roughness:1})));(floor.material as T.MeshStandardMaterial).color.set('#cfd2d4');scene.fog=null;}
  // a white figure does not show on the pale floor: the floor goes a mid grey when one is in the scene
  if([...((payload as any).colors??[]),...(((payload as any).extras??[]) as any[]).map(x=>x.color)].some((c:string)=>c===figureColors.white))(floor.material as T.MeshStandardMaterial).color.set('#8f949b');
  // A stage: a coarse mesh of the set from the source video, given in the camera's space at one moment (x right, y up, z toward

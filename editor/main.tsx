@@ -11,7 +11,7 @@ import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {Action,jump,burst,actionId,template,phaseKind,impactTime,clone,duration,locate,rootHeight,validateAction} from '../runtime/action';
 import {CharacterPlayer} from '../runtime/player';
 import {ImpactPreview} from '../runtime/effects';
-import {PairScene,buildSceneObjects,standInRoom,standAt,propPlace,sceneCameraAt,replayView,placedAt} from '../runtime/pair-scene';
+import {PairScene,buildSceneObjects,buildFloorLines,standInRoom,standAt,propPlace,sceneCameraAt,replayView,placedAt} from '../runtime/pair-scene';
 import {figureColors,characterFiles,ownShapeClips,ownShapeAction,ballHeight,floorLift,follow,characterCreatorMap,prepareFollower,FollowerSpec} from '../runtime/characters';
 
 type View='current'|'reference'|'both'; type Cam='Orbit'|'Front'|'Side'|'Top'|'Source'|'Replay'|'Travel';
@@ -63,7 +63,7 @@ function Viewport({state,onReady,onError,onCurves}:{state:React.MutableRefObject
     // and plays on the same clock. The first character (blue) is normally the reference; here it is the partner.
     const pair=s.view==='current'&&!s.idle?s.partner:null,room=pair?.scene||null;
     // A scene: the pair stands in its room. The room is shifted so the selected performer starts at the centre of the view.
-    if(room!==shownRoom){shownRoom=room;if(roomGroup){scene.remove(roomGroup);roomGroup.traverse(o=>{if((o as THREE.Mesh).isMesh)(o as THREE.Mesh).geometry.dispose();});roomGroup=null;}if(room){roomGroup=buildSceneObjects(THREE,room.objects,roomMaterial);scene.add(roomGroup!);}
+    if(room!==shownRoom){shownRoom=room;if(roomGroup){scene.remove(roomGroup);roomGroup.traverse(o=>{if((o as THREE.Mesh).isMesh)(o as THREE.Mesh).geometry.dispose();});roomGroup=null;}if(room){roomGroup=buildSceneObjects(THREE,room.objects,roomMaterial);if((room as any).lines?.length)roomGroup!.add(buildFloorLines(THREE,(room as any).lines,new THREE.MeshStandardMaterial({color:0xc9d2dd,roughness:1})));scene.add(roomGroup!);}
       // the others of a scene (a team clip's other players): each a mannequin in its own colour, stood where the scene has them
       for(const f of extraFigs)scene.remove(f.holder);extraFigs=(room?pair?.extras??[]:[]).map(spec=>{const root=cloneRig(gltf.scene),holder=new THREE.Group(),material=new THREE.MeshStandardMaterial({color:figureColors[spec.color]??'#8e949c',metalness:.15,roughness:.6});holder.add(root);scene.add(holder);root.traverse(o=>{const m=o as THREE.Mesh;if(m.isMesh){m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;m.material=material;}});const scale=1.85/new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3()).y;holder.scale.setScalar(scale);return {spec,holder,scale,player:new CharacterPlayer(root,gltf.animations,scale)};});
      // a staged scene's props: small plain shapes in their own colour, placed each frame by the same rule as the clay render

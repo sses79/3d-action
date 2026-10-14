@@ -23,7 +23,7 @@ export type SceneCamera={quats:number[][];positions:number[][];focal:number[];ab
 // lookAt is a point, or {performer, aim} to keep a performer's head or body in the middle, or {between:true} for the point
 // between the two. `to` moves the camera and/or changes the lens over the shot, eased, until the next shot starts.
 export type StagedShot={start:number;position:number[];lookAt:number[]|{performer:number;aim?:'head'|'body'}|{between:true};lens35:number;to?:{position?:number[];lens35?:number}};
-export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[];lock?:number[][];/* place: where the performer's root is in the room per frame, [x, lift, z]: x and z over the floor, lift above the action's own height (a jump). Given when the floor is known (a court): then the body model's own distance is not used. */place?:number[][]}[];distanceScale?:number[];props?:any[];/* extras: more people of the clip (other players), each an action with its own place per frame [x, lift, z], a colour name and, if they are not in the picture throughout, visible [from, to] seconds */extras?:{actionId:string;revision:number;name:string;color:string;place:number[][];visible?:number[]}[];staged?:{heights:number[];cameras:StagedShot[]}};
+export type PairScene={objects:SceneObject[];camera:SceneCamera;performers:{origin:number[];hipDown:number[];lock?:number[][];/* place: where the performer's root is in the room per frame, [x, lift, z]: x and z over the floor, lift above the action's own height (a jump). Given when the floor is known (a court): then the body model's own distance is not used. */place?:number[][]}[];distanceScale?:number[];props?:any[];/* lines: painted floor lines, each a polyline of [x, z] points on the floor (room axes) */lines?:number[][][];/* extras: more people of the clip (other players), each an action with its own place per frame [x, lift, z], a colour name and, if they are not in the picture throughout, visible [from, to] seconds */extras?:{actionId:string;revision:number;name:string;color:string;place:number[][];visible?:number[]}[];staged?:{heights:number[];cameras:StagedShot[]}};
 // Distance from one camera is the noisiest thing the body model gives, and it shows as feet sliding toward and away from the
 // camera. distanceScale evens it out: per frame, the factor that takes the pair's mean distance from the camera (model depth
 // times lens ratio) to its average over about a second. One factor for both performers, so what lies between them is kept.
@@ -140,6 +140,21 @@ export function propPlace(prop:{track:any[]},time:number,held:(segment:any,at?:n
  if(k>0&&seg.fly>0&&time<seg.start+seg.fly){let f=flights.get(seg);if(!f){f={from:anchor(prop.track[k-1],seg.start),to:anchor(seg,seg.start+seg.fly)};flights.set(seg,f);}const u=(time-seg.start)/seg.fly,p=mix(f.from,f.to,u);p[1]+=4*seg.peak*u*(1-u);return p;}
  const at=anchor(seg);if(k>0&&seg.blend>0&&time<seg.start+seg.blend){const u=(time-seg.start)/seg.blend;return mix(anchor(prop.track[k-1]),at,u*u*(3-2*u));}
  return at;
+}
+// Painted floor lines as one flat mesh: each polyline a strip `width` metres wide, a hair above the floor.
+export function buildFloorLines(T:any,lines:number[][][],material:any,width=.05){
+ const pos:number[]=[],idx:number[]=[];for(const l of lines){for(let i=0;i<l.length-1;i++){const [x0,z0]=l[i],[x1,z1]=l[i+1],dx=x1-x0,dz=z1-z0,n=Math.hypot(dx,dz)||1,nx=-dz/n*width/2,nz=dx/n*width/2,b=pos.length/3;pos.push(x0+nx,.004,z0+nz,x0-nx,.004,z0-nz,x1+nx,.004,z1+nz,x1-nx,.004,z1-nz);idx.push(b,b+2,b+1,b+1,b+2,b+3);}}
+ const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();const m=new T.Mesh(g,material);m.receiveShadow=true;m.name='floor lines';return m;
+}
+// An NBA court's lines in room axes (x along the court, z = minus the court's y): boundary, half-court line, centre circle, and for
+// each half the lane, free-throw circle, three-point line and restricted arc.
+export function basketballCourtLines(){
+ const L:number[][][]=[],arc=(cx:number,cy:number,r:number,a0:number,a1:number,n=48)=>Array.from({length:n+1},(_,k)=>{const a=a0+(a1-a0)*k/n;return [cx+r*Math.cos(a),-(cy+r*Math.sin(a))];});
+ L.push([[-14.325,-7.62],[14.325,-7.62],[14.325,7.62],[-14.325,7.62],[-14.325,-7.62]].map(([x,y])=>[x,-y]),[[0,-7.62],[0,7.62]],arc(0,0,1.83,0,2*Math.PI,64));
+ for(const s of [1,-1]){const hx=s*12.75,a0=Math.asin(6.71/7.24),cx=hx-s*7.24*Math.cos(a0);
+  L.push([[s*14.325,-2.44],[s*8.535,-2.44],[s*8.535,2.44],[s*14.325,2.44]].map(([x,y])=>[x,-y]),arc(s*8.535,0,1.83,0,2*Math.PI,64));
+  L.push([[s*14.325,-6.71],[cx,-6.71]].map(([x,y])=>[x,-y]),arc(hx,0,7.24,s>0?Math.PI-a0:-a0,s>0?Math.PI+a0:a0,64),[[cx,6.71],[s*14.325,6.71]].map(([x,y])=>[x,-y]),arc(hx,0,1.22,s>0?Math.PI/2:-Math.PI/2,s>0?3*Math.PI/2:Math.PI/2,32));}
+ return L;
 }
 // The objects as meshes, with whichever build of three the caller uses.
 export function buildSceneObjects(T:any,objects:SceneObject[],material:any){
