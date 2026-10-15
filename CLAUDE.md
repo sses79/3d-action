@@ -10,6 +10,7 @@ Three browser demos; active work is **Animation Studio** (LLM-driven movement li
 - `docs/TWO_PERSON_PLAN.md` — clips with two performers, built 2026-10-10/11: pairs (`set_pair`, contact, hand holds), a pair scene (plain stage objects, tracked camera with zoom, foot locking) and the reference package for a video model (`export_pair_reference`). The workflow is the `video-to-reference` skill; this document holds every measured result and limit.
 - `docs/SCENE_TO_REFERENCE_PLAN.md` — written scene → LLM blocking → two figures acting in a room → the same reference package (`stage_scene`, 2026-10-11; milestones 1–3 built; its last section lists what is open). The workflow is the `scene-to-reference` skill.
 - `docs/MULTI_PERSON_PLAN.md` — team sport clips (several players, a ball, a known court), plan agreed 2026-10-13; says which steps are built.
+- `docs/SHOT_TO_CLAY_PLAN.md` — a scene told in cuts (dialogue, mostly waist-up) to a clay video: shots grouped by setup, upper bodies from video on tapered columns, one room across cuts; plan agreed 2026-10-15, says which steps are built.
 - `docs/HANDOFF.md` — append-only session log (long, dense). Read the last few sections, not the whole file. Add a dated section after substantial work.
 - `docs/RULE_LOG.md` — every reconstruction rule, why it exists and what it did to the other clips. After changing a rule, run `authoring/reconstruction/batch.py` and add an entry.
 - Other `docs/` plans and studies are historical unless `CURRENT_STATE.md` points at them.
