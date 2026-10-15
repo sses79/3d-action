@@ -120,6 +120,9 @@ export async function init(cfg?:ClayViewConfig){
  // What the picture holds at a time, for a reference description: the camera, and for each performer and scene object its box
  // in the picture (0-1 from the left and from the top, clipped to the frame) and its distance. Boxes are of the whole shape:
  // what stands in front of what is not worked out.
+ // where each figure of a shots scene stands at a time (hips in room metres), for checks
+ W.shotFigures=(time:number)=>{place(time);return [...players.map((p,i)=>({name:(payload as any).shots?.figures?.[i]?.name??i,root:p.root})),...extras.map((e,i)=>({name:'extra '+i,root:e.root}))].map(f=>{const b=new T.Box3();f.root.traverse((o:any)=>{if(o.isMesh&&o.visible)b.expandByObject(o);});return {name:f.name,hips:f.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()).toArray().map(v=>Math.round(v*100)/100),box:[...b.min.toArray(),...b.max.toArray()].map(v=>Math.round(v*100)/100)};});};
+ (globalThis as any).shotFigures=W.shotFigures;
  W.describe=(time:number)=>{W.renderFrame(time);const r=(x:number,d=3)=>Math.round(x*10**d)/10**d,eye=camera.position,forward=camera.getWorldDirection(new T.Vector3()),v=new T.Vector3();
   const boxOf=(points:T.Vector3[])=>{let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity,front=0;for(const p of points){if(v.copy(p).sub(eye).dot(forward)<.05)continue;front++;v.copy(p).project(camera);x0=Math.min(x0,(v.x+1)/2);x1=Math.max(x1,(v.x+1)/2);y0=Math.min(y0,(1-v.y)/2);y1=Math.max(y1,(1-v.y)/2);}if(!front)return null;const full=[x0,y0,x1,y1],clip=[Math.max(0,x0),Math.max(0,y0),Math.min(1,x1),Math.min(1,y1)];if(clip[2]<=clip[0]||clip[3]<=clip[1])return null;return {box:clip.map(x=>r(x)),whole:front===points.length&&full.every((x,i)=>Math.abs(x-clip[i])<1e-9)};};
   // Performers: bounds of the posed mesh itself (every other vertex, skinned), not of joints. projectedBox is where the figure
