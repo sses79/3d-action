@@ -1,7 +1,8 @@
 """Follow chosen people (or things named in words) through a video window with SAM 3's video tracker, through ComfyUI's nodes.
 Run with ComfyUI's Python:
-  .authoring/comfyui/.venv/bin/python authoring/render/sam3-track.py .authoring/comfyui VIDEO START END OUT.json name:time:x:y [name:time:x:y ...] [--text=basketball] [--width=1280] [--every=3]
-A point (video seconds, pixels of the original picture) picks the person under it in that frame; the tracker then carries that
+  .authoring/comfyui/.venv/bin/python authoring/render/sam3-track.py .authoring/comfyui VIDEO START END OUT.json name:time:x:y or name:time:x0:y0:x1:y1 [...] [--text=basketball] [--width=1280] [--every=3]
+A point (video seconds, pixels of the original picture) picks the person under it in that frame, or a box picks
+the person filling it (better on dark clothing, where a point can find nothing); the tracker then carries that
 person's outline forward to the end of the window and backward to its start, remembering what they look like. Several points
 at one time are followed together. --every=3 follows every third frame and moves the box evenly between (three times
 quicker; the body build reads every third frame anyway). --text follows whatever the words name, found by the model itself (for a ball).
@@ -65,11 +66,16 @@ def track(imgs,init):
 result={}
 for t in sorted({float(x[1]) for x in seeds}):
     mine=[x for x in seeds if float(x[1])==t];k0=int(np.argmin(np.abs(np.array(times)-t)));init=[]
-    for name,_,x,y in mine:
-        with torch.no_grad():m=SAM3_Detect.execute(model,images[k0:k0+1],positive_coords=json.dumps([{'x':float(x)/scale,'y':float(y)/scale}])).result[0]
+    for name,_,*xy in mine:
+        with torch.no_grad():
+            if len(xy)==4:  # a box (x0, y0, x1, y1): holds where a point on dark clothing finds nothing
+                x0,y0,x1,y1=[float(v)/scale for v in xy];m=SAM3_Detect.execute(model,images[k0:k0+1],bboxes={'x':x0,'y':y0,'width':x1-x0,'height':y1-y0},threshold=.2,individual_masks=True).result[0]
+                if m.dim()==3 and m.shape[0]>1:  # several outlines inside the box: the one that fills most of it
+                    m=m[int(torch.argmax(torch.stack([(mm>.5)[int(y0*m.shape[1]/images.shape[1]):int(y1*m.shape[1]/images.shape[1]),int(x0*m.shape[2]/images.shape[2]):int(x1*m.shape[2]/images.shape[2])].sum() for mm in m])))][None]
+            else:x,y=xy;m=SAM3_Detect.execute(model,images[k0:k0+1],positive_coords=json.dumps([{'x':float(x)/scale,'y':float(y)/scale}])).result[0]
         init.append(m[0] if m.dim()==3 else m);print(name,'outline at the point:',int((m>0.5).sum()),'px',flush=True)
     init=torch.stack(init).float();a=time.perf_counter();ahead=list(range(k0,N,EVERY));behind=list(range(k0,-1,-EVERY));fwd=track(images[ahead],init) if len(ahead)>1 else None;back=track(images[behind],init) if len(behind)>1 else None;print('tracked from',round(times[k0],2),'s in',round(time.perf_counter()-a,1),'s',flush=True)
-    for i,(name,_,_,_) in enumerate(mine):
+    for i,(name,*_) in enumerate(mine):
         per=[None]*N
         if fwd is not None and i<len(fwd):
             for j,b in enumerate(boxes(fwd[i])):per[ahead[j]]=b
