@@ -3,7 +3,8 @@
 Cuts: from frame to frame, the change in colour (an HSV histogram) plus the change in brightness, against the median change over
 the second around it; a cut is a change at least four times that and over 0.35, the largest within three frames. This holds in
 dark footage, where a fixed threshold missed cuts between two dim shots. Shots shorter than --min seconds are dropped.
-Setups: two shots are from the same camera setup when the set behind the people matches: ORB features of three frames of each
+Setups: two shots are from the same camera setup when the set behind the people matches: ORB features (none in the picture's
+corners, where a channel's logo would match every shot) of three frames of each
 (start, middle, end), matched with a ratio test, and a homography fitted with RANSAC; 40 or more inliers in any pair of frames is
 a match (a camera that pans or pushes in a little still matches). Shots are joined into setups by those matches.
 OUT.json: {video, start, end, fps, shots: [{index, start, end, setup, keyTimes}], setups: [{index, shots, inliers}]} and a sheet
@@ -25,7 +26,9 @@ keys=[]
 for a,b in shots:
     fs=[]
     for u in (.1,.5,.9):
-        g=cv2.cvtColor(cv2.resize(frame(int(a+(b-a)*u)),(960,540)),cv2.COLOR_BGR2GRAY);g=cv2.createCLAHE(2.,(8,8)).apply(g);kp,de=orb.detectAndCompute(g,None);fs.append((kp,de))
+        g=cv2.cvtColor(cv2.resize(frame(int(a+(b-a)*u)),(960,540)),cv2.COLOR_BGR2GRAY);g=cv2.createCLAHE(2.,(8,8)).apply(g);mask=np.full(g.shape,255,np.uint8);h_,w_=g.shape
+        for y0,x0 in ((0,0),(0,w_-int(.22*w_)),(h_-int(.14*h_),0),(h_-int(.14*h_),w_-int(.22*w_))):mask[y0:y0+int(.14*h_),x0:x0+int(.22*w_)]=0  # a channel logo in a corner matches in every shot
+        kp,de=orb.detectAndCompute(g,mask);fs.append((kp,de))
     keys.append(fs)
 def inliers(x,y):
     (ka,da),(kb,db)=x,y
