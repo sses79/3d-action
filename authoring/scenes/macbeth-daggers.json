@@ -1,0 +1,333 @@
+{
+ "sceneId": "scene-macbeth-daggers",
+ "name": "Macbeth II.2 \u00b7 The daggers",
+ "objects": [
+  {
+   "name": "back wall",
+   "shape": "box",
+   "position": [
+    0,
+    1.6,
+    -3.075
+   ],
+   "size": [
+    6.0,
+    3.2,
+    0.15
+   ]
+  },
+  {
+   "name": "left wall",
+   "shape": "box",
+   "position": [
+    -3.075,
+    1.6,
+    -0.5
+   ],
+   "size": [
+    0.15,
+    3.2,
+    5.3
+   ]
+  },
+  {
+   "name": "right wall",
+   "shape": "box",
+   "position": [
+    3.075,
+    1.6,
+    -0.5
+   ],
+   "size": [
+    0.15,
+    3.2,
+    5.3
+   ]
+  },
+  {
+   "name": "open door",
+   "shape": "box",
+   "position": [
+    -2.0,
+    1.15,
+    -2.98
+   ],
+   "size": [
+    1.3,
+    2.3,
+    0.06
+   ]
+  },
+  {
+   "name": "sideboard",
+   "shape": "box",
+   "position": [
+    0.3,
+    0.45,
+    -2.75
+   ],
+   "size": [
+    1.4,
+    0.9,
+    0.45
+   ]
+  },
+  {
+   "name": "candlestick",
+   "shape": "cylinder",
+   "position": [
+    0.75,
+    1.07,
+    -2.75
+   ],
+   "size": [
+    0.08,
+    0.34,
+    0.08
+   ]
+  },
+  {
+   "name": "window",
+   "shape": "box",
+   "position": [
+    2.2,
+    1.55,
+    -2.98
+   ],
+   "size": [
+    1.1,
+    1.9,
+    0.06
+   ]
+  },
+  {
+   "name": "rug",
+   "shape": "box",
+   "position": [
+    0,
+    0.005,
+    0
+   ],
+   "size": [
+    4.0,
+    0.01,
+    2.8
+   ]
+  }
+ ],
+ "marks": {
+  "macbeth mark": [
+   -0.45,
+   0
+  ],
+  "lady mark": [
+   0.45,
+   0
+  ],
+  "floor before macbeth": [
+   0.5,
+   0.6
+  ]
+ },
+ "performers": [
+  {
+   "id": "macbeth",
+   "actionId": "macbeth-daggers-macbeth",
+   "name": "Macbeth II.2 \u00b7 Macbeth",
+   "represents": "Macbeth, a tall adult man about 40-45; screen-left, facing his wife; holds the two bloody daggers in his right hand",
+   "height": 1.86,
+   "color": "blue",
+   "start": "macbeth mark",
+   "facing": "lady",
+   "parts": [
+    {
+     "movementId": "move-idle",
+     "name": "0-3 s: stands rigid holding the daggers; she asks why he brought them",
+     "duration": 3
+    },
+    {
+     "movementId": "move-idle",
+     "name": "3-6 s: \"I won't go back. I can't look at it again.\"",
+     "duration": 3
+    },
+    {
+     "movementId": "move-idle",
+     "name": "6-8 s: lets her take the daggers",
+     "duration": 2
+    },
+    {
+     "movementId": "move-idle",
+     "name": "8-10 s: empty-handed, looks down at his hand",
+     "duration": 2
+    }
+   ],
+   "looks": [
+    {
+     "start": 0,
+     "end": 3,
+     "at": "floor before macbeth"
+    },
+    {
+     "start": 3,
+     "end": 8,
+     "at": "lady"
+    },
+    {
+     "start": 8,
+     "end": 10.6,
+     "at": [
+      -0.15,
+      0.95,
+      0.3
+     ]
+    }
+   ]
+  },
+  {
+   "id": "lady",
+   "actionId": "macbeth-daggers-lady",
+   "name": "Macbeth II.2 \u00b7 Lady Macbeth",
+   "represents": "Lady Macbeth, an adult woman; screen-right, facing her husband",
+   "height": 1.68,
+   "color": "orange",
+   "start": "lady mark",
+   "facing": "macbeth",
+   "parts": [
+    {
+     "movementId": "move-idle-talking",
+     "name": "0-3 s: \"Why did you bring the daggers here? They belong with the guards.\"",
+     "duration": 3
+    },
+    {
+     "movementId": "move-idle",
+     "name": "3-6 s: listens; at 5.3 s \"Give them to me.\"",
+     "duration": 3
+    },
+    {
+     "movementId": "move-idle",
+     "name": "6-8 s: takes the daggers with her left hand",
+     "duration": 2
+    },
+    {
+     "movementId": "move-idle",
+     "name": "8-10 s: holds the daggers; \"I'll put them back.\"",
+     "duration": 2
+    }
+   ],
+   "looks": [
+    {
+     "start": 0,
+     "end": 10.6,
+     "at": "macbeth"
+    }
+   ]
+  }
+ ],
+ "props": [
+  {
+   "id": "daggers",
+   "name": "daggers",
+   "shape": "box",
+   "size": [
+    0.06,
+    0.36,
+    0.06
+   ],
+   "color": "yellow",
+   "represents": "the two bloody daggers, held together by the hilts, blades down",
+   "start": {
+    "heldBy": "macbeth",
+    "hand": "right"
+   },
+   "handovers": [
+    {
+     "start": 6,
+     "end": 8,
+     "to": "lady",
+     "hand": "left"
+    }
+   ]
+  }
+ ],
+ "cameras": [
+  {
+   "start": 0,
+   "name": "Shot 1: Lady Macbeth chest-up over Macbeth's shoulder",
+   "position": [
+    -0.9,
+    1.5,
+    2.7
+   ],
+   "lookAt": "lady",
+   "aim": "head",
+   "lens35": 60
+  },
+  {
+   "start": 3,
+   "name": "Shot 2: Macbeth chest-up, reverse, same side of the line",
+   "position": [
+    0.9,
+    1.55,
+    2.7
+   ],
+   "lookAt": "macbeth",
+   "aim": "head",
+   "lens35": 60
+  },
+  {
+   "start": 5,
+   "name": "Shot 3: waist-up two-shot holding the hand-over",
+   "position": [
+    0,
+    1.4,
+    2.5
+   ],
+   "lookAt": [
+    0,
+    1.2,
+    0
+   ],
+   "lens35": 35
+  }
+ ],
+ "beats": [
+  {
+   "start": 0,
+   "end": 3,
+   "speaker": "lady",
+   "line": "Why did you bring the daggers here? They belong with the guards.",
+   "text": "Macbeth stands rigid, the daggers in his hand; Lady Macbeth faces him."
+  },
+  {
+   "start": 3,
+   "end": 5,
+   "speaker": "macbeth",
+   "line": "I won't go back. I can't look at it again.",
+   "text": "Macbeth answers without moving."
+  },
+  {
+   "start": 5,
+   "end": 6,
+   "speaker": "lady",
+   "line": "Give them to me.",
+   "text": "She holds his eyes."
+  },
+  {
+   "start": 6,
+   "end": 8,
+   "text": "She reaches out and takes the daggers from his hand."
+  },
+  {
+   "start": 8,
+   "end": 10,
+   "speaker": "lady",
+   "line": "I'll put them back.",
+   "text": "She holds the daggers; he looks down at his empty hand."
+  }
+ ],
+ "notes": [
+  "Act II Scene 2 adaptation, the hand-over beat only; lines are newly written modern English in the style of the Act I Scene 7 version, not Shakespeare's text.",
+  "The room follows the Act I Scene 7 antechamber master (door back left, sideboard with candles centre, curtained window right). Macbeth screen-left, Lady Macbeth screen-right, cameras south of their line as in Scene 7.",
+  "Nobody steps; they stand 0.9 m apart, as the hand-over needs."
+ ]
+}
