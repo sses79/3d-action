@@ -113,6 +113,76 @@
     0.01,
     2.8
    ]
+  },
+  {
+   "name": "fireplace",
+   "shape": "box",
+   "position": [
+    -2.86,
+    0.6,
+    -1.9
+   ],
+   "size": [
+    0.3,
+    1.2,
+    1.5
+   ]
+  },
+  {
+   "name": "mantel",
+   "shape": "box",
+   "position": [
+    -2.8,
+    1.24,
+    -1.9
+   ],
+   "size": [
+    0.42,
+    0.08,
+    1.7
+   ]
+  },
+  {
+   "name": "mantel candle left",
+   "shape": "cylinder",
+   "position": [
+    -2.8,
+    1.42,
+    -2.4
+   ],
+   "size": [
+    0.06,
+    0.28,
+    0.06
+   ]
+  },
+  {
+   "name": "mantel candle right",
+   "shape": "cylinder",
+   "position": [
+    -2.8,
+    1.42,
+    -1.4
+   ],
+   "size": [
+    0.06,
+    0.28,
+    0.06
+   ]
+  },
+  {
+   "name": "painting",
+   "shape": "box",
+   "position": [
+    -2.98,
+    2.0,
+    -1.9
+   ],
+   "size": [
+    0.04,
+    0.8,
+    1.0
+   ]
   }
  ],
  "marks": {
@@ -328,6 +398,7 @@
  "notes": [
   "Act II Scene 2 adaptation, the hand-over beat only; lines are newly written modern English in the style of the Act I Scene 7 version, not Shakespeare's text.",
   "The room follows the Act I Scene 7 antechamber master (door back left, sideboard with candles centre, curtained window right). Macbeth screen-left, Lady Macbeth screen-right, cameras south of their line as in Scene 7.",
-  "Nobody steps; they stand 0.9 m apart, as the hand-over needs."
+  "Nobody steps; they stand 0.9 m apart, as the hand-over needs.",
+  "2026-10-17: the marble fireplace adopted in s-video (west wall near the north-west corner, left of the doorway; behind Macbeth in his singles) added as plain boxes: surround, mantel with two candlesticks, painting above. No fire, no firebox opening (a box cannot show one)."
  ]
 }
