@@ -32,5 +32,6 @@ r=subprocess.run([sys.executable,'authoring/render/depth-tint.py',T['video'],f"{
 if r.returncode:sys.exit('tint failed:\n'+r.stderr[-2000:])
 r=subprocess.run([sys.executable,'authoring/render/video-clay-pack.py',str(root/f'{clip}.spec.json')],capture_output=True,text=True)
 if r.returncode:sys.exit('package failed:\n'+r.stderr[-2000:])
-C['fixed']=dict(at=time.strftime('%Y-%m-%dT%H:%M:%S'),fixes=fx,people=names,perShot=per,seconds=round(time.perf_counter()-began,1));json.dump(S,open(root/'source.json','w'),indent=1)
+C['fixed']=dict(at=time.strftime('%Y-%m-%dT%H:%M:%S'),fixes=fx,people=names,perShot=per,seconds=round(time.perf_counter()-began,1))
+S2=json.load(open(root/'source.json'));next(c for c in S2['clips'] if c['id']==clip)['fixed']=C['fixed'];json.dump(S2,open(root/'source.json','w'),indent=1)  # only this clip's record
 print(json.dumps(dict(clip=clip,people={n:colours[n] for n in names},perShot=per,seconds=C['fixed']['seconds'])))

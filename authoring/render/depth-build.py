@@ -90,5 +90,6 @@ spec=dict(id=a.clip,name=f"{S['name']} · {a.clip.replace(a.source+'-','clip ')}
     library=dict(source=S['id'],clip=a.clip,perShot=per_shot))
 spec_path=root/f'{a.clip}.spec.json';json.dump(spec,open(spec_path,'w'),indent=1);step('package',[py,'authoring/render/video-clay-pack.py',str(spec_path)])
 C.update(status='built',package=a.clip,built=dict(at=time.strftime('%Y-%m-%dT%H:%M:%S'),people={n:colours[i] for i,n in enumerate(names)},perShot=per_shot,keyframes=keys,seconds=dict(took,total=round(time.perf_counter()-began,1))))
-json.dump(S,open(root/'source.json','w'),indent=1)
+S2=json.load(open(root/'source.json'));next(c for c in S2['clips'] if c['id']==a.clip).update({k:C[k] for k in ('status','package','built')})  # read again: a description may have been written while this ran
+json.dump(S2,open(root/'source.json','w'),indent=1)
 print(json.dumps(dict(clip=a.clip,people={n:colours[i] for i,n in enumerate(names)},perShot=per_shot,keyframes=keys,seconds=C['built']['seconds'])))
