@@ -1,5 +1,5 @@
 import {createServer} from 'node:http';
-import {readFile,stat} from 'node:fs/promises';
+import {readFile,readdir,stat} from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
@@ -41,6 +41,22 @@ const server=createServer(async(req,res)=>{
    const match=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||''),first=match?Number(match[1]):0,last=Math.min(info.size-1,match&&match[2]?Number(match[2]):info.size-1);if(first>last||first>=info.size){res.writeHead(416,{'Content-Range':`bytes */${info.size}`});return res.end();}
    res.writeHead(match?206:200,{'Content-Type':/\.webm$/i.test(source.file)?'video/webm':'video/mp4','Accept-Ranges':'bytes','Content-Length':last-first+1,...(match?{'Content-Range':`bytes ${first}-${last}/${info.size}`}:{})});
    return createReadStream(source.file,{start:first,end:last}).on('error',()=>res.destroy()).pipe(res);
+  }
+  if(req.method==='GET'&&path==='/api/video-clay'){
+   // Video-to-clay packages (authoring/render/video-clay-pack.py): one folder each under .authoring/video-clay with a package.json.
+   const base=resolve(root,'.authoring/video-clay'),list=[];let names=[];try{names=await readdir(base);}catch{}
+   for(const id of names.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{list.push({...JSON.parse(await readFile(resolve(base,id,'package.json'),'utf8')),id});}catch{}}
+   return json(200,list);
+  }
+  if(req.method==='GET'&&path==='/api/video-clay-file'){
+   // Streams only the clay video or a keyframe still that a package names.
+   const id=url.searchParams.get('id')||'',file=url.searchParams.get('file')||'';if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))return json(404,{error:'No such package'});
+   const dir=resolve(root,'.authoring/video-clay',id);let pkg;try{pkg=JSON.parse(await readFile(resolve(dir,'package.json'),'utf8'));}catch{return json(404,{error:'No such package'});}
+   const named=new Set([pkg.clay,...pkg.keyframes.flatMap(k=>[k.clayStill,k.sourceStill])]);if(!named.has(file)||file.includes('/'))return json(404,{error:'Not a file of this package'});
+   const full=resolve(dir,file),info=await stat(full),type=file.endsWith('.mp4')?'video/mp4':'image/jpeg';
+   const match=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||''),first=match?Number(match[1]):0,last=Math.min(info.size-1,match&&match[2]?Number(match[2]):info.size-1);if(first>last||first>=info.size){res.writeHead(416,{'Content-Range':`bytes */${info.size}`});return res.end();}
+   res.writeHead(match?206:200,{'Content-Type':type,'Accept-Ranges':'bytes','Content-Length':last-first+1,...(match?{'Content-Range':`bytes ${first}-${last}/${info.size}`}:{})});
+   return createReadStream(full,{start:first,end:last}).on('error',()=>res.destroy()).pipe(res);
   }
   if(req.method==='GET'&&path==='/api/tools')return json(200,toolDefinitions);
   if(req.method==='POST'&&path==='/api/tool'){
