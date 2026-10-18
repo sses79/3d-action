@@ -70,3 +70,7 @@ Labels (a fixed list, each entry several):
 - `got-tywin` (211 s, 43 shots, 3 on): 016 (53.5-58.8 s, the camera moving round Tywin), 022 (93.6-98.2 s, four at the bier), 028 (132.8-144.9 s, the walk round the bier; V.5); 40 still entries.
 - `overview.jpg` per source: every shot, clips in colour, bridged shots marked.
 
+### The depth page (2026-10-18)
+
+`/editor/depth.html` (`editor/depth.tsx`; built with `npm run build:editor`; header link "Depth library" on the Clay page). Library view: the sources at the left with what to show (depth clips, still shots, built packages) and filters by what was measured (camera moves, someone moves, people in a wide shot, bridged sequence, speech, several shots) and by text; for the chosen source a strip of every shot (proposed clips in colour, bridged shots marked), the built packages, and the clips as cards (shots, time, reasons, "proposed · not built · not described"). A clip opens a side panel with each shot's numbers and speech windows. A built package opens the clip view that was "From a video" on the Clay page (video, rows, keyframe cards, cast and style, prompts); old `clay.html?video=` links are sent there. Service: `/api/depth-library` (sources with the packages cut from the same video file) and `/api/depth-library-file` (only shot thumbnails and the overview). The four packages are listed under their sources (three under the standoff, V.5 under Tywin). Labels and summaries wait for the describe step.
+

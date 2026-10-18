@@ -8,7 +8,7 @@ import {Studio,toolDefinitions} from './core.js';
 const root=fileURLToPath(new URL('../',import.meta.url)),studio=new Studio(root,process.env.STUDIO_STATE_PATH||undefined);
 const port=Number(process.env.STUDIO_PORT||5174);
 const origins=new Set([`http://127.0.0.1:${port}`,`http://localhost:${port}`,'http://127.0.0.1:5173','http://localhost:5173']);
-const files={'/editor/':['editor/index.html','text/html'],'/editor/app.js':['editor/app.js','text/javascript'],'/editor/clay.html':['editor/clay.html','text/html'],'/editor/clay.js':['editor/clay.js','text/javascript'],'/editor/style.css':['editor/style.css','text/css'],'/editor/assets/character.glb':['editor/assets/character.glb','model/gltf-binary'],'/editor/assets/characters/superhero-female.glb':['editor/assets/characters/superhero-female.glb','model/gltf-binary'],'/editor/assets/characters/superhero-male.glb':['editor/assets/characters/superhero-male.glb','model/gltf-binary']};
+const files={'/editor/':['editor/index.html','text/html'],'/editor/app.js':['editor/app.js','text/javascript'],'/editor/clay.html':['editor/clay.html','text/html'],'/editor/clay.js':['editor/clay.js','text/javascript'],'/editor/depth.html':['editor/depth.html','text/html'],'/editor/depth.js':['editor/depth.js','text/javascript'],'/editor/style.css':['editor/style.css','text/css'],'/editor/assets/character.glb':['editor/assets/character.glb','model/gltf-binary'],'/editor/assets/characters/superhero-female.glb':['editor/assets/characters/superhero-female.glb','model/gltf-binary'],'/editor/assets/characters/superhero-male.glb':['editor/assets/characters/superhero-male.glb','model/gltf-binary']};
 const server=createServer(async(req,res)=>{
  const host=req.headers.host;if(![`127.0.0.1:${port}`,`localhost:${port}`].includes(host)){res.writeHead(403);res.end();return;}
  const origin=req.headers.origin;if(origin&&!origins.has(origin)){res.writeHead(403);res.end();return;}
@@ -47,6 +47,20 @@ const server=createServer(async(req,res)=>{
    const base=resolve(root,'.authoring/video-clay'),list=[];let names=[];try{names=await readdir(base);}catch{}
    for(const id of names.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{list.push({...JSON.parse(await readFile(resolve(base,id,'package.json'),'utf8')),id});}catch{}}
    return json(200,list);
+  }
+  if(req.method==='GET'&&path==='/api/depth-library'){
+   // The depth shot library (docs/DEPTH_LIBRARY_PLAN.md): each source ingested by depth-ingest.py, with the built packages
+   // (.authoring/video-clay) that were cut from the same video file.
+   const base=resolve(root,'.authoring/depth-library'),pk=resolve(root,'.authoring/video-clay'),sources=[],packs=[];let names=[],pnames=[];try{names=await readdir(base);}catch{}try{pnames=await readdir(pk);}catch{}
+   for(const id of pnames.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{const p=JSON.parse(await readFile(resolve(pk,id,'package.json'),'utf8'));packs.push({id,name:p.name,sourceVideo:p.sourceVideo,start:p.start,end:p.start+p.duration,keyframes:p.keyframes.length,depth:!!p.depth,thumb:p.keyframes[0]?.depthStill??p.keyframes[0]?.clayStill,scene:p.scene??null});}catch{}}
+   for(const id of names.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{const s=JSON.parse(await readFile(resolve(base,id,'source.json'),'utf8'));delete s.file;sources.push({...s,packages:packs.filter(p=>p.sourceVideo===s.fileName)});}catch{}}
+   return json(200,{sources,unlinked:packs.filter(p=>!sources.some(s=>s.fileName===p.sourceVideo))});
+  }
+  if(req.method==='GET'&&path==='/api/depth-library-file'){
+   // Streams only a shot thumbnail or the overview sheet of an ingested source.
+   const id=url.searchParams.get('source')||'',file=url.searchParams.get('file')||'';if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id)||!/^(shot-\d{3}|overview)\.jpg$/.test(file))return json(404,{error:'Not a library file'});
+   let bytes;try{bytes=await readFile(resolve(root,'.authoring/depth-library',id,file));}catch{return json(404,{error:'No such file'});}
+   res.writeHead(200,{'Content-Type':'image/jpeg','Content-Length':bytes.length});return res.end(bytes);
   }
   if(req.method==='GET'&&path==='/api/video-clay-file'){
    // Streams only the clay video or a keyframe still that a package names.

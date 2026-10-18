@@ -23,6 +23,8 @@ EDITOR_FILES = {
     "app.js": "text/javascript; charset=utf-8",
     "clay.html": "text/html; charset=utf-8",
     "clay.js": "text/javascript; charset=utf-8",
+    "depth.html": "text/html; charset=utf-8",
+    "depth.js": "text/javascript; charset=utf-8",
     "assets/character.glb": "model/gltf-binary",
     "assets/characters/superhero-female.glb": "model/gltf-binary",
     "assets/characters/superhero-male.glb": "model/gltf-binary",
