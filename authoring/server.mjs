@@ -52,7 +52,7 @@ const server=createServer(async(req,res)=>{
    // Streams only the clay video or a keyframe still that a package names.
    const id=url.searchParams.get('id')||'',file=url.searchParams.get('file')||'';if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))return json(404,{error:'No such package'});
    const dir=resolve(root,'.authoring/video-clay',id);let pkg;try{pkg=JSON.parse(await readFile(resolve(dir,'package.json'),'utf8'));}catch{return json(404,{error:'No such package'});}
-   const named=new Set([pkg.clay,...pkg.keyframes.flatMap(k=>[k.clayStill,k.sourceStill])]);if(!named.has(file)||file.includes('/'))return json(404,{error:'Not a file of this package'});
+   const named=new Set([pkg.clay,pkg.depth,...pkg.keyframes.flatMap(k=>[k.clayStill,k.sourceStill,k.depthStill])].filter(Boolean));if(!named.has(file)||file.includes('/'))return json(404,{error:'Not a file of this package'});
    const full=resolve(dir,file),info=await stat(full),type=file.endsWith('.mp4')?'video/mp4':'image/jpeg';
    const match=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||''),first=match?Number(match[1]):0,last=Math.min(info.size-1,match&&match[2]?Number(match[2]):info.size-1);if(first>last||first>=info.size){res.writeHead(416,{'Content-Range':`bytes */${info.size}`});return res.end();}
    res.writeHead(match?206:200,{'Content-Type':type,'Accept-Ranges':'bytes','Content-Length':last-first+1,...(match?{'Content-Range':`bytes ${first}-${last}/${info.size}`}:{})});

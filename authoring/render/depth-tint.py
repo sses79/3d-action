@@ -1,6 +1,6 @@
 """A depth video straight from the source video, with each named person tinted in a colour of their own, for a video model that
 takes it as a motion reference (Seedance has no depth input of its own: this goes in as an ordinary reference video).
-  .authoring/vision-venv/bin/python authoring/render/depth-tint.py VIDEO START END OUT.mp4 --shots SHOTS.json --tracks A.json,B.json
+  .authoring/vision-venv/bin/python authoring/render/depth-tint.py VIDEO START END OUT.mp4 --shots SHOTS.json --tracks A.json,B.json[:old=new]
       --colors cersei=pink,lancel=blue,... [--encoder vits] [--size 518] [--strength 0.6] [--width 960] [--model da3|vda] [--depth DEPTH.npz]
 Depth: Depth Anything 3 by default (authoring/render/da3-depth.py, run here, saved beside OUT as .depth.npz; about 0.3 s a
 frame on this Mac against minutes per 32 frames for Video Depth Anything, --model vda), steadied over three frames; --depth
@@ -59,8 +59,10 @@ took=time.perf_counter()-began
 # who is where: boxes per frame by name, from the track files
 colors={kv.split('=')[0]:kv.split('=')[1] for kv in a.colors.split(',') if '=' in kv};boxes=[{} for _ in range(N)]
 for f in [x for x in a.tracks.split(',') if x]:
+    f,*ren=f.split(':');ren=dict(r.split('=') for r in ren)  # file.json:old=new renames a track (a person named wrongly in the follow step)
     tr=json.load(open(f));T=np.array(tr['times'])
     for name,v in tr['tracks'].items():
+        name=ren.get(name,name)
         if name not in colors:continue
         for k in range(N):
             j=int(np.argmin(np.abs(T-times[k])))
