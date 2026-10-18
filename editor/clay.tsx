@@ -169,13 +169,14 @@ function App(){
 // From a video: a clay video made from a source clip (depth-clay.py) with its keyframes (video-clay-pack.py): a still of the source
 // and of the clay at each one, and who is there, what they do, say and show. The cast and style typed here (kept in this browser)
 // turn it into a video prompt and one image prompt per keyframe for another scene.
-type Pack={id:string;name:string;sourceVideo:string;clay:string;depth?:string|null;start:number;duration:number;size:number[];fps:number;people:{name:string;color:string;represents:string}[];shots:{index:number;start:number;end:number;camera:string}[];audio:{start:number;end:number;who?:string;kind:string;text:string}[];keyframes:{time:number;shot:number;summary:string;clayStill:string;sourceStill:string;depthStill?:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]}[];notes?:string[]};
+type Pack={id:string;name:string;sourceVideo:string;clay:string;cast?:Record<string,string>;style?:string;scene?:string;depth?:string|null;start:number;duration:number;size:number[];fps:number;people:{name:string;color:string;represents:string}[];shots:{index:number;start:number;end:number;camera:string}[];audio:{start:number;end:number;who?:string;kind:string;text:string}[];keyframes:{time:number;shot:number;summary:string;clayStill:string;sourceStill:string;depthStill?:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]}[];notes?:string[]};
 function VideoClay(){
  const [list,setList]=useState<Pack[]>([]),[id,setId]=useState(new URLSearchParams(location.search).get('video')||''),[error,setError]=useState(''),[time,setTime]=useState(0),[copied,setCopied]=useState('');
  const [cast,setCast]=useState<Record<string,string>>({}),[style,setStyle]=useState(''),[ref,setRef]=useState<'clay'|'depth'>('clay'),video=useRef<HTMLVideoElement>(null);
  useEffect(()=>{fetch(bridgeUrl+'/api/video-clay').then(r=>r.json()).then((l:Pack[])=>{setList(l);if(!l.length)setError('No video-to-clay package yet: make one with authoring/render/video-clay-pack.py.');else setId(v=>l.some(p=>p.id===v)?v:l[0].id);}).catch(e=>setError('The authoring service is not answering ('+e.message+'). Start it with npm run start:authoring and open this page from it.'));},[]);
  const store='video-clay-cast:'+id;
- useEffect(()=>{try{const s=JSON.parse(localStorage.getItem(store)||'{}');setCast(s.cast||{});setStyle(s.style||'');setRef(s.ref==='depth'?'depth':'clay');}catch{setCast({});setStyle('');setRef('clay');}},[store]);
+ const pk0=list.find(p=>p.id===id);  // a package may suggest a cast and style; what is typed here (kept in this browser) wins
+ useEffect(()=>{try{const s=JSON.parse(localStorage.getItem(store)||'{}');setCast(s.cast||pk0?.cast||{});setStyle(s.style??pk0?.style??'');setRef(s.ref==='depth'?'depth':'clay');}catch{setCast(pk0?.cast||{});setStyle(pk0?.style||'');setRef('clay');}},[store,pk0]);
  const keep=(c:Record<string,string>,s:string,r=ref)=>{setCast(c);setStyle(s);setRef(r);try{localStorage.setItem(store,JSON.stringify({cast:c,style:s,ref:r}));}catch{}};
  const pkg=list.find(p=>p.id===id),useDepth=ref==='depth'&&!!pkg?.depth,file=(f:string)=>bridgeUrl+'/api/video-clay-file?id='+encodeURIComponent(id)+'&file='+encodeURIComponent(f);
  const seek=(t:number)=>{const v=video.current;if(v){v.pause();v.currentTime=t;}setTime(t);};
@@ -214,6 +215,7 @@ function VideoClay(){
    <h2>REFERENCE VIDEO</h2>
    <div className="vc-ref">{([['clay','Clay figures','plain coloured shapes; the kind of reference Seedance 2.5’s guide describes'],['depth','Tinted depth','the original’s depth, white near, each person tinted; exact outlines and camera, but Seedance has no depth input: it goes in as an ordinary video']] as const).map(([k,label,help])=><label key={k} className={k==='depth'&&!pkg.depth?'off':''}><input type="radio" name="vc-ref" disabled={k==='depth'&&!pkg.depth} checked={(k==='depth')===useDepth} onChange={()=>{const v=video.current,at=v?.currentTime??0;keep(cast,style,k);requestAnimationFrame(()=>{if(video.current)video.current.currentTime=at;});}}/><span><strong>{label}</strong><small>{k==='depth'&&!pkg.depth?'not in this package':help}</small></span></label>)}</div>
    <hr/><h2>YOUR SCENE</h2>
+   {pkg.scene&&<p className="vc-scene">{pkg.scene}</p>}
    <p className="vc-help">Who each figure becomes in your scene and the look to draw it in. Left empty, the prompts describe the people of the source clip.</p>
    <div className="vc-cast">{pkg.people.map(p=><label key={p.name}><span><i style={{background:hex[p.color]??p.color}}/>{p.name} · {p.color}</span><input value={cast[p.name]??''} placeholder={p.represents} onChange={e=>keep({...cast,[p.name]:e.target.value},style)}/></label>)}
     <label><span>Style</span><input value={style} placeholder="e.g. soft 2D digital painting, warm candlelight" onChange={e=>keep(cast,e.target.value)}/></label></div>
