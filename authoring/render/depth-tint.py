@@ -1,6 +1,6 @@
 """A depth video straight from the source video, with each named person tinted in a colour of their own, for a video model that
 takes it as a motion reference (Seedance has no depth input of its own: this goes in as an ordinary reference video).
-  .authoring/vision-venv/bin/python authoring/render/depth-tint.py VIDEO START END OUT.mp4 --shots SHOTS.json --tracks A.json,B.json[:old=new]
+  .authoring/vision-venv/bin/python authoring/render/depth-tint.py VIDEO START END OUT.mp4 --shots SHOTS.json --tracks A.json,B.json[:old=new] (a track file with "exact": true is boxes by hand, used as given and in front)
       --colors cersei=pink,lancel=blue,... [--encoder vits] [--size 518] [--strength 0.6] [--width 960] [--model da3|vda] [--depth DEPTH.npz]
 Depth: Depth Anything 3 by default (authoring/render/da3-depth.py, run here, saved beside OUT as .depth.npz; about 0.3 s a
 frame on this Mac against minutes per 32 frames for Video Depth Anything, --model vda), steadied over three frames; --depth
@@ -57,16 +57,22 @@ else:
     
 took=time.perf_counter()-began
 # who is where: boxes per frame by name, from the track files
-colors={kv.split('=')[0]:kv.split('=')[1] for kv in a.colors.split(',') if '=' in kv};boxes=[{} for _ in range(N)]
+colors={kv.split('=')[0]:kv.split('=')[1] for kv in a.colors.split(',') if '=' in kv};exact=set();boxes=[{} for _ in range(N)]
 for f in [x for x in a.tracks.split(',') if x]:
     f,*ren=f.split(':');ren=dict(r.split('=') for r in ren)  # file.json:old=new renames a track (a person named wrongly in the follow step)
     tr=json.load(open(f));T=np.array(tr['times'])
+    if tr.get('exact'):exact.update(ren.get(n,n) for n in tr['tracks'])  # boxes drawn by hand (a body lying down): used as they are, and in front where they overlap
     for name,v in tr['tracks'].items():
         name=ren.get(name,name)
         if name not in colors:continue
         for k in range(N):
             j=int(np.argmin(np.abs(T-times[k])))
             if abs(T[j]-times[k])<.6/fps and v[j]:boxes[k][name]=v[j]['box']
+for n in colors:  # a track that drops out for up to half a second (a turn, a blur) is carried across by blending its boxes
+    have=[k for k in range(N) if n in boxes[k]]
+    for k0,k1 in zip(have,have[1:]):
+        if 1<k1-k0<=round(fps/2):
+            for k in range(k0+1,k1):u=(k-k0)/(k1-k0);boxes[k][n]=[p+(q-p)*u for p,q in zip(boxes[k0][n],boxes[k1][n])]
 EDGE=a.edge;H,W=grey.shape[1:];sx=W/cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 for b in boxes:
     for n in b:b[n]=[v*sx for v in b[n]]
@@ -74,12 +80,14 @@ out=np.zeros((N,H,W,3),np.uint8);owner=np.full((H,W),-1,np.int8);seen={n:0 for n
 names=list(colors);hues={n:cv2.cvtColor(np.uint8([[[int(NAMED.get(c,c)[i:i+2],16) for i in (5,3,1)]]]),cv2.COLOR_BGR2HSV)[0,0,0] for n,c in colors.items()}
 for k in range(N):
     g=grey[k];owner[:]=-1;near={}
-    for i,n in enumerate(names):
+    for i,n in sorted(enumerate(names),key=lambda x:x[1] not in exact):  # boxes by hand first: they claim their pixels before the detector's people are worked out
         if n not in boxes[k]:continue
-        x0,y0,x1,y1=boxes[k][n];bw,bh=x1-x0,y1-y0;x0,y0,x1,y1=[int(round(v)) for v in (x0-.25*bw,y0-.35*bh,x1+.25*bw,y1)];x0,y0=max(0,x0),max(0,y0);x1,y1=min(W,x1),min(H,y1)  # the detector's boxes cut the top of the head and loose hair: widened, the depth edges keep the tint to the person
-        if H-y1<.08*H:y1=H  # a person cut by the bottom of the frame: carried to it
+        x0,y0,x1,y1=boxes[k][n];bw,bh=x1-x0,y1-y0;x0,y0,x1,y1=[int(round(v)) for v in ((x0,y0,x1,y1) if n in exact else (x0-.25*bw,y0-.35*bh,x1+.25*bw,y1))];x0,y0=max(0,x0),max(0,y0);x1,y1=min(W,x1),min(H,y1)  # the detector's boxes cut the top of the head and loose hair: widened, the depth edges keep the tint to the person
+        if H-y1<.08*H and n not in exact:y1=H  # a person cut by the bottom of the frame: carried to it
         if x1-x0<8 or y1-y0<8:continue
-        roi=g[y0:y1,x0:x1];t,_=cv2.threshold(roi,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU);m=(roi>=t).astype(np.uint8)
+        taken=np.isin(owner[y0:y1,x0:x1],[names.index(e) for e in exact]) if n not in exact else np.zeros((y1-y0,x1-x0),bool);roi=np.where(taken,0,g[y0:y1,x0:x1]).astype(np.uint8);free=roi[~taken];t,_=cv2.threshold(free.reshape(-1,1) if free.size else roi,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU);m=((roi>=t)&~taken).astype(np.uint8)  # the split from this person's own pixels
+        if n in exact:  # by hand: the whole box but its far background (someone much nearer inside it would take an Otsu split)
+            m=(roi>=.6*np.median(roi)).astype(np.uint8);m=cv2.morphologyEx(m,cv2.MORPH_OPEN,np.ones((5,5),np.uint8));owner[y0:y1,x0:x1][m>0]=i;near[i]=float(np.median(roi[m>0])) if m.any() else 0.;seen[n]+=1;continue
         m=cv2.morphologyEx(m,cv2.MORPH_OPEN,np.ones((5,5),np.uint8));cnt,lab,st,_=cv2.connectedComponentsWithStats(m)
         if cnt<2:continue
         # cut the nearer part along depth edges (a table in front of someone meets them at an edge; their own body, turning

@@ -128,3 +128,9 @@ The user's point: many shots need no control video. Definition, measured per sho
 - **Off** otherwise: people in place, talking or listening, the camera holding on them (close-ups, two-shots, over the shoulder). Keyframe images and the prompt carry these.
 - Measured on both Game of Thrones videos (`.authoring/control-need/`, shots from shots.py): the standoff 15 of 48 on (her walk down, the Mountain walking up, the crowd moving, the fast fight shots 29-41); the Tywin scene 3 of 43 on (the camera moving round Tywin twice, the wide shot of four at the bier); everything else is talk and comes out off. Missed by the numbers and on by eye: standoff 26-28 and 32 (the Mountain grabs and holds a man; slow hands, not speed). `examples.jpg` shows four of each kind. 3 minutes for 91 shots.
 
+## Macbeth V.5 from the Tywin scene's shot 28 (2026-10-18)
+
+`.authoring/video-clay/macbeth-v5-tomorrow/` (spec beside it): one 12 s moving shot (132.88-144.86 s), an older lord walking round a bier, becomes Macbeth walking round Lady Macbeth's bier with Seyton in the foreground; line windows are the source's speech times (0-2.1, 3.1-6.1, 9.1-11.1 s). Tinted depth only (the package step now takes a clay video as optional). Time: depth 2 minutes, following 3 minutes, tint seconds.
+- `depth-tint.py` changes: a track file with `"exact": true` is boxes by hand (the body: a detector does not find someone lying down), used as given, filled first with its whole box but the far background, and kept out of the others; a person's near-and-far split is taken from their own pixels; a track that drops out for up to half a second is carried across by blending its boxes (Macbeth turning at 5 s).
+- The body's boxes start at the bier's top edge: above it Macbeth stands behind the body at nearly the same depth, and no depth split can part them. So the pink is box-shaped and the head above the bier is untinted; the depth still shows the outline.
+

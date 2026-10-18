@@ -169,7 +169,7 @@ function App(){
 // From a video: the tinted depth video of a source clip (depth-tint.py; the clay of depth-clay.py when a package has no depth) with
 // its keyframes (video-clay-pack.py): a still of the source and of the reference video at each one, and who is there, what they do, say and show. The cast and style typed here (kept in this browser)
 // turn it into a video prompt and one image prompt per keyframe for another scene.
-type Pack={id:string;name:string;sourceVideo:string;clay:string;cast?:Record<string,string>;style?:string;scene?:string;depth?:string|null;start:number;duration:number;size:number[];fps:number;people:{name:string;color:string;represents:string}[];shots:{index:number;start:number;end:number;camera:string}[];audio:{start:number;end:number;who?:string;kind:string;text:string}[];keyframes:{time:number;shot:number;summary:string;clayStill:string;sourceStill:string;depthStill?:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]}[];notes?:string[]};
+type Pack={id:string;name:string;sourceVideo:string;clay:string|null;cast?:Record<string,string>;style?:string;scene?:string;depth?:string|null;start:number;duration:number;size:number[];fps:number;people:{name:string;color:string;represents:string}[];shots:{index:number;start:number;end:number;camera:string}[];audio:{start:number;end:number;who?:string;kind:string;text:string}[];keyframes:{time:number;shot:number;summary:string;clayStill:string|null;sourceStill:string;depthStill?:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]}[];notes?:string[]};
 function VideoClay(){
  const [list,setList]=useState<Pack[]>([]),[id,setId]=useState(new URLSearchParams(location.search).get('video')||''),[error,setError]=useState(''),[time,setTime]=useState(0),[copied,setCopied]=useState('');
  const [cast,setCast]=useState<Record<string,string>>({}),[style,setStyle]=useState(''),video=useRef<HTMLVideoElement>(null);
@@ -198,7 +198,7 @@ function VideoClay(){
  return <><header><div className="brand"><div className="brand-icon">◈</div><div><strong>ANIMATION STUDIO</strong><small>Clay reference / from a video</small></div></div><div className="header-actions"><select aria-label="Clip" value={id} onChange={e=>setId(e.target.value)}>{list.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select><a className="link" href="?">Staged scenes</a><a className="link" href="./">Action workshop</a></div></header>
   {error&&<div className="clay-error"><span>{error}</span></div>}
   {pkg&&<div className="clay-layout"><main>
-   <div className="clay-stage"><video ref={video} className="clay-canvas vc-video" src={file(useDepth?pkg.depth!:pkg.clay)} controls playsInline onTimeUpdate={e=>setTime((e.target as HTMLVideoElement).currentTime)}/></div>
+   <div className="clay-stage"><video ref={video} className="clay-canvas vc-video" src={file((useDepth?pkg.depth:pkg.clay)!)} controls playsInline onTimeUpdate={e=>setTime((e.target as HTMLVideoElement).currentTime)}/></div>
    <div className="timeline"><div className="clay-rows">
     <div className="clay-row"><label>Shots</label>{pkg.shots.map(s=><button key={s.index} className={'shot'+(time>=s.start&&time<s.end?' now':'')} style={{left:pos(s.start),width:wide(s.start,s.end)}} title={s.camera} onClick={()=>seek(s.start+.02)}>Shot {s.index}</button>)}</div>
     <div className="clay-row"><label>Keyframes</label>{pkg.keyframes.map((k,i)=><button key={i} className={'range vc-key'+(i===hereKey?' now':'')} style={{left:`calc(${pos(k.time)} - 11px)`,width:'22px'}} title={k.summary} onClick={()=>seek(k.time)}>{i+1}</button>)}</div>
@@ -206,7 +206,7 @@ function VideoClay(){
    </div></div>
    <div className="vc-keys">{pkg.keyframes.map((k,i)=><section key={i} className={'vc-card'+(i===hereKey?' now':'')}>
     <div className="vc-head"><button onClick={()=>seek(k.time)}>{i+1} · {k.time.toFixed(2)} s · shot {k.shot}</button><span>{pkg.shots.find(s=>s.index===k.shot)?.camera}</span></div>
-    <div className="vc-stills"><figure><img src={file(k.sourceStill)} alt=""/><figcaption>source</figcaption></figure><figure><img src={file(useDepth&&k.depthStill?k.depthStill:k.clayStill)} alt=""/><figcaption>{useDepth?'tinted depth':'clay'}</figcaption></figure></div>
+    <div className="vc-stills"><figure><img src={file(k.sourceStill)} alt=""/><figcaption>source</figcaption></figure><figure><img src={file((useDepth&&k.depthStill?k.depthStill:k.clayStill)!)} alt=""/><figcaption>{useDepth?'tinted depth':'clay'}</figcaption></figure></div>
     <p className="vc-sum">{k.summary}</p>
     {(()=>{const says=k.people.some(p=>p.speaking),face=k.people.some(p=>p.expression);return <table className="vc-people"><thead><tr><th>Who</th><th>Doing</th>{says&&<th>Says</th>}{face&&<th>Face</th>}</tr></thead><tbody>{k.people.map(p=>{const c=pkg.people.find(q=>q.name===p.name)!;return <tr key={p.name}><td><i style={{background:hex[c.color]??c.color}}/>{p.name}{cast[p.name]?.trim()?<small> → {cast[p.name]}</small>:null}</td><td>{p.doing}</td>{says&&<td>{p.speaking||'—'}</td>}{face&&<td>{p.expression||'—'}</td>}</tr>;})}</tbody></table>;})()}
     {texts&&<div className="clay-copy"><div className="clay-copy-head"><strong>Image prompt for this keyframe</strong><button onClick={()=>copy('k'+i,texts.images[i])}>{copied==='k'+i?'Copied':'Copy'}</button></div></div>}
@@ -222,7 +222,7 @@ function VideoClay(){
    {texts&&<div className="clay-copy"><div><div className="clay-copy-head"><strong>Video prompt ({useDepth?'tinted depth':'clay video'} as reference video 1)</strong><button onClick={()=>copy('video',texts.videoPrompt)}>{copied==='video'?'Copied':'Copy'}</button></div><p>{texts.videoPrompt}</p></div>
     <small>Whole-second times are for Seedance 2.5; 2.0 follows only the shot order. Upload the {useDepth?'tinted depth video':'clay video'} and your character images; the keyframe stills of the source are for checking, not for upload.</small></div>}
    <hr/><h2>PACKAGE</h2>
-   <p className="vc-help">.authoring/video-clay/{pkg.id}/ · clay.mp4{pkg.depth?', depth.mp4':''} ({pkg.size[0]}×{pkg.size[1]}, {pkg.duration.toFixed(2)} s, {pkg.fps} fps) and a source and clay still per keyframe. From {pkg.sourceVideo}, {pkg.start}–{(pkg.start+pkg.duration).toFixed(2)} s.</p>
+   <p className="vc-help">.authoring/video-clay/{pkg.id}/ · {[pkg.depth,pkg.clay].filter(Boolean).join(', ')} ({pkg.size[0]}×{pkg.size[1]}, {pkg.duration.toFixed(2)} s, {pkg.fps} fps) and a source and clay still per keyframe. From {pkg.sourceVideo}, {pkg.start}–{(pkg.start+pkg.duration).toFixed(2)} s.</p>
    {pkg.notes?.map((n,i)=><p key={i} className="vc-help">{n}</p>)}
   </aside></div>}</>;
 }
