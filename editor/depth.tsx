@@ -3,6 +3,7 @@
 // (a tinted depth video with keyframes, cast and prompts). Needs the authoring service.
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {createRoot} from 'react-dom/client';
+import {packPrompts} from '../runtime/depth-prompts';
 
 const bridgeUrl=location.port==='5174'?'':'http://127.0.0.1:5174';
 const hex:Record<string,string>={blue:'#4a86d8',orange:'#ee8a3a',green:'#4fae5a',pink:'#f07fb0',purple:'#8d6fd1',yellow:'#e8c53a',red:'#d9534a',gray:'#8e949c'};
@@ -21,7 +22,8 @@ function Library(){
  const [lib,setLib]=useState<{sources:Source[];unlinked:PackRef[]}|null>(null),[error,setError]=useState(''),[srcId,setSrcId]=useState(q.get('source')||''),[pkg,setPkg]=useState(q.get('package')||''),[open,setOpen]=useState(q.get('clip')||'');
  const [show,setShow]=useState({control:true,still:false,built:true}),[tags,setTags]=useState<string[]>([]),[text,setText]=useState('');
  // a package opened directly (an old Clay page link) selects its own source
- useEffect(()=>{fetch(bridgeUrl+'/api/depth-library').then(r=>r.json()).then(d=>{setLib(d);if(!d.sources.length)setError('Nothing ingested yet: run authoring/render/depth-ingest.py VIDEO --id NAME.');const owner=d.sources.find((s:Source)=>s.packages.some(p=>p.id===q.get('package')))?.id;setSrcId(v=>owner??(d.sources.some((s:Source)=>s.id===v)?v:d.sources[0]?.id||''));}).catch(e=>setError('The authoring service is not answering ('+e.message+'). Start it with npm run start:authoring and open this page from it.'));},[]);
+ const [loads,setLoads]=useState(0),reload=()=>setLoads(n=>n+1);
+ useEffect(()=>{fetch(bridgeUrl+'/api/depth-library').then(r=>r.json()).then(d=>{setLib(d);if(!d.sources.length)setError('Nothing ingested yet: run authoring/render/depth-ingest.py VIDEO --id NAME.');const owner=d.sources.find((s:Source)=>s.packages.some(p=>p.id===q.get('package')))?.id;setSrcId(v=>owner??(d.sources.some((s:Source)=>s.id===v)?v:d.sources[0]?.id||''));}).catch(e=>setError('The authoring service is not answering ('+e.message+'). Start it with npm run start:authoring and open this page from it.'));},[loads]);
  useEffect(()=>{const u=new URLSearchParams();if(srcId)u.set('source',srcId);if(pkg)u.set('package',pkg);if(open)u.set('clip',open);history.replaceState(null,'','?'+u.toString());},[srcId,pkg,open]);
  const src=lib?.sources.find(s=>s.id===srcId),shotOf=(n:number)=>src!.shots.find(s=>s.index===n)!;
  const colourOf=useMemo(()=>{const m=new Map<number,string>();src?.clips.filter(c=>c.kind==='control').forEach((c,i)=>c.shots.forEach(n=>m.set(n,CLIP[i%CLIP.length])));return m;},[src]);
@@ -55,11 +57,19 @@ function Library(){
      <em>{c.kind==='control'?(c.package?`built in ${Math.round(c.built?.seconds.total??0)} s · ${c.fixed?.people.length??Object.keys(c.built?.people??{}).length} people${c.fixed?' (fixed)':''} · open`:'proposed · not built'):'still'} · {c.described?'described':'not described'}</em></div></button>;})}</div>
   </>}</main>
   {oc&&src&&<aside className="dl-detail"><div className="dl-detail-head"><strong>{oc.id}</strong><button onClick={()=>setOpen('')}>×</button></div>
-   <p className="vc-help">{oc.kind==='control'?'A depth clip, not built yet. Build it with: .authoring/vision-venv/bin/python authoring/render/depth-build.py '+src.id+' '+oc.id+' (a few minutes; a button comes with the service jobs).':'A still shot: no control video; it will carry keyframes and text once described.'} {clock(oc.start)}–{clock(oc.end)}, {sec(oc.seconds)}.</p>
+   <p className="vc-help">{oc.kind==='control'?'A depth clip, not built yet: Build makes its depth, finds and names the people, tints and packages it (about 2 minutes for 5-15 s).':'A still shot: no control video; it will carry keyframes and text once described.'} {clock(oc.start)}–{clock(oc.end)}, {sec(oc.seconds)}.</p>
+   {oc.kind==='control'&&!oc.package&&<BuildButton clip={oc.id} onDone={reload}/>}
    {oc.shots.map(shotOf).map(s=><div key={s.index} className="dl-shot"><img src={thumb(src.id,s.thumb)} alt=""/><div><strong>Shot {s.index} · {sec(s.start)}–{sec(s.end)} · {s.control==='on'?'control on':s.bridged?'bridged':'off'}</strong>
     <small>camera {s.camera.toFixed(2)} widths/s · move {s.move.toFixed(2)} heights/s · {s.people} people · tallest {Math.round(s.size*100)}% of height{s.speechWindows.length?` · speech ${s.speechWindows.map(w=>`${sec(w[0])}–${sec(w[1])}`).join(', ')}`:''}</small><small>{s.why.join(', ')}</small></div></div>)}
   </aside>}
   </div></>;
+}
+// Builds a proposed clip as a service job (build_depth_clip) and follows it until done.
+async function tool(name:string,args:any){const r=await fetch(bridgeUrl+'/api/tool',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,arguments:args})}),d=await r.json();if(!r.ok||d.error)throw Error(d.error||'The service refused the request');return d.result;}
+function BuildButton({clip,onDone}:{clip:string;onDone:()=>void}){
+ const [state,setState]=useState(''),[busy,setBusy]=useState(false);
+ const go=async()=>{setBusy(true);setState('Starting…');try{const {job}=await tool('build_depth_clip',{clip}),t0=Date.now();for(;;){await new Promise(r=>setTimeout(r,3000));const j=await tool('get_depth_job',{job});if(j.status==='running'){setState(`Building… ${Math.round((Date.now()-t0)/1000)} s`);continue;}if(j.status==='done'){setState(`Built in ${Math.round(j.result?.seconds?.total??0)} s`);onDone();}else setState('Failed: '+(j.error||'').slice(-300));break;}}catch(e:any){setState(e.message);}setBusy(false);};
+ return <div className="dl-build"><button className="primary" disabled={busy} onClick={go}>{busy?'Building…':'Build this clip'}</button>{state&&<span>{state}</span>}</div>;
 }
 function Head(){return <header><div className="brand"><div className="brand-icon">◈</div><div><strong>ANIMATION STUDIO</strong><small>Depth library / reference clips from source videos</small></div></div><div className="header-actions"><a className="link" href="clay.html">Clay reference</a><a className="link" href="./">Action workshop</a></div></header>;}
 
@@ -79,18 +89,7 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
  file=(f:string)=>bridgeUrl+'/api/video-clay-file?id='+encodeURIComponent(id)+'&file='+encodeURIComponent(f)+(stamp?'&v='+stamp:'');
  const seek=(t:number)=>{const v=video.current;if(v){v.pause();v.currentTime=t;}setTime(t);};
  const copy=(k:string,text:string)=>{navigator.clipboard.writeText(text).then(()=>{setCopied(k);setTimeout(()=>setCopied(''),1500);});};
- const texts=useMemo(()=>{if(!pkg)return null;const person=(n:string)=>pkg.people.find(p=>p.name===n)!,as=(n:string)=>cast[n]?.trim()||person(n).represents,fig=(n:string)=>useDepth?`the ${person(n).color}-tinted person`:`the ${person(n).color} figure`;
-  const ks=pkg.keyframes,end=Math.round(pkg.duration),groups:{from:number;to:number;keys:typeof ks}[]=[];
-  ks.forEach((k,i)=>{const from=Math.floor(k.time),to=i+1<ks.length?Math.max(from+1,Math.floor(ks[i+1].time)):Math.max(from+1,end),g=groups[groups.length-1];if(g&&g.to>from){g.keys.push(k);g.to=Math.max(g.to,to);}else groups.push({from,to,keys:[k]});});
-  const line=(k:Pack['keyframes'][0])=>`${k.summary} ${k.people.map(p=>`${fig(p.name)} ${p.doing}${p.expression&&!/not visible/.test(p.expression)?`, ${p.expression}`:''}${p.speaking?`, says: ${p.speaking}`:''}`).join('; ')}.`;
-  const videoPrompt=[useDepth?`Reference video 1 is a depth map of the scene (white is near, black is far) with each person tinted one colour. Follow its camera, cuts, shot sizes, the layout of the room and where each person stands and moves; the tints only say who is who. Take no colours, greyness or lighting from it.`:`Reference video 1 is a coarse clay-model video. Follow its camera, cuts, shot sizes and where each figure stands and moves; take nothing of its look or lighting.`,
-   ...pkg.people.filter(p=>ks.some(k=>k.people.some(q=>q.name===p.name))).map(p=>`${fig(p.name)[0].toUpperCase()+fig(p.name).slice(1)} is ${as(p.name)}.`),
-   style.trim()?`Style: ${style.trim()}.`:'',
-   ...groups.map((g,gi)=>{const seen=new Set(groups.slice(0,gi).flatMap(x=>x.keys.map(k=>k.shot))),sh=[...new Set(g.keys.map(k=>k.shot))].filter(n=>!seen.has(n)).map(n=>pkg.shots.find(s=>s.index===n)!);return `${g.from}-${g.to}s${sh.length?` (${sh.map(s=>`${s.index>1?'cut to ':''}shot ${s.index}: ${s.camera}`).join('; then ')})`:''}: ${g.keys.map(line).join(' ')}`.replace(/(\. )([a-z])/g,(_,p,c)=>p+c.toUpperCase());}),
-   ...pkg.audio.filter(a=>a.kind==='speech').map(a=>`From ${Math.floor(a.start)}s ${fig(a.who!)} speaks.`),
-   `${end} seconds, 16:9.`].filter(Boolean).join('\n');
-  const images=ks.map((k,i)=>{const s=pkg.shots.find(x=>x.index===k.shot)!;return `Keyframe ${i+1}, ${k.time} s, shot ${k.shot} (${s.camera}). Use the ${useDepth?`depth still key-${i+1}-depth.jpg`:`clay still key-${i+1}-clay.jpg`} only for the camera angle, framing and where each ${useDepth?'person':'figure'} stands.${style.trim()?` Draw it as ${style.trim()}.`:''} ${k.summary} ${k.people.map(p=>`${as(p.name)} (${fig(p.name)}): ${p.doing}${p.expression?`; face: ${p.expression}`:''}${p.speaking?`; speaking: ${p.speaking}`:''}`).join('. ')}.`;});
-  return {videoPrompt,images};},[pkg,cast,style,useDepth]);
+ const texts=useMemo(()=>pkg?packPrompts(pkg,cast,style,useDepth):null,[pkg,cast,style,useDepth]);
  const pos=(t:number)=>pkg?`${t/pkg.duration*100}%`:'0',wide=(a:number,b:number)=>pkg?`${(b-a)/pkg.duration*100}%`:'0',hereKey=pkg?Math.max(0,pkg.keyframes.findLastIndex(k=>k.time<=time+1e-3)):0;
  return <><div className="dl-bar"><button onClick={onBack}>← Library</button><strong>{pkg?.name??id}</strong><span>built package</span></div>
   {error&&<div className="clay-error"><span>{error}</span></div>}
