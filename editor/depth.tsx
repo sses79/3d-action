@@ -9,7 +9,7 @@ const hex:Record<string,string>={blue:'#4a86d8',orange:'#ee8a3a',green:'#4fae5a'
 const sec=(x:number)=>x.toFixed(1)+' s',clock=(x:number)=>`${Math.floor(x/60)}:${(x%60).toFixed(1).padStart(4,'0')}`;
 const CLIP=['#e8c53a','#4fae5a','#4a86d8','#d9534a','#8d6fd1','#ee8a3a','#3fb5b0','#f07fb0'];
 type Shot={index:number;start:number;end:number;seconds:number;camera:number;move:number;people:number;size:number;speech:number;control:'on'|'off';why:string[];thumb:string;speechWindows:number[][];bridged?:boolean};
-type Clip={id:string;kind:'control'|'still';shots:number[];start:number;end:number;seconds:number;why:string[];status:string;described:boolean};
+type Clip={id:string;kind:'control'|'still';shots:number[];start:number;end:number;seconds:number;why:string[];status:string;described:boolean;package?:string;built?:{seconds:Record<string,number>;people:Record<string,string>};fixed?:{people:string[]}};
 type PackRef={id:string;name:string;start:number;end:number;keyframes:number;depth:boolean;thumb?:string;scene:string|null};
 type Source={id:string;name:string;fileName:string;duration:number;fps:number;size:number[];ingested:string;shots:Shot[];clips:Clip[];packages:PackRef[];seconds:Record<string,number>;speechFound:boolean};
 const thumb=(s:string,f:string)=>bridgeUrl+'/api/depth-library-file?source='+encodeURIComponent(s)+'&file='+encodeURIComponent(f);
@@ -45,17 +45,17 @@ function Library(){
     <div className="dl-counts"><b>{src.shots.length}</b> shots <b>{src.shots.filter(s=>s.control==='on').length}</b> need control <b>{src.clips.filter(c=>c.kind==='control').length}</b> depth clips <b>{src.packages.length}</b> built</div></div>
    <div className="dl-strip">{src.shots.map(s=><button key={s.index} title={`shot ${s.index}, ${sec(s.start)}-${sec(s.end)}: ${s.why.join(', ')}`} style={{borderColor:colourOf.get(s.index)??'#2a3240'}} className={colourOf.has(s.index)?'on':''} onClick={()=>setOpen(src.clips.find(c=>c.shots.includes(s.index))?.id??'')}><img src={thumb(src.id,s.thumb)} alt="" loading="lazy"/><span>{s.index}{s.bridged?' ·b':''}</span></button>)}</div>
    <p className="vc-help dl-legend">Each colour is a proposed depth clip; grey shots need no control. "b" is a slow shot bridged into a sequence.</p>
-   {show.built&&src.packages.length>0&&<><h2 className="dl-h">BUILT PACKAGES</h2><div className="dl-cards">{src.packages.map(p=><button key={p.id} className="dl-card built" onClick={()=>setPkg(p.id)}>
+   {show.built&&src.packages.some(p=>!src.clips.some(c=>c.package===p.id))&&<><h2 className="dl-h">BUILT BY HAND</h2><div className="dl-cards">{src.packages.filter(p=>!src.clips.some(c=>c.package===p.id)).map(p=><button key={p.id} className="dl-card built" onClick={()=>setPkg(p.id)}>
     {p.thumb&&<img src={packFile(p.id,p.thumb)} alt=""/>}<div><strong>{p.name}</strong><small>{clock(p.start)}–{clock(p.end)} · {sec(p.end-p.start)} · {p.keyframes} keyframes · {p.depth?'tinted depth':'clay'}</small>{p.scene&&<p>{p.scene.slice(0,160)}{p.scene.length>160?'…':''}</p>}<em>open</em></div></button>)}</div></>}
    <h2 className="dl-h">CLIPS <small>{clips.length} shown</small></h2>
-   <div className="dl-cards">{clips.map(c=>{const sh=c.shots.map(shotOf);return <button key={c.id} className={'dl-card'+(c.id===open?' now':'')+(c.kind==='still'?' still':'')} onClick={()=>setOpen(c.id===open?'':c.id)} style={c.kind==='control'?{borderLeftColor:colourOf.get(c.shots[0])}:undefined}>
+   <div className="dl-cards">{clips.map(c=>{const sh=c.shots.map(shotOf);return <button key={c.id} className={'dl-card'+(c.id===open?' now':'')+(c.kind==='still'?' still':'')} onClick={()=>c.package?setPkg(c.package):setOpen(c.id===open?'':c.id)} style={c.kind==='control'?{borderLeftColor:colourOf.get(c.shots[0])}:undefined}>
     <div className="dl-mosaic">{sh.slice(0,3).map(s=><img key={s.index} src={thumb(src.id,s.thumb)} alt="" loading="lazy"/>)}</div>
     <div><strong>{c.id.replace(src.id+'-','')} · {c.kind==='control'?'depth clip':'still shot'}</strong><small>{clock(c.start)}–{clock(c.end)} · {sec(c.seconds)} · {c.shots.length} shot{c.shots.length>1?'s':''}{sh.some(s=>s.speechWindows.length)?' · speech':''}</small>
      <div className="dl-tags">{(c.kind==='control'?c.why:['no control: keyframes and text']).map(w=><span key={w}>{w}</span>)}</div>
-     <em>{c.kind==='control'?'proposed · not built':'still'} · {c.described?'described':'not described'}</em></div></button>;})}</div>
+     <em>{c.kind==='control'?(c.package?`built in ${Math.round(c.built?.seconds.total??0)} s · ${c.fixed?.people.length??Object.keys(c.built?.people??{}).length} people${c.fixed?' (fixed)':''} · open`:'proposed · not built'):'still'} · {c.described?'described':'not described'}</em></div></button>;})}</div>
   </>}</main>
   {oc&&src&&<aside className="dl-detail"><div className="dl-detail-head"><strong>{oc.id}</strong><button onClick={()=>setOpen('')}>×</button></div>
-   <p className="vc-help">{oc.kind==='control'?'A depth clip: building it (depth, people followed, tint, keyframes) is step 3 of the plan and not here yet.':'A still shot: no control video; it will carry keyframes and text once described.'} {clock(oc.start)}–{clock(oc.end)}, {sec(oc.seconds)}.</p>
+   <p className="vc-help">{oc.kind==='control'?'A depth clip, not built yet. Build it with: .authoring/vision-venv/bin/python authoring/render/depth-build.py '+src.id+' '+oc.id+' (a few minutes; a button comes with the service jobs).':'A still shot: no control video; it will carry keyframes and text once described.'} {clock(oc.start)}–{clock(oc.end)}, {sec(oc.seconds)}.</p>
    {oc.shots.map(shotOf).map(s=><div key={s.index} className="dl-shot"><img src={thumb(src.id,s.thumb)} alt=""/><div><strong>Shot {s.index} · {sec(s.start)}–{sec(s.end)} · {s.control==='on'?'control on':s.bridged?'bridged':'off'}</strong>
     <small>camera {s.camera.toFixed(2)} widths/s · move {s.move.toFixed(2)} heights/s · {s.people} people · tallest {Math.round(s.size*100)}% of height{s.speechWindows.length?` · speech ${s.speechWindows.map(w=>`${sec(w[0])}–${sec(w[1])}`).join(', ')}`:''}</small><small>{s.why.join(', ')}</small></div></div>)}
   </aside>}
@@ -66,17 +66,17 @@ function Head(){return <header><div className="brand"><div className="brand-icon
 // A built package: the tinted depth video of a source clip (depth-tint.py; the clay of depth-clay.py when a package has no depth) with
 // its keyframes (video-clay-pack.py): a still of the source and of the reference video at each one, and who is there, what they do, say and show. The cast and style typed here (kept in this browser)
 // turn it into a video prompt and one image prompt per keyframe for another scene.
-type Pack={id:string;name:string;sourceVideo:string;clay:string|null;cast?:Record<string,string>;style?:string;scene?:string;depth?:string|null;start:number;duration:number;size:number[];fps:number;people:{name:string;color:string;represents:string}[];shots:{index:number;start:number;end:number;camera:string}[];audio:{start:number;end:number;who?:string;kind:string;text:string}[];keyframes:{time:number;shot:number;summary:string;clayStill:string|null;sourceStill:string;depthStill?:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]}[];notes?:string[]};
+type Pack={library?:{source:string;clip:string;perShot?:Record<string,string[]>;fixes?:{shots?:Record<string,Record<string,string>>}};id:string;name:string;sourceVideo:string;clay:string|null;cast?:Record<string,string>;style?:string;scene?:string;depth?:string|null;start:number;duration:number;size:number[];fps:number;people:{name:string;color:string;represents:string}[];shots:{index:number;start:number;end:number;camera:string}[];audio:{start:number;end:number;who?:string;kind:string;text:string}[];keyframes:{time:number;shot:number;summary:string;clayStill:string|null;sourceStill:string;depthStill?:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]}[];notes?:string[]};
 function PackageView({id,onBack}:{id:string;onBack:()=>void}){
- const [list,setList]=useState<Pack[]>([]),[error,setError]=useState(''),[time,setTime]=useState(0),[copied,setCopied]=useState('');
+ const [list,setList]=useState<Pack[]>([]),[error,setError]=useState(''),[time,setTime]=useState(0),[copied,setCopied]=useState(''),[stamp,setStamp]=useState(0);
  const [cast,setCast]=useState<Record<string,string>>({}),[style,setStyle]=useState(''),video=useRef<HTMLVideoElement>(null);
- useEffect(()=>{fetch(bridgeUrl+'/api/video-clay').then(r=>r.json()).then((l:Pack[])=>{setList(l);if(!l.some(p=>p.id===id))setError('No package '+id);}).catch(e=>setError('The authoring service is not answering ('+e.message+').'));},[id]);
+ useEffect(()=>{fetch(bridgeUrl+'/api/video-clay').then(r=>r.json()).then((l:Pack[])=>{setList(l);if(!l.some(p=>p.id===id))setError('No package '+id);}).catch(e=>setError('The authoring service is not answering ('+e.message+').'));},[id,stamp]);
  const store='video-clay-cast:'+id;
  const pk0=list.find(p=>p.id===id);  // a package may suggest a cast and style; what is typed here (kept in this browser) wins
  useEffect(()=>{try{const s=JSON.parse(localStorage.getItem(store)||'{}');setCast(s.cast||pk0?.cast||{});setStyle(s.style??pk0?.style??'');}catch{setCast(pk0?.cast||{});setStyle(pk0?.style||'');}},[store,pk0]);
  const keep=(c:Record<string,string>,s:string)=>{setCast(c);setStyle(s);try{localStorage.setItem(store,JSON.stringify({cast:c,style:s}));}catch{}};
  const pkg=list.find(p=>p.id===id),useDepth=!!pkg?.depth,  // the tinted depth is the reference video (it won the A/B on Seedance 2.5, 2026-10-18); a package without one shows its clay
- file=(f:string)=>bridgeUrl+'/api/video-clay-file?id='+encodeURIComponent(id)+'&file='+encodeURIComponent(f);
+ file=(f:string)=>bridgeUrl+'/api/video-clay-file?id='+encodeURIComponent(id)+'&file='+encodeURIComponent(f)+(stamp?'&v='+stamp:'');
  const seek=(t:number)=>{const v=video.current;if(v){v.pause();v.currentTime=t;}setTime(t);};
  const copy=(k:string,text:string)=>{navigator.clipboard.writeText(text).then(()=>{setCopied(k);setTimeout(()=>setCopied(''),1500);});};
  const texts=useMemo(()=>{if(!pkg)return null;const person=(n:string)=>pkg.people.find(p=>p.name===n)!,as=(n:string)=>cast[n]?.trim()||person(n).represents,fig=(n:string)=>useDepth?`the ${person(n).color}-tinted person`:`the ${person(n).color} figure`;
@@ -118,9 +118,23 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
    <hr/><h2>FOR THE PROMPT</h2>
    {texts&&<div className="clay-copy"><div><div className="clay-copy-head"><strong>Video prompt ({useDepth?'tinted depth':'clay video'} as reference video 1)</strong><button onClick={()=>copy('video',texts.videoPrompt)}>{copied==='video'?'Copied':'Copy'}</button></div><p>{texts.videoPrompt}</p></div>
     <small>Whole-second times are for Seedance 2.5; 2.0 follows only the shot order. Upload the {useDepth?'tinted depth video':'clay video'} and your character images; the keyframe stills of the source are for checking, not for upload.</small></div>}
+   {pkg.library?.perShot&&<><hr/><h2>PEOPLE</h2><PeopleFix pkg={pkg} onDone={()=>setStamp(Date.now())}/></>}
    <hr/><h2>PACKAGE</h2>
    <p className="vc-help">.authoring/video-clay/{pkg.id}/ · {[pkg.depth,pkg.clay].filter(Boolean).join(', ')} ({pkg.size[0]}×{pkg.size[1]}, {pkg.duration.toFixed(2)} s, {pkg.fps} fps) and a source and clay still per keyframe. From {pkg.sourceVideo}, {pkg.start}–{(pkg.start+pkg.duration).toFixed(2)} s.</p>
    {pkg.notes?.map((n,i)=><p key={i} className="vc-help">{n}</p>)}
   </aside></div>}</>;
+}
+// Fixes by hand for an automatically built clip, shot by shot: who each person found is (joins people across cuts, splits a name
+// given to two people), or drop; the service tints again from the saved depth.
+function PeopleFix({pkg,onDone}:{pkg:Pack;onDone:()=>void}){
+ const lib=pkg.library!,per=lib.perShot!,letters='ABCDEFGH'.split('');
+ const [fix,setFix]=useState<Record<string,Record<string,string>>>(lib.fixes?.shots??{}),[busy,setBusy]=useState(false),[note,setNote]=useState('');
+ const colour=(n:string)=>pkg.people.find(p=>p.name===n)?.color;
+ const set=(shot:string,n:string,v:string)=>{const f=structuredClone(fix);f[shot]={...(f[shot]??{})};if(v===n)delete f[shot][n];else f[shot][n]=v;setFix(f);};
+ const apply=()=>{setBusy(true);setNote('');fetch(bridgeUrl+'/api/depth-library/fix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:lib.source,clip:lib.clip,shots:fix})}).then(r=>r.json()).then(d=>{setBusy(false);if(d.error)setNote(d.error);else{setNote(`Tinted again in ${d.seconds} s.`);onDone();}}).catch(e=>{setBusy(false);setNote(e.message);});};
+ return <div className="dl-fix"><p className="vc-help">Found and named automatically, shot by shot. In each shot say who each person is (the same letter across cuts is the same person), or drop them; the tint is made again from the saved depth.</p>
+  <table className="vc-people"><thead><tr><th>Shot</th><th>Found as</th><th>Is</th></tr></thead><tbody>{Object.entries(per).flatMap(([shot,ns])=>ns.map(n=><tr key={shot+n}><td>{shot}</td><td><i style={{background:hex[colour(fix[shot]?.[n]??n)??colour(n)??'gray']}}/>{n}</td>
+   <td><select value={fix[shot]?.[n]??n} onChange={e=>set(shot,n,e.target.value)}>{letters.map(m=><option key={m} value={m}>{m}</option>)}<option value="-">drop</option></select></td></tr>))}</tbody></table>
+  <button className="primary" disabled={busy} onClick={apply}>{busy?'Tinting…':'Apply and tint again'}</button>{note&&<p className="vc-help">{note}</p>}</div>;
 }
 createRoot(document.getElementById('root')!).render(<Library/>);
