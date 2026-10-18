@@ -60,3 +60,13 @@ Labels (a fixed list, each entry several):
 2. Descriptions: by Claude in a session only, no API calls.
 3. Control-off shots: in the library too, as keyframes and text without depth.
 4. Clips: up to 15 s, whole sequences of consecutive control-on shots kept together.
+
+## Built
+
+### Step 1, ingest (2026-10-18)
+
+`authoring/render/depth-ingest.py VIDEO --id SOURCE-ID [--name] [--max 15] [--bridge 5]` writes `.authoring/depth-library/<id>/source.json` (every shot with its numbers, on/off and reasons, speech windows, a thumbnail), the speech times (whisper.cpp with a local model; the words are not kept) and the proposed clips. A control-off stretch of up to 5 s between two on-shots joins the sequence ("bridged"): the standoff's grab shots measure slow between fast fight cuts, and at 3 s the grab (4.2 s) still split the fight into fragments. Runs longer than 15 s are split at shot boundaries. About 2 minutes a video (shots 1 min, the control measure 50 s, speech 6-13 s).
+- `got-standoff` (119 s, 48 shots, 15 on): clips 001 (0-6.8 s: her walk down and the Mountain walking up; the courtyard A/B), 016 (47.8-50.1 s: the crowd moves), 023 (70.5-83.7 s, eleven shots: the fight to the throat-lift; close to V.8) and 024 (83.7-93.7 s: the rest of the fight, which shows the killing); 27 still entries.
+- `got-tywin` (211 s, 43 shots, 3 on): 016 (53.5-58.8 s, the camera moving round Tywin), 022 (93.6-98.2 s, four at the bier), 028 (132.8-144.9 s, the walk round the bier; V.5); 40 still entries.
+- `overview.jpg` per source: every shot, clips in colour, bridged shots marked.
+
