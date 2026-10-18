@@ -11,6 +11,7 @@ Three browser demos; active work is **Animation Studio** (LLM-driven movement li
 - `docs/SCENE_TO_REFERENCE_PLAN.md` — written scene → LLM blocking → two figures acting in a room → the same reference package (`stage_scene`, 2026-10-11; milestones 1–3 built; its last section lists what is open). The workflow is the `scene-to-reference` skill.
 - `docs/MULTI_PERSON_PLAN.md` — team sport clips (several players, a ball, a known court), plan agreed 2026-10-13; says which steps are built.
 - `docs/SHOT_TO_CLAY_PLAN.md` — a scene told in cuts (dialogue, mostly waist-up) to a clay video: shots grouped by setup, upper bodies from video on tapered columns, one room across cuts; plan agreed 2026-10-15, says which steps are built.
+- `docs/DEPTH_LIBRARY_PLAN.md` — planned 2026-10-18 (decisions recorded at its end; not built yet): a library of tinted depth clips cut from source videos (shots analysis, control-on shots built, summary and labels), its own page `/editor/depth.html`, and service operations and a skill so other agents can find a clip for a scene and get the depth video, keyframes and prompts.
 - `docs/HANDOFF.md` — append-only session log (long, dense). Read the last few sections, not the whole file. Add a dated section after substantial work.
 - `docs/RULE_LOG.md` — every reconstruction rule, why it exists and what it did to the other clips. After changing a rule, run `authoring/reconstruction/batch.py` and add an entry.
 - Other `docs/` plans and studies are historical unless `CURRENT_STATE.md` points at them.
