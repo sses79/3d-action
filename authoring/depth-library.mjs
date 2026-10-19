@@ -17,6 +17,11 @@ export const depthLabels={
 };
 const allLabels=new Set(Object.values(depthLabels).flat());
 const ID=/^[a-z0-9][a-z0-9-]{0,63}$/;
+// fixes to a built clip: per shot renames ({"2": {"E": "A", "G": "-"}}) and boxes drawn by hand
+// ([{name: "B", shot: "28", keys: [{time, box: [x0, y0, x1, y1] as fractions}]}])
+export function checkFixes(shots,boxes){const name=x=>typeof x==='string'&&/^[A-Z]$/.test(x),frac=v=>Number.isFinite(v)&&v>=-.05&&v<=1.05;
+ if(!shots||typeof shots!=='object'||Array.isArray(shots)||!Object.entries(shots).every(([k,m])=>/^\d{1,4}$/.test(k)&&m&&typeof m==='object'&&Object.entries(m).every(([a,b])=>name(a)&&(name(b)||b==='-'))))throw Error('shots: {"2": {"E": "A", "G": "-"}}');
+ if(!Array.isArray(boxes)||boxes.length>40||!boxes.every(e=>e&&name(e.name)&&/^\d{1,4}$/.test(String(e.shot))&&Array.isArray(e.keys)&&e.keys.length>=1&&e.keys.length<=60&&e.keys.every(q=>Number.isFinite(q.time)&&q.time>=0&&Array.isArray(q.box)&&q.box.length===4&&q.box.every(frac)&&q.box[2]>q.box[0]&&q.box[3]>q.box[1])))throw Error('boxes: [{name: "B", shot: "28", keys: [{time: 1.2, box: [x0, y0, x1, y1]}]}], box as fractions of the picture');}
 export class DepthLibrary{
  constructor(root){this.root=root;this.base=resolve(root,'.authoring/depth-library');this.packs=resolve(root,'.authoring/video-clay');this.jobs=new Map();this.py=resolve(root,'.authoring/vision-venv/bin/python');}
  sources(){if(!existsSync(this.base))return [];return readdirSync(this.base).filter(d=>ID.test(d)&&existsSync(resolve(this.base,d,'source.json'))).map(d=>JSON.parse(readFileSync(resolve(this.base,d,'source.json'),'utf8')));}
@@ -57,7 +62,7 @@ export class DepthLibrary{
   return {job:id,status:'running'};}
  ingest({video,id,name}){if(typeof video!=='string'||!existsSync(video))throw Error('video: a readable local video file');if(typeof id!=='string'||!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))throw Error('id: lower-case letters, digits and dashes');return this.job('ingest',['authoring/render/depth-ingest.py',video,'--id',id,...(name?['--name',String(name).slice(0,120)]:[])]);}
  build({clip,video}){const {S,C}=this.locate(clip);if(C.kind!=='control')throw Error('A still shot has no depth to build');return this.job('build',['authoring/render/depth-build.py',S.id,C.id,...(video?['--video',video]:[])]);}
- fix({clip,shots}){const {S,C}=this.locate(clip);if(!C.package)throw Error('Build the clip first');const name=x=>/^[A-Z]$/.test(x);if(!shots||typeof shots!=='object'||!Object.entries(shots).every(([k,m])=>/^\d{1,4}$/.test(k)&&m&&typeof m==='object'&&Object.entries(m).every(([a,b])=>name(a)&&(name(b)||b==='-'))))throw Error('shots: {"2": {"E": "A", "G": "-"}}');
-  writeFileSync(resolve(this.base,S.id,C.id+'.fixes.json'),JSON.stringify({shots}));return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-fix.py',S.id,C.id],{cwd:this.root,timeout:300000},(e,so,se)=>e?fail(Error((se||e.message).slice(-1500))):done(JSON.parse(so.trim().split('\n').pop()))));}
+ fix({clip,shots={},boxes=[]}){const {S,C}=this.locate(clip);if(!C.package)throw Error('Build the clip first');checkFixes(shots,boxes);
+  writeFileSync(resolve(this.base,S.id,C.id+'.fixes.json'),JSON.stringify({shots,boxes}));return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-fix.py',S.id,C.id],{cwd:this.root,timeout:300000},(e,so,se)=>e?fail(Error((se||e.message).slice(-1500))):done(JSON.parse(so.trim().split('\n').pop()))));}
  jobStatus(id){const j=this.jobs.get(id);if(!j)throw Error('No such job (jobs are kept until the service restarts)');return {...j,log:j.status==='running'?j.log.slice(-600):undefined};}
 }

@@ -5,6 +5,7 @@ import {createReadStream} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
 import {inspectBundle} from './reconstruction/bundle.mjs';
+import {checkFixes} from './depth-library.mjs';
 import {Studio,toolDefinitions} from './core.js';
 const root=fileURLToPath(new URL('../',import.meta.url)),studio=new Studio(root,process.env.STUDIO_STATE_PATH||undefined);
 const port=Number(process.env.STUDIO_PORT||5174);
@@ -67,9 +68,9 @@ const server=createServer(async(req,res)=>{
    // Fixes by hand to a built clip, shot by shot: who each person found is (joins and splits), or drop; tint and package again (depth-fix.py, seconds).
    if(!req.headers['content-type']?.startsWith('application/json'))throw Error('Expected application/json');
    let body='';for await(const c of req){body+=c;if(body.length>100000)throw Error('Request too large');}
-   const {source,clip,shots={}}=JSON.parse(body),ok=x=>typeof x==='string'&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(x),name=x=>typeof x==='string'&&/^[A-Z]$/.test(x);
-   if(!ok(source)||!ok(clip)||typeof shots!=='object'||!Object.entries(shots).every(([k,m])=>/^\d{1,4}$/.test(k)&&m&&typeof m==='object'&&Object.entries(m).every(([a,b])=>name(a)&&(name(b)||b==='-'))))return json(400,{error:'source, clip and shots {"2": {"E": "A", "G": "-"}} (single capital letters, "-" drops)'});
-   await writeFile(resolve(root,'.authoring/depth-library',source,clip+'.fixes.json'),JSON.stringify({shots}));
+   const {source,clip,shots={},boxes=[]}=JSON.parse(body),ok=x=>typeof x==='string'&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(x);if(!ok(source)||!ok(clip))return json(400,{error:'source and clip'});
+   try{checkFixes(shots,boxes);}catch(e){return json(400,{error:e.message});}
+   await writeFile(resolve(root,'.authoring/depth-library',source,clip+'.fixes.json'),JSON.stringify({shots,boxes}));
    const out=await new Promise(done=>execFile(resolve(root,'.authoring/vision-venv/bin/python'),['authoring/render/depth-fix.py',source,clip],{cwd:root,timeout:300000},(e,so,se)=>done(e?{error:(se||e.message).slice(-1500)}:JSON.parse(so.trim().split('\n').pop()))));
    return json(out.error?400:200,out);
   }

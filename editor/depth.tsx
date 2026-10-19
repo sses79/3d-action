@@ -76,10 +76,11 @@ function Head(){return <header><div className="brand"><div className="brand-icon
 // A built package: the tinted depth video of a source clip (depth-tint.py; the clay of depth-clay.py when a package has no depth) with
 // its keyframes (video-clay-pack.py): a still of the source and of the reference video at each one, and who is there, what they do, say and show. The cast and style typed here (kept in this browser)
 // turn it into a video prompt and one image prompt per keyframe for another scene.
-type Pack={library?:{source:string;clip:string;perShot?:Record<string,string[]>;fixes?:{shots?:Record<string,Record<string,string>>}};id:string;name:string;sourceVideo:string;clay:string|null;cast?:Record<string,string>;style?:string;scene?:string;depth?:string|null;start:number;duration:number;size:number[];fps:number;people:{name:string;color:string;represents:string}[];shots:{index:number;start:number;end:number;camera:string}[];audio:{start:number;end:number;who?:string;kind:string;text:string}[];keyframes:{time:number;shot:number;summary:string;clayStill:string|null;sourceStill:string;depthStill?:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]}[];notes?:string[]};
+type Pack={library?:{source:string;clip:string;perShot?:Record<string,string[]>;fixes?:{shots?:Record<string,Record<string,string>>;boxes?:HandBox[]}};id:string;name:string;sourceVideo:string;clay:string|null;cast?:Record<string,string>;style?:string;scene?:string;depth?:string|null;start:number;duration:number;size:number[];fps:number;people:{name:string;color:string;represents:string}[];shots:{index:number;start:number;end:number;camera:string}[];audio:{start:number;end:number;who?:string;kind:string;text:string}[];keyframes:{time:number;shot:number;summary:string;clayStill:string|null;sourceStill:string;depthStill?:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]}[];notes?:string[]};
 function PackageView({id,onBack}:{id:string;onBack:()=>void}){
  const [list,setList]=useState<Pack[]>([]),[error,setError]=useState(''),[time,setTime]=useState(0),[copied,setCopied]=useState(''),[stamp,setStamp]=useState(0);
  const [cast,setCast]=useState<Record<string,string>>({}),[style,setStyle]=useState(''),video=useRef<HTMLVideoElement>(null);
+ const [hand,setHand]=useState<HandBox[]>([]),[draw,setDraw]=useState('');
  useEffect(()=>{fetch(bridgeUrl+'/api/video-clay').then(r=>r.json()).then((l:Pack[])=>{setList(l);if(!l.some(p=>p.id===id))setError('No package '+id);}).catch(e=>setError('The authoring service is not answering ('+e.message+').'));},[id,stamp]);
  const store='video-clay-cast:'+id;
  const pk0=list.find(p=>p.id===id);  // a package may suggest a cast and style; what is typed here (kept in this browser) wins
@@ -88,13 +89,14 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
  const pkg=list.find(p=>p.id===id),useDepth=!!pkg?.depth,  // the tinted depth is the reference video (it won the A/B on Seedance 2.5, 2026-10-18); a package without one shows its clay
  file=(f:string)=>bridgeUrl+'/api/video-clay-file?id='+encodeURIComponent(id)+'&file='+encodeURIComponent(f)+(stamp?'&v='+stamp:'');
  const seek=(t:number)=>{const v=video.current;if(v){v.pause();v.currentTime=t;}setTime(t);};
+ useEffect(()=>{setHand(structuredClone(pkg?.library?.fixes?.boxes??[]));setDraw('');},[pkg]);
  const copy=(k:string,text:string)=>{navigator.clipboard.writeText(text).then(()=>{setCopied(k);setTimeout(()=>setCopied(''),1500);});};
  const texts=useMemo(()=>pkg?packPrompts(pkg,cast,style,useDepth):null,[pkg,cast,style,useDepth]);
  const pos=(t:number)=>pkg?`${t/pkg.duration*100}%`:'0',wide=(a:number,b:number)=>pkg?`${(b-a)/pkg.duration*100}%`:'0',hereKey=pkg?Math.max(0,pkg.keyframes.findLastIndex(k=>k.time<=time+1e-3)):0;
  return <><div className="dl-bar"><button onClick={onBack}>← Library</button><strong>{pkg?.name??id}</strong><span>built package</span></div>
   {error&&<div className="clay-error"><span>{error}</span></div>}
   {pkg&&<div className="clay-layout"><main>
-   <div className="clay-stage"><video ref={video} className="clay-canvas vc-video" src={file((useDepth?pkg.depth:pkg.clay)!)} controls playsInline onTimeUpdate={e=>setTime((e.target as HTMLVideoElement).currentTime)}/></div>
+   <div className="clay-stage"><div className="clay-canvas dl-videowrap"><video ref={video} className="vc-video" src={file((useDepth?pkg.depth:pkg.clay)!)} controls playsInline onTimeUpdate={e=>setTime((e.target as HTMLVideoElement).currentTime)}/>{pkg.library&&<DrawLayer pkg={pkg} time={time} hand={hand} setHand={setHand} draw={draw} onStart={()=>video.current?.pause()}/>}</div></div>
    <div className="timeline"><div className="clay-rows">
     <div className="clay-row"><label>Shots</label>{pkg.shots.map(s=><button key={s.index} className={'shot'+(time>=s.start&&time<s.end?' now':'')} style={{left:pos(s.start),width:wide(s.start,s.end)}} title={s.camera} onClick={()=>seek(s.start+.02)}>Shot {s.index}</button>)}</div>
     <div className="clay-row"><label>Keyframes</label>{pkg.keyframes.map((k,i)=><button key={i} className={'range vc-key'+(i===hereKey?' now':'')} style={{left:`calc(${pos(k.time)} - 11px)`,width:'22px'}} title={k.summary} onClick={()=>seek(k.time)}>{i+1}</button>)}</div>
@@ -117,7 +119,7 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
    <hr/><h2>FOR THE PROMPT</h2>
    {texts&&<div className="clay-copy"><div><div className="clay-copy-head"><strong>Video prompt ({useDepth?'tinted depth':'clay video'} as reference video 1)</strong><button onClick={()=>copy('video',texts.videoPrompt)}>{copied==='video'?'Copied':'Copy'}</button></div><p>{texts.videoPrompt}</p></div>
     <small>Whole-second times are for Seedance 2.5; 2.0 follows only the shot order. Upload the {useDepth?'tinted depth video':'clay video'} and your character images; the keyframe stills of the source are for checking, not for upload.</small></div>}
-   {pkg.library?.perShot&&<><hr/><h2>PEOPLE</h2><PeopleFix pkg={pkg} onDone={()=>setStamp(Date.now())}/></>}
+   {pkg.library?.perShot&&<><hr/><h2>PEOPLE</h2><PeopleFix pkg={pkg} hand={hand} setHand={setHand} draw={draw} setDraw={setDraw} time={time} onDone={()=>setStamp(Date.now())}/></>}
    <hr/><h2>PACKAGE</h2>
    <p className="vc-help">.authoring/video-clay/{pkg.id}/ · {[pkg.depth,pkg.clay].filter(Boolean).join(', ')} ({pkg.size[0]}×{pkg.size[1]}, {pkg.duration.toFixed(2)} s, {pkg.fps} fps) and a source and clay still per keyframe. From {pkg.sourceVideo}, {pkg.start}–{(pkg.start+pkg.duration).toFixed(2)} s.</p>
    {pkg.notes?.map((n,i)=><p key={i} className="vc-help">{n}</p>)}
@@ -125,15 +127,35 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
 }
 // Fixes by hand for an automatically built clip, shot by shot: who each person found is (joins people across cuts, splits a name
 // given to two people), or drop; the service tints again from the saved depth.
-function PeopleFix({pkg,onDone}:{pkg:Pack;onDone:()=>void}){
+function PeopleFix({pkg,onDone,hand,setHand,draw,setDraw,time}:{pkg:Pack;onDone:()=>void;hand:HandBox[];setHand:(h:HandBox[])=>void;draw:string;setDraw:(d:string)=>void;time:number}){
  const lib=pkg.library!,per=lib.perShot!,letters='ABCDEFGH'.split('');
- const [fix,setFix]=useState<Record<string,Record<string,string>>>(lib.fixes?.shots??{}),[busy,setBusy]=useState(false),[note,setNote]=useState('');
+ const [fix,setFix]=useState<Record<string,Record<string,string>>>(lib.fixes?.shots??{}),[busy,setBusy]=useState(false),[note,setNote]=useState(''),[pick,setPick]=useState('A');
  const colour=(n:string)=>pkg.people.find(p=>p.name===n)?.color;
  const set=(shot:string,n:string,v:string)=>{const f=structuredClone(fix);f[shot]={...(f[shot]??{})};if(v===n)delete f[shot][n];else f[shot][n]=v;setFix(f);};
- const apply=()=>{setBusy(true);setNote('');fetch(bridgeUrl+'/api/depth-library/fix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:lib.source,clip:lib.clip,shots:fix})}).then(r=>r.json()).then(d=>{setBusy(false);if(d.error)setNote(d.error);else{setNote(`Tinted again in ${d.seconds} s.`);onDone();}}).catch(e=>{setBusy(false);setNote(e.message);});};
+ const apply=()=>{setBusy(true);setNote('');fetch(bridgeUrl+'/api/depth-library/fix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:lib.source,clip:lib.clip,shots:fix,boxes:hand})}).then(r=>r.json()).then(d=>{setBusy(false);if(d.error)setNote(d.error);else{setNote(`Tinted again in ${d.seconds} s.`);onDone();}}).catch(e=>{setBusy(false);setNote(e.message);});};
  return <div className="dl-fix"><p className="vc-help">Found and named automatically, shot by shot. In each shot say who each person is (the same letter across cuts is the same person), or drop them; the tint is made again from the saved depth.</p>
   <table className="vc-people"><thead><tr><th>Shot</th><th>Found as</th><th>Is</th></tr></thead><tbody>{Object.entries(per).flatMap(([shot,ns])=>ns.map(n=><tr key={shot+n}><td>{shot}</td><td><i style={{background:hex[colour(fix[shot]?.[n]??n)??colour(n)??'gray']}}/>{n}</td>
    <td><select value={fix[shot]?.[n]??n} onChange={e=>set(shot,n,e.target.value)}>{letters.map(m=><option key={m} value={m}>{m}</option>)}<option value="-">drop</option></select></td></tr>))}</tbody></table>
+  <h3 className="dl-sub">Boxes by hand</h3>
+  <p className="vc-help">For someone the detector misses (armour, someone lying down): choose a letter, press Draw, pause on a frame and drag over the person. Draw again at other times in the same shot to follow them; the box is blended between your keys and held before the first and after the last. Boxes are tinted first and in front.</p>
+  <div className="dl-drawbar"><select value={pick} onChange={e=>setPick(e.target.value)}>{letters.map(m=><option key={m} value={m}>{m}</option>)}</select><button className={draw?'primary':''} onClick={()=>setDraw(draw?'':pick)}>{draw?`Drawing ${draw}: drag on the picture · stop`:'Draw a box'}</button></div>
+  {hand.length>0&&<table className="vc-people"><thead><tr><th>Who</th><th>Shot</th><th>Keys</th><th></th></tr></thead><tbody>{hand.map((e,i)=><tr key={i}><td><i style={{background:hex[colour(e.name)??'gray']}}/>{e.name}</td><td>{e.shot}</td><td>{e.keys.map(k=>k.time.toFixed(2)+' s').join(', ')}</td><td><button onClick={()=>setHand(hand.filter((_,j)=>j!==i))}>Remove</button></td></tr>)}</tbody></table>}
   <button className="primary" disabled={busy} onClick={apply}>{busy?'Tinting…':'Apply and tint again'}</button>{note&&<p className="vc-help">{note}</p>}</div>;
+}
+// A box drawn by hand for one person in one shot: keys at clip times, boxes as fractions of the picture.
+type HandBox={name:string;shot:string;keys:{time:number;box:number[]}[]};
+const shotAt=(pkg:Pack,t:number)=>pkg.shots.find(s=>s.start<=t+1e-3&&t<s.end-1e-3)??pkg.shots[pkg.shots.length-1];
+function boxAt(pkg:Pack,e:HandBox,t:number){const sh=pkg.shots.find(s=>String(s.index)===String(e.shot));if(!sh||!(sh.start<=t+1e-3&&t<sh.end))return null;const ks=[...e.keys].sort((a,b)=>a.time-b.time);let j=ks.findLastIndex(k=>k.time<=t);if(j<0)j=0;const a=ks[j],b=ks[Math.min(j+1,ks.length-1)],u=b.time>a.time?Math.min(1,Math.max(0,(t-a.time)/(b.time-a.time))):0;return a.box.map((v,i)=>v+(b.box[i]-v)*u);}
+// Over the video: the hand boxes at this moment, and, while drawing, a drag makes or replaces a key at this time.
+function DrawLayer({pkg,time,hand,setHand,draw,onStart}:{pkg:Pack;time:number;hand:HandBox[];setHand:(h:HandBox[])=>void;draw:string;onStart:()=>void}){
+ const [drag,setDrag]=useState<number[]|null>(null),ref=useRef<SVGSVGElement>(null);
+ const at=(e:React.PointerEvent)=>{const r=ref.current!.getBoundingClientRect();return [Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)),Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))];};
+ const up=()=>{if(!drag)return;const [x0,y0,x1,y1]=drag,box=[Math.min(x0,x1),Math.min(y0,y1),Math.max(x0,x1),Math.max(y0,y1)].map(v=>Math.round(v*1000)/1000);setDrag(null);if(box[2]-box[0]<.01||box[3]-box[1]<.01)return;
+  const shot=String(shotAt(pkg,time).index),next=structuredClone(hand);let e=next.find(x=>x.name===draw&&x.shot===shot);if(!e){e={name:draw,shot,keys:[]};next.push(e);}e.keys=[...e.keys.filter(k=>Math.abs(k.time-time)>.02),{time:Math.round(time*1000)/1000,box}].sort((a,b)=>a.time-b.time);setHand(next);};
+ const colour=(n:string)=>hex[pkg.people.find(p=>p.name===n)?.color??'']??'#e8c53a';
+ return <svg ref={ref} className={'dl-draw'+(draw?' on':'')} viewBox="0 0 1 1" preserveAspectRatio="none" onPointerDown={e=>{if(!draw)return;onStart();(e.target as Element).setPointerCapture?.(e.pointerId);const p=at(e);setDrag([...p,...p]);}} onPointerMove={e=>{if(drag)setDrag([drag[0],drag[1],...at(e)]);}} onPointerUp={up}>
+  {hand.map((e,i)=>{const b=boxAt(pkg,e,time);return b&&<g key={i}><rect x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} fill="none" stroke={colour(e.name)} strokeWidth={.004} vectorEffect="non-scaling-stroke" style={{strokeWidth:2}}/><text x={b[0]+.005} y={b[1]+.04} fontSize={.035} fill={colour(e.name)}>{e.name}{e.keys.some(k=>Math.abs(k.time-time)<.02)?' ◆':''}</text></g>;})}
+  {drag&&<rect x={Math.min(drag[0],drag[2])} y={Math.min(drag[1],drag[3])} width={Math.abs(drag[2]-drag[0])} height={Math.abs(drag[3]-drag[1])} fill="rgba(232,197,58,.15)" stroke="#e8c53a" vectorEffect="non-scaling-stroke" style={{strokeWidth:2}}/>}
+ </svg>;
 }
 createRoot(document.getElementById('root')!).render(<Library/>);
