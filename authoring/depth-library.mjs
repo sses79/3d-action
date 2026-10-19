@@ -18,10 +18,10 @@ export const depthLabels={
 const allLabels=new Set(Object.values(depthLabels).flat());
 const ID=/^[a-z0-9][a-z0-9-]{0,63}$/;
 // fixes to a built clip: per shot renames ({"2": {"E": "A", "G": "-"}}) and boxes drawn by hand
-// ([{name: "B", shot: "28", keys: [{time, box: [x0, y0, x1, y1] as fractions}]}])
+// ([{name: "B", shot: "28", keys: [{time, box: [x0, y0, x1, y1] as fractions, or null for out of view}]}])
 export function checkFixes(shots,boxes){const name=x=>typeof x==='string'&&/^[A-Z]$/.test(x),frac=v=>Number.isFinite(v)&&v>=-.05&&v<=1.05;
  if(!shots||typeof shots!=='object'||Array.isArray(shots)||!Object.entries(shots).every(([k,m])=>/^\d{1,4}$/.test(k)&&m&&typeof m==='object'&&Object.entries(m).every(([a,b])=>name(a)&&(name(b)||b==='-'))))throw Error('shots: {"2": {"E": "A", "G": "-"}}');
- if(!Array.isArray(boxes)||boxes.length>40||!boxes.every(e=>e&&name(e.name)&&/^\d{1,4}$/.test(String(e.shot))&&Array.isArray(e.keys)&&e.keys.length>=1&&e.keys.length<=60&&e.keys.every(q=>Number.isFinite(q.time)&&q.time>=0&&Array.isArray(q.box)&&q.box.length===4&&q.box.every(frac)&&q.box[2]>q.box[0]&&q.box[3]>q.box[1])))throw Error('boxes: [{name: "B", shot: "28", keys: [{time: 1.2, box: [x0, y0, x1, y1]}]}], box as fractions of the picture');}
+ if(!Array.isArray(boxes)||boxes.length>40||!boxes.every(e=>e&&name(e.name)&&/^\d{1,4}$/.test(String(e.shot))&&Array.isArray(e.keys)&&e.keys.length>=1&&e.keys.length<=60&&e.keys.every(q=>Number.isFinite(q.time)&&q.time>=0&&(q.box===null||Array.isArray(q.box)&&q.box.length===4&&q.box.every(frac)&&q.box[2]>q.box[0]&&q.box[3]>q.box[1]))))throw Error('boxes: [{name: "B", shot: "28", keys: [{time: 1.2, box: [x0, y0, x1, y1]}]}], box as fractions of the picture');}
 // The star standard for a built package as a control signal (docs/DEPTH_LIBRARY_PLAN.md, "Star standard"). A person's rating
 // wins; otherwise the machine suggests 1-4 from the keyframe check and the motion: faults (a main person missing, two colours on
 // one person, a colour with nobody behind it) cost stars; notes (an untinted extra, a head a little short, a box drawn by hand)

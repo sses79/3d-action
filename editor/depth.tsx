@@ -150,9 +150,9 @@ function PeopleFix({pkg,onDone,hand,setHand,draw,setDraw,time}:{pkg:Pack;onDone:
   <button className="primary" disabled={busy} onClick={apply}>{busy?'Tinting…':'Apply and tint again'}</button>{note&&<p className="vc-help">{note}</p>}</div>;
 }
 // A box drawn by hand for one person in one shot: keys at clip times, boxes as fractions of the picture.
-type HandBox={name:string;shot:string;keys:{time:number;box:number[]}[]};
+type HandBox={name:string;shot:string;keys:{time:number;box:number[]|null}[]};
 const shotAt=(pkg:Pack,t:number)=>pkg.shots.find(s=>s.start<=t+1e-3&&t<s.end-1e-3)??pkg.shots[pkg.shots.length-1];
-function boxAt(pkg:Pack,e:HandBox,t:number){const sh=pkg.shots.find(s=>String(s.index)===String(e.shot));if(!sh||!(sh.start<=t+1e-3&&t<sh.end))return null;const ks=[...e.keys].sort((a,b)=>a.time-b.time);let j=ks.findLastIndex(k=>k.time<=t);if(j<0)j=0;const a=ks[j],b=ks[Math.min(j+1,ks.length-1)],u=b.time>a.time?Math.min(1,Math.max(0,(t-a.time)/(b.time-a.time))):0;return a.box.map((v,i)=>v+(b.box[i]-v)*u);}
+function boxAt(pkg:Pack,e:HandBox,t:number){const sh=pkg.shots.find(s=>String(s.index)===String(e.shot));if(!sh||!(sh.start<=t+1e-3&&t<sh.end))return null;const ks=[...e.keys].sort((a,b)=>a.time-b.time);let j=ks.findLastIndex(k=>k.time<=t);if(j<0)j=0;const a=ks[j];if(!a.box)return null;let b=ks[Math.min(j+1,ks.length-1)];if(!b.box)b=a;const u=b.time>a.time?Math.min(1,Math.max(0,(t-a.time)/(b.time-a.time))):0;const bb=b.box!;return a.box.map((v,i)=>v+(bb[i]-v)*u);}
 // Over the video: the hand boxes at this moment, and, while drawing, a drag makes or replaces a key at this time.
 function DrawLayer({pkg,time,hand,setHand,draw,onStart}:{pkg:Pack;time:number;hand:HandBox[];setHand:(h:HandBox[])=>void;draw:string;onStart:()=>void}){
  const [drag,setDrag]=useState<number[]|null>(null),ref=useRef<SVGSVGElement>(null);

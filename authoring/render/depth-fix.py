@@ -6,7 +6,7 @@ Reads <clip>.fixes.json beside the clip's files in .authoring/depth-library/<sou
 cuts and also splits a name the automatic step gave to two people. A letter not used before is a new person (next colour).
 "boxes": [{"name": "B", "shot": "28", "keys": [{"time": 1.2, "box": [x0, y0, x1, y1]}, ...]}] are boxes drawn by hand (fractions of the
 picture, times in clip seconds) for what the detector misses (armour, someone lying down): within that shot the box is blended
-between its keys and held before the first and after the last; it is tinted first and in front (depth-tint's "exact"), in the
+between its keys and held before the first and after the last; a key with "box": null means out of view from that time to the next key; it is tinted first and in front (depth-tint's "exact"), in the
 person's colour, as the track "<name>-hand", and replaces that person's detector track in the shot.
 The automatic tracks (<clip>.tracks.json) are never changed; the fixed ones go to <clip>.tracks-fixed.json, hand boxes to <clip>.hand.json."""
 import re,sys,os,json,pathlib,subprocess,time
@@ -39,6 +39,8 @@ for e in fx.get('boxes',[]):
     for k,t in enumerate(T['times']):
         if not sh['start']<=t<sh['end']:continue
         c=t-T['start'];j=max([i for i,q in enumerate(ks) if q['time']<=c],default=0);q0=ks[j];q1=ks[min(j+1,len(ks)-1)]
+        if q0['box'] is None or (c<q0['time'] and j==0 and False):continue  # a key with no box: the person is out of view from there to the next key
+        if q1['box'] is None:q1=q0
         u=0 if q1['time']<=q0['time'] else min(1,max(0,(c-q0['time'])/(q1['time']-q0['time'])));b=[a_+(b_-a_)*u for a_,b_ in zip(q0['box'],q1['box'])]
         tr[k]={'box':[b[0]*W,b[1]*H,b[2]*W,b[3]*H]}
     if e['name'] not in colours:colours[e['name']]=next(c for c in PAL if c not in colours.values()) if len(colours)<len(PAL) else 'gray'
