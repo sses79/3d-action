@@ -11,7 +11,7 @@ The library: `docs/DEPTH_LIBRARY_PLAN.md`. The page: `http://127.0.0.1:5174/edit
 curl -s -X POST http://127.0.0.1:5174/api/tool -H 'Content-Type: application/json' -d @request.json
 ```
 
-Source footage stays local and out of the repository. A package's keyframe *source* stills are frames of someone else's footage: they are for checking, never for uploading or copying a likeness. People in the library are roles (A, B, C), not actors.
+Source footage stays local and out of the repository. A package's keyframe *source* stills are frames of someone else's footage: they go only to the keyframe step, as layout references (room, framing, camera angle, light), with every person replaced and no face, costume or likeness taken; never to the video model, never into the repository. People in the library are roles (A, B, C), not actors.
 
 ## 1. Split the scene into beats and decide control per beat
 
@@ -38,8 +38,15 @@ Descriptions are written by Claude, not by a model inside the service. Open the 
 
 ## 5. Cast it for the scene
 
-`cast_depth_clip {clip, cast: {A: "who A becomes, with their look"}, style, scene?}` returns the reference video (path and URL), the keyframe composition stills, the video prompt (reference video as Video 1) and one image prompt per keyframe. Cast every person letter that matters; a letter left out is described as the source's role, which may not fit the scene. Things the clip shows that the scene does not have (a crown, a weapon, armour) must be overridden in the cast text.
+`cast_depth_clip {clip, cast: {A: "who A becomes, with their look"}, style, scene?}` returns the reference video, the video prompt (reference video as Video 1) and `keyframeGeneration`: per keyframe its time, its prompt and two layout references, the depth still (where each person stands, how near, the framing) and the frame of the source at that time (room layout, architecture, camera angle, light). Cast every person letter that matters; a letter left out is described as the source's role, which may not fit the scene. Things the clip shows that the scene does not have (a crown, a weapon, armour) must be overridden in the cast text.
+
+Why both references: the video model holds the picture to the depth video's layout. In the courtyard test (2026-10-18) a keyframe drawn with the woman on the right and one narrow window was overruled: the video put her where the depth had her, with the source's windows and column. A keyframe drawn to the same layout from the start agrees with the video instead of fighting it. If the scene needs a different room, say so: the source's architecture comes through the depth.
 
 ## What to hand back
 
-Per beat: control on or off and why; for on, the clip ID, why it fits and what differs from the beat, the reference video path, the keyframe stills, the video prompt and the image prompts; for off, the framing to use. State the limits: Seedance has no official depth input (it goes in as an ordinary reference video; one A/B on 2026-10-18 showed it works); the keyframe images must be generated in the scene's style from the image prompts; source stills are not for upload.
+Per beat: control on or off and why; for on, the clip ID, why it fits and what differs from the beat, then two hand-overs in order:
+
+1. **Keyframe generation** (an image model, before the video): for each `keyframeGeneration` entry, Image 1 = the depth still, Image 2 = the source frame, then the character sheets (and the scene's background plate if any), with its prompt. Each generated keyframe is bound to its time.
+2. **Video generation**: Video 1 = the reference video, then the character sheets and the generated keyframes, with the video prompt.
+
+For off beats: the framing to use. State the limits: Seedance has no official depth input (it goes in as an ordinary reference video; one A/B on 2026-10-18 showed it works); the keyframe images must be generated in the scene's style from the image prompts and the two layout references; source frames go to the keyframe step only.

@@ -107,7 +107,7 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
     <div className="vc-stills"><figure><img src={file(k.sourceStill)} alt=""/><figcaption>source</figcaption></figure><figure><img src={file((useDepth&&k.depthStill?k.depthStill:k.clayStill)!)} alt=""/><figcaption>{useDepth?'tinted depth':'clay'}</figcaption></figure></div>
     <p className="vc-sum">{k.summary}</p>
     {(()=>{const says=k.people.some(p=>p.speaking),face=k.people.some(p=>p.expression);return <table className="vc-people"><thead><tr><th>Who</th><th>Doing</th>{says&&<th>Says</th>}{face&&<th>Face</th>}</tr></thead><tbody>{k.people.map(p=>{const c=pkg.people.find(q=>q.name===p.name)!;return <tr key={p.name}><td><i style={{background:hex[c.color]??c.color}}/>{p.name}{cast[p.name]?.trim()?<small> → {cast[p.name]}</small>:null}</td><td>{p.doing}</td>{says&&<td>{p.speaking||'—'}</td>}{face&&<td>{p.expression||'—'}</td>}</tr>;})}</tbody></table>;})()}
-    {texts&&<div className="clay-copy"><div className="clay-copy-head"><strong>Image prompt for this keyframe</strong><button onClick={()=>copy('k'+i,texts.images[i])}>{copied==='k'+i?'Copied':'Copy'}</button></div></div>}
+    {texts&&<div className="clay-copy"><div className="clay-copy-head"><strong>Image prompt for this keyframe (with its depth still and source frame as layout references)</strong><button onClick={()=>copy('k'+i,texts.images[i])}>{copied==='k'+i?'Copied':'Copy'}</button></div></div>}
    </section>)}</div>
   </main>
   <aside className="right">
@@ -118,7 +118,7 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
     <label><span>Style</span><input value={style} placeholder="e.g. soft 2D digital painting, warm candlelight" onChange={e=>keep(cast,e.target.value)}/></label></div>
    <hr/><h2>FOR THE PROMPT</h2>
    {texts&&<div className="clay-copy"><div><div className="clay-copy-head"><strong>Video prompt ({useDepth?'tinted depth':'clay video'} as reference video 1)</strong><button onClick={()=>copy('video',texts.videoPrompt)}>{copied==='video'?'Copied':'Copy'}</button></div><p>{texts.videoPrompt}</p></div>
-    <small>Whole-second times are for Seedance 2.5; 2.0 follows only the shot order. Upload the {useDepth?'tinted depth video':'clay video'} and your character images; the keyframe stills of the source are for checking, not for upload.</small></div>}
+    <small>Whole-second times are for Seedance 2.5; 2.0 follows only the shot order. Upload the {useDepth?'tinted depth video':'clay video'} and your character images; for each keyframe, generate the image from its depth still and source frame (layout only: replace every person) with the image prompt, then add the keyframes. The source frames never go to the video model.</small></div>}
    {pkg.library?.perShot&&<><hr/><h2>PEOPLE</h2><PeopleFix pkg={pkg} hand={hand} setHand={setHand} draw={draw} setDraw={setDraw} time={time} onDone={()=>setStamp(Date.now())}/></>}
    <hr/><h2>PACKAGE</h2>
    <p className="vc-help">.authoring/video-clay/{pkg.id}/ · {[pkg.depth,pkg.clay].filter(Boolean).join(', ')} ({pkg.size[0]}×{pkg.size[1]}, {pkg.duration.toFixed(2)} s, {pkg.fps} fps) and a source and clay still per keyframe. From {pkg.sourceVideo}, {pkg.start}–{(pkg.start+pkg.duration).toFixed(2)} s.</p>
