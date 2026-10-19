@@ -34,16 +34,24 @@ def tracked_at(t):
     return names
 def iou(p,q):
     w_=max(0,min(p[2],q[2])-max(p[0],q[0]));h_=max(0,min(p[3],q[3])-max(p[1],q[1]));i=w_*h_;return i/((p[2]-p[0])*(p[3]-p[1])+(q[2]-q[0])*(q[3]-q[1])-i+1e-9)
+def src_t(t):  # a package's time in the source video; a test cut (derivedFrom) maps through its segments and speed
+    D=P.get('derivedFrom')
+    if not D:return P['start']+t
+    base=json.load(open(pk.parent/D['package']/'package.json'))['start'];x=t*D['speed']
+    for a_,b_ in D['segments']:
+        if x<=b_-a_+1e-6:return base+a_+x
+        x-=b_-a_
+    return base+D['segments'][-1][1]
 out=[];rows=[]
 for k in P['keyframes']:
-    dv.set(cv2.CAP_PROP_POS_FRAMES,round(k['time']*dv.get(5)));ok,d=dv.read();sv.set(cv2.CAP_PROP_POS_MSEC,(P['start']+k['time'])*1000);ok2,f=sv.read()
+    dv.set(cv2.CAP_PROP_POS_FRAMES,round(k['time']*dv.get(5)));ok,d=dv.read();sv.set(cv2.CAP_PROP_POS_MSEC,src_t(k['time'])*1000);ok2,f=sv.read()
     if not ok or not ok2:out.append(dict(time=k['time'],ok=False,issues=['frame not readable']));continue
     h,w=d.shape[:2];f=cv2.resize(f,(w,h));hsv=cv2.cvtColor(d,cv2.COLOR_BGR2HSV);sat=hsv[...,1]>70
     dist=np.stack([np.minimum(abs(hsv[...,0].astype(int)-H[c]),180-abs(hsv[...,0].astype(int)-H[c])) for c in used])
     near=np.argmin(dist,0);masks={c:(sat&(near==i)&(dist[i]<=8)) for i,c in enumerate(used)}
     masks={c:cv2.morphologyEx(m.astype(np.uint8),cv2.MORPH_OPEN,np.ones((3,3),np.uint8))>0 for c,m in masks.items()}
-    area={c:float(m.mean()) for c,m in masks.items()};at=P['start']+k['time'];want={colour_of[n]:n for n in tracked_at(at) if n in colour_of} if TR else {colour_of[p['name']]:p['name'] for p in k['people'] if p['name'] in colour_of}
-    issues=[];kf=round((P['start']+k['time'])*vfps);q=cache/f'{kf}.json';dets=[]
+    area={c:float(m.mean()) for c,m in masks.items()};at=src_t(k['time']);want={colour_of[n]:n for n in tracked_at(at) if n in colour_of} if TR else {colour_of[p['name']]:p['name'] for p in k['people'] if p['name'] in colour_of}
+    issues=[];kf=round(src_t(k['time'])*vfps);q=cache/f'{kf}.json';dets=[]
     if q.exists():
         dd=json.loads(q.read_text());sx=w/S['size'][0]
         for b,kp in zip(dd['boxes'],dd.get('keypoints') or [[]]*len(dd['boxes'])):
