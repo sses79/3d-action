@@ -5,7 +5,7 @@ import {createReadStream} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
 import {inspectBundle} from './reconstruction/bundle.mjs';
-import {checkFixes} from './depth-library.mjs';
+import {checkFixes,DepthLibrary,starStandard} from './depth-library.mjs';
 import {Studio,toolDefinitions} from './core.js';
 const root=fileURLToPath(new URL('../',import.meta.url)),studio=new Studio(root,process.env.STUDIO_STATE_PATH||undefined);
 const port=Number(process.env.STUDIO_PORT||5174);
@@ -56,7 +56,9 @@ const server=createServer(async(req,res)=>{
    const base=resolve(root,'.authoring/depth-library'),pk=resolve(root,'.authoring/video-clay'),sources=[],packs=[];let names=[],pnames=[];try{names=await readdir(base);}catch{}try{pnames=await readdir(pk);}catch{}
    for(const id of pnames.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{const p=JSON.parse(await readFile(resolve(pk,id,'package.json'),'utf8'));packs.push({id,name:p.name,sourceVideo:p.sourceVideo,start:p.start,end:p.start+p.duration,keyframes:p.keyframes.length,depth:!!p.depth,thumb:p.keyframes[0]?.depthStill??p.keyframes[0]?.clayStill,scene:p.scene??null});}catch{}}
    for(const id of names.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{const s=JSON.parse(await readFile(resolve(base,id,'source.json'),'utf8'));delete s.file;sources.push({...s,packages:packs.filter(p=>p.sourceVideo===s.fileName)});}catch{}}
-   return json(200,{sources,unlinked:packs.filter(p=>!sources.some(s=>s.fileName===p.sourceVideo))});
+   const lib=new DepthLibrary(root);for(const p of packs)p.stars=lib.stars(p.id,null);
+   for(const S of sources)for(const C of S.clips){const sm=lib.summary(S,C);C.stars=sm.stars;C.starsSuggested=sm.starsSuggested;C.bestPackage=sm.bestPackage;}
+   return json(200,{sources,unlinked:packs.filter(p=>!sources.some(s=>s.fileName===p.sourceVideo)),starStandard});
   }
   if(req.method==='GET'&&path==='/api/depth-library-file'){
    // Streams only a shot thumbnail or the overview sheet of an ingested source.
@@ -78,8 +80,8 @@ const server=createServer(async(req,res)=>{
    // Streams only the clay video or a keyframe still that a package names.
    const id=url.searchParams.get('id')||'',file=url.searchParams.get('file')||'';if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))return json(404,{error:'No such package'});
    const dir=resolve(root,'.authoring/video-clay',id);let pkg;try{pkg=JSON.parse(await readFile(resolve(dir,'package.json'),'utf8'));}catch{return json(404,{error:'No such package'});}
-   const named=new Set([pkg.clay,pkg.depth,...pkg.keyframes.flatMap(k=>[k.clayStill,k.sourceStill,k.depthStill])].filter(Boolean));if(!named.has(file)||file.includes('/'))return json(404,{error:'Not a file of this package'});
-   const full=resolve(dir,file),info=await stat(full),type=file.endsWith('.mp4')?'video/mp4':'image/jpeg';
+   const named=new Set([pkg.clay,pkg.depth,'check.json','check.jpg',...pkg.keyframes.flatMap(k=>[k.clayStill,k.sourceStill,k.depthStill])].filter(Boolean));if(!named.has(file)||file.includes('/'))return json(404,{error:'Not a file of this package'});
+   const full=resolve(dir,file);let info;try{info=await stat(full);}catch{return json(404,{error:'Not made yet'});}const type=file.endsWith('.mp4')?'video/mp4':file.endsWith('.json')?'application/json':'image/jpeg';
    const match=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||''),first=match?Number(match[1]):0,last=Math.min(info.size-1,match&&match[2]?Number(match[2]):info.size-1);if(first>last||first>=info.size){res.writeHead(416,{'Content-Range':`bytes */${info.size}`});return res.end();}
    res.writeHead(match?206:200,{'Content-Type':type,'Accept-Ranges':'bytes','Content-Length':last-first+1,...(match?{'Content-Range':`bytes ${first}-${last}/${info.size}`}:{})});
    return createReadStream(full,{start:first,end:last}).on('error',()=>res.destroy()).pipe(res);

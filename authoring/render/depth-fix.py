@@ -9,7 +9,7 @@ picture, times in clip seconds) for what the detector misses (armour, someone ly
 between its keys and held before the first and after the last; it is tinted first and in front (depth-tint's "exact"), in the
 person's colour, as the track "<name>-hand", and replaces that person's detector track in the shot.
 The automatic tracks (<clip>.tracks.json) are never changed; the fixed ones go to <clip>.tracks-fixed.json, hand boxes to <clip>.hand.json."""
-import sys,os,json,pathlib,subprocess,time
+import re,sys,os,json,pathlib,subprocess,time
 src,clip=sys.argv[1],sys.argv[2];root=pathlib.Path('.authoring/depth-library')/src;S=json.load(open(root/'source.json'));C=next(c for c in S['clips'] if c['id']==clip)
 assert C.get('package'),'build the clip first (depth-build.py)'
 fx=json.load(open(root/f'{clip}.fixes.json')) if (root/f'{clip}.fixes.json').exists() else {};per_fix=fx.get('shots',{})
@@ -54,5 +54,7 @@ if r.returncode:sys.exit('tint failed:\n'+r.stderr[-2000:])
 r=subprocess.run([sys.executable,'authoring/render/video-clay-pack.py',str(root/f'{clip}.spec.json')],capture_output=True,text=True)
 if r.returncode:sys.exit('package failed:\n'+r.stderr[-2000:])
 C['fixed']=dict(at=time.strftime('%Y-%m-%dT%H:%M:%S'),fixes=fx,people=names,perShot=per,seconds=round(time.perf_counter()-began,1))
-S2=json.load(open(root/'source.json'));next(c for c in S2['clips'] if c['id']==clip)['fixed']=C['fixed'];json.dump(S2,open(root/'source.json','w'),indent=1)  # only this clip's record
+r_=subprocess.run([sys.executable,'authoring/render/depth-check.py',src,clip],capture_output=True,text=True)  # the double check at the keyframes
+chk=json.loads(re.search(r'{"clip".*',r_.stdout).group(0)) if r_.returncode==0 and re.search(r'{"clip".*',r_.stdout) else {'ok':None,'keyframes':[]}
+S2=json.load(open(root/'source.json'));next(c for c in S2['clips'] if c['id']==clip)['fixed']=C['fixed'];next(c for c in S2['clips'] if c['id']==clip)['check']=dict(ok=chk['ok'],issues=sum(len(i) for _,i in chk['keyframes']));json.dump(S2,open(root/'source.json','w'),indent=1)  # only this clip's record
 print(json.dumps(dict(clip=clip,hand=sorted(hand),people={n:colours[n] for n in everyone},perShot=per,seconds=C['fixed']['seconds'])))

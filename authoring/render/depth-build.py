@@ -12,7 +12,7 @@ Reads .authoring/depth-library/<source>/source.json (depth-ingest.py) and, for t
 5. package: video-clay-pack.py into .authoring/video-clay/<clip-id>/ (tinted depth only), with keyframe text left to the
    describe step ("not described"); the clip in source.json becomes "built" with its package id and the build record.
 Timing is printed and stored. The source video must be at the path recorded at ingest unless --video gives it."""
-import sys,os,json,argparse,hashlib,pathlib,subprocess,time,numpy as np,cv2
+import re,sys,os,json,argparse,hashlib,pathlib,subprocess,time,numpy as np,cv2
 p=argparse.ArgumentParser();p.add_argument('source');p.add_argument('clip');p.add_argument('--video');p.add_argument('--people',type=int,default=4);a=p.parse_args()
 root=pathlib.Path('.authoring/depth-library')/a.source;S=json.load(open(root/'source.json'));C=next(c for c in S['clips'] if c['id']==a.clip)
 assert C['kind']=='control','a still shot has no depth to build'
@@ -90,6 +90,8 @@ spec=dict(id=a.clip,name=f"{S['name']} · {a.clip.replace(a.source+'-','clip ')}
     library=dict(source=S['id'],clip=a.clip,perShot=per_shot))
 spec_path=root/f'{a.clip}.spec.json';json.dump(spec,open(spec_path,'w'),indent=1);step('package',[py,'authoring/render/video-clay-pack.py',str(spec_path)])
 C.update(status='built',package=a.clip,built=dict(at=time.strftime('%Y-%m-%dT%H:%M:%S'),people={n:colours[i] for i,n in enumerate(names)},perShot=per_shot,keyframes=keys,seconds=dict(took,total=round(time.perf_counter()-began,1))))
-S2=json.load(open(root/'source.json'));next(c for c in S2['clips'] if c['id']==a.clip).update({k:C[k] for k in ('status','package','built')})  # read again: a description may have been written while this ran
+r_=subprocess.run([sys.executable,'authoring/render/depth-check.py',a.source,a.clip],capture_output=True,text=True)  # the double check at the keyframes
+chk=json.loads(re.search(r'{"clip".*',r_.stdout).group(0)) if r_.returncode==0 and re.search(r'{"clip".*',r_.stdout) else {'ok':None,'keyframes':[]}
+S2=json.load(open(root/'source.json'));next(c for c in S2['clips'] if c['id']==a.clip).update({k:C[k] for k in ('status','package','built')});next(c for c in S2['clips'] if c['id']==a.clip)['check']=dict(ok=chk['ok'],issues=sum(len(i) for _,i in chk['keyframes']))  # read again: a description may have been written while this ran
 json.dump(S2,open(root/'source.json','w'),indent=1)
 print(json.dumps(dict(clip=a.clip,people={n:colours[i] for i,n in enumerate(names)},perShot=per_shot,keyframes=keys,seconds=C['built']['seconds'])))

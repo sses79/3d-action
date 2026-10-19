@@ -32,6 +32,14 @@ If no clip fits, say so. The fall-backs are a staged clay scene (`scene-to-refer
 
 A proposed clip (not built) is built with `build_depth_clip {clip}` (a job of about 2 minutes; poll `get_depth_job`). People are found and named A, B, C per shot automatically; across a cut the same person may get a new letter, and two people in alike clothes may share one. Look at the package on the page and fix it with `fix_depth_clip {clip, shots: {"2": {"E": "A", "G": "-"}}}` (shot index from the clip's shots; "-" drops a person). About 10 seconds.
 
+### Stars
+
+Every package has stars as a control signal (`docs/DEPTH_LIBRARY_PLAN.md`, "Star standard"): 5 reference (a person's judgement, best after a generation), 4 strong (no faults, clear motion), 3 usable, 2 weak, 1 not usable. A person's rating wins; otherwise the check suggests 1-4. Prefer 4-5 stars (`find_depth_clips {minStars: 4}`); each result names its best package, often a 5-star package built by hand over the same time, and `cast_depth_clip` takes that package ID. After a generation, tell the user what it showed and record it with `rate_depth_package {package, stars, why, proven: {model, date, result}, by}`; give 5 only when the user judged it.
+
+### Check the colours before handing over
+
+Every build and fix runs a double check at the keyframes (`authoring/render/depth-check.py`): it reads the tinted depth frame back and compares each colour with the people the detector sees in the source frame. `get_depth_clip` (package.check) and `cast_depth_clip` (check) list the issues, the page shows them on each keyframe card and links the check sheet. Issues: **missing** (a tracked person has no colour), **unexpected** (a colour with no person), **untinted person** (a large person the detector sees has no colour), **two colours** (one person's box holds two colours), **box-shaped** (a region fills its bounding box) and **head** (the colour stops short of a visible face). Look at the sheet: two colours where one person stands behind another, and box-shaped for a box drawn by hand, can be right. Fix the rest (rename, drop, a box by hand) and say in the hand-over what is left.
+
 ## 4. Describe a clip (when it has no description)
 
 Descriptions are written by Claude, not by a model inside the service. Open the clip on the page or read `get_depth_clip`, look at the keyframe stills (the source stills show what happens), and call `describe_depth_clip` with: a two or three sentence summary, labels from the fixed list, who each person letter is (roles and clothes, no actor names), `peopleCount`, what the camera does per shot index, and per keyframe time a summary and what each person does. Mark `content: shows a killing` (or `blood`) when it does; otherwise `none of concern`.

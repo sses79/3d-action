@@ -7,11 +7,13 @@ import {packPrompts} from '../runtime/depth-prompts';
 
 const bridgeUrl=location.port==='5174'?'':'http://127.0.0.1:5174';
 const hex:Record<string,string>={blue:'#4a86d8',orange:'#ee8a3a',green:'#4fae5a',pink:'#f07fb0',purple:'#8d6fd1',yellow:'#e8c53a',red:'#d9534a',gray:'#8e949c'};
+const starText=(n?:number|null,sug?:boolean|null)=>n?'★'.repeat(n)+'☆'.repeat(5-n)+(sug?' suggested':''):'';
 const sec=(x:number)=>x.toFixed(1)+' s',clock=(x:number)=>`${Math.floor(x/60)}:${(x%60).toFixed(1).padStart(4,'0')}`;
 const CLIP=['#e8c53a','#4fae5a','#4a86d8','#d9534a','#8d6fd1','#ee8a3a','#3fb5b0','#f07fb0'];
 type Shot={index:number;start:number;end:number;seconds:number;camera:number;move:number;people:number;size:number;speech:number;control:'on'|'off';why:string[];thumb:string;speechWindows:number[][];bridged?:boolean};
-type Clip={id:string;kind:'control'|'still';shots:number[];start:number;end:number;seconds:number;why:string[];status:string;described:boolean;package?:string;built?:{seconds:Record<string,number>;people:Record<string,string>};fixed?:{people:string[]}};
-type PackRef={id:string;name:string;start:number;end:number;keyframes:number;depth:boolean;thumb?:string;scene:string|null};
+type Stars={stars:number;suggested:boolean;why:string|string[];by?:string;proven?:any};
+type Clip={stars?:number|null;starsSuggested?:boolean|null;bestPackage?:string|null;id:string;kind:'control'|'still';shots:number[];start:number;end:number;seconds:number;why:string[];status:string;described:boolean;package?:string;built?:{seconds:Record<string,number>;people:Record<string,string>};fixed?:{people:string[]}};
+type PackRef={stars?:Stars;id:string;name:string;start:number;end:number;keyframes:number;depth:boolean;thumb?:string;scene:string|null};
 type Source={id:string;name:string;fileName:string;duration:number;fps:number;size:number[];ingested:string;shots:Shot[];clips:Clip[];packages:PackRef[];seconds:Record<string,number>;speechFound:boolean};
 const thumb=(s:string,f:string)=>bridgeUrl+'/api/depth-library-file?source='+encodeURIComponent(s)+'&file='+encodeURIComponent(f);
 const packFile=(id:string,f:string)=>bridgeUrl+'/api/video-clay-file?id='+encodeURIComponent(id)+'&file='+encodeURIComponent(f);
@@ -48,12 +50,13 @@ function Library(){
    <div className="dl-strip">{src.shots.map(s=><button key={s.index} title={`shot ${s.index}, ${sec(s.start)}-${sec(s.end)}: ${s.why.join(', ')}`} style={{borderColor:colourOf.get(s.index)??'#2a3240'}} className={colourOf.has(s.index)?'on':''} onClick={()=>setOpen(src.clips.find(c=>c.shots.includes(s.index))?.id??'')}><img src={thumb(src.id,s.thumb)} alt="" loading="lazy"/><span>{s.index}{s.bridged?' ·b':''}</span></button>)}</div>
    <p className="vc-help dl-legend">Each colour is a proposed depth clip; grey shots need no control. "b" is a slow shot bridged into a sequence.</p>
    {show.built&&src.packages.some(p=>!src.clips.some(c=>c.package===p.id))&&<><h2 className="dl-h">BUILT BY HAND</h2><div className="dl-cards">{src.packages.filter(p=>!src.clips.some(c=>c.package===p.id)).map(p=><button key={p.id} className="dl-card built" onClick={()=>setPkg(p.id)}>
-    {p.thumb&&<img src={packFile(p.id,p.thumb)} alt=""/>}<div><strong>{p.name}</strong><small>{clock(p.start)}–{clock(p.end)} · {sec(p.end-p.start)} · {p.keyframes} keyframes · {p.depth?'tinted depth':'clay'}</small>{p.scene&&<p>{p.scene.slice(0,160)}{p.scene.length>160?'…':''}</p>}<em>open</em></div></button>)}</div></>}
+    {p.thumb&&<img src={packFile(p.id,p.thumb)} alt=""/>}<div><strong>{p.name}</strong><small>{clock(p.start)}–{clock(p.end)} · {sec(p.end-p.start)} · {p.keyframes} keyframes · {p.depth?'tinted depth':'clay'}</small>{p.stars&&<span className={'dl-stars'+(p.stars.suggested?' sug':'')}>{starText(p.stars.stars,p.stars.suggested)}</span>}{p.scene&&<p>{p.scene.slice(0,160)}{p.scene.length>160?'…':''}</p>}<em>open</em></div></button>)}</div></>}
    <h2 className="dl-h">CLIPS <small>{clips.length} shown</small></h2>
    <div className="dl-cards">{clips.map(c=>{const sh=c.shots.map(shotOf);return <button key={c.id} className={'dl-card'+(c.id===open?' now':'')+(c.kind==='still'?' still':'')} onClick={()=>c.package?setPkg(c.package):setOpen(c.id===open?'':c.id)} style={c.kind==='control'?{borderLeftColor:colourOf.get(c.shots[0])}:undefined}>
     <div className="dl-mosaic">{sh.slice(0,3).map(s=><img key={s.index} src={thumb(src.id,s.thumb)} alt="" loading="lazy"/>)}</div>
     <div><strong>{c.id.replace(src.id+'-','')} · {c.kind==='control'?'depth clip':'still shot'}</strong><small>{clock(c.start)}–{clock(c.end)} · {sec(c.seconds)} · {c.shots.length} shot{c.shots.length>1?'s':''}{sh.some(s=>s.speechWindows.length)?' · speech':''}</small>
      <div className="dl-tags">{(c.kind==='control'?c.why:['no control: keyframes and text']).map(w=><span key={w}>{w}</span>)}</div>
+     {c.stars&&<span className={'dl-stars'+(c.starsSuggested?' sug':'')} title={c.bestPackage&&c.bestPackage!==c.package?'best package: '+c.bestPackage:''}>{starText(c.stars,c.starsSuggested)}{c.bestPackage&&c.bestPackage!==c.package?' · via '+c.bestPackage:''}</span>}
      <em>{c.kind==='control'?(c.package?`built in ${Math.round(c.built?.seconds.total??0)} s · ${c.fixed?.people.length??Object.keys(c.built?.people??{}).length} people${c.fixed?' (fixed)':''} · open`:'proposed · not built'):'still'} · {c.described?'described':'not described'}</em></div></button>;})}</div>
   </>}</main>
   {oc&&src&&<aside className="dl-detail"><div className="dl-detail-head"><strong>{oc.id}</strong><button onClick={()=>setOpen('')}>×</button></div>
@@ -90,10 +93,12 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
  file=(f:string)=>bridgeUrl+'/api/video-clay-file?id='+encodeURIComponent(id)+'&file='+encodeURIComponent(f)+(stamp?'&v='+stamp:'');
  const seek=(t:number)=>{const v=video.current;if(v){v.pause();v.currentTime=t;}setTime(t);};
  useEffect(()=>{setHand(structuredClone(pkg?.library?.fixes?.boxes??[]));setDraw('');},[pkg]);
+ const [check,setCheck]=useState<{ok:boolean;keyframes:{time:number;ok:boolean;issues:string[]}[]}|null>(null);
+ useEffect(()=>{setCheck(null);if(!pkg?.library)return;fetch(file('check.json')).then(r=>r.ok?r.json():null).then(setCheck).catch(()=>{});},[pkg,stamp]);
  const copy=(k:string,text:string)=>{navigator.clipboard.writeText(text).then(()=>{setCopied(k);setTimeout(()=>setCopied(''),1500);});};
  const texts=useMemo(()=>pkg?packPrompts(pkg,cast,style,useDepth):null,[pkg,cast,style,useDepth]);
  const pos=(t:number)=>pkg?`${t/pkg.duration*100}%`:'0',wide=(a:number,b:number)=>pkg?`${(b-a)/pkg.duration*100}%`:'0',hereKey=pkg?Math.max(0,pkg.keyframes.findLastIndex(k=>k.time<=time+1e-3)):0;
- return <><div className="dl-bar"><button onClick={onBack}>← Library</button><strong>{pkg?.name??id}</strong><span>built package</span></div>
+ return <><div className="dl-bar"><button onClick={onBack}>← Library</button><strong>{pkg?.name??id}</strong><span>built package</span>{check&&<span className={'dl-check-sum'+(check.ok?' ok':'')}>{check.ok?'✓ check passed at every keyframe':`⚠ check: ${check.keyframes.reduce((n,k)=>n+k.issues.length,0)} issue(s) at the keyframes`}</span>}{check&&<a className="link" href={file('check.jpg')} target="_blank" rel="noreferrer">check sheet</a>}</div>
   {error&&<div className="clay-error"><span>{error}</span></div>}
   {pkg&&<div className="clay-layout"><main>
    <div className="clay-stage"><div className="clay-canvas dl-videowrap"><video ref={video} className="vc-video" src={file((useDepth?pkg.depth:pkg.clay)!)} controls playsInline onTimeUpdate={e=>setTime((e.target as HTMLVideoElement).currentTime)}/>{pkg.library&&<DrawLayer pkg={pkg} time={time} hand={hand} setHand={setHand} draw={draw} onStart={()=>video.current?.pause()}/>}</div></div>
@@ -105,6 +110,7 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
    <div className="vc-keys">{pkg.keyframes.map((k,i)=><section key={i} className={'vc-card'+(i===hereKey?' now':'')}>
     <div className="vc-head"><button onClick={()=>seek(k.time)}>{i+1} · {k.time.toFixed(2)} s · shot {k.shot}</button><span>{pkg.shots.find(s=>s.index===k.shot)?.camera}</span></div>
     <div className="vc-stills"><figure><img src={file(k.sourceStill)} alt=""/><figcaption>source</figcaption></figure><figure><img src={file((useDepth&&k.depthStill?k.depthStill:k.clayStill)!)} alt=""/><figcaption>{useDepth?'tinted depth':'clay'}</figcaption></figure></div>
+    {check&&(()=>{const c=check.keyframes.find(x=>Math.abs(x.time-k.time)<.01);return c&&<div className={'dl-check-k'+(c.ok?' ok':'')}>{c.ok?'✓ Colours and shapes checked':c.issues.map((x,j)=><div key={j}>⚠ {x}</div>)}</div>;})()}
     <p className="vc-sum">{k.summary}</p>
     {(()=>{const says=k.people.some(p=>p.speaking),face=k.people.some(p=>p.expression);return <table className="vc-people"><thead><tr><th>Who</th><th>Doing</th>{says&&<th>Says</th>}{face&&<th>Face</th>}</tr></thead><tbody>{k.people.map(p=>{const c=pkg.people.find(q=>q.name===p.name)!;return <tr key={p.name}><td><i style={{background:hex[c.color]??c.color}}/>{p.name}{cast[p.name]?.trim()?<small> → {cast[p.name]}</small>:null}</td><td>{p.doing}</td>{says&&<td>{p.speaking||'—'}</td>}{face&&<td>{p.expression||'—'}</td>}</tr>;})}</tbody></table>;})()}
     {texts&&<div className="clay-copy"><div className="clay-copy-head"><strong>Image prompt for this keyframe (with its depth still and source frame as layout references)</strong><button onClick={()=>copy('k'+i,texts.images[i])}>{copied==='k'+i?'Copied':'Copy'}</button></div></div>}
@@ -119,6 +125,7 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
    <hr/><h2>FOR THE PROMPT</h2>
    {texts&&<div className="clay-copy"><div><div className="clay-copy-head"><strong>Video prompt ({useDepth?'tinted depth':'clay video'} as reference video 1)</strong><button onClick={()=>copy('video',texts.videoPrompt)}>{copied==='video'?'Copied':'Copy'}</button></div><p>{texts.videoPrompt}</p></div>
     <small>Whole-second times are for Seedance 2.5; 2.0 follows only the shot order. Upload the {useDepth?'tinted depth video':'clay video'} and your character images; for each keyframe, generate the image from its depth still and source frame (layout only: replace every person) with the image prompt, then add the keyframes. The source frames never go to the video model.</small></div>}
+   <hr/><h2>STARS</h2><RateBox id={pkg.id}/>
    {pkg.library?.perShot&&<><hr/><h2>PEOPLE</h2><PeopleFix pkg={pkg} hand={hand} setHand={setHand} draw={draw} setDraw={setDraw} time={time} onDone={()=>setStamp(Date.now())}/></>}
    <hr/><h2>PACKAGE</h2>
    <p className="vc-help">.authoring/video-clay/{pkg.id}/ · {[pkg.depth,pkg.clay].filter(Boolean).join(', ')} ({pkg.size[0]}×{pkg.size[1]}, {pkg.duration.toFixed(2)} s, {pkg.fps} fps) and a source and clay still per keyframe. From {pkg.sourceVideo}, {pkg.start}–{(pkg.start+pkg.duration).toFixed(2)} s.</p>
@@ -157,5 +164,16 @@ function DrawLayer({pkg,time,hand,setHand,draw,onStart}:{pkg:Pack;time:number;ha
   {hand.map((e,i)=>{const b=boxAt(pkg,e,time);return b&&<g key={i}><rect x={b[0]} y={b[1]} width={b[2]-b[0]} height={b[3]-b[1]} fill="none" stroke={colour(e.name)} strokeWidth={.004} vectorEffect="non-scaling-stroke" style={{strokeWidth:2}}/><text x={b[0]+.005} y={b[1]+.04} fontSize={.035} fill={colour(e.name)}>{e.name}{e.keys.some(k=>Math.abs(k.time-time)<.02)?' ◆':''}</text></g>;})}
   {drag&&<rect x={Math.min(drag[0],drag[2])} y={Math.min(drag[1],drag[3])} width={Math.abs(drag[2]-drag[0])} height={Math.abs(drag[3]-drag[1])} fill="rgba(232,197,58,.15)" stroke="#e8c53a" vectorEffect="non-scaling-stroke" style={{strokeWidth:2}}/>}
  </svg>;
+}
+// The package's stars as a control signal: a person's rating, or the machine's suggestion until one is given.
+function RateBox({id}:{id:string}){
+ const [cur,setCur]=useState<Stars|null>(null),[std,setStd]=useState<Record<string,string>>({}),[pick,setPick]=useState(0),[why,setWhy]=useState(''),[note,setNote]=useState('');
+ const load=()=>fetch(bridgeUrl+'/api/depth-library').then(r=>r.json()).then(d=>{setStd(d.starStandard??{});const all=[...d.sources.flatMap((s:any)=>s.packages),...d.unlinked];setCur(all.find((p:any)=>p.id===id)?.stars??null);});
+ useEffect(()=>{load();},[id]);
+ const save=()=>tool('rate_depth_package',{package:id,stars:pick,why,by:'Tim (on the depth page)'}).then(()=>{setNote('Saved.');setPick(0);setWhy('');load();}).catch(e=>setNote(e.message));
+ return <div className="dl-rate">{cur&&<p className="vc-help"><span className={'dl-stars big'+(cur.suggested?' sug':'')}>{starText(cur.stars,cur.suggested)}</span><br/>{cur.suggested?'Suggested by the check: ':`Rated by ${cur.by}: `}{Array.isArray(cur.why)?cur.why.join(' · '):cur.why}</p>}
+  <div className="dl-starpick">{[1,2,3,4,5].map(n=><button key={n} className={n<=pick?'on':''} title={std[n]} onClick={()=>setPick(n)}>★</button>)}</div>
+  {pick>0&&<><p className="vc-help">{pick}: {std[pick]}</p><input className="dl-search" placeholder="What it rests on (a generation, what you saw)" value={why} onChange={e=>setWhy(e.target.value)}/><button className="primary" disabled={why.trim().length<5} onClick={save}>Rate {pick} star{pick>1?'s':''}</button></>}
+  {note&&<p className="vc-help">{note}</p>}</div>;
 }
 createRoot(document.getElementById('root')!).render(<Library/>);
