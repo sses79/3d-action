@@ -7,7 +7,8 @@ and clearly saturated (the depth's grey has none). The source frame at the same 
 (the cache from the build; at least 30% of the picture tall, confidence 0.5) and their nose and shoulders. Issues:
   missing: a person with a box at that moment (the build's tracks, the fixes, boxes by hand) has no colour (or under 0.3% of the picture);
   unexpected: a colour appears for a person with no box at that moment;
-  untinted person: the detector sees a large person with less than a quarter of the box tinted;
+  untinted person: the detector sees a large person with less than a quarter of the box tinted (a bystander: a note);
+  missing subject: the same for the largest person in the frame (a fault: the subject is not tinted);
   two colours: two colours each cover more than a quarter of one detected person;
   box-shaped: a region fills more than 90% of its bounding box (a hand box, or a tint that ran along a box edge);
   head: a detected person's nose is seen but the colour covering their body does not reach it.
@@ -62,7 +63,8 @@ for k in P['keyframes']:
         if x1-x0<4 or y1-y0<4:continue
         cov={c:float(masks[c][y0:y1,x0:x1].mean()) for c in used};tot=sum(cov.values());top=sorted(cov,key=lambda c:-cov[c])
         where=f'the person at {round((x0+x1)/2/w*100)}% across'
-        if tot<.25:issues.append(f'untinted person: {where} (box {round((y1-y0)/h*100)}% tall) is {tot:.0%} tinted')
+        main=(x1-x0)*(y1-y0)>=max((o[2]-o[0])*(o[3]-o[1]) for o,_ in dets)*.999  # the largest person in the frame: the subject, not a bystander
+        if tot<.25:issues.append(f"{'missing subject' if main else 'untinted person'}: {where} (box {round((y1-y0)/h*100)}% tall) is {tot:.0%} tinted{' (the largest person in the frame)' if main else ''}")
         elif len(top)>1 and cov[top[1]]>.25 and cov[top[0]]>.25:issues.append(f'two colours: {where} is {top[0]} {cov[top[0]]:.0%} and {top[1]} {cov[top[1]]:.0%}')
         if kp and tot>=.25 and kp[0][2]>.5:
             nx,ny=int(kp[0][0]),int(kp[0][1]);c=top[0];r=max(3,int(.03*(y1-y0)))

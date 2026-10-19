@@ -90,8 +90,11 @@ spec=dict(id=a.clip,name=f"{S['name']} · {a.clip.replace(a.source+'-','clip ')}
     library=dict(source=S['id'],clip=a.clip,perShot=per_shot))
 spec_path=root/f'{a.clip}.spec.json';json.dump(spec,open(spec_path,'w'),indent=1);step('package',[py,'authoring/render/video-clay-pack.py',str(spec_path)])
 C.update(status='built',package=a.clip,built=dict(at=time.strftime('%Y-%m-%dT%H:%M:%S'),people={n:colours[i] for i,n in enumerate(names)},perShot=per_shot,keyframes=keys,seconds=dict(took,total=round(time.perf_counter()-began,1))))
+S2=json.load(open(root/'source.json'));next(c for c in S2['clips'] if c['id']==a.clip).update({k:C[k] for k in ('status','package','built')})
+json.dump(S2,open(root/'source.json','w'),indent=1)
+# the double check at the keyframes, once the clip's package is recorded (the check reads it from source.json)
 r_=subprocess.run([sys.executable,'authoring/render/depth-check.py',a.source,a.clip],capture_output=True,text=True)  # the double check at the keyframes
 chk=json.loads(re.search(r'{"clip".*',r_.stdout).group(0)) if r_.returncode==0 and re.search(r'{"clip".*',r_.stdout) else {'ok':None,'keyframes':[]}
-S2=json.load(open(root/'source.json'));next(c for c in S2['clips'] if c['id']==a.clip).update({k:C[k] for k in ('status','package','built')});next(c for c in S2['clips'] if c['id']==a.clip)['check']=dict(ok=chk['ok'],issues=sum(len(i) for _,i in chk['keyframes']))  # read again: a description may have been written while this ran
+S2=json.load(open(root/'source.json'));next(c for c in S2['clips'] if c['id']==a.clip)['check']=dict(ok=chk['ok'],issues=sum(len(i) for _,i in chk['keyframes']))  # read again: a description may have been written while this ran
 json.dump(S2,open(root/'source.json','w'),indent=1)
 print(json.dumps(dict(clip=a.clip,people={n:colours[i] for i,n in enumerate(names)},perShot=per_shot,keyframes=keys,seconds=C['built']['seconds'])))

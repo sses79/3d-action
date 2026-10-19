@@ -121,3 +121,11 @@ What the library offers is a control signal for dynamic film scenes; a package's
 - A clip's stars are those of its best package: its own build or a package built by hand over at least half the same time (fight clip 023 takes V.8's 5 stars, clip 001 the courtyard's). `find_depth_clips` adds (stars - 3) x 0.5 to the score, says the stars and which package in each result, and takes `minStars`; `cast_depth_clip` takes a package ID too (a clip's `bestPackage`), so the 5-star hand-built packages are what an agent casts.
 - Suggested now: standoff 001 and 016 at 4, Tywin 022 at 3 (little motion), Tywin 016 at 2 (two colours where the lord stands behind the bier: a person would raise it), V.5 at 3 (two colours, box-shaped hand box).
 
+### A third source: Ramsay kills Roose (2026-10-19)
+
+`got-ramsay` (225 s, 1280x720, no sound track: ingest now skips speech timing when a video has no audio). 55 shots, 10 need control, 5 depth clips proposed (002 the opening, 026 the approach and the embrace in which the killing happens, 030 the close-ups after it, 035, 044), 45 still shots; 1.9 minutes. Very dark footage throughout.
+- Built 026 (12.6 s, three shots; 5.3 minutes) and 002 (7.9 s; 3.3 minutes) with no hand work. 002 passes the check. 026 is weak: in the close embrace the detector's boxes overlap, so Ramsay's close-up (shot 27) has no tint, the embrace tints only part of one back with both heads grey, and Roose comes back in shot 28 as a new person (C) instead of A. It needs the page's fixes (C is A; boxes by hand for Ramsay in shot 27 and both in the embrace).
+- The check called all of that "untinted person", a note, and would have suggested 4 stars. An untinted person is now a fault ("missing subject") when they are the largest person in the frame: the subject, not a bystander. The standoff and the courtyard references still have no faults; V.8 gets one (the soldier's back in the foreground of its first shot, a bystander who is the largest person there), which its 5-star rating by the user overrides. 026 now gets 2 stars, 002 4.
+- The build ran the check before recording the clip's package, so the check found nothing; it now runs after.
+- Not described yet; 026 and 030 show a killing.
+

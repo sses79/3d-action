@@ -22,8 +22,8 @@ def run(cmd,what):
 shots_json=root/'shots.json';run([py,'authoring/render/shots.py',a.video,'0',f'{dur-.05:.3f}',str(shots_json)],'shots')
 speech=[]
 if os.path.exists(a.whisper_model):
-    t=time.perf_counter();wav=root/'audio.wav';subprocess.run(['ffmpeg','-loglevel','error','-y','-i',a.video,'-ar','16000','-ac','1',str(wav)],check=True)
-    subprocess.run(['whisper-cli','-m',a.whisper_model,'-f',str(wav),'-np','-oj','-of',str(root/'speech')],capture_output=True)
+    t=time.perf_counter();wav=root/'audio.wav';subprocess.run(['ffmpeg','-loglevel','error','-y','-i',a.video,'-vn','-ar','16000','-ac','1',str(wav)],capture_output=True)  # a video with no sound track gives no wav: no speech times
+    if wav.exists():subprocess.run(['whisper-cli','-m',a.whisper_model,'-f',str(wav),'-np','-oj','-of',str(root/'speech')],capture_output=True)
     try:speech=[[x['offsets']['from']/1000,x['offsets']['to']/1000] for x in json.load(open(root/'speech.json'))['transcription'] if x['text'].strip() and not x['text'].strip().startswith(('[','('))]
     except Exception:speech=[]
     for f in (wav,root/'speech.json'):f.unlink(missing_ok=True)  # times only: the words are not kept

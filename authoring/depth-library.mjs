@@ -27,7 +27,7 @@ export function checkFixes(shots,boxes){const name=x=>typeof x==='string'&&/^[A-
 // one person, a colour with nobody behind it) cost stars; notes (an untinted extra, a head a little short, a box drawn by hand)
 // do not: both 5-star references have them and generated well. Only a person gives 5.
 export const starStandard={5:'Reference: judged excellent by a person, best after a generation that followed it (cuts, positions, movement); strong motion or a complex moving camera',4:'Strong: no faults at the keyframes, clear camera or body motion; not yet proven in a generation',3:'Usable: one fault away from the main action, or little motion (a still camera with people placed), or not checked',2:'Weak: faults on the main people; fix before use',1:'Not usable: identities wrong across cuts, depth broken, or content that cannot be used'};
-const FAULT=/^(missing|unexpected|two colours)/;
+const FAULT=/^(missing|unexpected|two colours)/;  // 'missing subject' (the largest person untinted) is a fault too
 export function suggestStars(check,why){const notes=[];if(!check)return {stars:3,suggested:true,why:['not checked']};
  const all=check.keyframes.flatMap(k=>k.issues.map(i=>`${k.time} s: ${i}`)),faults=all.filter(i=>FAULT.test(i.replace(/^[\d.]+ s: /,'')));let stars=faults.length===0?4:faults.length===1?3:2;
  if(faults.length)notes.push(`${faults.length} fault(s): `+faults.slice(0,3).join('; '));if(all.length>faults.length)notes.push(`${all.length-faults.length} note(s) (untinted extras, short heads, hand boxes) do not count`);
