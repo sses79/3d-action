@@ -12,7 +12,7 @@ const sec=(x:number)=>x.toFixed(1)+' s',clock=(x:number)=>`${Math.floor(x/60)}:$
 const CLIP=['#e8c53a','#4fae5a','#4a86d8','#d9534a','#8d6fd1','#ee8a3a','#3fb5b0','#f07fb0'];
 type Shot={index:number;start:number;end:number;seconds:number;camera:number;move:number;people:number;size:number;speech:number;control:'on'|'off';why:string[];thumb:string;speechWindows:number[][];bridged?:boolean};
 type Stars={stars:number;suggested:boolean;why:string|string[];by?:string;proven?:any};
-type Clip={stars?:number|null;starsSuggested?:boolean|null;bestPackage?:string|null;id:string;kind:'control'|'still';shots:number[];start:number;end:number;seconds:number;why:string[];status:string;described:boolean;package?:string;built?:{seconds:Record<string,number>;people:Record<string,string>};fixed?:{people:string[]}};
+type Clip={needsControlNow?:boolean;controlWhy?:string;controlOverride?:{control:string;why:string;by:string};stars?:number|null;starsSuggested?:boolean|null;bestPackage?:string|null;id:string;kind:'control'|'still';shots:number[];start:number;end:number;seconds:number;why:string[];status:string;described:boolean;package?:string;built?:{seconds:Record<string,number>;people:Record<string,string>};fixed?:{people:string[]}};
 type PackRef={stars?:Stars;id:string;name:string;start:number;end:number;keyframes:number;depth:boolean;thumb?:string;scene:string|null};
 type Source={id:string;name:string;fileName:string;duration:number;fps:number;size:number[];ingested:string;shots:Shot[];clips:Clip[];packages:PackRef[];seconds:Record<string,number>;speechFound:boolean};
 const thumb=(s:string,f:string)=>bridgeUrl+'/api/depth-library-file?source='+encodeURIComponent(s)+'&file='+encodeURIComponent(f);
@@ -52,16 +52,17 @@ function Library(){
    {show.built&&src.packages.some(p=>!src.clips.some(c=>c.package===p.id))&&<><h2 className="dl-h">BUILT BY HAND</h2><div className="dl-cards">{src.packages.filter(p=>!src.clips.some(c=>c.package===p.id)).map(p=><button key={p.id} className="dl-card built" onClick={()=>setPkg(p.id)}>
     {p.thumb&&<img src={packFile(p.id,p.thumb)} alt=""/>}<div><strong>{p.name}</strong><small>{clock(p.start)}–{clock(p.end)} · {sec(p.end-p.start)} · {p.keyframes} keyframes · {p.depth?'tinted depth':'clay'}</small>{p.stars&&<span className={'dl-stars'+(p.stars.suggested?' sug':'')}>{starText(p.stars.stars,p.stars.suggested)}</span>}{p.scene&&<p>{p.scene.slice(0,160)}{p.scene.length>160?'…':''}</p>}<em>open</em></div></button>)}</div></>}
    <h2 className="dl-h">CLIPS <small>{clips.length} shown</small></h2>
-   <div className="dl-cards">{clips.map(c=>{const sh=c.shots.map(shotOf);return <button key={c.id} className={'dl-card'+(c.id===open?' now':'')+(c.kind==='still'?' still':'')} onClick={()=>c.package?setPkg(c.package):setOpen(c.id===open?'':c.id)} style={c.kind==='control'?{borderLeftColor:colourOf.get(c.shots[0])}:undefined}>
+   <div className="dl-cards">{clips.map(c=>{const sh=c.shots.map(shotOf);return <button key={c.id} className={'dl-card'+(c.id===open?' now':'')+(c.kind==='still'?' still':'')+(c.kind==='control'&&c.needsControlNow===false?' nocontrol':'')} onClick={()=>c.package?setPkg(c.package):setOpen(c.id===open?'':c.id)} style={c.kind==='control'?{borderLeftColor:colourOf.get(c.shots[0])}:undefined}>
     <div className="dl-mosaic">{sh.slice(0,3).map(s=><img key={s.index} src={thumb(src.id,s.thumb)} alt="" loading="lazy"/>)}</div>
     <div><strong>{c.id.replace(src.id+'-','')} · {c.kind==='control'?'depth clip':'still shot'}</strong><small>{clock(c.start)}–{clock(c.end)} · {sec(c.seconds)} · {c.shots.length} shot{c.shots.length>1?'s':''}{sh.some(s=>s.speechWindows.length)?' · speech':''}</small>
-     <div className="dl-tags">{(c.kind==='control'?c.why:['no control: keyframes and text']).map(w=><span key={w}>{w}</span>)}</div>
+     <div className="dl-tags">{c.kind==='control'&&c.needsControlNow===false?<span className="off">control not needed{c.controlOverride?' (by '+c.controlOverride.by+')':' (measured)'}</span>:(c.kind==='control'?c.why:['no control: keyframes and text']).map(w=><span key={w}>{w}</span>)}</div>
      {c.stars&&<span className={'dl-stars'+(c.starsSuggested?' sug':'')} title={c.bestPackage&&c.bestPackage!==c.package?'best package: '+c.bestPackage:''}>{starText(c.stars,c.starsSuggested)}{c.bestPackage&&c.bestPackage!==c.package?' · via '+c.bestPackage:''}</span>}
      <em>{c.kind==='control'?(c.package?`built in ${Math.round(c.built?.seconds.total??0)} s · ${c.fixed?.people.length??Object.keys(c.built?.people??{}).length} people${c.fixed?' (fixed)':''} · open`:'proposed · not built'):'still'} · {c.described?'described':'not described'}</em></div></button>;})}</div>
   </>}</main>
   {oc&&src&&<aside className="dl-detail"><div className="dl-detail-head"><strong>{oc.id}</strong><button onClick={()=>setOpen('')}>×</button></div>
    <p className="vc-help">{oc.kind==='control'?'A depth clip, not built yet: Build makes its depth, finds and names the people, tints and packages it (about 2 minutes for 5-15 s).':'A still shot: no control video; it will carry keyframes and text once described.'} {clock(oc.start)}–{clock(oc.end)}, {sec(oc.seconds)}.</p>
-   {oc.kind==='control'&&!oc.package&&<BuildButton clip={oc.id} onDone={reload}/>}
+   {oc.kind==='control'&&<ControlSwitch clip={oc} onDone={reload}/>}
+   {oc.kind==='control'&&!oc.package&&oc.needsControlNow!==false&&<BuildButton clip={oc.id} onDone={reload}/>}
    {oc.shots.map(shotOf).map(s=><div key={s.index} className="dl-shot"><img src={thumb(src.id,s.thumb)} alt=""/><div><strong>Shot {s.index} · {sec(s.start)}–{sec(s.end)} · {s.control==='on'?'control on':s.bridged?'bridged':'off'}</strong>
     <small>camera {s.camera.toFixed(2)} widths/s · move {s.move.toFixed(2)} heights/s · {s.people} people · tallest {Math.round(s.size*100)}% of height{s.speechWindows.length?` · speech ${s.speechWindows.map(w=>`${sec(w[0])}–${sec(w[1])}`).join(', ')}`:''}</small><small>{s.why.join(', ')}</small></div></div>)}
   </aside>}
@@ -73,6 +74,14 @@ function BuildButton({clip,onDone}:{clip:string;onDone:()=>void}){
  const [state,setState]=useState(''),[busy,setBusy]=useState(false);
  const go=async()=>{setBusy(true);setState('Starting…');try{const {job}=await tool('build_depth_clip',{clip}),t0=Date.now();for(;;){await new Promise(r=>setTimeout(r,3000));const j=await tool('get_depth_job',{job});if(j.status==='running'){setState(`Building… ${Math.round((Date.now()-t0)/1000)} s`);continue;}if(j.status==='done'){setState(`Built in ${Math.round(j.result?.seconds?.total??0)} s`);onDone();}else setState('Failed: '+(j.error||'').slice(-300));break;}}catch(e:any){setState(e.message);}setBusy(false);};
  return <div className="dl-build"><button className="primary" disabled={busy} onClick={go}>{busy?'Building…':'Build this clip'}</button>{state&&<span>{state}</span>}</div>;
+}
+// Whether this clip needs a control video: the measured verdict, which a person can override (set_depth_clip_control).
+function ControlSwitch({clip,onDone}:{clip:Clip;onDone:()=>void}){
+ const [why,setWhy]=useState(''),[note,setNote]=useState('');const on=clip.needsControlNow!==false;
+ const set=(control:string)=>tool('set_depth_clip_control',{clip:clip.id,control,why:why||'set on the depth page',by:'Tim (on the depth page)'}).then(()=>{setNote('');onDone();}).catch(e=>setNote(e.message));
+ return <div className="dl-ctl"><p className="vc-help"><b>{on?'Needs a control video':'Control not needed'}</b> · {clip.controlWhy}</p>
+  <input className="dl-search" placeholder="Why (optional)" value={why} onChange={e=>setWhy(e.target.value)}/>
+  <div className="group"><button onClick={()=>set(on?'off':'on')}>{on?'Mark: control not needed':'Mark: needs control'}</button>{clip.controlOverride&&<button onClick={()=>set('measured')}>Back to measured</button>}</div>{note&&<p className="vc-help">{note}</p>}</div>;
 }
 function Head(){return <header><div className="brand"><div className="brand-icon">◈</div><div><strong>ANIMATION STUDIO</strong><small>Depth library / reference clips from source videos</small></div></div><div className="header-actions"><a className="link" href="clay.html">Clay reference</a><a className="link" href="./">Action workshop</a></div></header>;}
 

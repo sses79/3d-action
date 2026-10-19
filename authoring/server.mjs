@@ -57,7 +57,7 @@ const server=createServer(async(req,res)=>{
    for(const id of pnames.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{const p=JSON.parse(await readFile(resolve(pk,id,'package.json'),'utf8'));packs.push({id,name:p.name,sourceVideo:p.sourceVideo,start:p.start,end:p.start+p.duration,keyframes:p.keyframes.length,depth:!!p.depth,thumb:p.keyframes[0]?.depthStill??p.keyframes[0]?.clayStill,scene:p.scene??null});}catch{}}
    for(const id of names.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{const s=JSON.parse(await readFile(resolve(base,id,'source.json'),'utf8'));delete s.file;sources.push({...s,packages:packs.filter(p=>p.sourceVideo===s.fileName)});}catch{}}
    const lib=new DepthLibrary(root);for(const p of packs)p.stars=lib.stars(p.id,null);
-   for(const S of sources)for(const C of S.clips){const sm=lib.summary(S,C);C.stars=sm.stars;C.starsSuggested=sm.starsSuggested;C.bestPackage=sm.bestPackage;}
+   for(const S of sources)for(const C of S.clips){const sm=lib.summary(S,C);C.stars=sm.stars;C.starsSuggested=sm.starsSuggested;C.bestPackage=sm.bestPackage;C.needsControlNow=sm.needsControl;C.controlWhy=sm.controlWhy;}
    return json(200,{sources,unlinked:packs.filter(p=>!sources.some(s=>s.fileName===p.sourceVideo)),starStandard});
   }
   if(req.method==='GET'&&path==='/api/depth-library-file'){
