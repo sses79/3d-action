@@ -5,8 +5,8 @@
 // layout (seen in the courtyard test, 2026-10-18), so a keyframe drawn to another layout is overruled; matching it from the
 // start keeps the keyframe and the video in agreement.
 export type PackPeople={name:string;color:string;represents:string};
-export type PackKey={time:number;shot:number;summary:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]};
-export type Beat={actor:string;verb:string;target?:string;contact?:string;change?:string;start:number;end:number};
+export type PackKey={layout?:Record<string,{side:string;area:number}>;time:number;shot:number;summary:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]};
+export type Beat={actor:string;verb:string;target?:string;contact?:string;change?:string;avoid?:string;peak?:number;start:number;end:number};
 export type PackLike={beats?:Beat[];summary?:string;duration:number;people:PackPeople[];shots:{index:number;start:number;end:number;camera:string}[];audio:{start:number;end:number;who?:string;kind:string;text:string}[];keyframes:PackKey[]};
 // How many beats a clip can carry (docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md): about 1.5-2.5 s each, so a 5 s clip holds 2-3 and
 // a 4 s clip 2; one beat over 4 s or more usually needs no control video (a keyframe and the prompt carry it) unless the camera
@@ -37,3 +37,33 @@ const person=(n:string)=>pkg.people.find(p=>p.name===n)!,as=(n:string)=>cast[n]?
   const images=ks.map((k,i)=>{const s=pkg.shots.find(x=>x.index===k.shot)!;return `Keyframe ${i+1}, ${k.time} s, shot ${pkg.shots.indexOf(s)+1} (${s.camera}). ${beatAt(k.time)}${useDepth?`References: Image 1 is the depth still key-${i+1}-depth.jpg (white is near): keep exactly where each person stands, how near they are and the camera's framing. Image 2 is the source frame key-${i+1}-source.jpg: keep its room layout, architecture (walls, windows, arches, columns, doors, stairs), camera angle and light direction, because the reference video will hold the picture to that layout. Replace every person with the cast below and redraw everything${style.trim()?` as ${style.trim()}`:' in the scene\'s style'}; take no face, hair, costume or likeness from the source frame.`:`Use the clay still key-${i+1}-clay.jpg only for the camera angle, framing and where each figure stands.${style.trim()?` Draw it as ${style.trim()}.`:''}`} ${k.summary} ${k.people.map(p=>`${as(p.name)} (${fig(p.name)}): ${p.doing}${p.expression?`; face: ${p.expression}`:''}${p.speaking?`; speaking: ${p.speaking}`:''}`).join('. ')}.`;});
   return {videoPrompt,images};
 }
+
+// The hand-over to keyframe generation (docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md, "The keyframe image prompt"): per keyframe, in order,
+// its beat, the contact, where each person is, what changed since the previous keyframe (which is passed as an image: keyframes are
+// generated in order, each from the last approved one), the references in their order and the prompt. Image numbers count the
+// references as listed; the character sheets come last.
+export function keyframeHandover(pkg:PackLike,cast:Record<string,string>,style:string,files:{depth:(i:number)=>string;source:(i:number)=>string;contact?:(i:number)=>string|null}){
+ const name=(n:string)=>cast[n]?.trim()?cast[n].trim().split(/[:,(]/)[0].trim():(pkg.people.find(p=>p.name===n)?.represents??n);
+ const said=(x:string)=>pkg.people.reduce((t,p)=>t.replace(new RegExp(`\\b${p.name}\\b`,p.name.length>1?'gi':'g'),name(p.name)),x);
+ const cutBetween=(a:number,b:number)=>pkg.shots.some(s=>s.start>a+1e-3&&s.start<=b);
+ const beatOf=(t:number)=>{const i=pkg.beats?.findIndex(b=>b.start-1e-3<=t&&t<b.end+1e-3)??-1;return i<0?null:{i,b:pkg.beats![i]};};
+ const size=(k:PackKey)=>{const a=Math.max(0,...Object.values(k.layout??{}).map(x=>x.area));return a>.45?'tight: the people fill most of the frame':a>.15?'medium: the people fill a good part of the frame':'wide: the people are small in the frame';};
+ return pkg.keyframes.map((k,i)=>{const bb=beatOf(k.time),prev=i?pkg.keyframes[i-1]:null,pb=prev?beatOf(prev.time):null,contact=files.contact?.(i+1)??null;
+  const refs=[{role:'depth still: framing, where each person stands and how near (white is near; the tints only say who is who)',file:files.depth(i+1)},{role:'source frame: room, architecture, camera angle, light, and who touches what; replace every person, take no likeness',file:files.source(i+1)},...(contact?[{role:'contact card: whose hand is on what',file:contact}]:[]),...(prev?[{role:`keyframe ${i} as generated and approved: continuity (the same people, sides, arms and what is held)`,file:`keyframe-${i}.png (yours)`}]:[]),{role:'character sheets',file:'yours'}];
+  const sides=Object.entries(k.layout??{}).map(([n,l])=>`${name(n)} at screen ${l.side}`).join(', ');
+  const people=bb?[bb.b.actor,...(bb.b.target?[bb.b.target]:[])]:Object.keys(k.layout??{});
+  const lines=[`Keyframe ${i+1} of ${pkg.keyframes.length}, at ${k.time} s.`,
+   bb?`Beat ${bb.i+1} of ${pkg.beats!.length}: ${said(`${bb.b.actor} ${bb.b.verb}${bb.b.target?' '+bb.b.target:''}`)}${bb.b.change?`; ${said(bb.b.change)}`:''}.`:'The opening frame.',
+   bb?.b.contact?`Contact: ${said(bb.b.contact)}.`:'',
+   sides?`${sides[0].toUpperCase()+sides.slice(1)}.`:'',
+   ...people.filter((n,j,a)=>a.indexOf(n)===j&&!(k.layout??{})[n]).map(n=>`${name(n)} is not coloured in the depth still here: take where he is and what he touches from the source frame.`),
+   people.length>1?`Exactly two arms per person; every hand is joined to a visible arm of its owner.`:'',
+   prev?(pb&&bb&&pb.i!==bb.i?`Since keyframe ${i}: the next beat has begun.`:`Since keyframe ${i}: the same beat, a moment later${bb?.b.change?` (${said(bb.b.change)})`:''}.`)+(cutBetween(prev.time,k.time)?` There is a cut since keyframe ${i}: Image ${refs.findIndex(r=>r.role.startsWith('keyframe'))+1} is keyframe ${i}; keep the same people, costumes, arms and what is held, not its framing.`:` Image ${refs.findIndex(r=>r.role.startsWith('keyframe'))+1} is keyframe ${i}: keep the same people, sides, arms and what is held.`):'',
+   `Image 1 is the depth still: keep its framing, positions and nearness exactly. Image 2 is the source frame: keep its room, architecture, camera angle and light, and read from it who touches what.${contact?' Image 3 is the contact card: follow its hands.':''} The character sheets give the faces and costumes.`,
+   `Do not copy from the source frame: any face, costume or likeness, or props and actions that are not in this beat${bb?.b.avoid?` (${said(bb.b.avoid)})`:''}.`,
+   `Crop: the same as the depth still, ${size(k)}.`,
+   ...people.filter((n,j,a)=>a.indexOf(n)===j).map(n=>{const c=cast[n]?.trim();if(!c)return '';const d=c.toLowerCase().startsWith(name(n).toLowerCase()+':')?c.slice(name(n).length+1).trim():c;return `${name(n)}: ${d}.`;}),
+   style.trim()?`Draw it as ${style.trim()}.`:''].filter(Boolean);
+  return {index:i+1,time:k.time,beat:bb?{n:bb.i+1,of:pkg.beats!.length,...bb.b}:null,layout:k.layout??null,previous:prev?{index:i,time:prev.time}:null,references:refs.map((r,j)=>({image:j+1,...r})),prompt:lines.join(' ')};});
+}
+

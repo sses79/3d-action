@@ -7,7 +7,7 @@ import {sampleSignature,compareMotion,MotionSignature} from '../runtime/common-m
 import {manifest,inspectLibrary,resolveSpec,motionHash,actionSpecSchema,conventions,contactReview,connectionPolicy,findContract} from './contracts.mjs';
 import {RunLogs} from './run-log';
 import {DepthLibrary,depthLabels,starStandard} from './depth-library.mjs';
-import {packPrompts,beatRule} from '../runtime/depth-prompts';
+import {packPrompts,beatRule,keyframeHandover} from '../runtime/depth-prompts';
 import {loadProject,saveProject} from './project-store.mjs';
 import {reconstruct,hashFile,runProcess,defaultEnvironment,bodyParts} from './reconstruction/pipeline.mjs';
 import {digest} from './reconstruction/contracts.mjs';
@@ -397,9 +397,10 @@ const to=who(h?.to),toHand=hand(h?.hand);if(!h||Object.keys(h).some(k=>!['start'
      stars:lib.stars(C.package,null),
      beats:P.beats?{summary:P.summary,beats:P.beats,check:beatRule(P.duration,P.beats)}:{note:'No beats: give them with set_depth_beats before generating; the prompts are written from shot descriptions until then.'},
      check:(()=>{const c=lib.check(C.package);return c?{ok:c.ok,issues:c.keyframes.flatMap((k:any)=>k.issues.map((i:string)=>`${k.time} s: ${i}`)),sheet:resolve(files.folder,'check.jpg'),note:'Look at the sheet; fix with fix_depth_clip (rename, drop, boxes by hand) before handing over, or say what is left.'}:{ok:null,note:'Not checked: run authoring/render/depth-check.py'};})(),
-     keyframeGeneration:files.keyframes.map((k:any,i:number)=>({index:k.index,time:k.time,references:[{image:1,role:'depth still: where each person stands, how near, the framing',path:k.composition.path,url:k.composition.url},{image:2,role:'source frame: room layout, architecture, camera angle, light direction; replace every person, no likeness',path:k.source.path},{image:'3+',role:'your character sheets (and the scene\'s background plate if any)'}],prompt:images[i]})),
-     videoGeneration:{video1:files.referenceVideo?.path,images:'your character sheets, then the keyframes generated above bound to their times',prompt:videoPrompt},
-     upload:'Keyframes: generate one per keyframeGeneration entry from its two references, the character sheets and its prompt. Video: the reference video as Video 1, then the character sheets and the generated keyframes. The source frames go only to the keyframe step, as layout references, never to the video model.',page:'http://127.0.0.1:5174/editor/depth.html?package='+C.package};}
+     keyframeGeneration:P.beats?keyframeHandover(P,cast as any,args.style??'',{depth:(n:number)=>files.keyframes[n-1].composition.path,source:(n:number)=>files.keyframes[n-1].source.path,contact:(n:number)=>{const f=resolve(files.folder,`key-${n}-contact.jpg`);return existsSync(f)?f:null;}}):files.keyframes.map((k:any,i:number)=>({index:k.index,time:k.time,references:[{image:1,role:'depth still: where each person stands, how near, the framing',path:k.composition.path,url:k.composition.url},{image:2,role:'source frame: room layout, architecture, camera angle, light direction; replace every person, no likeness',path:k.source.path},{image:'3+',role:'your character sheets (and the scene\'s background plate if any)'}],prompt:images[i]})),
+     generateKeyframesInOrder:'Generate keyframe 1 first; approve it before keyframe 2, which takes it as a reference, and so on. Check each against its depth still and source frame: its beat only, two arms per person with every hand joined to its owner, the same sides as the keyframe before, the same crop.',
+     videoGeneration:{duration:`${Math.round(P.duration)} s: set the generator to exactly this`,video1:files.referenceVideo?.path,images:'your character sheets, then the approved keyframes, each bound to its time',prompt:videoPrompt},
+     upload:'Keyframes, in order: each from its references as listed (depth still, source frame, contact card if any, the previous approved keyframe, the character sheets) and its prompt. Video: the reference video as Video 1 at the stated duration, then the character sheets and the approved keyframes. The source frames go only to the keyframe step, never to the video model.',page:'http://127.0.0.1:5174/editor/depth.html?package='+C.package};}
    case 'ingest_source_video':return this.depthLib().ingest(args);
    case 'build_depth_clip':return this.depthLib().build(args);
    case 'fix_depth_clip':return await this.depthLib().fix(args);

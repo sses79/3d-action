@@ -3,7 +3,7 @@
 // (a tinted depth video with keyframes, cast and prompts). Needs the authoring service.
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {createRoot} from 'react-dom/client';
-import {packPrompts} from '../runtime/depth-prompts';
+import {packPrompts,keyframeHandover} from '../runtime/depth-prompts';
 
 const bridgeUrl=location.port==='5174'?'':'http://127.0.0.1:5174';
 const hex:Record<string,string>={blue:'#4a86d8',orange:'#ee8a3a',green:'#4fae5a',pink:'#f07fb0',purple:'#8d6fd1',yellow:'#e8c53a',red:'#d9534a',gray:'#8e949c'};
@@ -105,7 +105,7 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
  const [check,setCheck]=useState<{ok:boolean;keyframes:{time:number;ok:boolean;issues:string[]}[]}|null>(null);
  useEffect(()=>{setCheck(null);if(!pkg?.library)return;fetch(file('check.json')).then(r=>r.ok?r.json():null).then(setCheck).catch(()=>{});},[pkg,stamp]);
  const copy=(k:string,text:string)=>{navigator.clipboard.writeText(text).then(()=>{setCopied(k);setTimeout(()=>setCopied(''),1500);});};
- const texts=useMemo(()=>pkg?packPrompts(pkg,cast,style,useDepth):null,[pkg,cast,style,useDepth]);
+ const texts=useMemo(()=>{if(!pkg)return null;const p=packPrompts(pkg,cast,style,useDepth);if(pkg.beats?.length&&useDepth){const h=keyframeHandover(pkg as any,cast,style,{depth:i=>`key-${i}-depth.jpg`,source:i=>`key-${i}-source.jpg`});return {...p,images:h.map(e=>e.prompt),refs:h.map(e=>e.references)};}return {...p,refs:null as any};},[pkg,cast,style,useDepth]);  // with beats: the hand-over template (previous keyframe, contact, sides)
  const pos=(t:number)=>pkg?`${t/pkg.duration*100}%`:'0',wide=(a:number,b:number)=>pkg?`${(b-a)/pkg.duration*100}%`:'0',hereKey=pkg?Math.max(0,pkg.keyframes.findLastIndex(k=>k.time<=time+1e-3)):0;
  return <><div className="dl-bar"><button onClick={onBack}>← Library</button><strong>{pkg?.name??id}</strong><span>built package</span>{pkg?.summary&&<span className="dl-summary">{pkg.summary}</span>}{check&&<span className={'dl-check-sum'+(check.ok?' ok':'')}>{check.ok?'✓ check passed at every keyframe':`⚠ check: ${check.keyframes.reduce((n,k)=>n+k.issues.length,0)} issue(s) at the keyframes`}</span>}{check&&<a className="link" href={file('check.jpg')} target="_blank" rel="noreferrer">check sheet</a>}</div>
   {error&&<div className="clay-error"><span>{error}</span></div>}
@@ -123,6 +123,7 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
     {check&&(()=>{const c=check.keyframes.find(x=>Math.abs(x.time-k.time)<.01);return c&&<div className={'dl-check-k'+(c.ok?' ok':'')}>{c.ok?'✓ Colours and shapes checked':c.issues.map((x,j)=><div key={j}>⚠ {x}</div>)}</div>;})()}
     <p className="vc-sum">{k.summary}</p>
     {(()=>{const says=k.people.some(p=>p.speaking),face=k.people.some(p=>p.expression);return <table className="vc-people"><thead><tr><th>Who</th><th>Doing</th>{says&&<th>Says</th>}{face&&<th>Face</th>}</tr></thead><tbody>{k.people.map(p=>{const c=pkg.people.find(q=>q.name===p.name)!;return <tr key={p.name}><td><i style={{background:hex[c.color]??c.color}}/>{p.name}{cast[p.name]?.trim()?<small> → {cast[p.name]}</small>:null}</td><td>{p.doing}</td>{says&&<td>{p.speaking||'—'}</td>}{face&&<td>{p.expression||'—'}</td>}</tr>;})}</tbody></table>;})()}
+    {texts?.refs&&<ol className="dl-refs">{texts.refs[i].map((r:any)=><li key={r.image}><b>Image {r.image}</b> {r.role}</li>)}</ol>}
     {texts&&<div className="clay-copy"><div className="clay-copy-head"><strong>Image prompt for this keyframe (with its depth still and source frame as layout references)</strong><button onClick={()=>copy('k'+i,texts.images[i])}>{copied==='k'+i?'Copied':'Copy'}</button></div></div>}
    </section>)}</div>
   </main>

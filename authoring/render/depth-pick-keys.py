@@ -60,8 +60,15 @@ def key(t):
     if not b:return dict(time=t,shot=shot_at(t),summary='The opening frame.',people=[dict(name=n,doing='') for n in col])
     s=f"{b['actor']} {b['verb']} {b.get('target','')}".strip()+'.'+(f" {b['change'][0].upper()+b['change'][1:]}." if b.get('change') else '')
     return dict(time=t,shot=shot_at(t),summary=s if t>=.2 else 'The opening frame. '+s,people=[dict(name=b['actor'],doing=f"{b['verb']} {b.get('target','')}".strip())]+([dict(name=b['target'],doing=b.get('change') or '')] if b.get('target') else []))
+def layout(t):  # where each person is at a keyframe, from the tint: screen side (centroid) and share of the picture
+    k=min(len(frames)-1,round(t*fps));R=regions(frames[k]);out={}
+    for n,c in col.items():
+        m=R[c]
+        if m.mean()<.003:continue
+        x=float(np.nonzero(m)[1].mean())/m.shape[1];out[n]=dict(side='left' if x<.4 else 'right' if x>.6 else 'centre',area=round(float(m.mean()),3))
+    return out
 spec_path=pk.parent/f'{pid}-spec.json';spec=json.load(open(spec_path))
-spec['keyframes']=[key(t) for t in keys];spec['keyPicker']=dict(picked=picked,warnings=warn);spec['notes']=[n for n in spec.get('notes',[]) if not n.startswith('Keyframes:')]+[f"Keyframes: {', '.join(str(k) for k in keys)} s, picked per beat (depth-pick-keys.py)"+(f"; warnings: {'; '.join(warn)}" if warn else '')]
+spec['keyframes']=[dict(key(t),layout=layout(t)) for t in keys];spec['keyPicker']=dict(picked=picked,warnings=warn);spec['notes']=[n for n in spec.get('notes',[]) if not n.startswith('Keyframes:')]+[f"Keyframes: {', '.join(str(k) for k in keys)} s, picked per beat (depth-pick-keys.py)"+(f"; warnings: {'; '.join(warn)}" if warn else '')]
 json.dump(spec,open(spec_path,'w'),indent=1)
 for f in pk.glob('key-*.jpg'):f.unlink()
 subprocess.run([sys.executable,'authoring/render/video-clay-pack.py',str(spec_path)],check=True,capture_output=True)
