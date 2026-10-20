@@ -23,7 +23,8 @@ while True:
 def regions(f):
     hsv=cv2.cvtColor(f,cv2.COLOR_BGR2HSV);sat=hsv[...,1]>70;h_=hsv[...,0].astype(int);d=np.stack([np.minimum(abs(h_-H[c]),180-abs(h_-H[c])) for c in used]);near=np.argmin(d,0)
     return {c:cv2.morphologyEx((sat&(near==i)&(d[i]<=8)).astype(np.uint8),cv2.MORPH_OPEN,np.ones((3,3),np.uint8)) for i,c in enumerate(used)}
-cuts=[s['start'] for s in P['shots'][1:]];warn=[];keys=[0.15];picked=[]
+cuts=[s['start'] for s in P['shots'][1:]]+[P['duration']];  # the clip's end counts as a cut: a keyframe stays 0.3 s clear of it
+warn=[];keys=[0.15];picked=[]
 for i,b in enumerate(P['beats']):
     ca,ct=col.get(b['actor']),col.get(b.get('target'));best=None;scores=[];actor_max=0
     for k in range(int(math.ceil(b['start']*fps)),int(b['end']*fps)):

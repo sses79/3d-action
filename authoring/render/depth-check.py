@@ -12,12 +12,13 @@ and clearly saturated (the depth's grey has none). The source frame at the same 
   two colours: two colours each cover more than a quarter of one detected person;
   box-shaped: a region fills more than 90% of its bounding box (a hand box, or a tint that ran along a box edge);
   head: a detected person's nose is seen but the colour covering their body does not reach it.
-With beats (the keyframe gate): a beat person with no colour at the keyframe is missing (a fault), and a hand marked as the
+With beats (the keyframe gate): a beat person with no colour at the keyframe is missing (a fault) when someone uncoloured is in
+the frame, else only not in this shot (a reaction shot: no uncoloured person half the frame tall; a note), and a hand marked as the
 contact (set_contact_marks) that does not carry its owner's colour is a wrong hand colour (a fault): the video model reads the
 contact from the tint.
 Writes check.json in the package folder ({keyframes: [{time, ok, issues, colours}]}) and check.jpg (source with the detector's
 boxes beside the tinted frame with each colour's outline and the issues). It does not change anything: the fixes are the page's."""
-import sys,json,pathlib,cv2,numpy as np
+import sys,json,re,pathlib,cv2,numpy as np
 src,clip=sys.argv[1],sys.argv[2];root=pathlib.Path('.authoring/depth-library')/src;S=json.load(open(root/'source.json'))
 if clip.startswith('package:'):  # a package built by hand (no library clip): the people it names at each keyframe are expected
     C={'id':clip[8:],'package':clip[8:]};clip=clip[8:]
@@ -84,7 +85,10 @@ for k in P['keyframes']:
     if b:  # the keyframe gate: the beat's people must be coloured, and a hand marked as the contact must carry its owner's colour
         for role in ('actor','target'):
             n=b.get(role)
-            if n and n in colour_of and area.get(colour_of[n],0)<.003 and not any(t.startswith(f'missing: {n} ') for t in issues):issues.append(f'missing: {n} ({colour_of[n]}), the {role} of beat {P["beats"].index(b)+1}, has no colour')
+            if n and n in colour_of and area.get(colour_of[n],0)<.003:
+                unseen=not any(t.startswith(('untinted person','missing subject')) and int(re.search(r'box (\\d+)% tall',t).group(1))>=50 for t in issues if re.search(r'box (\\d+)% tall',t))  # nobody large and uncoloured in the frame: they are not in this shot (a reaction shot; small onlookers in the back do not count)
+                issues=[t for t in issues if not t.startswith(f'missing: {n} ')]
+                issues.append(f'not in this shot: {n}, the {role} of beat {P["beats"].index(b)+1} (no uncoloured person in the frame)' if unseen else f'missing: {n} ({colour_of[n]}), the {role} of beat {P["beats"].index(b)+1}, has no colour')
         if all(area.get(colour_of.get(b.get(r)),0)>=.003 for r in ('actor','target') if b.get(r) in colour_of):  # the beat's people are coloured: the largest untinted person is a bystander
             issues=[t.replace('missing subject:','untinted person:',1).replace('(the largest person in the frame)','(the largest person, but the beat\'s people are coloured: a bystander)') for t in issues]
         for m in k.get('marks') or []:
