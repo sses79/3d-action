@@ -47,6 +47,11 @@ export class DepthLibrary{
   const check=rule(P.duration,clean);P.summary=summary;P.beats=clean;P.beatCheck=check;writeFileSync(f,JSON.stringify(P,null,1));
   for(const spec of [resolve(this.packs,id+'-spec.json'),...this.sources().map(S=>resolve(this.base,S.id,id+'.spec.json'))])if(existsSync(spec)){const sp=JSON.parse(readFileSync(spec,'utf8'));sp.summary=summary;sp.beats=clean;writeFileSync(spec,JSON.stringify(sp,null,1));}
   return {package:id,summary,beats:clean,check};}
+ // the cut planner (depth-plan-cut.py): beats with the source span showing each, and a whole-second duration -> a new package
+ planCut(args){const {id,name,from,duration,summary,beats,dry=false}=args;if(typeof id!=='string'||!ID.test(id)||id.length>48)throw Error('id: a new package ID');if(!this.pack(from))throw Error('from: a built package to cut from');if(!Number.isInteger(duration)||duration<2||duration>15)throw Error('duration: whole seconds, 2-15');
+  if(!Array.isArray(beats)||!beats.length||beats.some(b=>!b||typeof b.actor!=='string'||typeof b.verb!=='string'||!Number.isFinite(b.from)||!Number.isFinite(b.to)||b.to<=b.from))throw Error('beats: [{actor, verb, target?, contact?, change?, from, to}] with from/to the source span in the package');
+  const f=resolve(this.base,`plan-${id}.json`);writeFileSync(f,JSON.stringify({id,name:name??id,from,duration,summary:summary??'',beats}));
+  return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-plan-cut.py',f,...(dry?['--dry']:[])],{cwd:this.root,timeout:300000},(e,so,se)=>{if(e)return fail(Error((se||e.message).slice(-1500)));const i=so.indexOf('{\n');let plan=null;try{plan=JSON.parse(so.slice(i,so.lastIndexOf('\n}')+2));}catch{}done({package:dry?null:id,dry,plan,page:dry?null:'http://127.0.0.1:5174/editor/depth.html?package='+id});}));}
  ratingsFile(){return resolve(this.base,'ratings.json');}
  ratings(){try{return JSON.parse(readFileSync(this.ratingsFile(),'utf8'));}catch{return {};}}
  stars(pkgId,why){const r=this.ratings()[pkgId];if(r)return {...r,suggested:false};return suggestStars(this.check(pkgId),why);}

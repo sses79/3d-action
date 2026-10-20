@@ -37,10 +37,10 @@ def iou(p,q):
 def src_t(t):  # a package's time in the source video; a test cut (derivedFrom) maps through its segments and speed
     D=P.get('derivedFrom')
     if not D:return P['start']+t
-    base=json.load(open(pk.parent/D['package']/'package.json'))['start'];x=t*D['speed']
-    for a_,b_ in D['segments']:
-        if x<=b_-a_+1e-6:return base+a_+x
-        x-=b_-a_
+    base=json.load(open(pk.parent/D['package']/'package.json'))['start'];sp=D.get('speeds') or [D['speed']]*len(D['segments']);x=t  # each segment at its own speed (the cut planner)
+    for (a_,b_),v in zip(D['segments'],sp):
+        if x<=(b_-a_)/v+1e-6:return base+a_+x*v
+        x-=(b_-a_)/v
     return base+D['segments'][-1][1]
 out=[];rows=[]
 for k in P['keyframes']:
