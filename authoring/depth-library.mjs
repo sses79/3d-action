@@ -35,6 +35,18 @@ export function suggestStars(check,why){const notes=[];if(!check)return {stars:3
  return {stars,suggested:true,why:notes.length?notes:['no faults at the keyframes']};}
 export class DepthLibrary{
  constructor(root){this.root=root;this.base=resolve(root,'.authoring/depth-library');this.packs=resolve(root,'.authoring/video-clay');this.jobs=new Map();this.py=resolve(root,'.authoring/vision-venv/bin/python');}
+ // the package's beats and one-line summary (docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md, "Beats first"): stored in the package and
+ // in its spec (so a repack keeps them), checked against the beat rule
+ setBeats({package:id,summary,beats},rule){if(typeof id!=='string'||!ID.test(id))throw Error('package: a package ID');const f=resolve(this.packs,id,'package.json');if(!existsSync(f))throw Error('No such package: '+id);
+  if(typeof summary!=='string'||summary.length<5||summary.length>300)throw Error('summary: one line, the beats in order ("A grabs B, locks B\'s throat, lifts B into the air")');
+  if(!Array.isArray(beats)||!beats.length||beats.length>8)throw Error('beats: 1-8 of {actor, verb, target?, contact?, change?, start, end}');
+  const P=JSON.parse(readFileSync(f,'utf8')),names=P.people.map(p=>p.name);
+  const clean=beats.map((b,i)=>{if(!b||typeof b.actor!=='string'||typeof b.verb!=='string'||!Number.isFinite(b.start)||!Number.isFinite(b.end)||b.end<=b.start)throw Error(`beat ${i+1}: actor, verb, start and end (seconds, end after start)`);if(b.start<-.01||b.end>P.duration+.05)throw Error(`beat ${i+1}: inside 0-${P.duration} s`);
+   for(const k of ['actor','target'])if(b[k]!==undefined&&!names.includes(b[k]))throw Error(`beat ${i+1}: ${k} must be one of the package's people (${names.join(', ')})`);
+   const o={actor:b.actor,verb:String(b.verb).slice(0,120),start:+(+b.start).toFixed(3),end:+(+b.end).toFixed(3)};for(const k of ['target','contact','change'])if(b[k])o[k]=String(b[k]).slice(0,200);return o;}).sort((a,b)=>a.start-b.start);
+  const check=rule(P.duration,clean);P.summary=summary;P.beats=clean;P.beatCheck=check;writeFileSync(f,JSON.stringify(P,null,1));
+  for(const spec of [resolve(this.packs,id+'-spec.json'),...this.sources().map(S=>resolve(this.base,S.id,id+'.spec.json'))])if(existsSync(spec)){const sp=JSON.parse(readFileSync(spec,'utf8'));sp.summary=summary;sp.beats=clean;writeFileSync(spec,JSON.stringify(sp,null,1));}
+  return {package:id,summary,beats:clean,check};}
  ratingsFile(){return resolve(this.base,'ratings.json');}
  ratings(){try{return JSON.parse(readFileSync(this.ratingsFile(),'utf8'));}catch{return {};}}
  stars(pkgId,why){const r=this.ratings()[pkgId];if(r)return {...r,suggested:false};return suggestStars(this.check(pkgId),why);}

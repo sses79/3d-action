@@ -35,6 +35,8 @@ Each beat states:
 - the contact ("A's right hand on B's throat");
 - the change it causes ("B's feet leave the ground").
 
+**Duration and beats must match.** A beat needs about 1.5–2.5 s to read, so a 5 s clip holds 2–3 beats and a 4 s clip 2 at most (`floor(duration / 1.5)`). Under 1.2 s is a fault. **One beat over 4–5 s usually needs no control video**: a keyframe and the prompt carry it, unless the camera moves, someone travels or a contact must land at a time (the control rule decides).
+
 Everything else follows from the beats: which source segments to cut, where the cuts fall, where the keyframes go, what each keyframe and prompt line says, and what the check looks for. A source moment that doesn't serve a beat is cut out, however good it looks.
 
 ## Rules for the package
@@ -104,3 +106,17 @@ A keyframe that fails is redone before the video, never "tested to see".
 1, 2, 3 and 6 first: beats, the cut planner, the keyframe picker and the hand-over. These address failures 1–4. Then 4 and 5, the contact card and the keyframe gate, which address K5 and K6. Then 7, the review helper.
 
 To test it, cut a new package for the same three beats, "A grabs B, locks B's throat, lifts B into the air": 5 s, three shots of at least 1.4 s, three or four keyframes, no speech. Then run it at 5 s. Judge it on whether the lift reads as a lift.
+
+## Built
+
+### Step 1, beats in the package (2026-10-20)
+
+`set_depth_beats {package, summary, beats: [{actor, verb, target?, contact?, change?, start, end}]}` stores a package's beats and one-line summary (in `package.json` and its spec, so a repack keeps them) and checks them with `beatRule` (`runtime/depth-prompts.ts`): at most floor(duration/1.5) beats, each at least 1.2 s (notes under 1.5 s), whole-second starts preferred, the whole clip covered, and one beat over 4 s or more flagged as possibly needing no control. When a package has beats, the video prompt opens with the summary and has one line per beat in whole seconds (actor, verb, target, contact, change, with people's names said as their colours and the cuts inside the beat in brackets), and each keyframe's image prompt starts with "Beat i of n: …". `cast_depth_clip` returns the beats and their check, or a note to set them. The page shows the summary in the package's header, a Beats row on its timeline and a BEATS panel with the check. Tried on the 5 s V.8 test: one beat per shot (six) is rejected (too many, five too short); "Macduff grabs Macbeth, locks his throat, lifts him into the air" in three beats passes with two notes (beat 1 is 1.27 s; beat 2 starts at 1.27 s, not on a whole second); one beat over 5 s is flagged as maybe not needing control.
+
+### The V.8 test as two 4 s clips at normal speed (2026-10-20)
+
+The user found the first test's cause: 7 s of V.8 (4.97-12.2 s) had been squeezed into 5 s at 1.2x with part of a shot cut, which is why it had six shots. Now the same stretch at 1.0x, 4.97-12.97 s, is two 4 s packages split inside the arms-locked shot, so part B starts on part A's last frame and can be generated as its continuation:
+- `macbeth-v8-part-a` (shots: struggle 0.5 s, grin 1.06, chain 1.31, fear 0.63, arms lock 0.5): beats "Macduff holds Macbeth, who taunts him, then seizes him by the chain" (0-1.56, 1.56-4.0); keyframes 0.15, 1.0, 2.2; check passes (a watching soldier untinted at 1.0).
+- `macbeth-v8-part-b` (arms locked from below 1.74 s, held up by the throat 1.63, the helm 0.63): beats "Macduff closes his grip on Macbeth's throat and lifts him into the air" (0-1.74, 1.74-4.0); keyframes 0.2, 1.0, 3.0. At 3.0 Macduff's gripping hand is tinted with Macbeth (the known throat-shot problem): the check reports him missing.
+Both beat sets pass the rule, with a note each that beat 2 starts off a whole second (the source's cut times; the cut planner of step 2 is for that).
+

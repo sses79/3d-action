@@ -32,6 +32,10 @@ If no clip fits, say so. The fall-backs are a staged clay scene (`scene-to-refer
 
 A proposed clip (not built) is built with `build_depth_clip {clip}` (a job of about 2 minutes; poll `get_depth_job`). People are found and named A, B, C per shot automatically; across a cut the same person may get a new letter, and two people in alike clothes may share one. Look at the package on the page and fix it with `fix_depth_clip {clip, shots: {"2": {"E": "A", "G": "-"}}}` (shot index from the clip's shots; "-" drops a person). About 10 seconds.
 
+### Beats
+
+Before casting, give the package its beats (`set_depth_beats`): the action as a one-line summary and 1.5–2.5 s beats, each with actor, verb, target, contact and change. A 5 s clip carries 2–3 beats. One beat over the whole clip usually needs no control video. The prompts are written from the beats (`docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md`).
+
 ### Stars
 
 Every package has stars as a control signal (`docs/DEPTH_LIBRARY_PLAN.md`, "Star standard"): 5 reference (a person's judgement, best after a generation), 4 strong (no faults, clear motion), 3 usable, 2 weak, 1 not usable. A person's rating wins; otherwise the check suggests 1-4. Prefer 4-5 stars (`find_depth_clips {minStars: 4}`); each result names its best package, often a 5-star package built by hand over the same time, and `cast_depth_clip` takes that package ID. After a generation, tell the user what it showed and record it with `rate_depth_package {package, stars, why, proven: {model, date, result}, by}`; give 5 only when the user judged it.
