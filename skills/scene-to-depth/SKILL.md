@@ -44,6 +44,8 @@ With beats set, `cast_depth_clip` hands over keyframes in order: generate keyfra
 
 Each keyframe gets a contact card (the source frame with outlines and an arrow from each hand to what it touches). Where the detector misses someone (armour, dark clothes, an arm from below) the card has no arrows: place them with `set_contact_marks` (or on the page) before handing over a keyframe whose beat has contact.
 
+The check gates each keyframe of a package with beats: a beat person without colour, or a marked contact hand not in its owner's colour, is a fault. Fix it (a hand box) or say in the hand-over that the keyframe image and contact card must carry whose hand it is.
+
 ### Stars
 
 Every package has stars as a control signal (`docs/DEPTH_LIBRARY_PLAN.md`, "Star standard"): 5 reference (a person's judgement, best after a generation), 4 strong (no faults, clear motion), 3 usable, 2 weak, 1 not usable. A person's rating wins; otherwise the check suggests 1-4. Prefer 4-5 stars (`find_depth_clips {minStars: 4}`); each result names its best package, often a 5-star package built by hand over the same time, and `cast_depth_clip` takes that package ID. After a generation, tell the user what it showed and record it with `rate_depth_package {package, stars, why, proven: {model, date, result}, by}`; give 5 only when the user judged it.

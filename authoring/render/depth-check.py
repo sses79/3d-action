@@ -12,6 +12,9 @@ and clearly saturated (the depth's grey has none). The source frame at the same 
   two colours: two colours each cover more than a quarter of one detected person;
   box-shaped: a region fills more than 90% of its bounding box (a hand box, or a tint that ran along a box edge);
   head: a detected person's nose is seen but the colour covering their body does not reach it.
+With beats (the keyframe gate): a beat person with no colour at the keyframe is missing (a fault), and a hand marked as the
+contact (set_contact_marks) that does not carry its owner's colour is a wrong hand colour (a fault): the video model reads the
+contact from the tint.
 Writes check.json in the package folder ({keyframes: [{time, ok, issues, colours}]}) and check.jpg (source with the detector's
 boxes beside the tinted frame with each colour's outline and the issues). It does not change anything: the fixes are the page's."""
 import sys,json,pathlib,cv2,numpy as np
@@ -77,6 +80,17 @@ for k in P['keyframes']:
         if kp and tot>=.25 and kp[0][2]>.5:
             nx,ny=int(kp[0][0]),int(kp[0][1]);c=top[0];r=max(3,int(.03*(y1-y0)))
             if 0<=nx<w and 0<=ny<h and not masks[c][max(0,ny-r):ny+r,max(0,nx-r):nx+r].any():issues.append(f'head: {where} has a face seen but {c} does not reach it')
+    b=next((x for x in P.get('beats') or [] if x['start']-1e-3<=k['time']<x['end']+1e-3),None)
+    if b:  # the keyframe gate: the beat's people must be coloured, and a hand marked as the contact must carry its owner's colour
+        for role in ('actor','target'):
+            n=b.get(role)
+            if n and n in colour_of and area.get(colour_of[n],0)<.003 and not any(t.startswith(f'missing: {n} ') for t in issues):issues.append(f'missing: {n} ({colour_of[n]}), the {role} of beat {P["beats"].index(b)+1}, has no colour')
+        if all(area.get(colour_of.get(b.get(r)),0)>=.003 for r in ('actor','target') if b.get(r) in colour_of):  # the beat's people are coloured: the largest untinted person is a bystander
+            issues=[t.replace('missing subject:','untinted person:',1).replace('(the largest person in the frame)','(the largest person, but the beat\'s people are coloured: a bystander)') for t in issues]
+        for m in k.get('marks') or []:
+            x,y=int(m['from'][0]*w),int(m['from'][1]*h);r=max(4,w//80);win={c:int(masks[c][max(0,y-r):y+r,max(0,x-r):x+r].sum()) for c in used}
+            own=colour_of.get(m['owner']);top=max(win,key=win.get) if any(win.values()) else None
+            if own and win.get(own,0)==0:issues.append(f"wrong hand colour: {m['owner']}'s {m['hand']} hand (on {m['target']}'s {m['part']}) is {top or 'untinted'} in the depth video, not {own}")
     out.append(dict(time=k['time'],ok=not issues,issues=issues,colours={c:round(a*100,1) for c,a in area.items() if a>=.003}))
     a_=f.copy();b_=d.copy()
     for b,_ in dets:cv2.rectangle(a_,(int(b[0]),int(b[1])),(int(b[2]),int(b[3])),(0,255,255),2)
