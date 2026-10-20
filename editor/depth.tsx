@@ -13,7 +13,10 @@ const CLIP=['#e8c53a','#4fae5a','#4a86d8','#d9534a','#8d6fd1','#ee8a3a','#3fb5b0
 type Shot={index:number;start:number;end:number;seconds:number;camera:number;move:number;people:number;size:number;speech:number;control:'on'|'off';why:string[];thumb:string;speechWindows:number[][];bridged?:boolean};
 type Stars={stars:number;suggested:boolean;why:string|string[];by?:string;proven?:any};
 type Clip={needsControlNow?:boolean;controlWhy?:string;controlOverride?:{control:string;why:string;by:string};stars?:number|null;starsSuggested?:boolean|null;bestPackage?:string|null;id:string;kind:'control'|'still';shots:number[];start:number;end:number;seconds:number;why:string[];status:string;described:boolean;package?:string;built?:{seconds:Record<string,number>;people:Record<string,string>};fixed?:{people:string[]}};
-type PackRef={stars?:Stars;id:string;name:string;start:number;end:number;keyframes:number;depth:boolean;thumb?:string;scene:string|null};
+type PkStatus={status:'current'|'replaced'|'stopped'|'test';note?:string;replacedBy?:string;at?:string};
+type PackRef={stars?:Stars;id:string;name:string;start:number;end:number;keyframes:number;depth:boolean;thumb?:string;scene:string|null;summary?:string|null;status?:PkStatus|null;results?:number;used?:number};
+const STATUS_ORDER={current:0,test:1,undefined:2,replaced:3,stopped:4} as Record<string,number>;
+const statusText=(st?:PkStatus|null)=>!st?'':st.status==='replaced'?`replaced${st.replacedBy?' by '+st.replacedBy:''}`:st.status;
 type Source={id:string;name:string;fileName:string;duration:number;fps:number;size:number[];ingested:string;shots:Shot[];clips:Clip[];packages:PackRef[];seconds:Record<string,number>;speechFound:boolean};
 const thumb=(s:string,f:string)=>bridgeUrl+'/api/depth-library-file?source='+encodeURIComponent(s)+'&file='+encodeURIComponent(f);
 const packFile=(id:string,f:string)=>bridgeUrl+'/api/video-clay-file?id='+encodeURIComponent(id)+'&file='+encodeURIComponent(f);
@@ -49,8 +52,8 @@ function Library(){
     <div className="dl-counts"><b>{src.shots.length}</b> shots <b>{src.shots.filter(s=>s.control==='on').length}</b> need control <b>{src.clips.filter(c=>c.kind==='control').length}</b> depth clips <b>{src.packages.length}</b> built</div></div>
    <div className="dl-strip">{src.shots.map(s=><button key={s.index} title={`shot ${s.index}, ${sec(s.start)}-${sec(s.end)}: ${s.why.join(', ')}`} style={{borderColor:colourOf.get(s.index)??'#2a3240'}} className={colourOf.has(s.index)?'on':''} onClick={()=>setOpen(src.clips.find(c=>c.shots.includes(s.index))?.id??'')}><img src={thumb(src.id,s.thumb)} alt="" loading="lazy"/><span>{s.index}{s.bridged?' ·b':''}</span></button>)}</div>
    <p className="vc-help dl-legend">Each colour is a proposed depth clip; grey shots need no control. "b" is a slow shot bridged into a sequence.</p>
-   {show.built&&src.packages.some(p=>!src.clips.some(c=>c.package===p.id))&&<><h2 className="dl-h">BUILT BY HAND</h2><div className="dl-cards">{src.packages.filter(p=>!src.clips.some(c=>c.package===p.id)).map(p=><button key={p.id} className="dl-card built" onClick={()=>setPkg(p.id)}>
-    {p.thumb&&<img src={packFile(p.id,p.thumb)} alt=""/>}<div><strong>{p.name}</strong><small>{clock(p.start)}–{clock(p.end)} · {sec(p.end-p.start)} · {p.keyframes} keyframes · {p.depth?'tinted depth':'clay'}</small>{p.stars&&<span className={'dl-stars'+(p.stars.suggested?' sug':'')}>{starText(p.stars.stars,p.stars.suggested)}</span>}{p.scene&&<p>{p.scene.slice(0,160)}{p.scene.length>160?'…':''}</p>}<em>open</em></div></button>)}</div></>}
+   {show.built&&src.packages.some(p=>!src.clips.some(c=>c.package===p.id))&&<><h2 className="dl-h">BUILT BY HAND</h2><div className="dl-cards">{src.packages.filter(p=>!src.clips.some(c=>c.package===p.id)).sort((a,b)=>(STATUS_ORDER[String(a.status?.status)]??2)-(STATUS_ORDER[String(b.status?.status)]??2)).map(p=><button key={p.id} className={'dl-card built'+(p.status&&['replaced','stopped'].includes(p.status.status)?' dim':'')} onClick={()=>setPkg(p.id)}>
+    {p.thumb&&<img src={packFile(p.id,p.thumb)} alt=""/>}<div><strong>{p.name}</strong><small>{clock(p.start)}–{clock(p.end)} · {sec(p.end-p.start)} · {p.keyframes} keyframes · {p.depth?'tinted depth':'clay'}</small>{p.stars&&<span className={'dl-stars'+(p.stars.suggested?' sug':'')}>{starText(p.stars.stars,p.stars.suggested)}</span>}{p.status&&<span className={'dl-status '+p.status.status} title={p.status.note??''}>{statusText(p.status)}</span>}{!!p.results&&<span className="dl-results">{p.results} result{p.results>1?'s':''} reviewed{p.used?` · ${p.used} used`:''}</span>}{(p.scene??p.summary)&&<p>{(p.scene??p.summary)!.slice(0,160)}{(p.scene??p.summary)!.length>160?'…':''}</p>}<em>open</em></div></button>)}</div></>}
    <h2 className="dl-h">CLIPS <small>{clips.length} shown</small></h2>
    <div className="dl-cards">{clips.map(c=>{const sh=c.shots.map(shotOf);return <button key={c.id} className={'dl-card'+(c.id===open?' now':'')+(c.kind==='still'?' still':'')+(c.kind==='control'&&c.needsControlNow===false?' nocontrol':'')} onClick={()=>c.package?setPkg(c.package):setOpen(c.id===open?'':c.id)} style={c.kind==='control'?{borderLeftColor:colourOf.get(c.shots[0])}:undefined}>
     <div className="dl-mosaic">{sh.slice(0,3).map(s=><img key={s.index} src={thumb(src.id,s.thumb)} alt="" loading="lazy"/>)}</div>
@@ -106,12 +109,15 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
  file=(f:string)=>bridgeUrl+'/api/video-clay-file?id='+encodeURIComponent(id)+'&file='+encodeURIComponent(f)+(stamp?'&v='+stamp:'');
  const seek=(t:number)=>{const v=video.current;if(v){v.pause();v.currentTime=t;}setTime(t);};
  useEffect(()=>{setHand(structuredClone(pkg?.library?.fixes?.boxes??[]));setDraw('');},[pkg]);
+ const [extras,setExtras]=useState<{status:PkStatus|null;reviews:any[]}|null>(null);
+ useEffect(()=>{setExtras(null);fetch(bridgeUrl+'/api/depth-package-extras?id='+encodeURIComponent(id)).then(r=>r.ok?r.json():null).then(setExtras).catch(()=>{});},[id,stamp]);
+ const lead=(pkg as any)?.derivedFrom?.lead?.seconds??0;
  const [check,setCheck]=useState<{ok:boolean;keyframes:{time:number;ok:boolean;issues:string[]}[]}|null>(null);
  useEffect(()=>{setCheck(null);if(!pkg?.library)return;fetch(file('check.json')).then(r=>r.ok?r.json():null).then(setCheck).catch(()=>{});},[pkg,stamp]);
  const copy=(k:string,text:string)=>{navigator.clipboard.writeText(text).then(()=>{setCopied(k);setTimeout(()=>setCopied(''),1500);});};
  const texts=useMemo(()=>{if(!pkg)return null;const p=packPrompts(pkg,cast,style,useDepth);if(pkg.beats?.length&&useDepth){const h=keyframeHandover(pkg as any,cast,style,{depth:i=>`key-${i}-depth.jpg`,source:i=>`key-${i}-source.jpg`,contact:i=>(pkg.keyframes[i-1] as any)?.contactStill??null});return {...p,images:h.map(e=>e.prompt),refs:h.map(e=>e.references)};}return {...p,refs:null as any};},[pkg,cast,style,useDepth]);  // with beats: the hand-over template (previous keyframe, contact, sides)
  const pos=(t:number)=>pkg?`${t/pkg.duration*100}%`:'0',wide=(a:number,b:number)=>pkg?`${(b-a)/pkg.duration*100}%`:'0',hereKey=pkg?Math.max(0,pkg.keyframes.findLastIndex(k=>k.time<=time+1e-3)):0;
- return <><div className="dl-bar"><button onClick={onBack}>← Library</button><strong>{pkg?.name??id}</strong><span>built package</span>{pkg?.summary&&<span className="dl-summary">{pkg.summary}</span>}{check&&<span className={'dl-check-sum'+(check.ok?' ok':'')}>{check.ok?'✓ check passed at every keyframe':`⚠ check: ${check.keyframes.reduce((n,k)=>n+k.issues.length,0)} issue(s) at the keyframes`}</span>}{check&&<a className="link" href={file('check.jpg')} target="_blank" rel="noreferrer">check sheet</a>}</div>
+ return <><div className="dl-bar"><button onClick={onBack}>← Library</button><strong>{pkg?.name??id}</strong><span>built package</span>{extras?.status&&<span className={'dl-status '+extras.status.status} title={extras.status.note??''}>{statusText(extras.status)}{extras.status.note?': '+extras.status.note:''}</span>}{pkg?.summary&&<span className="dl-summary">{pkg.summary}</span>}{check&&<span className={'dl-check-sum'+(check.ok?' ok':'')}>{check.ok?'✓ check passed at every keyframe':`⚠ check: ${check.keyframes.reduce((n,k)=>n+k.issues.length,0)} issue(s) at the keyframes`}</span>}{check&&<a className="link" href={file('check.jpg')} target="_blank" rel="noreferrer">check sheet</a>}</div>
   {error&&<div className="clay-error"><span>{error}</span></div>}
   {pkg&&<div className="clay-layout"><main>
    <div className="clay-stage"><div className="clay-canvas dl-videowrap"><video ref={video} className="vc-video" src={file((useDepth?pkg.depth:pkg.clay)!)} controls playsInline onTimeUpdate={e=>setTime((e.target as HTMLVideoElement).currentTime)}/>{pkg.library&&<DrawLayer pkg={pkg} time={time} hand={hand} setHand={setHand} draw={draw} onStart={()=>video.current?.pause()}/>}</div></div>
@@ -140,13 +146,14 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
     <label><span>Style</span><input value={style} placeholder="e.g. soft 2D digital painting, warm candlelight" onChange={e=>keep(cast,e.target.value)}/></label></div>
    <hr/><h2>FOR THE PROMPT</h2>
    {texts&&<div className="clay-copy"><div><div className="clay-copy-head"><strong>Video prompt ({useDepth?'tinted depth':'clay video'} as reference video 1)</strong><button onClick={()=>copy('video',texts.videoPrompt)}>{copied==='video'?'Copied':'Copy'}</button></div><p>{texts.videoPrompt}</p></div>
-    <small>Whole-second times are for Seedance 2.5; 2.0 follows only the shot order. Upload the {useDepth?'tinted depth video':'clay video'} and your character images; for each keyframe, generate the image from its depth still and source frame (layout only: replace every person) with the image prompt, then add the keyframes. The source frames never go to the video model.</small></div>}
+    <small>Whole-second times are for Seedance 2.5; 2.0 follows only the shot order. Upload the {useDepth?'tinted depth video':'clay video'}{lead?', the first-frame image (the previous take\'s last frame) as the first frame,':''} and your character images; for each keyframe{lead?' after the first':''}, generate the image from its depth still and source frame (layout only: replace every person) with the image prompt, then add the keyframes. The source frames never go to the video model.</small></div>}
    <hr/><h2>BEATS</h2>{pkg.beats?.length?<div className="vc-help">{pkg.summary}<br/>{pkg.beats.length} beat{pkg.beats.length>1?'s':''} in {pkg.duration.toFixed(1)} s (at most {pkg.beatCheck?.maxBeats})
     {pkg.beatCheck?.faults.map((f,i)=><div key={i} className="dl-check-k">⚠ {f}</div>)}{pkg.beatCheck?.notes.map((f,i)=><div key={'n'+i}>· {f}</div>)}</div>:<p className="vc-help">No beats yet: the action this clip stands for ("A grabs B, locks B's throat, lifts B into the air"), set with set_depth_beats. The prompts are written from them.</p>}
+   <hr/><h2>RESULTS</h2>{extras?.reviews.length?extras.reviews.map(r=><Result key={r.label} id={pkg.id} r={r}/>):<p className="vc-help">No result reviewed yet. When a take comes back, review it against this package (review_depth_result, with a verdict: used, good, retake or rejected); it shows here with its sheet.</p>}
    <hr/><h2>STARS</h2><RateBox id={pkg.id}/>
    {pkg.library?.perShot&&<><hr/><h2>PEOPLE</h2><PeopleFix pkg={pkg} hand={hand} setHand={setHand} draw={draw} setDraw={setDraw} time={time} onDone={()=>setStamp(Date.now())}/></>}
    <hr/><h2>PACKAGE</h2>
-   <p className="vc-help">.authoring/video-clay/{pkg.id}/ · {[pkg.depth,pkg.clay].filter(Boolean).join(', ')} ({pkg.size[0]}×{pkg.size[1]}, {pkg.duration.toFixed(2)} s, {pkg.fps} fps) and a source and clay still per keyframe. From {pkg.sourceVideo}, {pkg.start}–{(pkg.start+pkg.duration).toFixed(2)} s.</p>
+   <p className="vc-help">.authoring/video-clay/{pkg.id}/ · {[pkg.depth,pkg.clay].filter(Boolean).join(', ')} ({pkg.size[0]}×{pkg.size[1]}, {pkg.duration.toFixed(2)} s, {pkg.fps} fps) and a source{pkg.clay?', clay':''} and depth still per keyframe. From {pkg.sourceVideo}, {pkg.start}–{(pkg.start+pkg.duration).toFixed(2)} s.</p>
    {pkg.notes?.map((n,i)=><p key={i} className="vc-help">{n}</p>)}
   </aside></div>}</>;
 }
@@ -184,6 +191,15 @@ function DrawLayer({pkg,time,hand,setHand,draw,onStart}:{pkg:Pack;time:number;ha
  </svg>;
 }
 // The package's stars as a control signal: a person's rating, or the machine's suggestion until one is given.
+// A take generated from the package and reviewed against it (review_depth_result): the verdict, the measures, the video and the sheet.
+function Result({id,r}:{id:string;r:any}){const f=(x:string)=>bridgeUrl+'/api/video-clay-review-file?id='+encodeURIComponent(id)+'&label='+encodeURIComponent(r.label)+'&file='+x;
+ return <div className="dl-result"><div className="dl-result-head"><strong>{r.label}</strong>{r.verdict&&<span className={'dl-verdict '+r.verdict}>{r.verdict}</span>}<small>{String(r.reviewed??'').replace('T',' ')}</small></div>
+  {r.video&&<video src={f('result.mp4')} controls preload="metadata"/>}
+  <div className="vc-help">{r.length.result} s for a {r.length.guide} s guide · cuts {r.cuts.matched.length}/{r.cuts.guide.length} matched{r.cuts.matched.length?` (${r.cuts.matched.map((m:any)=>`${m.guide}→${m.result} s`).join(', ')})`:''}{r.cuts.missing.length?` · missing ${r.cuts.missing.join(', ')} s`:''}{r.cuts.extra.length?` · extra ${r.cuts.extra.join(', ')} s`:''}</div>
+  <div className="vc-help">{r.motion.map((m:any)=><div key={m.beat}>beat {m.beat} ({m.what}): movement {m.ratio??'–'} of the source's{m.flag?` ⚠ ${m.flag}`:''}</div>)}</div>
+  {r.flags.length?<div className="vc-help">{r.flags.map((x:string,i:number)=><div key={i} className="dl-check-k">⚠ {x}</div>)}</div>:<div className="vc-help">No flags.</div>}
+  {r.note&&<p className="vc-help">{r.note}</p>}
+  <a className="link" href={f('sheet.jpg')} target="_blank" rel="noreferrer">sheet: source, depth and result at each keyframe</a></div>;}
 function RateBox({id}:{id:string}){
  const [cur,setCur]=useState<Stars|null>(null),[std,setStd]=useState<Record<string,string>>({}),[pick,setPick]=useState(0),[why,setWhy]=useState(''),[note,setNote]=useState('');
  const load=()=>fetch(bridgeUrl+'/api/depth-library').then(r=>r.json()).then(d=>{setStd(d.starStandard??{});const all=[...d.sources.flatMap((s:any)=>s.packages),...d.unlinked];setCur(all.find((p:any)=>p.id===id)?.stars??null);});

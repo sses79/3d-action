@@ -8,12 +8,12 @@ Measures, without judging taste:
   displacement in picture widths a second, in the result and in the source, and their ratio; under 0.5 is flagged: the action
   may have become a pose;
 - a sheet at each keyframe time: source, depth still and the result frame side by side.
-Writes .authoring/video-clay/<package>/reviews/<label>/review.json and sheet.jpg (the result video is not copied; its path and
-SHA-256 are recorded) and prints the report."""
-import sys,json,hashlib,pathlib,time,argparse,cv2,numpy as np
+Writes .authoring/video-clay/<package>/reviews/<label>/review.json, sheet.jpg and result.mp4 (a copy of the result; its original
+path and SHA-256 are recorded) and prints the report."""
+import sys,re,json,shutil,hashlib,pathlib,time,argparse,cv2,numpy as np
 p=argparse.ArgumentParser();p.add_argument('package');p.add_argument('video');p.add_argument('--label');a=p.parse_args()
 pk=pathlib.Path('.authoring/video-clay')/a.package;P=json.load(open(pk/'package.json'))
-label=a.label or pathlib.Path(a.video).stem[:40].replace(' ','-');out=pk/'reviews'/label;out.mkdir(parents=True,exist_ok=True)
+label=a.label or (re.sub(r'[^a-z0-9]+','-',pathlib.Path(a.video).stem.lower()).strip('-')[:40] or 'result');out=pk/'reviews'/label;out.mkdir(parents=True,exist_ok=True)
 def frames(path,step=1/30):  # grey 160x90 at even times, whatever the container's frame rate
     c=cv2.VideoCapture(str(path));n=c.get(7);fps=c.get(5);dur=n/fps if fps else 0;ts=np.arange(0,dur-1e-6,step);g=[];k=-1;cur=None
     for t in ts:
@@ -69,6 +69,7 @@ for i,k in enumerate(P['keyframes'],1):
     if not ok or k['time']>=rdur:cv2.putText(cells[-1],'past the end of the result',(20,115),0,.7,(255,255,255),2)
     row=np.hstack(cells);cv2.putText(row,f"K{i} {k['time']} s",(6,22),0,.6,(255,255,255),2);rows.append(row)
 cv2.imwrite(str(out/'sheet.jpg'),np.vstack(rows),[cv2.IMWRITE_JPEG_QUALITY,88])
-rep=dict(package=a.package,result=str(pathlib.Path(a.video).resolve()),sha256=hashlib.sha256(open(a.video,'rb').read()).hexdigest(),reviewed=time.strftime('%Y-%m-%dT%H:%M:%S'),
+shutil.copy(a.video,out/'result.mp4')  # kept beside its review, so the page can play it
+rep=dict(package=a.package,label=label,video='result.mp4',result=str(pathlib.Path(a.video).resolve()),sha256=hashlib.sha256(open(a.video,'rb').read()).hexdigest(),reviewed=time.strftime('%Y-%m-%dT%H:%M:%S'),
   length=dict(result=round(rdur,2),guide=P['duration']),cuts=dict(guide=gcuts,result=rcuts,matched=matched,missing=missing,extra=extra),motion=mot,flags=flags,sheet=str(out/'sheet.jpg'))
 json.dump(rep,open(out/'review.json','w'),indent=1);print(json.dumps(rep,indent=1))

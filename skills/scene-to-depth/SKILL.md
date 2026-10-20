@@ -48,6 +48,10 @@ The check gates each keyframe of a package with beats: a beat person without col
 
 After a generation, run `review_depth_result {package, video}`: it flags a wrong length, missing or extra cuts and beats whose action became a pose, and makes a sheet at each keyframe. Report its flags with your own look at the sheet, then rate the package.
 
+Give the review a `verdict` (used, good, retake, rejected) and a one-line `note` once the user has decided; the take, its sheet and its measures then show under RESULTS on the package's page. When a take made with a cast and style worked, call `cast_depth_clip` with `keep: true` so the package keeps them. Say where a package stands with `set_depth_package_status` (current, replaced by another, stopped, test); pick `current` packages first.
+
+To continue a previous take, a package can open on a lead image (its last frame, held about 0.5 s; `derivedFrom.lead`): its first keyframe is that image, not generated, and the video prompt says to start on it. Join the new take to the old one at the new take's first cut, not on the lead frame: the generated first frame drifts a little in light and framing.
+
 ### Stars
 
 Every package has stars as a control signal (`docs/DEPTH_LIBRARY_PLAN.md`, "Star standard"): 5 reference (a person's judgement, best after a generation), 4 strong (no faults, clear motion), 3 usable, 2 weak, 1 not usable. A person's rating wins; otherwise the check suggests 1-4. Prefer 4-5 stars (`find_depth_clips {minStars: 4}`); each result names its best package, often a 5-star package built by hand over the same time, and `cast_depth_clip` takes that package ID. After a generation, tell the user what it showed and record it with `rate_depth_package {package, stars, why, proven: {model, date, result}, by}`; give 5 only when the user judged it.

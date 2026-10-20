@@ -54,9 +54,9 @@ const server=createServer(async(req,res)=>{
    // The depth shot library (docs/DEPTH_LIBRARY_PLAN.md): each source ingested by depth-ingest.py, with the built packages
    // (.authoring/video-clay) that were cut from the same video file.
    const base=resolve(root,'.authoring/depth-library'),pk=resolve(root,'.authoring/video-clay'),sources=[],packs=[];let names=[],pnames=[];try{names=await readdir(base);}catch{}try{pnames=await readdir(pk);}catch{}
-   for(const id of pnames.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{const p=JSON.parse(await readFile(resolve(pk,id,'package.json'),'utf8'));packs.push({id,name:p.name,sourceVideo:p.derivedFrom?.sourceVideo??p.sourceVideo,start:p.start,end:p.start+p.duration,keyframes:p.keyframes.length,depth:!!p.depth,thumb:p.keyframes[0]?.depthStill??p.keyframes[0]?.clayStill,scene:p.scene??null});}catch{}}
+   for(const id of pnames.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{const p=JSON.parse(await readFile(resolve(pk,id,'package.json'),'utf8'));packs.push({id,name:p.name,sourceVideo:p.derivedFrom?.sourceVideo??p.sourceVideo,start:p.start,end:p.start+p.duration,keyframes:p.keyframes.length,depth:!!p.depth,thumb:p.keyframes[0]?.depthStill??p.keyframes[0]?.clayStill,scene:p.scene??null,summary:p.summary??null});}catch{}}
    for(const id of names.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{const s=JSON.parse(await readFile(resolve(base,id,'source.json'),'utf8'));delete s.file;sources.push({...s,packages:packs.filter(p=>p.sourceVideo===s.fileName)});}catch{}}
-   const lib=new DepthLibrary(root);for(const p of packs)p.stars=lib.stars(p.id,null);
+   const lib=new DepthLibrary(root);for(const p of packs){p.stars=lib.stars(p.id,null);p.status=lib.statusOf(p.id);const rv=lib.reviews(p.id);p.results=rv.length;p.used=rv.filter(r=>r.verdict==='used').length;}
    for(const S of sources)for(const C of S.clips){const sm=lib.summary(S,C);C.stars=sm.stars;C.starsSuggested=sm.starsSuggested;C.bestPackage=sm.bestPackage;C.needsControlNow=sm.needsControl;C.controlWhy=sm.controlWhy;}
    return json(200,{sources,unlinked:packs.filter(p=>!sources.some(s=>s.fileName===p.sourceVideo)),starStandard});
   }
@@ -75,6 +75,20 @@ const server=createServer(async(req,res)=>{
    await writeFile(resolve(root,'.authoring/depth-library',source,clip+'.fixes.json'),JSON.stringify({shots,boxes}));
    const out=await new Promise(done=>execFile(resolve(root,'.authoring/vision-venv/bin/python'),['authoring/render/depth-fix.py',source,clip],{cwd:root,timeout:300000},(e,so,se)=>done(e?{error:(se||e.message).slice(-1500)}:JSON.parse(so.trim().split('\n').pop()))));
    return json(out.error?400:200,out);
+  }
+  if(req.method==='GET'&&path==='/api/depth-package-extras'){
+   // A package's status and the results reviewed against it (review_depth_result), for the Depth library page.
+   const id=url.searchParams.get('id')||'';if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))return json(404,{error:'No such package'});const lib=new DepthLibrary(root);if(!lib.pack(id))return json(404,{error:'No such package'});
+   return json(200,{status:lib.statusOf(id),reviews:lib.reviews(id).map(({result,sha256,...r})=>({...r,original:result}))});
+  }
+  if(req.method==='GET'&&path==='/api/video-clay-review-file'){
+   // A reviewed result's sheet or video copy (reviews/<label>/sheet.jpg, result.mp4).
+   const id=url.searchParams.get('id')||'',label=url.searchParams.get('label')||'',file=url.searchParams.get('file')||'';
+   if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id)||!/^[a-z0-9][a-z0-9-]{0,39}$/.test(label)||!['sheet.jpg','result.mp4'].includes(file))return json(404,{error:'Not a review file'});
+   const full=resolve(root,'.authoring/video-clay',id,'reviews',label,file);let info;try{info=await stat(full);}catch{return json(404,{error:'Not made'});}
+   const type=file.endsWith('.mp4')?'video/mp4':'image/jpeg',range=req.headers.range&&/bytes=(\d*)-(\d*)/.exec(req.headers.range);
+   if(range&&type==='video/mp4'){const a=range[1]?+range[1]:0,z=range[2]?Math.min(+range[2],info.size-1):info.size-1;res.writeHead(206,{'Content-Type':type,'Content-Range':`bytes ${a}-${z}/${info.size}`,'Accept-Ranges':'bytes','Content-Length':z-a+1,'Cache-Control':'no-store'});createReadStream(full,{start:a,end:z}).pipe(res);return;}
+   res.writeHead(200,{'Content-Type':type,'Content-Length':info.size,'Accept-Ranges':'bytes','Cache-Control':'no-store'});createReadStream(full).pipe(res);return;
   }
   if(req.method==='GET'&&path==='/api/video-clay-file'){
    // Streams only the clay video or a keyframe still that a package names.
