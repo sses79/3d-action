@@ -43,7 +43,7 @@ export class DepthLibrary{
   const P=JSON.parse(readFileSync(f,'utf8')),names=P.people.map(p=>p.name);
   const clean=beats.map((b,i)=>{if(!b||typeof b.actor!=='string'||typeof b.verb!=='string'||!Number.isFinite(b.start)||!Number.isFinite(b.end)||b.end<=b.start)throw Error(`beat ${i+1}: actor, verb, start and end (seconds, end after start)`);if(b.start<-.01||b.end>P.duration+.05)throw Error(`beat ${i+1}: inside 0-${P.duration} s`);
    for(const k of ['actor','target'])if(b[k]!==undefined&&!names.includes(b[k]))throw Error(`beat ${i+1}: ${k} must be one of the package's people (${names.join(', ')})`);
-   const o={actor:b.actor,verb:String(b.verb).slice(0,120),start:+(+b.start).toFixed(3),end:+(+b.end).toFixed(3)};for(const k of ['target','contact','change'])if(b[k])o[k]=String(b[k]).slice(0,200);return o;}).sort((a,b)=>a.start-b.start);
+   const o={actor:b.actor,verb:String(b.verb).slice(0,120),start:+(+b.start).toFixed(3),end:+(+b.end).toFixed(3)};if(b.peak!==undefined){if(!Number.isFinite(b.peak)||b.peak<b.start||b.peak>b.end)throw Error(`beat ${i+1}: peak inside the beat`);o.peak=+(+b.peak).toFixed(3);}for(const k of ['target','contact','change'])if(b[k])o[k]=String(b[k]).slice(0,200);return o;}).sort((a,b)=>a.start-b.start);
   const check=rule(P.duration,clean);P.summary=summary;P.beats=clean;P.beatCheck=check;writeFileSync(f,JSON.stringify(P,null,1));
   for(const spec of [resolve(this.packs,id+'-spec.json'),...this.sources().map(S=>resolve(this.base,S.id,id+'.spec.json'))])if(existsSync(spec)){const sp=JSON.parse(readFileSync(spec,'utf8'));sp.summary=summary;sp.beats=clean;writeFileSync(spec,JSON.stringify(sp,null,1));}
   return {package:id,summary,beats:clean,check};}
@@ -52,6 +52,9 @@ export class DepthLibrary{
   if(!Array.isArray(beats)||!beats.length||beats.some(b=>!b||typeof b.actor!=='string'||typeof b.verb!=='string'||!Number.isFinite(b.from)||!Number.isFinite(b.to)||b.to<=b.from))throw Error('beats: [{actor, verb, target?, contact?, change?, from, to}] with from/to the source span in the package');
   const f=resolve(this.base,`plan-${id}.json`);writeFileSync(f,JSON.stringify({id,name:name??id,from,duration,summary:summary??'',beats}));
   return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-plan-cut.py',f,...(dry?['--dry']:[])],{cwd:this.root,timeout:300000},(e,so,se)=>{if(e)return fail(Error((se||e.message).slice(-1500)));const i=so.indexOf('{\n');let plan=null;try{plan=JSON.parse(so.slice(i,so.lastIndexOf('\n}')+2));}catch{}done({package:dry?null:id,dry,plan,page:dry?null:'http://127.0.0.1:5174/editor/depth.html?package='+id});}));}
+ // the keyframe picker (depth-pick-keys.py): one keyframe per beat at the moment it reads best, written into the package
+ pickKeys({package:id,dry=false}){if(typeof id!=='string'||!ID.test(id)||!this.pack(id))throw Error('package: a built package');
+  return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-pick-keys.py',id,...(dry?['--dry']:[])],{cwd:this.root,timeout:300000},(e,so,se)=>{if(e)return fail(Error((se||e.message).slice(-1500)));let r=null;try{r=JSON.parse(so.slice(so.indexOf('{'),so.lastIndexOf('}')+1));}catch{}done({...r,dry});}));}
  ratingsFile(){return resolve(this.base,'ratings.json');}
  ratings(){try{return JSON.parse(readFileSync(this.ratingsFile(),'utf8'));}catch{return {};}}
  stars(pkgId,why){const r=this.ratings()[pkgId];if(r)return {...r,suggested:false};return suggestStars(this.check(pkgId),why);}

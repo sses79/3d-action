@@ -38,6 +38,8 @@ Before casting, give the package its beats (`set_depth_beats`): the action as a 
 
 To make a new clip from beats instead of taking a library clip's own cuts, use `plan_depth_cut` (whole-second duration, one source span per beat; it trims or widens spans to 1.0-1.2x, puts beats on whole seconds and warns on short beats or shots). Try `dry: true` first.
 
+Then `pick_depth_keys` places the keyframes, one per beat where it reads best. Read its warnings: where it cannot rank a shot (the actor untinted) or cannot see the peak of a change (a lift, a face), give the beat a `peak` with `set_depth_beats` and pick again.
+
 ### Stars
 
 Every package has stars as a control signal (`docs/DEPTH_LIBRARY_PLAN.md`, "Star standard"): 5 reference (a person's judgement, best after a generation), 4 strong (no faults, clear motion), 3 usable, 2 weak, 1 not usable. A person's rating wins; otherwise the check suggests 1-4. Prefer 4-5 stars (`find_depth_clips {minStars: 4}`); each result names its best package, often a 5-star package built by hand over the same time, and `cast_depth_clip` takes that package ID. After a generation, tell the user what it showed and record it with `rate_depth_package {package, stars, why, proven: {model, date, result}, by}`; give 5 only when the user judged it.
