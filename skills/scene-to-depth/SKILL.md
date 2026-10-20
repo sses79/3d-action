@@ -46,6 +46,8 @@ Each keyframe gets a contact card (the source frame with outlines and an arrow f
 
 The check gates each keyframe of a package with beats: a beat person without colour, or a marked contact hand not in its owner's colour, is a fault. Fix it (a hand box) or say in the hand-over that the keyframe image and contact card must carry whose hand it is.
 
+After a generation, run `review_depth_result {package, video}`: it flags a wrong length, missing or extra cuts and beats whose action became a pose, and makes a sheet at each keyframe. Report its flags with your own look at the sheet, then rate the package.
+
 ### Stars
 
 Every package has stars as a control signal (`docs/DEPTH_LIBRARY_PLAN.md`, "Star standard"): 5 reference (a person's judgement, best after a generation), 4 strong (no faults, clear motion), 3 usable, 2 weak, 1 not usable. A person's rating wins; otherwise the check suggests 1-4. Prefer 4-5 stars (`find_depth_clips {minStars: 4}`); each result names its best package, often a 5-star package built by hand over the same time, and `cast_depth_clip` takes that package ID. After a generation, tell the user what it showed and record it with `rate_depth_package {package, stars, why, proven: {model, date, result}, by}`; give 5 only when the user judged it.

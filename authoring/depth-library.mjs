@@ -62,6 +62,9 @@ export class DepthLibrary{
   const f=resolve(this.packs,id,'package.json');k.marks=marks.map(m=>({owner:m.owner,hand:m.hand,target:m.target,part:m.part,from:m.from.map(x=>+x.toFixed(4)),to:m.to.map(x=>+x.toFixed(4))}));writeFileSync(f,JSON.stringify(P,null,1));
   const spec=resolve(this.packs,id+'-spec.json');if(existsSync(spec)){const sp=JSON.parse(readFileSync(spec,'utf8'));const a=sp.keyframes?.find(x=>Math.abs(x.time-k.time)<.01);if(a){a.marks=k.marks;writeFileSync(spec,JSON.stringify(sp,null,1));}}
   return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-contact-card.py',id],{cwd:this.root,timeout:300000},(e,so,se)=>{if(e)return fail(Error((se||e.message).slice(-1500)));let r=null;try{r=JSON.parse(so.slice(so.indexOf('['),so.lastIndexOf(']')+1));}catch{}done({package:id,keyframe,marks:k.marks,cards:r});}));}
+ // a generated result against its package (depth-review-result.py): length, cuts, motion per beat, a sheet at each keyframe
+ reviewResult({package:id,video,label}){if(!this.pack(id))throw Error('package: a built package');if(typeof video!=='string'||!existsSync(video))throw Error('video: the generated result, a local file');if(label!==undefined&&!/^[a-z0-9][a-z0-9-]{0,39}$/.test(label))throw Error('label: lower-case letters, digits and dashes');
+  return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-review-result.py',id,video,...(label?['--label',label]:[])],{cwd:this.root,timeout:300000},(e,so,se)=>{if(e)return fail(Error((se||e.message).slice(-1500)));try{done(JSON.parse(so.slice(so.indexOf('{'),so.lastIndexOf('}')+1)));}catch{fail(Error('no report'));}}));}
  ratingsFile(){return resolve(this.base,'ratings.json');}
  ratings(){try{return JSON.parse(readFileSync(this.ratingsFile(),'utf8'));}catch{return {};}}
  stars(pkgId,why){const r=this.ratings()[pkgId];if(r)return {...r,suggested:false};return suggestStars(this.check(pkgId),why);}
