@@ -19,10 +19,12 @@ col={p['name']:p['color'] for p in P['people']};used=sorted(set(col.values()));H
 def src_t(t):
     D=P.get('derivedFrom')
     if not D:return P['start']+t
-    base=json.load(open(pk.parent/D['package']/'package.json'))['start'];sp=D.get('speeds') or [D['speed']]*len(D['segments']);x=t
+    L=(D.get('lead') or {}).get('seconds',0)  # the lead (an image held at the opening, not in the source): no source frame
+    if t<L:return None
+    base=json.load(open(pk.parent/D['package']/'package.json'))['start'];sp=D.get('speeds') or [D['speed']]*len(D['segments']);x=t-L
     for (a,b),v in zip(D['segments'],sp):
-        if x<=(b-a)/v+1e-6:return base+a+x*v
-        x-=(b-a)/v
+        if x<=abs(b-a)/v+1e-6:return base+a+x*v*(1 if b>=a else -1)  # a segment from a later to an earlier time plays in reverse
+        x-=abs(b-a)/v
     return base+D['segments'][-1][1]
 cap=cv2.VideoCapture(S['file']);vfps=cap.get(5);W0,H0=S['size'];cache=pathlib.Path('.authoring/reconstruction-cache')/('detections-%s-yolo26s-pose-1920'%S['sha256'][:16]);model=None
 def detect(k,frame):
@@ -37,9 +39,13 @@ PARTS=lambda kp:{'face':kp[0],'throat':(kp[0]+(kp[5]+kp[6])/2)/2,'shoulder':None
 SIDE={5:'left',6:'right',7:'left',8:'right',9:'left',10:'right'}
 report=[]
 for i,k in enumerate(P['keyframes'],1):
-    t=src_t(k['time']);kf=round(t*vfps);cap.set(cv2.CAP_PROP_POS_FRAMES,kf);ok,frame=cap.read()
-    if not ok:continue
-    d=detect(kf,frame);depth=cv2.resize(cv2.imread(str(pk/k['depthStill'])),(W0,H0)) if k.get('depthStill') else None
+    t=src_t(k['time'])
+    if t is None:frame=cv2.resize(cv2.imread(P['derivedFrom']['lead']['image']),(W0,H0));ok=True;d={'boxes':[],'keypoints':[]}  # the lead image: hand marks only
+    else:
+        kf=round(t*vfps);cap.set(cv2.CAP_PROP_POS_FRAMES,kf);ok,frame=cap.read()
+        if not ok:continue
+        d=detect(kf,frame)
+    depth=cv2.resize(cv2.imread(str(pk/k['depthStill'])),(W0,H0)) if k.get('depthStill') else None
     hsv=cv2.cvtColor(depth,cv2.COLOR_BGR2HSV) if depth is not None else None
     masks={}
     if hsv is not None:

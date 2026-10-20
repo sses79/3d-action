@@ -170,3 +170,11 @@ Codex reviewed `KEYFRAME-TASK-v1.md` before generating (`s-video/.../act-5-scene
 - `keyframeHandover`: the crop comes from the shot's own camera description first (close-up, low camera looking up; colour names become people), then the tint share; a beat person absent from a shot with no contact mark gets "only X is in this shot; the action continues off-screen" and no contact line; the hands sentence is now "every visible hand must connect plausibly to its owner's arm; preserve the reference crop and natural occlusion; do not reveal off-screen arms or bodies to prove ownership".
 - Part B beat 2's change no longer names the helm close-up (that is shot 3's camera, keyframe 4 only).
 - Task v2: one image at a time, only approved images become references; A5 → B1 is a continuity reference 0.40 s apart, not the same frame.
+
+### Part B continuation from a previous take's last frame (2026-10-20)
+
+Tim stopped the keyframe-by-keyframe A1–B4 chain as too slow for 4 s. Instead: take 2069 is kept up to its own cut at 2.86 s, and a new 4 s take starts on its last frame. Package `macbeth-v8-part-b-lift`:
+- a **lead**: 0.5 s held on that frame (Tim's screenshot, cleaned), its depth from Depth Anything 3 on the image, tinted by hand; `derivedFrom.lead {seconds, image}`. `depth-check.py` and `depth-contact-card.py` read the lead image for keyframes inside it (no detector there; hand marks only), and map later times past it.
+- then macbeth-v8-fight 8.84–12.34 s: the lift from below (arms raised, gauntlet at the throat: this is where the lift is; I had first dropped it as the rejected "overhead wrist" shot, Tim pointed it out) and the held-up close shot. It ends before the helm close-up (Tim: Macbeth is the centre).
+- keyframes 0.15 (the lead), 1, 2, 3 s, hand marks on the three from below; check: notes only.
+- the scripts also accept a reversed segment (`[later, earlier]`), tried and not used.

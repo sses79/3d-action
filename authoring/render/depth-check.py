@@ -41,21 +41,25 @@ def iou(p,q):
 def src_t(t):  # a package's time in the source video; a test cut (derivedFrom) maps through its segments and speed
     D=P.get('derivedFrom')
     if not D:return P['start']+t
-    base=json.load(open(pk.parent/D['package']/'package.json'))['start'];sp=D.get('speeds') or [D['speed']]*len(D['segments']);x=t  # each segment at its own speed (the cut planner)
+    L=(D.get('lead') or {}).get('seconds',0)  # a lead: the opening held on an image that is not in the source (a previous take's last frame)
+    if t<L:return None
+    base=json.load(open(pk.parent/D['package']/'package.json'))['start'];sp=D.get('speeds') or [D['speed']]*len(D['segments']);x=t-L  # each segment at its own speed (the cut planner)
     for (a_,b_),v in zip(D['segments'],sp):
-        if x<=(b_-a_)/v+1e-6:return base+a_+x*v
-        x-=(b_-a_)/v
+        if x<=abs(b_-a_)/v+1e-6:return base+a_+x*v*(1 if b_>=a_ else -1)  # a segment from a later to an earlier time plays in reverse
+        x-=abs(b_-a_)/v
     return base+D['segments'][-1][1]
 out=[];rows=[]
 for k in P['keyframes']:
-    dv.set(cv2.CAP_PROP_POS_FRAMES,round(k['time']*dv.get(5)));ok,d=dv.read();sv.set(cv2.CAP_PROP_POS_MSEC,src_t(k['time'])*1000);ok2,f=sv.read()
+    dv.set(cv2.CAP_PROP_POS_FRAMES,round(k['time']*dv.get(5)));ok,d=dv.read();st=src_t(k['time'])
+    if st is None:f=cv2.imread(P['derivedFrom']['lead']['image']);ok2=f is not None
+    else:sv.set(cv2.CAP_PROP_POS_MSEC,st*1000);ok2,f=sv.read()
     if not ok or not ok2:out.append(dict(time=k['time'],ok=False,issues=['frame not readable']));continue
     h,w=d.shape[:2];f=cv2.resize(f,(w,h));hsv=cv2.cvtColor(d,cv2.COLOR_BGR2HSV);sat=hsv[...,1]>70
     dist=np.stack([np.minimum(abs(hsv[...,0].astype(int)-H[c]),180-abs(hsv[...,0].astype(int)-H[c])) for c in used])
     near=np.argmin(dist,0);masks={c:(sat&(near==i)&(dist[i]<=8)) for i,c in enumerate(used)}
     masks={c:cv2.morphologyEx(m.astype(np.uint8),cv2.MORPH_OPEN,np.ones((3,3),np.uint8))>0 for c,m in masks.items()}
-    area={c:float(m.mean()) for c,m in masks.items()};at=src_t(k['time']);want={colour_of[n]:n for n in tracked_at(at) if n in colour_of} if TR else {colour_of[p['name']]:p['name'] for p in k['people'] if p['name'] in colour_of}
-    issues=[];kf=round(src_t(k['time'])*vfps);q=cache/f'{kf}.json';dets=[]
+    area={c:float(m.mean()) for c,m in masks.items()};at=src_t(k['time']);want={colour_of[n]:n for n in tracked_at(at) if n in colour_of} if TR and at is not None else {colour_of[p['name']]:p['name'] for p in k['people'] if p['name'] in colour_of}
+    issues=[];kf=round(at*vfps) if at is not None else None;q=cache/f'{kf}.json' if kf is not None else pathlib.Path('/nonexistent');dets=[]
     if q.exists():
         dd=json.loads(q.read_text());sx=w/S['size'][0]
         for b,kp in zip(dd['boxes'],dd.get('keypoints') or [[]]*len(dd['boxes'])):
