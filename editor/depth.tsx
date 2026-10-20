@@ -93,6 +93,10 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
  const [list,setList]=useState<Pack[]>([]),[error,setError]=useState(''),[time,setTime]=useState(0),[copied,setCopied]=useState(''),[stamp,setStamp]=useState(0);
  const [cast,setCast]=useState<Record<string,string>>({}),[style,setStyle]=useState(''),video=useRef<HTMLVideoElement>(null);
  const [hand,setHand]=useState<HandBox[]>([]),[draw,setDraw]=useState('');
+ const [marking,setMarking]=useState<{k:number;owner:string;hand:string;target:string;part:string;from?:number[]}|null>(null),[markBusy,setMarkBusy]=useState(false);
+ const pickPoint=(i:number,pt:number[])=>{if(!marking||marking.k!==i||!pkg)return;if(!marking.from){setMarking({...marking,from:pt});return;}
+  const old=((pkg.keyframes[i] as any).marks??[]) as any[],m={owner:marking.owner,hand:marking.hand,target:marking.target,part:marking.part,from:marking.from,to:pt};setMarking(null);setMarkBusy(true);
+  fetch(bridgeUrl+'/api/tool',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'set_contact_marks',arguments:{package:pkg.id,keyframe:i+1,marks:[...old.filter(o=>!(o.owner===m.owner&&o.hand===m.hand)),m]}})}).then(r=>r.json()).then(()=>{setMarkBusy(false);setStamp(Date.now());}).catch(()=>setMarkBusy(false));};
  useEffect(()=>{fetch(bridgeUrl+'/api/video-clay').then(r=>r.json()).then((l:Pack[])=>{setList(l);if(!l.some(p=>p.id===id))setError('No package '+id);}).catch(e=>setError('The authoring service is not answering ('+e.message+').'));},[id,stamp]);
  const store='video-clay-cast:'+id;
  const pk0=list.find(p=>p.id===id);  // a package may suggest a cast and style; what is typed here (kept in this browser) wins
@@ -105,7 +109,7 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
  const [check,setCheck]=useState<{ok:boolean;keyframes:{time:number;ok:boolean;issues:string[]}[]}|null>(null);
  useEffect(()=>{setCheck(null);if(!pkg?.library)return;fetch(file('check.json')).then(r=>r.ok?r.json():null).then(setCheck).catch(()=>{});},[pkg,stamp]);
  const copy=(k:string,text:string)=>{navigator.clipboard.writeText(text).then(()=>{setCopied(k);setTimeout(()=>setCopied(''),1500);});};
- const texts=useMemo(()=>{if(!pkg)return null;const p=packPrompts(pkg,cast,style,useDepth);if(pkg.beats?.length&&useDepth){const h=keyframeHandover(pkg as any,cast,style,{depth:i=>`key-${i}-depth.jpg`,source:i=>`key-${i}-source.jpg`});return {...p,images:h.map(e=>e.prompt),refs:h.map(e=>e.references)};}return {...p,refs:null as any};},[pkg,cast,style,useDepth]);  // with beats: the hand-over template (previous keyframe, contact, sides)
+ const texts=useMemo(()=>{if(!pkg)return null;const p=packPrompts(pkg,cast,style,useDepth);if(pkg.beats?.length&&useDepth){const h=keyframeHandover(pkg as any,cast,style,{depth:i=>`key-${i}-depth.jpg`,source:i=>`key-${i}-source.jpg`,contact:i=>(pkg.keyframes[i-1] as any)?.contactStill??null});return {...p,images:h.map(e=>e.prompt),refs:h.map(e=>e.references)};}return {...p,refs:null as any};},[pkg,cast,style,useDepth]);  // with beats: the hand-over template (previous keyframe, contact, sides)
  const pos=(t:number)=>pkg?`${t/pkg.duration*100}%`:'0',wide=(a:number,b:number)=>pkg?`${(b-a)/pkg.duration*100}%`:'0',hereKey=pkg?Math.max(0,pkg.keyframes.findLastIndex(k=>k.time<=time+1e-3)):0;
  return <><div className="dl-bar"><button onClick={onBack}>← Library</button><strong>{pkg?.name??id}</strong><span>built package</span>{pkg?.summary&&<span className="dl-summary">{pkg.summary}</span>}{check&&<span className={'dl-check-sum'+(check.ok?' ok':'')}>{check.ok?'✓ check passed at every keyframe':`⚠ check: ${check.keyframes.reduce((n,k)=>n+k.issues.length,0)} issue(s) at the keyframes`}</span>}{check&&<a className="link" href={file('check.jpg')} target="_blank" rel="noreferrer">check sheet</a>}</div>
   {error&&<div className="clay-error"><span>{error}</span></div>}
@@ -119,7 +123,8 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
    </div></div>
    <div className="vc-keys">{pkg.keyframes.map((k,i)=><section key={i} className={'vc-card'+(i===hereKey?' now':'')}>
     <div className="vc-head"><button onClick={()=>seek(k.time)}>{i+1} · {k.time.toFixed(2)} s · shot {k.shot}</button><span>{pkg.shots.find(s=>s.index===k.shot)?.camera}</span></div>
-    <div className="vc-stills"><figure><img src={file(k.sourceStill)} alt=""/><figcaption>source</figcaption></figure><figure><img src={file((useDepth&&k.depthStill?k.depthStill:k.clayStill)!)} alt=""/><figcaption>{useDepth?'tinted depth':'clay'}</figcaption></figure></div>
+    <div className={'vc-stills'+((k as any).contactStill?' three':'')}><figure><MarkableImg src={file(k.sourceStill)} marking={marking?.k===i} onPick={pt=>pickPoint(i,pt)}/><figcaption>source{marking?.k===i?` · click ${marking.from?'what the hand touches':'the hand'}`:''}</figcaption></figure><figure><img src={file((useDepth&&k.depthStill?k.depthStill:k.clayStill)!)} alt=""/><figcaption>{useDepth?'tinted depth':'clay'}</figcaption></figure>{(k as any).contactStill&&<figure><img src={file((k as any).contactStill)} alt=""/><figcaption>contact card</figcaption></figure>}</div>
+    {pkg.library||pkg.beats?<MarkBar pkg={pkg} k={i} marking={marking} setMarking={setMarking} busy={markBusy}/>:null}
     {check&&(()=>{const c=check.keyframes.find(x=>Math.abs(x.time-k.time)<.01);return c&&<div className={'dl-check-k'+(c.ok?' ok':'')}>{c.ok?'✓ Colours and shapes checked':c.issues.map((x,j)=><div key={j}>⚠ {x}</div>)}</div>;})()}
     <p className="vc-sum">{k.summary}</p>
     {(()=>{const says=k.people.some(p=>p.speaking),face=k.people.some(p=>p.expression);return <table className="vc-people"><thead><tr><th>Who</th><th>Doing</th>{says&&<th>Says</th>}{face&&<th>Face</th>}</tr></thead><tbody>{k.people.map(p=>{const c=pkg.people.find(q=>q.name===p.name)!;return <tr key={p.name}><td><i style={{background:hex[c.color]??c.color}}/>{p.name}{cast[p.name]?.trim()?<small> → {cast[p.name]}</small>:null}</td><td>{p.doing}</td>{says&&<td>{p.speaking||'—'}</td>}{face&&<td>{p.expression||'—'}</td>}</tr>;})}</tbody></table>;})()}
@@ -188,5 +193,17 @@ function RateBox({id}:{id:string}){
   <div className="dl-starpick">{[1,2,3,4,5].map(n=><button key={n} className={n<=pick?'on':''} title={std[n]} onClick={()=>setPick(n)}>★</button>)}</div>
   {pick>0&&<><p className="vc-help">{pick}: {std[pick]}</p><input className="dl-search" placeholder="What it rests on (a generation, what you saw)" value={why} onChange={e=>setWhy(e.target.value)}/><button className="primary" disabled={why.trim().length<5} onClick={save}>Rate {pick} star{pick>1?'s':''}</button></>}
   {note&&<p className="vc-help">{note}</p>}</div>;
+}
+// The source still as a target for two clicks (a hand, then what it touches), as fractions of the picture.
+function MarkableImg({src,marking,onPick}:{src:string;marking:boolean;onPick:(pt:number[])=>void}){
+ return <img src={src} alt="" className={marking?'dl-markable':''} onClick={e=>{if(!marking)return;const r=(e.target as HTMLImageElement).getBoundingClientRect();onPick([+((e.clientX-r.left)/r.width).toFixed(4),+((e.clientY-r.top)/r.height).toFixed(4)]);}}/>;
+}
+// Marks whose hand is on what at a keyframe (set_contact_marks), for its contact card: choose, then click the source still twice.
+function MarkBar({pkg,k,marking,setMarking,busy}:{pkg:Pack;k:number;marking:any;setMarking:(m:any)=>void;busy:boolean}){
+ const names=pkg.people.map(p=>p.name),[owner,setOwner]=useState(names[1]??names[0]),[hnd,setHnd]=useState('right'),[target,setTarget]=useState(names[0]),[part,setPart]=useState('throat');
+ const marks=((pkg.keyframes[k] as any).marks??[]) as any[];const on=marking?.k===k;
+ return <div className="dl-markbar">{marks.map((m,j)=><span key={j}>{m.owner}'s {m.hand} hand → {m.target}'s {m.part}</span>)}
+  <select value={owner} onChange={e=>setOwner(e.target.value)}>{names.map(n=><option key={n}>{n}</option>)}</select><select value={hnd} onChange={e=>setHnd(e.target.value)}><option>right</option><option>left</option></select><span>hand on</span><select value={target} onChange={e=>setTarget(e.target.value)}>{names.map(n=><option key={n}>{n}</option>)}</select><input value={part} onChange={e=>setPart(e.target.value)} placeholder="throat"/>
+  <button className={on?'primary':''} disabled={busy} onClick={()=>setMarking(on?null:{k,owner,hand:hnd,target,part})}>{busy?'Making the card…':on?(marking.from?'Now click what it touches · cancel':'Click the hand on the source · cancel'):'Mark a hand'}</button></div>;
 }
 createRoot(document.getElementById('root')!).render(<Library/>);

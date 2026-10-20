@@ -55,6 +55,13 @@ export class DepthLibrary{
  // the keyframe picker (depth-pick-keys.py): one keyframe per beat at the moment it reads best, written into the package
  pickKeys({package:id,dry=false}){if(typeof id!=='string'||!ID.test(id)||!this.pack(id))throw Error('package: a built package');
   return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-pick-keys.py',id,...(dry?['--dry']:[])],{cwd:this.root,timeout:300000},(e,so,se)=>{if(e)return fail(Error((se||e.message).slice(-1500)));let r=null;try{r=JSON.parse(so.slice(so.indexOf('{'),so.lastIndexOf('}')+1));}catch{}done({...r,dry});}));}
+ // hand marks for a keyframe's contact card, placed by hand (the detector misses armour and arms from below); remakes the cards
+ setMarks({package:id,keyframe,marks}){const P=this.pack(id);if(!P)throw Error('package: a built package');const k=P.keyframes[keyframe-1];if(!k)throw Error(`keyframe: 1-${P.keyframes.length}`);
+  const names=P.people.map(p=>p.name),fr=v=>Array.isArray(v)&&v.length===2&&v.every(x=>Number.isFinite(x)&&x>=0&&x<=1);
+  if(!Array.isArray(marks)||marks.length>8||!marks.every(m=>m&&names.includes(m.owner)&&names.includes(m.target)&&['left','right'].includes(m.hand)&&typeof m.part==='string'&&m.part.length<=40&&fr(m.from)&&fr(m.to)))throw Error(`marks: [{owner, hand: left|right, target, part ("throat"), from: [x, y], to: [x, y]}] with owner and target from ${names.join(', ')}, points as fractions of the picture`);
+  const f=resolve(this.packs,id,'package.json');k.marks=marks.map(m=>({owner:m.owner,hand:m.hand,target:m.target,part:m.part,from:m.from.map(x=>+x.toFixed(4)),to:m.to.map(x=>+x.toFixed(4))}));writeFileSync(f,JSON.stringify(P,null,1));
+  const spec=resolve(this.packs,id+'-spec.json');if(existsSync(spec)){const sp=JSON.parse(readFileSync(spec,'utf8'));const a=sp.keyframes?.find(x=>Math.abs(x.time-k.time)<.01);if(a){a.marks=k.marks;writeFileSync(spec,JSON.stringify(sp,null,1));}}
+  return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-contact-card.py',id],{cwd:this.root,timeout:300000},(e,so,se)=>{if(e)return fail(Error((se||e.message).slice(-1500)));let r=null;try{r=JSON.parse(so.slice(so.indexOf('['),so.lastIndexOf(']')+1));}catch{}done({package:id,keyframe,marks:k.marks,cards:r});}));}
  ratingsFile(){return resolve(this.base,'ratings.json');}
  ratings(){try{return JSON.parse(readFileSync(this.ratingsFile(),'utf8'));}catch{return {};}}
  stars(pkgId,why){const r=this.ratings()[pkgId];if(r)return {...r,suggested:false};return suggestStars(this.check(pkgId),why);}

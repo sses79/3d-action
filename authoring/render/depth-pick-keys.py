@@ -1,5 +1,5 @@
-"""Keyframe picker (docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md, step 3): one keyframe per beat, at the moment the beat reads best, plus
-the opening; written into the package and its spec, then the package is made again (stills) and checked.
+"""Keyframe picker (docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md, step 3): every shot gets a keyframe at its opening (each camera angle
+needs its picture), and a beat gets one where it reads best when that is a second or more into its shot; written into the package and its spec, then the package is made again (stills) and checked.
   .authoring/vision-venv/bin/python authoring/render/depth-pick-keys.py PACKAGE-ID [--dry]
 Reads the package's beats (set_depth_beats or the cut planner), people and colours, shots and the tinted depth video. For each beat,
 every frame inside it at least 0.3 s from a cut is scored from the tint: the actor's and the target's areas (each colour's region,
@@ -50,12 +50,25 @@ for i,b in enumerate(P['beats']):
         if ca and inner and max(x[2] for x in inner)<.003 and b.get('peak') is None:warn.append(f"beat {i+1}: in shot {sh['index']} ({sh['start']}-{sh['end']} s) {b['actor']} has no colour, so it cannot be ranked; if the beat peaks there, give the beat a peak time")
     if all(abs(t0-k)>.3 for k in keys):keys.append(t0)
     picked.append(dict(beat=i+1,time=t0,why=why,actor=round(row[2],3),target=round(row[3],3),contact=round(row[4],4)))
+# every shot gets a keyframe at its opening (each camera angle needs its picture): 0.25 s after the cut (a frame on the cut can be
+# blurred or half the shot before; the clip's first at 0.15), on a whole second when one is close; a beat's peak a second or more into
+# the shot gets its own keyframe too, and one nearer the start stands for the shot
+per=[]
+for sh in P['shots']:
+    inside=[p_['time'] for p_ in picked if sh['start']-1e-3<=p_['time']<sh['end']]
+    t=round(min(sh['start']+.25,(sh['start']+sh['end'])/2),2) if sh['start']>0 else .15;w=[x for x in range(math.ceil(sh['start']+.25),math.floor(sh['end']-.25)+1)]
+    if w and min(w)-sh['start']<=.6:t=float(min(w))
+    late=[x for x in inside if x-sh['start']>=1.0]  # a beat peak a second or more into the shot: the picture has changed, it gets its own keyframe
+    if inside and not late:per+=inside;continue  # a peak near the shot's start stands for the shot
+    per.append(t);per+=late;picked.append(dict(shot=sh['index'],time=t,why="the shot's opening"))
+keys=sorted(set(per))
 print(json.dumps(dict(package=pid,keyframes=keys,picked=picked,warnings=warn),indent=1))
 if dry:sys.exit()
 shot_at=lambda t:next((s['index'] for s in P['shots'] if s['start']-1e-3<=t<s['end']),P['shots'][-1]['index'])
 beat_at=lambda t:next((b for b in P['beats'] if b['start']-1e-3<=t<b['end']+1e-3),None)
 def key(t):
     b=beat_at(t);old=next((k for k in P['keyframes'] if abs(k['time']-t)<.05),None)
+    keep={x:old[x] for x in ('marks',) if old and old.get(x)}  # marks placed by hand stay with a keyframe that keeps its time
     if old and old.get('summary') not in ('opening','not described',None) and t<.2:return dict(old,shot=shot_at(t))
     if not b:return dict(time=t,shot=shot_at(t),summary='The opening frame.',people=[dict(name=n,doing='') for n in col])
     s=f"{b['actor']} {b['verb']} {b.get('target','')}".strip()+'.'+(f" {b['change'][0].upper()+b['change'][1:]}." if b.get('change') else '')
@@ -68,8 +81,9 @@ def layout(t):  # where each person is at a keyframe, from the tint: screen side
         x=float(np.nonzero(m)[1].mean())/m.shape[1];out[n]=dict(side='left' if x<.4 else 'right' if x>.6 else 'centre',area=round(float(m.mean()),3))
     return out
 spec_path=pk.parent/f'{pid}-spec.json';spec=json.load(open(spec_path))
-spec['keyframes']=[dict(key(t),layout=layout(t)) for t in keys];spec['keyPicker']=dict(picked=picked,warnings=warn);spec['notes']=[n for n in spec.get('notes',[]) if not n.startswith('Keyframes:')]+[f"Keyframes: {', '.join(str(k) for k in keys)} s, picked per beat (depth-pick-keys.py)"+(f"; warnings: {'; '.join(warn)}" if warn else '')]
+spec['keyframes']=[dict(key(t),layout=layout(t),**{x:o[x] for o in P['keyframes'] if abs(o['time']-t)<.05 for x in ('marks',) if o.get(x)}) for t in keys];spec['keyPicker']=dict(picked=picked,warnings=warn);spec['notes']=[n for n in spec.get('notes',[]) if not n.startswith('Keyframes:')]+[f"Keyframes: {', '.join(str(k) for k in keys)} s, picked per beat (depth-pick-keys.py)"+(f"; warnings: {'; '.join(warn)}" if warn else '')]
 json.dump(spec,open(spec_path,'w'),indent=1)
 for f in pk.glob('key-*.jpg'):f.unlink()
 subprocess.run([sys.executable,'authoring/render/video-clay-pack.py',str(spec_path)],check=True,capture_output=True)
 P2=json.load(open(pk/'package.json'));P2['beats']=P['beats'];P2['summary']=P.get('summary');P2['beatCheck']=P.get('beatCheck');json.dump(P2,open(pk/'package.json','w'),indent=1)
+subprocess.run([sys.executable,'authoring/render/depth-contact-card.py',pid],capture_output=True)  # the contact cards for the new keyframes
