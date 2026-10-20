@@ -5,7 +5,7 @@
 // layout (seen in the courtyard test, 2026-10-18), so a keyframe drawn to another layout is overruled; matching it from the
 // start keeps the keyframe and the video in agreement.
 export type PackPeople={name:string;color:string;represents:string};
-export type PackKey={layout?:Record<string,{side:string;area:number}>;time:number;shot:number;summary:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]};
+export type PackKey={marks?:any[];layout?:Record<string,{side:string;area:number}>;time:number;shot:number;summary:string;people:{name:string;doing:string;speaking?:string;expression?:string}[]};
 export type Beat={actor:string;verb:string;target?:string;contact?:string;change?:string;avoid?:string;peak?:number;start:number;end:number};
 export type PackLike={beats?:Beat[];summary?:string;duration:number;people:PackPeople[];shots:{index:number;start:number;end:number;camera:string}[];audio:{start:number;end:number;who?:string;kind:string;text:string}[];keyframes:PackKey[]};
 // How many beats a clip can carry (docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md): about 1.5-2.5 s each, so a 5 s clip holds 2-3 and
@@ -47,17 +47,18 @@ export function keyframeHandover(pkg:PackLike,cast:Record<string,string>,style:s
  const said=(x:string)=>pkg.people.reduce((t,p)=>t.replace(new RegExp(`\\b${p.name}\\b`,p.name.length>1?'gi':'g'),name(p.name)),x);
  const cutBetween=(a:number,b:number)=>pkg.shots.some(s=>s.start>a+1e-3&&s.start<=b);
  const beatOf=(t:number)=>{const i=pkg.beats?.findIndex(b=>b.start-1e-3<=t&&t<b.end+1e-3)??-1;return i<0?null:{i,b:pkg.beats![i]};};
- const size=(k:PackKey)=>{const a=Math.max(0,...Object.values(k.layout??{}).map(x=>x.area));return a>.45?'tight: the people fill most of the frame':a>.15?'medium: the people fill a good part of the frame':'wide: the people are small in the frame';};
+ const size=(k:PackKey)=>{const cam=(pkg.shots.find(s=>s.index===k.shot)?.camera??'').toLowerCase(),a=Math.max(0,...Object.values(k.layout??{}).map(x=>x.area));  // the shot's own description first: a face close-up has little colour but is close
+  const said_=(x:string)=>x.split(/[:;]/)[0].replace(/the (\w+) figure/g,(m,c)=>{const q=pkg.people.find(p=>p.color===c);return q?name(q.name):m}).replace(/^close,?\s*/,'').trim();if(/close/.test(cam))return `a close-up (${said_(cam)||'close'}); keep it as tight as the depth still`;if(/from below|\blow\b/.test(cam))return `a low camera looking up (${said_(cam)}); keep it as tight as the depth still`;return a>.45?'tight: the people fill most of the frame':a>.15?'medium: the people fill a good part of the frame':'wide: the people are small in the frame';};
  return pkg.keyframes.map((k,i)=>{const bb=beatOf(k.time),prev=i?pkg.keyframes[i-1]:null,pb=prev?beatOf(prev.time):null,contact=files.contact?.(i+1)??null;
   const refs=[{role:'depth still: framing, where each person stands and how near (white is near; the tints only say who is who)',file:files.depth(i+1)},{role:'source frame: room, architecture, camera angle, light, and who touches what; replace every person, take no likeness',file:files.source(i+1)},...(contact?[{role:'contact card: whose hand is on what',file:contact}]:[]),...(prev?[{role:`keyframe ${i} as generated and approved: continuity (the same people, sides, arms and what is held)`,file:`keyframe-${i}.png (yours)`}]:[]),{role:'character sheets',file:'yours'}];
   const sides=Object.entries(k.layout??{}).map(([n,l])=>`${name(n)} at screen ${l.side}`).join(', ');
   const people=bb?[bb.b.actor,...(bb.b.target?[bb.b.target]:[])]:Object.keys(k.layout??{});
   const lines=[`Keyframe ${i+1} of ${pkg.keyframes.length}, at ${k.time} s.`,
    bb?`Beat ${bb.i+1} of ${pkg.beats!.length}: ${said(`${bb.b.actor} ${bb.b.verb}${bb.b.target?' '+bb.b.target:''}`)}${bb.b.change?`; ${said(bb.b.change)}`:''}.`:'The opening frame.',
-   bb?.b.contact?`Contact: ${said(bb.b.contact)}.`:'',
+   bb?.b.contact&&people.every(n=>(k.layout??{})[n]||((k as any).marks??[]).some((m:any)=>m.owner===n||m.target===n))?`Contact: ${said(bb.b.contact)}.`:'',
    sides?`${sides[0].toUpperCase()+sides.slice(1)}.`:'',
-   ...people.filter((n,j,a)=>a.indexOf(n)===j&&!(k.layout??{})[n]).map(n=>`${name(n)} is not coloured in the depth still here: take where he is and what he touches from the source frame.`),
-   people.length>1?`Exactly two arms per person; every hand is joined to a visible arm of its owner.`:'',
+   ...people.filter((n,j,a)=>a.indexOf(n)===j&&!(k.layout??{})[n]).map(n=>((k as any).marks??[]).some((m:any)=>m.owner===n||m.target===n)?`${name(n)} is not coloured in the depth still here: take where he is and what he touches from the source frame and the contact card.`:`Only ${people.filter(m=>(k.layout??{})[m]).map(name).join(' and ')||'what the depth still shows'} is in this shot; the action continues off-screen: do not bring ${name(n)}, his hands or the contact into the picture.`),
+   people.length>1?`Every visible hand must connect plausibly to its owner's arm; preserve the reference crop and natural occlusion; do not reveal off-screen arms or bodies to prove ownership.`:'',
    prev?(pb&&bb&&pb.i!==bb.i?`Since keyframe ${i}: the next beat has begun.`:`Since keyframe ${i}: the same beat, a moment later${bb?.b.change?` (${said(bb.b.change)})`:''}.`)+(cutBetween(prev.time,k.time)?` There is a cut since keyframe ${i}: Image ${refs.findIndex(r=>r.role.startsWith('keyframe'))+1} is keyframe ${i}; keep the same people, costumes, arms and what is held, not its framing.`:` Image ${refs.findIndex(r=>r.role.startsWith('keyframe'))+1} is keyframe ${i}: keep the same people, sides, arms and what is held.`):'',
    `Image 1 is the depth still: keep its framing, positions and nearness exactly. Image 2 is the source frame: keep its room, architecture, camera angle and light, and read from it who touches what.${contact?' Image 3 is the contact card: follow its hands.':''} The character sheets give the faces and costumes.`,
    `Do not copy from the source frame: any face, costume or likeness, or props and actions that are not in this beat${bb?.b.avoid?` (${said(bb.b.avoid)})`:''}.`,
