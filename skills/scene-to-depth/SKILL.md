@@ -82,3 +82,7 @@ For off beats: the framing to use. State the limits: Seedance has no official de
 ## Long calls and concurrent writes
 
 A call that runs past 240 s comes back as `{job, status: 'running'}`; poll `get_depth_job` until it is done or failed (a job the service lost to a restart says so: run it again). To start one without waiting, post `async: true` with the call to `POST /api/tool`. When another agent may be working on the same package, read its `revision` (`get_depth_clip`, the package list) and pass `expectedRevision` with your write; a refusal ("stale: …") means read again and redo the change.
+
+## One call (make_depth_reference)
+
+For footage the caller brings: `make_depth_reference {video, scene, cast: {character: description}, duration, window?, beats?, style?, id?}` runs ingest, build, check, description, who plays whom, beats, cut, keyframes, contact cards, the second check and the hand-over as one job. Poll `get_depth_job`. When it says `needs_input`, read its questions: each says what to answer (`answers`) or which tool fixes it (`set_contact_marks`, `fix_depth_clip`, `set_depth_beats`); then call `make_depth_reference {request, answers}`. `redo: "beats"` (or any step) starts again from there. Its drafts (description, cast, beats) are a vision model's: say so when you report, and check them on the page.

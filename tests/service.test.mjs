@@ -51,3 +51,20 @@ test('a call can be a job, and /api/health says what is running',()=>temp(async 
   const h=await (await fetch(base+'/api/health')).json();assert.equal(typeof h.uptimeSeconds,'number');assert.ok(h.jobs.counts.done>=1);assert.equal(typeof h.checks.visionPython,'boolean');assert.equal(h.restartNeeded,null);
  }finally{p.kill();}
 }));
+
+test('a depth request stops for a question, carries on without redoing finished steps, and redoes from a step',()=>temp(async dir=>{
+ const {DepthRequests}=await import('../authoring/depth-request.mjs');
+ const lib={base:dir,store:new JobStore(join(dir,'jobs')),pack:()=>null};const ran=[];
+ class Fake extends DepthRequests{}
+ for(const s of ['source','window','build','checkBuild','describe','cast','beats','cut','keys','contact','checkFinal','handover'])Fake.prototype[s]=async function(R){ran.push(s);
+  if(s==='cast'&&!R.answers.cast)return {ask:[{id:'cast',question:'who plays whom?'}]};return s==='handover'?{package:'pk',page:'p',revision:2,handover:{}}:{ok:s};};
+ const video=join(dir,'v.mp4');await writeFile(video,'x');const q=new Fake(lib,async()=>({}));
+ assert.throws(()=>q.start({video,scene:'a scene',cast:{A:'x'}}),/duration: needed/);
+ assert.throws(()=>q.start({video,scene:'a scene',cast:{A:'x'},duration:4,lead:{}}),/step 2e/);
+ const r=q.start({video,scene:'a scene',cast:{A:'x'},duration:4});
+ await until(()=>lib.store.read(r.job)?.status==='needs_input');assert.deepEqual(ran,['source','window','build','checkBuild','describe','cast']);
+ assert.equal(lib.store.status(r.job).questions[0].id,'cast');assert.equal(q.read(r.request).status,'needs_input');
+ ran.length=0;const r2=q.start({request:r.request,answers:{cast:{A:'A'}}});await until(()=>lib.store.read(r2.job)?.status==='done');
+ assert.deepEqual(ran,['cast','beats','cut','keys','contact','checkFinal','handover']);assert.equal(lib.store.status(r2.job).result.package,'pk');
+ ran.length=0;const r3=q.start({request:r.request,redo:'keys'});await until(()=>lib.store.read(r3.job)?.status==='done');assert.deepEqual(ran,['keys','contact','checkFinal','handover']);
+}));

@@ -20,11 +20,12 @@ export class JobStore{
  // a job record for work already running (a call that outlasted its wait): it is not queued, it is followed
  follow(kind,meta,promise){const j=this.save({id:newId(kind),kind,...meta,status:'running',pid:process.pid,startedAt:new Date().toISOString(),log:'',result:null,error:null});this.live.set(j.id,j);
   promise.then(r=>{j.status='done';j.result=r;},e=>{j.status='failed';j.error=String(e?.message??e).slice(-2000);}).finally(()=>{j.finishedAt=new Date().toISOString();this.save(j);this.live.delete(j.id);});return j;}
- // queue work: run(job, log) returns a promise of the result; log(text) keeps the last 4000 characters and step(name) says where it is
+ // queue work: run(job, log, step) returns a promise of the result; log(text) keeps the last 4000 characters and step(name) says where it is;
+ // a result with needsInput ends the job as needs_input, with its questions (the work is carried on by a new job once answered)
  enqueue(kind,meta,run){const j=this.save({id:newId(kind),kind,...meta,status:'queued',pid:process.pid,queuedAt:new Date().toISOString(),log:'',result:null,error:null});this.live.set(j.id,j);this.queue.push({j,run});this.next();return j;}
  next(){if(this.busy||!this.queue.length)return;const {j,run}=this.queue.shift();this.busy=true;j.status='running';j.startedAt=new Date().toISOString();this.save(j);
   let saved=0;const log=t=>{j.log=(j.log+t).slice(-4000);if(Date.now()-saved>2000){saved=Date.now();this.save(j);}},step=s=>{j.step=s;this.save(j);};
-  Promise.resolve().then(()=>run(j,log,step)).then(r=>{j.status='done';j.result=r??null;},e=>{j.status='failed';j.error=String(e?.message??e).slice(-2000);}).finally(()=>{j.finishedAt=new Date().toISOString();this.save(j);this.live.delete(j.id);this.busy=false;this.next();});}
+  Promise.resolve().then(()=>run(j,log,step)).then(r=>{if(r&&r.needsInput){j.status='needs_input';j.questions=r.questions;j.result=r;}else{j.status='done';j.result=r??null;}},e=>{j.status='failed';j.error=String(e?.message??e).slice(-2000);}).finally(()=>{j.finishedAt=new Date().toISOString();this.save(j);this.live.delete(j.id);this.busy=false;this.next();});}
  status(id){const j=this.read(id);if(!j)throw Error('No such job: '+id);const {pid,...o}=j;return {...o,log:j.status==='running'?String(j.log??'').slice(-600):undefined,position:j.status==='queued'?this.queue.findIndex(q=>q.j.id===id)+1||undefined:undefined};}
  summary(){const all=readdirSync(this.dir).filter(f=>f.endsWith('.json')).map(f=>{try{return JSON.parse(readFileSync(resolve(this.dir,f),'utf8'));}catch{return null;}}).filter(Boolean),by={};for(const j of all)by[j.status]=(by[j.status]??0)+1;
   return {counts:by,running:all.filter(j=>j.status==='running').map(j=>({id:j.id,kind:j.kind,step:j.step??null,startedAt:j.startedAt})),queued:this.queue.length};}

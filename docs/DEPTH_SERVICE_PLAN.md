@@ -109,6 +109,37 @@ Everything else stays available for fine control, as now.
   - The lead tinting by hand becomes a step that asks for two boxes when the detector fails.
 - **Done when:** the V.8 lift package can be remade from the source file, a beat list and the cast with one call plus the hand marks it asks for, and it matches the hand-built one: the same shots, keyframes within 0.2 s, and the check clean.
 
+**Built so far (2026-10-24), parts 2a–2d; 2e, continuing from a lead image, is next.**
+- **The request.** `make_depth_reference` (`authoring/depth-request.mjs`) runs twelve steps as one job:
+  - source (reused by its SHA-256, or ingested) and window (a clip of the source for exactly that span, made when needed);
+  - build (reused if built) and check;
+  - describe, cast and beats;
+  - cut (the request's own package, through the cut planner; a redo remakes it), keys and contact;
+  - check again, then the hand-over (`cast_depth_clip`).
+  - Each step's outcome is stored in `.authoring/depth-library/requests/<id>.json`.
+- **Stopping and carrying on.** A step that needs a person returns questions, and the job ends as `needs_input`; `get_depth_job` lists them with what to answer.
+  - `make_depth_reference {request, answers}` carries on without rerunning finished steps; `redo` starts again from a step.
+  - The stops:
+    - a fault in either check (accept or fix);
+    - who plays whom when the model is not sure;
+    - beats that break the rule;
+    - beats that get 1 s of the take;
+    - a window too short for the take;
+    - a contact the detector cannot see on a keyframe where a beat person is in shot.
+- **Drafts.** `authoring/render/depth-draft.py` (OpenRouter, `DEPTH_DRAFT_MODEL`, default `openai/gpt-6-luna`) writes the description, the cast mapping and the beats.
+  - Beats are drafted at 2 s or more each (the planner gives whole seconds).
+  - Drafts are stored with `by: model:…`.
+- **Tried on Ramsay 026 as Duncan's murder (5 s).**
+  - The model mapped the older lord to Duncan and the son to Macbeth.
+  - Its first beats (three) gave 1 s beats; after the change, two: approach and embrace 3 s, the stab 2 s.
+  - It stopped for hand marks, and then for a real fault: the marked hand (Macbeth's, on Duncan's back) is inside Duncan's blue tint.
+  - Package `duncan-embrace-5s-2`, hand-over written.
+  - Steps that ran: the drafts, cut, keys, contact cards, both checks and hand-over. The source, build and description were reused.
+- **Open.**
+  - A reused description with no shot cameras leaves "not described" in the prompts.
+  - A redo from beats drops the hand marks made on the earlier cut.
+  - The contact stop also asks at a beat's first keyframe, before the contact happens (answer `contact-N: skip`).
+
 ### Step 3: delivery to a project folder (about a day)
 
 - **Writing the folder.** `deliverTo` writes the folder described above, from templates in `authoring/templates/` (the task, the upload steps, the generation prompt).
