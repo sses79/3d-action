@@ -876,3 +876,13 @@ Numbers are in `docs/MULTI_PERSON_PLAN.md` (from "One player from two cameras" o
 - Ball: a hand down at the hips means a bounce; a player moving over the floor with the ball bounces it every 0.5 s, timed to the sightings.
 - A given track may be seen in as little as 30% of its frames (`givenTrack` in the observe report).
 - The replay's camera solve, placing and joining of track pieces are still scratch scripts in `.authoring/team/scripts/`.
+
+## 2026-10-15/24 · Depth library, the depth references for Seedance, V.8 final fight
+
+Details and numbers live in `docs/DEPTH_LIBRARY_PLAN.md` and `docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md`; the s-video side in `s-video/outputs/macbeth/act-5-scene-8-*`.
+- Tinted depth from footage (Depth Anything 3, each person one colour) beat clay as Seedance's reference video in the courtyard A/B (2026-10-18): depth for footage, clay only for written scenes.
+- Depth library: sources (`got-standoff`, `got-tywin`, `got-ramsay`) cut into shots, a control rule (camera / person movement; `set_depth_clip_control` to overrule), clips built and fixed on `/editor/depth.html`, the `scene-to-depth` skill, a star standard (5 only by a person).
+- Improvement plan steps 1-7: beats and the beat rule, the cut planner, the keyframe picker (a keyframe per shot opening plus late peaks), the hand-over (depth still, source frame, contact card, previous approved keyframe, sheets), contact cards with hand marks, the keyframe gate, `review_depth_result`.
+- V.8 final fight: the keyframe-by-keyframe chain for parts A and B was too slow; instead take 2069's first 2.86 s were kept and `macbeth-v8-part-b-lift` (a 0.5 s lead on 2069's last frame, then the real lift from below and the held shot, 4 s) gave take 1215 with three approved keyframes: both cuts matched, no flags. Film: `continuation-b/results/v8-final-fight-2069+1215.mp4` (6.44 s), joined at the new take's first cut, not on the lead frame.
+- Page: prompts that know a lead image, the cast kept from a take that worked (`cast_depth_clip keep`), results with verdicts on the package, package status (`set_depth_package_status`), clip labels (no-control clips are still shots; clips built by hand open their package), names written as the cast says them.
+- Open: the fight package's Macduff hand tinted blue at 2.6 s (mask repair stopped by Tim); Ramsay clips 026/030 unused; the lift package awaits a person's stars.
