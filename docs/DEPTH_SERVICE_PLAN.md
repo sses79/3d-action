@@ -64,6 +64,28 @@ Everything else stays available for fine control, as now.
 - **Package revisions.** Every package gets a `revision`. Writes take `expectedRevision` (as actions already do) and refuse a stale one.
 - **Done when:** a restart in the middle of a build loses nothing; two agents cannot overwrite each other's package; the tests cover the job file and the revision refusal.
 
+**Built 2026-10-24.**
+- **Jobs.** `authoring/jobs.mjs`: jobs are kept on disk in `.authoring/jobs/<id>.json` and run one at a time; the server and the bundle share the folder.
+  - A job left running by a stopped service is failed on the next start ("the service stopped while this job was running").
+  - Done and failed jobs older than 14 days are removed.
+  - Ingest and build run in this queue.
+  - Any tool call that outlasts 240 s (`STUDIO_SYNC_WAIT_MS`), or is sent with `async: true`, is answered with a job ID; `get_depth_job` reads it.
+- **Package revisions and locks.** Revisions live in `.authoring/depth-library/package-revisions.json`; a package first seen is revision 1.
+  - `set_depth_beats`, `pick_depth_keys`, `set_contact_marks`, `fix_depth_clip`, `describe_depth_clip`, `build_depth_clip`, `plan_depth_cut` and `cast_depth_clip keep` add one, under a lock file in the package folder.
+  - Given `expectedRevision`, they refuse a stale one: "stale: package … is at revision N"; the page answers 409.
+  - The page sends the revision it read. Agents may leave it out for now: optional, not yet required.
+- **Health.** `GET /api/health` returns:
+  - the version and process;
+  - `restartNeeded` when `core.js`, `depth-library.mjs`, `jobs.mjs` or `server.mjs` changed after the start;
+  - the jobs;
+  - checks for the vision Python, ComfyUI, the OpenRouter key file (only whether it is there) and mini4 over SSH.
+- **launchd agent.** `authoring/service/service.mjs` (`npm run service:install | deploy:authoring | service:status`) installs `~/Library/LaunchAgents/com.sses79.codex3d.authoring.plist`: Node 26, `OPENROUTER_ENV_FILE`, the log in `.authoring/logs/service.log`, a restart when it stops.
+- **Checked.** 4 new tests (93 in all).
+  - Killed with `kill -9`, the service was back in 16 s.
+  - `deploy` built, tested and restarted it in 28 s.
+  - A review job interrupted by a restart came back failed with the reason.
+  - A stale `set_contact_marks` was refused, and the right revision went through (1 → 2).
+
 ### Step 2: one call from footage to package (2–3 days)
 
 - **The pipeline.** `make_depth_reference` runs the existing steps in order:

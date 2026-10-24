@@ -78,3 +78,7 @@ Per beat: control on or off and why; for on, the clip ID, why it fits and what d
 2. **Video generation**: Video 1 = the reference video, then the character sheets and the generated keyframes, with the video prompt.
 
 For off beats: the framing to use. State the limits: Seedance has no official depth input (it goes in as an ordinary reference video; one A/B on 2026-10-18 showed it works); the keyframe images must be generated in the scene's style from the image prompts and the two layout references; source frames go to the keyframe step only.
+
+## Long calls and concurrent writes
+
+A call that runs past 240 s comes back as `{job, status: 'running'}`; poll `get_depth_job` until it is done or failed (a job the service lost to a restart says so: run it again). To start one without waiting, post `async: true` with the call to `POST /api/tool`. When another agent may be working on the same package, read its `revision` (`get_depth_clip`, the package list) and pass `expectedRevision` with your write; a refusal ("stale: …") means read again and redo the change.

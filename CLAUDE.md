@@ -33,9 +33,11 @@ Three browser demos; active work is **Animation Studio** (LLM-driven movement li
 npm run build            # watch/app.js
 npm run build:editor     # editor/app.js and editor/clay.js (the Clay reference page, /editor/clay.html)
 npm run build:authoring  # authoring/core.js (required after editing core.ts or runtime/)
-npm run start:authoring  # service on 127.0.0.1:5174 (set OPENROUTER_ENV_FILE or OPENROUTER_API_KEY to allow reconstruct_motion decisions:true)
+npm run deploy:authoring # build core.js and the editor, run the tests, restart the service (launchd agent com.sses79.codex3d.authoring)
+npm run service:status   # launchd's view and GET /api/health (version, jobs, a restart still needed, Python/ComfyUI/OpenRouter/mini4)
+npm run start:authoring  # the service by hand on 127.0.0.1:5174, only when the agent is not installed (npm run service:install)
 python3 serve_demo.py --host 127.0.0.1 --port 5173   # public demo server
-node --test tests/*.test.mjs   # 89 tests, ~17 s, uses temp state dirs
+node --test tests/*.test.mjs   # 93 tests, ~17 s, uses temp state dirs
 npm run test:vision && python3 tests/server.py && node tests/physics.mjs && node tests/fallback.mjs
 npx tsc --noEmit -p editor/tsconfig.json
 node authoring/cli.mjs tools   # operation schemas (service must be running)
@@ -48,6 +50,7 @@ node authoring/cli.mjs tools   # operation schemas (service must be running)
 - Use Node 26 (`/Users/tim/.nvm/versions/node/v26.7.0/bin`); the default shell may give Node 18, which fails on JSON import attributes.
 
 - Source is written very densely (multi-thousand-character lines, few comments). Match it when making small edits; grep by symbol rather than reading whole files.
+- The service runs as a launchd user agent (installed 2026-10-24; logs in `.authoring/logs/service.log`; restarts itself if it stops). After editing the service's code run `npm run deploy:authoring`; `/api/health` says `restartNeeded` when a changed file has not been restarted into. Long calls come back as a job ID after 240 s (or at once with `async: true` on `POST /api/tool`); read them with `get_depth_job`; jobs are kept in `.authoring/jobs/`. Depth package writes take an optional `expectedRevision` and refuse a stale one.
 - After editing `pipeline.mjs`, `retarget.ts`, `core.ts` or anything in `runtime/`, run `npm run build:authoring` and then restart the service: the service runs the bundle `authoring/core.js`, which has those files compiled in, so a restart alone keeps the old code (this cost an afternoon on 2026-10-10). Python stages are picked up per run. `authoring/cli.mjs` gives up waiting after a few minutes while the service carries on; for a long build post to `http://127.0.0.1:5174/api/tool` with `curl --max-time` and read the full answer. A full 20-clip batch takes 10–15 minutes, so run it in the background.
 - SAM 3D Body is the default 3D source (`source: auto`; plan and status in `docs/SAM3D_PLAN.md`): ComfyUI and weights live in untracked `.authoring/comfyui`; `authoring/reconstruction/body.py` runs there. The character is posed from the model's joint rotations by default (`pose: rotations`; `positions` is the earlier path). Eight live `sam3d-<slug>` actions are rotation builds (clips 1, 4, 16, 19, 34, 43, 51, 52); the other 51 are still position builds until rebuilt. `batch.py` builds all catalog clips into `sam3d-<slug>` actions; `--source rules` builds the rule pipeline into the plain slugs. `mini4.local` (key login as `tim`, `~/Yun/sam3d-runner`) runs the model about twice as fast.
 - Confidence levels decide what may be rebuilt: read `list_reviews` first; levels 2–3 (acceptable, approved) are left alone, level 1 (has issues) is the work list with the user's timed notes. Record what the user reports with `set_review`. Rebuild a few targeted actions, not the whole catalog, unless asked.

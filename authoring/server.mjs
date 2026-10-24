@@ -3,12 +3,25 @@ import {readFile,readdir,stat,writeFile} from 'node:fs/promises';
 import {execFile} from 'node:child_process';
 import {createReadStream} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-import {resolve} from 'node:path';
+import {resolve,dirname} from 'node:path';
+import {JobStore} from './jobs.mjs';
 import {inspectBundle} from './reconstruction/bundle.mjs';
 import {checkFixes,DepthLibrary,starStandard} from './depth-library.mjs';
 import {Studio,toolDefinitions} from './core.js';
 const root=fileURLToPath(new URL('../',import.meta.url)),studio=new Studio(root,process.env.STUDIO_STATE_PATH||undefined);
 const port=Number(process.env.STUDIO_PORT||5174);
+// Health (docs/DEPTH_SERVICE_PLAN.md, step 1): the version running, the job queue, and whether what the jobs need is there. A bundle
+// (authoring/core.js) or a library file newer than this process means a rebuild that has not been restarted into.
+process.env.STUDIO_JOBS_DIR??=process.env.STUDIO_STATE_PATH?resolve(dirname(process.env.STUDIO_STATE_PATH),'jobs'):resolve(root,'.authoring/jobs');  // one jobs folder for the server and the bundle's depth library
+const jobs=()=>JobStore.at(process.env.STUDIO_JOBS_DIR);
+const started=Date.now(),version=await new Promise(r=>execFile('git',['rev-parse','--short','HEAD'],{cwd:root},(e,so)=>r(e?null:so.trim())));let mini=null;
+async function health(){const exists=async f=>{try{await stat(resolve(root,f));return true;}catch{return false;}},newer=async f=>{try{return (await stat(resolve(root,f))).mtimeMs>started;}catch{return false;}};
+ if(!mini||Date.now()-mini.at>60000)mini={at:Date.now(),up:await new Promise(r=>execFile('ssh',['-o','BatchMode=yes','-o','ConnectTimeout=3','tim@mini4.local','true'],{timeout:6000},e=>r(!e)))};
+ const stale=[];for(const f of ['authoring/core.js','authoring/depth-library.mjs','authoring/jobs.mjs','authoring/server.mjs'])if(await newer(f))stale.push(f);
+ return {ok:!stale.length,version,pid:process.pid,node:process.version,startedAt:new Date(started).toISOString(),uptimeSeconds:Math.round((Date.now()-started)/1000),
+  restartNeeded:stale.length?{changed:stale,note:'These files changed after the service started: restart it (npm run deploy:authoring).'}:null,
+  jobs:jobs().summary(),
+  checks:{visionPython:await exists('.authoring/vision-venv/bin/python'),comfyui:await exists('.authoring/comfyui/.venv/bin/python'),openRouterKey:!!(process.env.OPENROUTER_API_KEY||process.env.OPENROUTER_ENV_FILE&&await exists(process.env.OPENROUTER_ENV_FILE)),mini4:mini.up}};}
 const origins=new Set([`http://127.0.0.1:${port}`,`http://localhost:${port}`,'http://127.0.0.1:5173','http://localhost:5173']);
 const files={'/editor/':['editor/index.html','text/html'],'/editor/app.js':['editor/app.js','text/javascript'],'/editor/clay.html':['editor/clay.html','text/html'],'/editor/clay.js':['editor/clay.js','text/javascript'],'/editor/depth.html':['editor/depth.html','text/html'],'/editor/depth.js':['editor/depth.js','text/javascript'],'/editor/style.css':['editor/style.css','text/css'],'/editor/assets/character.glb':['editor/assets/character.glb','model/gltf-binary'],'/editor/assets/characters/superhero-female.glb':['editor/assets/characters/superhero-female.glb','model/gltf-binary'],'/editor/assets/characters/superhero-male.glb':['editor/assets/characters/superhero-male.glb','model/gltf-binary']};
 const server=createServer(async(req,res)=>{
@@ -46,8 +59,8 @@ const server=createServer(async(req,res)=>{
   }
   if(req.method==='GET'&&path==='/api/video-clay'){
    // Video-to-clay packages (authoring/render/video-clay-pack.py): one folder each under .authoring/video-clay with a package.json.
-   const base=resolve(root,'.authoring/video-clay'),list=[];let names=[];try{names=await readdir(base);}catch{}
-   for(const id of names.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{list.push({...JSON.parse(await readFile(resolve(base,id,'package.json'),'utf8')),id});}catch{}}
+   const base=resolve(root,'.authoring/video-clay'),list=[],revs=new DepthLibrary(root);let names=[];try{names=await readdir(base);}catch{}
+   for(const id of names.sort()){if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))continue;try{list.push({...JSON.parse(await readFile(resolve(base,id,'package.json'),'utf8')),id,revision:revs.rev(id)});}catch{}}
    return json(200,list);
   }
   if(req.method==='GET'&&path==='/api/depth-library'){
@@ -70,11 +83,9 @@ const server=createServer(async(req,res)=>{
    // Fixes by hand to a built clip, shot by shot: who each person found is (joins and splits), or drop; tint and package again (depth-fix.py, seconds).
    if(!req.headers['content-type']?.startsWith('application/json'))throw Error('Expected application/json');
    let body='';for await(const c of req){body+=c;if(body.length>100000)throw Error('Request too large');}
-   const {source,clip,shots={},boxes=[]}=JSON.parse(body),ok=x=>typeof x==='string'&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(x);if(!ok(source)||!ok(clip))return json(400,{error:'source and clip'});
+   const {source,clip,shots={},boxes=[],expectedRevision}=JSON.parse(body),ok=x=>typeof x==='string'&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(x);if(!ok(source)||!ok(clip))return json(400,{error:'source and clip'});
    try{checkFixes(shots,boxes);}catch(e){return json(400,{error:e.message});}
-   await writeFile(resolve(root,'.authoring/depth-library',source,clip+'.fixes.json'),JSON.stringify({shots,boxes}));
-   const out=await new Promise(done=>execFile(resolve(root,'.authoring/vision-venv/bin/python'),['authoring/render/depth-fix.py',source,clip],{cwd:root,timeout:300000},(e,so,se)=>done(e?{error:(se||e.message).slice(-1500)}:JSON.parse(so.trim().split('\n').pop()))));
-   return json(out.error?400:200,out);
+   try{return json(200,await new DepthLibrary(root).fix({clip,shots,boxes,expectedRevision}));}catch(e){return json(/^stale:/.test(e.message)?409:400,{error:e.message});}  // the library's fix: the package's lock and revision
   }
   if(req.method==='GET'&&path==='/api/depth-package-extras'){
    // A package's status and the results reviewed against it (review_depth_result), for the Depth library page.
@@ -105,8 +116,15 @@ const server=createServer(async(req,res)=>{
    if(origin===undefined&&req.headers['content-type']!=='application/json')throw Error('Expected application/json');
    if(!req.headers['content-type']?.startsWith('application/json'))throw Error('Expected application/json');
    let body='';for await(const c of req){body+=c;if(body.length>128000000)throw Error('Request exceeds 128 MB');}
-   const {name,arguments:args}=JSON.parse(body);return json(200,{result:await studio.call(name,args,req.headers['x-studio-transport']==='cli'?'cli':'mcp')});
+   // a call that outlasts its wait (240 s by default, under the 300 s a fetch waits for its answer; async: true waits 0) is answered
+   // with a job ID and goes on as a job kept on disk (authoring/jobs.mjs), read with get_depth_job
+   const {name,arguments:args,async:now,wait}=JSON.parse(body),ms=now===true?0:Number.isFinite(wait)?Math.max(0,Math.min(wait,280))*1000:Number(process.env.STUDIO_SYNC_WAIT_MS||240000);
+   const work=studio.call(name,args,req.headers['x-studio-transport']==='cli'?'cli':'mcp');let timer;const late=Symbol();
+   const first=now===true?late:await Promise.race([work,new Promise(r=>{timer=setTimeout(()=>r(late),ms);})]).finally(()=>clearTimeout(timer));
+   if(first!==late)return json(200,{result:first});
+   const job=jobs().follow('tool-'+name,{tool:name},work);return json(200,{result:{job:job.id,status:'running',tool:name,note:'Still running: poll get_depth_job with this job ID for the result.'}});
   }
+  if(req.method==='GET'&&path==='/api/health')return json(200,await health());
   if(req.method==='GET'&&path==='/'){res.writeHead(302,{Location:'/editor/'});return res.end();}
   if(req.method==='GET'&&files[path]){const [file,type]=files[path];res.writeHead(200,{'Content-Type':type});res.end(await readFile(resolve(root,file)));return;}
   json(404,{error:'Unknown route'});

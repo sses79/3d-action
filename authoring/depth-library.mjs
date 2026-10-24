@@ -4,6 +4,7 @@
 import {readFileSync,writeFileSync,readdirSync,existsSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {spawn,execFile} from 'node:child_process';
+import {JobStore,withLock} from './jobs.mjs';
 
 export const depthLabels={
  camera:['still','pan','push in','pull out','follow','track round','handheld','low angle','high angle','cut sequence'],
@@ -34,10 +35,10 @@ export function suggestStars(check,why){const notes=[];if(!check)return {stars:3
  const moving=(why??[]).some(w=>/camera moves|someone moves|bridged/.test(w));if(why&&!moving&&stars>3){stars=3;notes.push('little motion: a still camera with people placed');}
  return {stars,suggested:true,why:notes.length?notes:['no faults at the keyframes']};}
 export class DepthLibrary{
- constructor(root){this.root=root;this.base=resolve(root,'.authoring/depth-library');this.packs=resolve(root,'.authoring/video-clay');this.jobs=new Map();this.py=resolve(root,'.authoring/vision-venv/bin/python');}
+ constructor(root){this.root=root;this.base=resolve(root,'.authoring/depth-library');this.packs=resolve(root,'.authoring/video-clay');this.store=JobStore.at(process.env.STUDIO_JOBS_DIR||resolve(root,'.authoring/jobs'));this.py=resolve(root,'.authoring/vision-venv/bin/python');}
  // the package's beats and one-line summary (docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md, "Beats first"): stored in the package and
  // in its spec (so a repack keeps them), checked against the beat rule
- setBeats({package:id,summary,beats},rule){if(typeof id!=='string'||!ID.test(id))throw Error('package: a package ID');const f=resolve(this.packs,id,'package.json');if(!existsSync(f))throw Error('No such package: '+id);
+ _setBeats({package:id,summary,beats},rule){if(typeof id!=='string'||!ID.test(id))throw Error('package: a package ID');const f=resolve(this.packs,id,'package.json');if(!existsSync(f))throw Error('No such package: '+id);
   if(typeof summary!=='string'||summary.length<5||summary.length>300)throw Error('summary: one line, the beats in order ("A grabs B, locks B\'s throat, lifts B into the air")');
   if(!Array.isArray(beats)||!beats.length||beats.length>8)throw Error('beats: 1-8 of {actor, verb, target?, contact?, change?, start, end}');
   const P=JSON.parse(readFileSync(f,'utf8')),names=P.people.map(p=>p.name);
@@ -48,7 +49,7 @@ export class DepthLibrary{
   for(const spec of [resolve(this.packs,id+'-spec.json'),...this.sources().map(S=>resolve(this.base,S.id,id+'.spec.json'))])if(existsSync(spec)){const sp=JSON.parse(readFileSync(spec,'utf8'));sp.summary=summary;sp.beats=clean;writeFileSync(spec,JSON.stringify(sp,null,1));}
   return {package:id,summary,beats:clean,check};}
  // the cast and style a package's prompts use by default (the page and cast_depth_clip without a cast): kept when a take made from them worked
- setCast(id,cast,style){const f=resolve(this.packs,id,'package.json');if(!existsSync(f))throw Error('No such package: '+id);const P=JSON.parse(readFileSync(f,'utf8'));
+ _setCast(id,cast,style){const f=resolve(this.packs,id,'package.json');if(!existsSync(f))throw Error('No such package: '+id);const P=JSON.parse(readFileSync(f,'utf8'));
   P.cast={...(P.cast??{}),...cast};if(typeof style==='string'&&style.trim())P.style=style.trim();writeFileSync(f,JSON.stringify(P,null,1));
   for(const spec of [resolve(this.packs,id+'-spec.json'),...this.sources().map(S=>resolve(this.base,S.id,id+'.spec.json'))])if(existsSync(spec)){const sp=JSON.parse(readFileSync(spec,'utf8'));sp.cast=P.cast;sp.style=P.style;writeFileSync(spec,JSON.stringify(sp,null,1));}
   return {cast:P.cast,style:P.style??''};}
@@ -62,15 +63,15 @@ export class DepthLibrary{
  // the results generated from a package and reviewed against it (review_depth_result), newest first
  reviews(id){const d=resolve(this.packs,id,'reviews');if(!existsSync(d))return [];return readdirSync(d).filter(l=>/^[a-z0-9][a-z0-9-]{0,39}$/.test(l)&&existsSync(resolve(d,l,'review.json'))).map(l=>({label:l,...JSON.parse(readFileSync(resolve(d,l,'review.json'),'utf8'))})).sort((a,b)=>String(b.reviewed).localeCompare(String(a.reviewed)));}
  // the cut planner (depth-plan-cut.py): beats with the source span showing each, and a whole-second duration -> a new package
- planCut(args){const {id,name,from,duration,summary,beats,dry=false}=args;if(typeof id!=='string'||!ID.test(id)||id.length>48)throw Error('id: a new package ID');if(!this.pack(from))throw Error('from: a built package to cut from');if(!Number.isInteger(duration)||duration<2||duration>15)throw Error('duration: whole seconds, 2-15');
+ _planCut(args){const {id,name,from,duration,summary,beats,dry=false}=args;if(typeof id!=='string'||!ID.test(id)||id.length>48)throw Error('id: a new package ID');if(!this.pack(from))throw Error('from: a built package to cut from');if(!Number.isInteger(duration)||duration<2||duration>15)throw Error('duration: whole seconds, 2-15');
   if(!Array.isArray(beats)||!beats.length||beats.some(b=>!b||typeof b.actor!=='string'||typeof b.verb!=='string'||!Number.isFinite(b.from)||!Number.isFinite(b.to)||b.to<=b.from))throw Error('beats: [{actor, verb, target?, contact?, change?, from, to}] with from/to the source span in the package');
   const f=resolve(this.base,`plan-${id}.json`);writeFileSync(f,JSON.stringify({id,name:name??id,from,duration,summary:summary??'',beats}));
   return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-plan-cut.py',f,...(dry?['--dry']:[])],{cwd:this.root,timeout:300000},(e,so,se)=>{if(e)return fail(Error((se||e.message).slice(-1500)));const i=so.indexOf('{\n');let plan=null;try{plan=JSON.parse(so.slice(i,so.lastIndexOf('\n}')+2));}catch{}done({package:dry?null:id,dry,plan,page:dry?null:'http://127.0.0.1:5174/editor/depth.html?package='+id});}));}
  // the keyframe picker (depth-pick-keys.py): one keyframe per beat at the moment it reads best, written into the package
- pickKeys({package:id,dry=false}){if(typeof id!=='string'||!ID.test(id)||!this.pack(id))throw Error('package: a built package');
+ _pickKeys({package:id,dry=false}){if(typeof id!=='string'||!ID.test(id)||!this.pack(id))throw Error('package: a built package');
   return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-pick-keys.py',id,...(dry?['--dry']:[])],{cwd:this.root,timeout:300000},(e,so,se)=>{if(e)return fail(Error((se||e.message).slice(-1500)));let r=null;try{r=JSON.parse(so.slice(so.indexOf('{'),so.lastIndexOf('}')+1));}catch{}done({...r,dry});}));}
  // hand marks for a keyframe's contact card, placed by hand (the detector misses armour and arms from below); remakes the cards
- setMarks({package:id,keyframe,marks}){const P=this.pack(id);if(!P)throw Error('package: a built package');const k=P.keyframes[keyframe-1];if(!k)throw Error(`keyframe: 1-${P.keyframes.length}`);
+ _setMarks({package:id,keyframe,marks}){const P=this.pack(id);if(!P)throw Error('package: a built package');const k=P.keyframes[keyframe-1];if(!k)throw Error(`keyframe: 1-${P.keyframes.length}`);
   const names=P.people.map(p=>p.name),fr=v=>Array.isArray(v)&&v.length===2&&v.every(x=>Number.isFinite(x)&&x>=0&&x<=1);
   if(!Array.isArray(marks)||marks.length>8||!marks.every(m=>m&&names.includes(m.owner)&&names.includes(m.target)&&['left','right'].includes(m.hand)&&typeof m.part==='string'&&m.part.length<=40&&fr(m.from)&&fr(m.to)))throw Error(`marks: [{owner, hand: left|right, target, part ("throat"), from: [x, y], to: [x, y]}] with owner and target from ${names.join(', ')}, points as fractions of the picture`);
   const f=resolve(this.packs,id,'package.json');k.marks=marks.map(m=>({owner:m.owner,hand:m.hand,target:m.target,part:m.part,from:m.from.map(x=>+x.toFixed(4)),to:m.to.map(x=>+x.toFixed(4))}));writeFileSync(f,JSON.stringify(P,null,1));
@@ -96,7 +97,7 @@ export class DepthLibrary{
  list(f={}){const out=[];for(const S of this.sources()){if(f.source&&S.id!==f.source)continue;for(const C of S.clips){if(f.kind&&C.kind!==f.kind)continue;if(f.built!==undefined&&!!C.package!==f.built)continue;if(f.described!==undefined&&!!C.description!==f.described)continue;if(f.labels?.length&&!f.labels.every(l=>C.description?.labels?.includes(l)))continue;out.push(this.summary(S,C));}}return out;}
  check(id){const f=resolve(this.packs,id,'check.json');return existsSync(f)?JSON.parse(readFileSync(f,'utf8')):null;}
  get(clip){const {S,C}=this.locate(clip);const shots=S.shots.filter(s=>C.shots.includes(s.index)).map(({thumb,...s})=>({...s,thumb:`/api/depth-library-file?source=${S.id}&file=${thumb}`}));const P=C.package?this.pack(C.package):null;
-  return {...this.summary(S,C),description:C.description??null,shotsMeasured:shots,sourceFile:S.fileName,build:C.built??null,fixed:C.fixed??null,package:P?{id:C.package,people:P.people,keyframes:P.keyframes.map(k=>({time:k.time,shot:k.shot,summary:k.summary,people:k.people})),files:this.files(C.package,P),check:this.check(C.package)}:null,page:`http://127.0.0.1:5174/editor/depth.html?source=${S.id}&clip=${C.id}`};}
+  return {...this.summary(S,C),description:C.description??null,shotsMeasured:shots,sourceFile:S.fileName,build:C.built??null,fixed:C.fixed??null,package:P?{id:C.package,revision:this.rev(C.package),people:P.people,keyframes:P.keyframes.map(k=>({time:k.time,shot:k.shot,summary:k.summary,people:k.people})),files:this.files(C.package,P),check:this.check(C.package)}:null,page:`http://127.0.0.1:5174/editor/depth.html?source=${S.id}&clip=${C.id}`};}
  files(id,P){const dir=resolve(this.packs,id),url=f=>`http://127.0.0.1:5174/api/video-clay-file?id=${id}&file=${f}`;return {folder:dir,referenceVideo:P.depth?{path:resolve(dir,P.depth),url:url(P.depth)}:P.clay?{path:resolve(dir,P.clay),url:url(P.clay)}:null,keyframes:P.keyframes.map((k,i)=>({index:i+1,time:k.time,composition:{path:resolve(dir,k.depthStill??k.clayStill),url:url(k.depthStill??k.clayStill)},source:{path:resolve(dir,k.sourceStill),note:'a frame of the original footage: a layout reference for generating this keyframe (room, framing, camera angle, light); replace every person, take no likeness; not for the video model'}}))};}
  // a beat's words against a clip's labels (three points each), its summary and keyframe text (one point a word), the people
  // count and the length; clips not yet described are left out unless asked for (descriptions come from Claude in a session)
@@ -112,7 +113,7 @@ export class DepthLibrary{
    if(people){const n=d.peopleCount??null;if(n!==null&&Math.abs(n-people)<=0)score+=2;}
    const sm=this.summary(S,C);if(minStars&&!(sm.stars>=minStars))continue;if(score>0){if(sm.stars){score+=(sm.stars-3)*.5;why.push(`${sm.stars} stars${sm.starsSuggested?' (suggested)':''}${sm.bestPackage&&sm.bestPackage!==C.package?' via '+sm.bestPackage:''}`);}out.push({...sm,score:Math.round(score*10)/10,why});}}
   return out.sort((a,b)=>b.score-a.score||a.seconds-b.seconds).slice(0,limit);}
- describe(args){const {S,C}=this.locate(args.clip);if(typeof args.summary!=='string'||args.summary.length<10||args.summary.length>1200)throw Error('summary: two or three sentences (10-1200 characters)');
+ _describe(args){const {S,C}=this.locate(args.clip);if(typeof args.summary!=='string'||args.summary.length<10||args.summary.length>1200)throw Error('summary: two or three sentences (10-1200 characters)');
   const labels=args.labels??[];if(!Array.isArray(labels)||!labels.length||labels.some(l=>!allLabels.has(l)))throw Error('labels: one or more of '+JSON.stringify(depthLabels));
   const d={summary:args.summary,labels,people:args.people??{},peopleCount:args.peopleCount??null,shots:args.shots??{},keyframes:args.keyframes??[],by:args.by??'Claude in a session',at:new Date().toISOString()};C.description=d;C.described=true;this.save(S);
   let repacked=false;if(C.package){const spec=resolve(this.base,S.id,C.id+'.spec.json');if(existsSync(spec)){const P=JSON.parse(readFileSync(spec,'utf8'));
@@ -121,13 +122,28 @@ export class DepthLibrary{
    P.notes=[...(P.notes??[]).filter(n=>!n.startsWith('Described:')),'Described: '+d.summary];writeFileSync(spec,JSON.stringify(P,null,1));
    return new Promise((done,fail)=>execFile(this.py,['authoring/render/video-clay-pack.py',spec],{cwd:this.root,timeout:120000},e=>e?fail(e):done({clip:C.id,described:true,repacked:true})));}}
   return {clip:C.id,described:true,repacked};}
- job(kind,argv,onDone){const id=kind+'-'+Date.now().toString(36);const j={id,kind,status:'running',startedAt:new Date().toISOString(),log:'',result:null,error:null};this.jobs.set(id,j);
-  const p=spawn(this.py,argv,{cwd:this.root});const add=b=>{j.log=(j.log+b.toString()).slice(-4000);};p.stdout.on('data',add);p.stderr.on('data',add);
-  p.on('close',code=>{j.finishedAt=new Date().toISOString();if(code===0){j.status='done';try{j.result=JSON.parse(j.log.trim().split('\n').filter(l=>l.startsWith('{')).pop());}catch{}onDone?.(j);}else{j.status='failed';j.error=j.log.slice(-1500);}});
-  return {job:id,status:'running'};}
+ // long work runs in the service's job queue (jobs.mjs): kept on disk, one at a time, its log's last lines and its result readable by ID
+ job(kind,argv,meta={},onDone){const j=this.store.enqueue(kind,meta,(j,log)=>new Promise((ok,fail)=>{const p=spawn(this.py,argv,{cwd:this.root});const add=b=>log(b.toString());p.stdout.on('data',add);p.stderr.on('data',add);
+  p.on('close',code=>{if(code!==0)return fail(Error(String(j.log).slice(-1500)));let r=null;try{r=JSON.parse(String(j.log).trim().split('\n').filter(l=>l.startsWith('{')).pop());}catch{}Promise.resolve(onDone?.(r)).then(x=>ok(x??r),fail);});}));return {job:j.id,status:j.status};}
  ingest({video,id,name}){if(typeof video!=='string'||!existsSync(video))throw Error('video: a readable local video file');if(typeof id!=='string'||!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))throw Error('id: lower-case letters, digits and dashes');return this.job('ingest',['authoring/render/depth-ingest.py',video,'--id',id,...(name?['--name',String(name).slice(0,120)]:[])]);}
- build({clip,video}){const {S,C}=this.locate(clip);if(C.kind!=='control')throw Error('A still shot has no depth to build');return this.job('build',['authoring/render/depth-build.py',S.id,C.id,...(video?['--video',video]:[])]);}
- fix({clip,shots={},boxes=[]}){const {S,C}=this.locate(clip);if(!C.package)throw Error('Build the clip first');checkFixes(shots,boxes);
+ build({clip,video}){const {S,C}=this.locate(clip);if(C.kind!=='control')throw Error('A still shot has no depth to build');const pid=C.package??C.id;if(arguments[0].expectedRevision!==undefined)this.checkRev(pid,arguments[0].expectedRevision);const job=this.job('build',['authoring/render/depth-build.py',S.id,C.id,...(video?['--video',video]:[])],{package:pid},r=>({...r,revision:this.bump(pid)}));return {...job,revision:this.rev(pid)};}
+ _fix({clip,shots={},boxes=[]}){const {S,C}=this.locate(clip);if(!C.package)throw Error('Build the clip first');checkFixes(shots,boxes);
   writeFileSync(resolve(this.base,S.id,C.id+'.fixes.json'),JSON.stringify({shots,boxes}));return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-fix.py',S.id,C.id],{cwd:this.root,timeout:300000},(e,so,se)=>e?fail(Error((se||e.message).slice(-1500))):done(JSON.parse(so.trim().split('\n').pop()))));}
- jobStatus(id){const j=this.jobs.get(id);if(!j)throw Error('No such job (jobs are kept until the service restarts)');return {...j,log:j.status==='running'?j.log.slice(-600):undefined};}
+ jobStatus(id){return this.store.status(id);}
+ // revisions of packages (docs/DEPTH_SERVICE_PLAN.md, step 1): every write through the service adds one; a write given
+ // expectedRevision refuses a package that has moved on, so two agents cannot overwrite each other's work; writes to one package
+ // also take its lock (jobs.mjs withLock), across the service's processes
+ revFile(){return resolve(this.base,'package-revisions.json');}
+ revs(){try{return JSON.parse(readFileSync(this.revFile(),'utf8'));}catch{return {};}}
+ rev(id){return this.revs()[id]??(this.pack(id)?1:0);}
+ bump(id){const all=this.revs();all[id]=(all[id]??(this.pack(id)?1:0))+1;writeFileSync(this.revFile(),JSON.stringify(all,null,1));return all[id];}
+ checkRev(id,expected){if(expected===undefined)return;if(!Number.isInteger(expected))throw Error('expectedRevision: an integer, the revision you read');const now=this.rev(id);if(now!==expected)throw Error(`stale: package ${id} is at revision ${now}, not ${expected}; read it again (get_depth_clip or the page) and redo the change`);}
+ async write(id,expected,fn){if(typeof id!=='string'||!ID.test(id))throw Error('package: a package ID');return withLock(resolve(this.packs,id),async()=>{this.checkRev(id,expected);const r=await fn();const n=this.bump(id);return r&&typeof r==='object'&&!Array.isArray(r)?{...r,revision:n}:{result:r,revision:n};});}
+ setBeats(args,rule){return this.write(args.package,args.expectedRevision,()=>this._setBeats(args,rule));}
+ setCast(id,cast,style,expected){return this.write(id,expected,()=>this._setCast(id,cast,style));}
+ planCut(args){if(args.dry)return this._planCut(args);return this.write(args.id,undefined,()=>this._planCut(args));}
+ pickKeys(args){if(args.dry)return this._pickKeys(args);return this.write(args.package,args.expectedRevision,()=>this._pickKeys(args));}
+ setMarks(args){return this.write(args.package,args.expectedRevision,()=>this._setMarks(args));}
+ describe(args){const {C}=this.locate(args.clip);if(!C.package)return this._describe(args);return this.write(C.package,args.expectedRevision,()=>this._describe(args));}
+ fix(args){const {C}=this.locate(args.clip);if(!C.package)throw Error('Build the clip first');return this.write(C.package,args.expectedRevision,()=>this._fix(args));}
 }
