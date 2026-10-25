@@ -109,7 +109,7 @@ Everything else stays available for fine control, as now.
   - The lead tinting by hand becomes a step that asks for two boxes when the detector fails.
 - **Done when:** the V.8 lift package can be remade from the source file, a beat list and the cast with one call plus the hand marks it asks for, and it matches the hand-built one: the same shots, keyframes within 0.2 s, and the check clean.
 
-**Built so far (2026-10-24), parts 2a–2d; 2e, continuing from a lead image, is next.**
+**Built 2026-10-24 (parts 2a–2d, then 2e below).**
 - **The request.** `make_depth_reference` (`authoring/depth-request.mjs`) runs twelve steps as one job:
   - source (reused by its SHA-256, or ingested) and window (a clip of the source for exactly that span, made when needed);
   - build (reused if built) and check;
@@ -139,6 +139,29 @@ Everything else stays available for fine control, as now.
   - A reused description with no shot cameras leaves "not described" in the prompts.
   - A redo from beats drops the hand marks made on the earlier cut.
   - The contact stop also asks at a beat's first keyframe, before the contact happens (answer `contact-N: skip`).
+
+**2e and the step 2 check (2026-10-24).**
+- **Continuing a take.** `lead {image, seconds?, boxes?}` continues a previous take.
+  - `authoring/render/depth-lead.py` makes the frame's tinted depth: Depth Anything 3, people from the caller's boxes (as fractions; several per person), or from the detector when it finds exactly one person per name. Otherwise the request asks, listing what the detector found.
+  - The cut planner takes the lead as the start of the first beat; beats keep the take's length.
+  - `derivedFrom.lead` is set, so keyframe 1 is "given".
+- **Changes made while checking:**
+  - **Reuse a covering package.** A window inside a built package of the same source is cut from that package, the rated, fixed one first, instead of built again. The fresh build of the V.8 window left the lift shot untinted and split Macbeth in two; `got-standoff-req1` is marked stopped.
+  - **Filmed timing kept.** When the beats follow one another and fill the take at 0.95–1.1×, the planner keeps the filmed timing as one segment, with beats where they fall rather than on whole seconds. The whole-second plan had sped the lift up to 1.2× and slowed the held shot to 0.82×.
+  - **Too slow stops.** Slower than 0.85× is now a stop, like 1 s beats.
+  - **Peaks.** Beat peaks pass through to the keyframe picker.
+- **The check passed.** `make_depth_reference` was run with:
+  - the source film and the window (80.15–83.65 s);
+  - the lead frame with boxes;
+  - two beats with their peaks;
+  - the cast;
+  - 4 s.
+
+  It cut `macbeth-v8-lift-remake` from `macbeth-v8-fight` (5 stars) in 20–25 s.
+  - Its shots, beats and keyframes are the same as the hand-built `macbeth-v8-part-b-lift`: shots 0–0.5, 0.5–2.37 and 2.37–4; keyframes at 0.15, 1, 2 and 3 s.
+  - It asked for hand marks at the four keyframes; given the hand-built ones, the final check passed with no faults.
+  - After the lead, the depth video is identical (mean difference 0.02 grey levels); the lead differs by its rough boxes.
+  - Without the peaks, the last keyframe fell at 2.62 and 3.53 s instead of 3 s.
 
 ### Step 3: delivery to a project folder (about a day)
 

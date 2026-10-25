@@ -44,7 +44,7 @@ else if(cmd==='deploy'){
  for(const [what,args] of [['build:authoring',['run','-s','build:authoring']],['build:editor',['run','-s','build:editor']]]){console.log('·',what);if(sh('npm',args).status)throw Error(what+' failed');}
  console.log('· tests');if(sh(node,['--test',...readdirSync(resolve(root,'tests')).filter(f=>f.endsWith('.test.mjs')).map(f=>'tests/'+f)],{stdio:['ignore','ignore','inherit']}).status)throw Error('Tests failed: not restarted (node --test tests/*.test.mjs for the details)');
  if(loaded())sh('launchctl',['kickstart','-k',`${domain}/${label}`]);else{console.log('The agent is not installed: node authoring/service/service.mjs install');process.exit(1);}
- const h=await health();if(!h)throw Error('Restarted, but /api/health does not answer: see '+resolve(logs,'service.log'));console.log(`Running: version ${h.version}, pid ${h.pid}${h.restartNeeded?' (still stale: '+h.restartNeeded.changed.join(', ')+')':''}`);}
+ const h=await health(45000);if(!h)throw Error('Restarted, but /api/health does not answer: see '+resolve(logs,'service.log'));console.log(`Running: version ${h.version}, pid ${h.pid}${h.restartNeeded?' (still stale: '+h.restartNeeded.changed.join(', ')+')':''}`);}
 else if(cmd==='status'){console.log(loaded()?'launchd: '+label+' is loaded':'launchd: not installed');const h=await health(2000);console.log(h?JSON.stringify(h,null,1):'/api/health does not answer');}
 else if(cmd==='uninstall'){if(loaded())sh('launchctl',['bootout',`${domain}/${label}`]);if(existsSync(plist))unlinkSync(plist);console.log('Removed '+label);}
 else{console.log('Usage: node authoring/service/service.mjs install|deploy|status|uninstall');process.exit(cmd?1:0);}
