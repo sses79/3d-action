@@ -37,7 +37,7 @@ npm run deploy:authoring # build core.js and the editor, run the tests, restart 
 npm run service:status   # launchd's view and GET /api/health (version, jobs, a restart still needed, Python/ComfyUI/OpenRouter/mini4)
 npm run start:authoring  # the service by hand on 127.0.0.1:5174, only when the agent is not installed (npm run service:install)
 python3 serve_demo.py --host 127.0.0.1 --port 5173   # public demo server
-node --test tests/*.test.mjs   # 94 tests, ~17 s, uses temp state dirs
+node --test tests/*.test.mjs   # 95 tests, ~17 s, uses temp state dirs
 npm run test:vision && python3 tests/server.py && node tests/physics.mjs && node tests/fallback.mjs
 npx tsc --noEmit -p editor/tsconfig.json
 node authoring/cli.mjs tools   # operation schemas (service must be running)

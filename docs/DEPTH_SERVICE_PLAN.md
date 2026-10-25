@@ -171,6 +171,23 @@ Everything else stays available for fine control, as now.
 - **Joining takes.** A `join` option on `review_depth_result` cuts and joins takes with both sound tracks (as `v8-final-fight-2069+1215.mp4` was made). It warns when the join frame differs from the guide, which is why V.8 was joined at the first cut.
 - **Done when:** an s-video session can go from "I need a depth reference for this beat" to the uploads and prompt without anyone writing files by hand.
 
+**Built 2026-10-25.**
+- **The delivery.** `deliver_depth_package {package, to, cast, style?, scene?, sheets?, sound?, rights?}` (`authoring/depth-deliver.mjs`) writes into the project folder:
+  - `references/package-vN/`: the depth video, each keyframe's depth still, source frame and contact card, the lead frame, `package.json` and the check;
+  - `TASK-vN.md`: the V.8 task's rules and the one-at-a-time approval order; per keyframe the beat, its references as paths in the folder (the previous approved keyframe, or the given first frame) and its prompt; a lead keyframe is "given";
+  - `upload-steps-vN.md`: `@Video1`, then the sheets, the first frame and the keyframes as `@ImageN`, and what never to upload;
+  - `generation-prompt-vN.txt`: `[STYLE] [ANCHORS] [SHOTS] [SOUND] [LIMITS]`, shots in seconds with the beat and contact in the characters' names;
+  - `handover-vN.json`.
+- **Re-delivery.** A second delivery writes `-v2` files beside the first. `delivery.json` keeps each version's file hashes and prompts, and the task opens with what changed (the revision, which stills, which prompts, or "nothing in the package changed").
+- **From a request.** `make_depth_reference` ends with a `deliver` step when given `deliverTo` (with `sheets`, `sound`, `rights`).
+- **Joining takes.** `review_depth_result` takes `join {previous, at, from?, out?}`: `authoring/render/join-takes.py` joins the previous take up to `at` and the new one from its first cut after the lead, with both sound tracks.
+  - It is re-encoded at the previous take's average frame rate; the containers of these takes say 60 fps while playing at 24.15.
+  - It reports the difference between the frames that meet, with a warning when the join is not on a cut.
+- **Checked.**
+  - The remade V.8 lift was delivered twice into a test folder; the second delivery said "nothing in the package changed".
+  - Take 1215, reviewed against `macbeth-v8-lift-remake` with `join {previous: take 2069, at: 2.857}`, gave a 6.46 s film from the 0.5 s cut. That is 156 frames against the hand-joined film's 154, mean difference 4.8 grey levels.
+  - A delivery test was added (95 tests in all).
+
 ### Step 4: mini4 as a worker (about a day)
 
 - **What runs there.** The heavy steps (Depth Anything 3 over a window, SAM 3 tracks, SAM 3D Body) run on mini4 when it answers; otherwise they run here.

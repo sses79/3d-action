@@ -3,6 +3,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtemp,rm,mkdir,writeFile,readFile} from 'node:fs/promises';
+import {readFileSync,existsSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawn} from 'node:child_process';
@@ -56,7 +57,7 @@ test('a depth request stops for a question, carries on without redoing finished 
  const {DepthRequests}=await import('../authoring/depth-request.mjs');
  const lib={base:dir,store:new JobStore(join(dir,'jobs')),pack:()=>null};const ran=[];
  class Fake extends DepthRequests{}
- for(const s of ['source','window','build','checkBuild','describe','cast','beats','lead','cut','keys','contact','checkFinal','handover'])Fake.prototype[s]=async function(R){ran.push(s);
+ for(const s of ['source','window','build','checkBuild','describe','cast','beats','lead','cut','keys','contact','checkFinal','handover','deliver'])Fake.prototype[s]=async function(R){ran.push(s);
   if(s==='cast'&&!R.answers.cast)return {ask:[{id:'cast',question:'who plays whom?'}]};return s==='handover'?{package:'pk',page:'p',revision:2,handover:{}}:{ok:s};};
  const video=join(dir,'v.mp4');await writeFile(video,'x');const q=new Fake(lib,async()=>({}));
  assert.throws(()=>q.start({video,scene:'a scene',cast:{A:'x'}}),/duration: needed/);
@@ -65,6 +66,24 @@ test('a depth request stops for a question, carries on without redoing finished 
  await until(()=>lib.store.read(r.job)?.status==='needs_input');assert.deepEqual(ran,['source','window','build','checkBuild','describe','cast']);
  assert.equal(lib.store.status(r.job).questions[0].id,'cast');assert.equal(q.read(r.request).status,'needs_input');
  ran.length=0;const r2=q.start({request:r.request,answers:{cast:{A:'A'}}});await until(()=>lib.store.read(r2.job)?.status==='done');
- assert.deepEqual(ran,['cast','beats','lead','cut','keys','contact','checkFinal','handover']);assert.equal(lib.store.status(r2.job).result.package,'pk');
- ran.length=0;const r3=q.start({request:r.request,redo:'keys'});await until(()=>lib.store.read(r3.job)?.status==='done');assert.deepEqual(ran,['keys','contact','checkFinal','handover']);
+ assert.deepEqual(ran,['cast','beats','lead','cut','keys','contact','checkFinal','handover','deliver']);assert.equal(lib.store.status(r2.job).result.package,'pk');
+ ran.length=0;const r3=q.start({request:r.request,redo:'keys'});await until(()=>lib.store.read(r3.job)?.status==='done');assert.deepEqual(ran,['keys','contact','checkFinal','handover','deliver']);
+}));
+
+test('delivery writes the task, upload steps and prompt, and a second delivery writes -v2 with what changed',()=>temp(async dir=>{
+ const {deliver}=await import('../authoring/depth-deliver.mjs');const pk=join(dir,'packs','pk');await mkdir(pk,{recursive:true});
+ for(const f of ['depth.mp4','key-1-depth.jpg','key-1-source.jpg','key-2-depth.jpg','key-2-source.jpg','key-2-contact.jpg','lead.png'])await writeFile(join(pk,f),f);
+ const P={name:'Test',duration:4,depth:'depth.mp4',people:[{name:'A',color:'blue'},{name:'B',color:'orange'}],shots:[{index:1,start:0,end:.5,camera:'held'},{index:2,start:.5,end:4,camera:'from below: the blue figure held up'}],
+  beats:[{actor:'B',verb:'lifts',target:'A',contact:"B's hand at A's throat",start:0,end:4}],keyframes:[{time:.15,shot:1,depthStill:'key-1-depth.jpg',sourceStill:'key-1-source.jpg'},{time:1,shot:2,depthStill:'key-2-depth.jpg',sourceStill:'key-2-source.jpg',contactStill:'key-2-contact.jpg'}],derivedFrom:{lead:{seconds:.5,image:join(pk,'lead.png')}}};
+ await writeFile(join(pk,'package.json'),JSON.stringify(P));let rev=3;
+ const lib={packs:join(dir,'packs'),pack:id=>id==='pk'?JSON.parse(String(readFileSync(join(pk,'package.json')))):null,rev:()=>rev};
+ const castFn=async()=>({keyframeGeneration:[{index:1,time:.15,given:true,references:[]},{index:2,time:1,previous:{index:1},beat:{n:1,of:1,actor:'B',verb:'lifts',target:'A'},references:[{role:'depth still',file:join(pk,'key-2-depth.jpg')},{role:'keyframe 1, the first frame (given): continuity',file:'keyframe-1.png (yours)'},{role:'character sheets',file:'yours'}],prompt:'Keyframe 2 prompt'}],videoGeneration:{}});
+ const to=join(dir,'project'),cast={A:'Macbeth: battle-worn',B:'Macduff: in armour'};
+ const r=await deliver({lib,castFn,pkg:'pk',to,cast,style:'soft painting',sheets:{Macbeth:'sheets/macbeth.png'}});
+ assert.equal(r.version,1);assert.deepEqual(r.keyframesToMake.map(k=>k.id),['K2']);
+ const prompt=String(readFileSync(join(to,'generation-prompt-v1.txt')));assert.match(prompt,/blue=Macbeth @Image1,orange=Macduff/);assert.match(prompt,/@Image2 is the first frame/);assert.match(prompt,/1s @Image3/);assert.match(prompt,/0-0\.5s: As @Image2, held\./);assert.match(prompt,/From below: Macbeth held up\. Macduff lifts Macbeth; contact: Macduff's hand at Macbeth's throat\./);
+ const task=String(readFileSync(join(to,'TASK-v1.md')));assert.match(task,/### K1 — 0\.15 s: given/);assert.match(task,/`references\/package-v1\/first-frame\.png` \(the first frame, given\)/);assert.match(task,/Save as `references\/keyframes\/K2-v1\.png`/);
+ assert.ok(existsSync(join(to,'references/package-v1/key-2-contact.jpg')));assert.match(String(readFileSync(join(to,'upload-steps-v1.md'))),/never for the video model/);
+ await writeFile(join(pk,'key-2-depth.jpg'),'changed');rev=4;const r2=await deliver({lib,castFn,pkg:'pk',to,cast});
+ assert.equal(r2.version,2);assert.ok(r2.changes.includes('revision 3 → 4'));assert.ok(r2.changes.includes('key-2-depth.jpg changed'));assert.ok(existsSync(join(to,'TASK-v2.md'))&&existsSync(join(to,'TASK-v1.md')));
 }));

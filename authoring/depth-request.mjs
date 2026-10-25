@@ -9,8 +9,9 @@ import {resolve,basename} from 'node:path';
 import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {depthLabels} from './depth-library.mjs';
+import {deliver} from './depth-deliver.mjs';
 const FAULT=/^(missing|unexpected|two colours|wrong hand colour)/;
-const STEPS=['source','window','build','check-build','describe','cast','beats','lead','cut','keys','contact','check-final','handover'];
+const STEPS=['source','window','build','check-build','describe','cast','beats','lead','cut','keys','contact','check-final','handover','deliver'];
 const page=(src,id)=>`http://127.0.0.1:5174/editor/depth.html?source=${src}&package=${id}`;
 const slug=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,28)||'video';
 export class DepthRequests{
@@ -20,6 +21,7 @@ export class DepthRequests{
  read(id){if(typeof id!=='string'||!/^req-[a-z0-9]{4,40}$/.test(id))throw Error('request: a request ID (req-…)');if(!existsSync(this.file(id)))throw Error('No such request: '+id);return JSON.parse(readFileSync(this.file(id),'utf8'));}
  save(R){mkdirSync(this.dir,{recursive:true});R.updatedAt=new Date().toISOString();const t=this.file(R.id)+'.tmp';writeFileSync(t,JSON.stringify(R,null,1));renameSync(t,this.file(R.id));return R;}
  // start a request, or carry one on (request) with answers, or redo from a step (redo)
+ deliver_(a){return deliver({lib:this.lib,castFn:this.castTool,pkg:a.package,to:a.to,cast:a.cast,style:a.style,scene:a.scene,sheets:a.sheets,sound:a.sound,rights:a.rights});}
  start(a){let R;
   if(a.request){R=this.read(a.request);if(a.answers!==undefined){if(!a.answers||typeof a.answers!=='object'||Array.isArray(a.answers))throw Error('answers: an object, e.g. {"cast": {"Macbeth": "A"}, "check-build": "accept"}');R.answers={...R.answers,...a.answers};}
    if(a.redo!==undefined){const i=STEPS.indexOf(a.redo);if(i<0)throw Error('redo: one of '+STEPS.join(', '));for(const s of STEPS.slice(i))delete R.steps[s];}}
@@ -29,9 +31,10 @@ export class DepthRequests{
    if(!Number.isInteger(a.duration)||a.duration<2||a.duration>15)throw Error('duration: the take\'s length in whole seconds, 2-15');
    if(a.window!==undefined&&!(a.window&&Number.isFinite(a.window.start)&&Number.isFinite(a.window.end)&&a.window.end>a.window.start))throw Error('window: {start, end} in seconds of the video');
    if(a.beats!==undefined&&(!Array.isArray(a.beats)||!a.beats.length||a.beats.some(b=>!b||typeof b.actor!=='string'||typeof b.verb!=='string')))throw Error('beats: [{actor, verb, target?, contact?, change?, from?, to?}] with actor/target from the cast');
+   if(a.deliverTo!==undefined&&(typeof a.deliverTo!=='string'||!a.deliverTo.startsWith('/')))throw Error('deliverTo: an absolute folder path');
    if(a.id!==undefined&&(typeof a.id!=='string'||!/^[a-z0-9][a-z0-9-]{2,47}$/.test(a.id)||this.lib.pack(a.id)))throw Error('id: a new package ID (lower case, digits, dashes; not one already built)');
    if(a.lead!==undefined&&!(a.lead&&typeof a.lead.image==='string'&&existsSync(a.lead.image)&&(a.lead.seconds===undefined||(a.lead.seconds>=.2&&a.lead.seconds<=1.5))&&(a.lead.boxes===undefined||(a.lead.boxes&&typeof a.lead.boxes==='object'))))throw Error('lead: {image (the previous take\'s last frame, a local file), seconds? (0.2-1.5, default 0.5), boxes? {character: [[x0, y0, x1, y1], ...] as fractions}}');
-   R={id:'req-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),createdAt:new Date().toISOString(),args:{video:a.video,window:a.window??null,scene:a.scene,cast:a.cast,style:a.style??'',duration:a.duration,beats:a.beats??null,people:a.people??null,id:a.id??null,lead:a.lead??null,deliverTo:a.deliverTo??null},steps:{},answers:{},status:'queued'};}
+   R={id:'req-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),createdAt:new Date().toISOString(),args:{video:a.video,window:a.window??null,scene:a.scene,cast:a.cast,style:a.style??'',duration:a.duration,beats:a.beats??null,people:a.people??null,id:a.id??null,lead:a.lead??null,deliverTo:a.deliverTo??null,sheets:a.sheets??null,sound:a.sound??null,rights:a.rights??null},steps:{},answers:{},status:'queued'};}
   R.status='queued';this.save(R);
   const job=this.lib.store.enqueue('depth-request',{request:R.id},(j,log,step)=>this.run(R.id,log,step));
   R.job=job.id;this.save(R);return {request:R.id,job:job.id,status:job.status,file:this.file(R.id),note:'Poll get_depth_job; when it says needs_input, answer and call make_depth_reference {request} again.'};}
@@ -39,7 +42,7 @@ export class DepthRequests{
   try{for(const s of STEPS){if(R.steps[s]?.done)continue;step(s);log(`· ${s}\n`);const out=await this[s.replace(/-(.)/g,(_,c)=>c.toUpperCase())](R,log);
     if(out?.ask){R.status='needs_input';R.questions=out.ask;this.save(R);return {needsInput:true,request:R.id,step:s,questions:out.ask};}
     R.steps[s]={done:true,at:new Date().toISOString(),...out};R.questions=[];this.save(R);}
-   R.status='done';this.save(R);const H=R.steps.handover;return {request:R.id,package:H.package,page:H.page,revision:H.revision,handover:H.handover};}
+   R.status='done';this.save(R);const H=R.steps.handover,Dl=R.steps.deliver;return {request:R.id,package:H.package,page:H.page,revision:H.revision,...(Dl&&!Dl.none?{delivered:Dl}:{}),handover:H.handover};}
   catch(e){R.status='failed';R.error=String(e?.message??e).slice(-1500);this.save(R);throw e;}}
  py(args,log,timeout=1800000){return new Promise((ok,fail)=>{const p=spawn(this.lib.py,args,{cwd:this.lib.root});let out='',err='';const t=setTimeout(()=>p.kill('SIGTERM'),timeout);
   p.stdout.on('data',b=>{out+=b;log?.(b.toString());});p.stderr.on('data',b=>{err+=b;log?.(b.toString());});p.on('close',code=>{clearTimeout(t);code===0?ok(out):fail(Error(`${basename(args[0])}: ${(err||out).slice(-1200)}`));});});}
@@ -124,6 +127,9 @@ export class DepthRequests{
    want.push({keyframe:i+1,time:k.time,shot:P.shots.find(s=>s.index===k.shot)?.camera??'',contact:b.contact,card:resolve(this.lib.packs,pk,k.contactStill??`key-${i+1}-contact.jpg`),source:resolve(this.lib.packs,pk,k.sourceStill)});});
   if(want.length)return {ask:[{id:'contact',question:`${want.length} keyframe(s) need the hands marked: the detector sees no hand on the contact the beat names.`,keyframes:want,page:page(this.src(R).id,pk),answer:`mark them with set_contact_marks {package: "${pk}", keyframe, marks: [{owner, hand, target, part, from: [x, y], to: [x, y]}]} (fractions of the picture) or "Mark a hand" on the page, then carry on; or answers {"contact-N": "skip"} / {"contact": "skip"}`}]};
   return {marked:rep.filter(c=>c.hands.length).map(c=>c.keyframe)};}
+ // 13. delivery to the caller's folder (depth-deliver.mjs), when deliverTo is given
+ async deliver(R){if(!R.args.deliverTo)return {none:true};const d=await deliver({lib:this.lib,castFn:this.castTool,pkg:R.steps.cut.package,to:R.args.deliverTo,cast:R.steps.cast.cast,style:R.args.style,scene:R.args.scene,sheets:R.args.sheets??{},sound:R.args.sound??undefined,rights:R.args.rights??undefined});
+  return {folder:d.folder,version:d.version,written:d.written,keyframesToMake:d.keyframesToMake,changes:d.changes};}
  // 12. the hand-over: prompts, keyframe references and the video settings (cast_depth_clip), with the caller's cast and style
  async handover(R){const pk=R.steps.cut.package,h=await this.castTool({clip:pk,cast:R.steps.cast.cast,style:R.args.style,scene:R.args.scene});
   return {package:pk,page:page(this.src(R).id,pk),revision:this.lib.rev(pk),handover:{videoGeneration:h.videoGeneration,keyframeGeneration:h.keyframeGeneration,generateKeyframesInOrder:h.generateKeyframesInOrder,stars:h.stars,check:h.check,files:h.files}};}
