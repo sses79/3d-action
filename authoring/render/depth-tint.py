@@ -30,7 +30,7 @@ p.add_argument('--shots');p.add_argument('--tracks',default='');p.add_argument('
 p.add_argument('--device',default='mps' if torch.backends.mps.is_available() else 'cpu');a=p.parse_args()
 if a.end-a.start>15+1e-6:raise SystemExit('A window is at most 15 seconds (a video model takes about that much reference)')
 if not a.depth and a.model=='da3':  # the default: Depth Anything 3 through ComfyUI, one frame at a time (quick on this Mac)
-    a.depth=os.path.splitext(a.out)[0]+'.depth.npz';subprocess.run([os.path.join(root,'.authoring/comfyui/.venv/bin/python'),os.path.join(root,'authoring/render/da3-depth.py'),os.path.join(root,'.authoring/comfyui'),a.video,str(a.start),str(a.end),a.depth],check=True,stdout=subprocess.DEVNULL)
+    a.depth=os.path.splitext(a.out)[0]+'.depth.npz';subprocess.run([sys.executable,os.path.join(root,'authoring/render/da3-run.py'),a.video,str(a.start),str(a.end),a.depth,'--save-width','0'],check=True,stdout=subprocess.DEVNULL)  # mini4 when it answers (da3-run.py)
 cap=cv2.VideoCapture(a.video);fps=cap.get(cv2.CAP_PROP_FPS);k0=round(a.start*fps);cap.set(cv2.CAP_PROP_POS_FRAMES,k0);frames=[]
 for _ in range(round((a.end-a.start)*fps)):
     ok,im=cap.read()

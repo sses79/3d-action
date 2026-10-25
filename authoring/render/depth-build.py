@@ -24,7 +24,7 @@ def step(name,cmd):
     if r.returncode:sys.exit(f'{name} failed:\n'+(r.stderr or r.stdout)[-2500:])
     return r.stdout
 dep=root/f'{a.clip}.depth.npz'
-if not dep.exists():step('depth',['.authoring/comfyui/.venv/bin/python','authoring/render/da3-depth.py','.authoring/comfyui',video,f'{t0:.3f}',f'{t1:.3f}',str(dep),'--save-width','960'])
+if not dep.exists():step('depth',[py,'authoring/render/da3-run.py',video,f'{t0:.3f}',f'{t1:.3f}',str(dep),'--save-width','960'])  # mini4 when it answers (da3-run.py)
 # people: detector boxes on every frame (cached per video file), joined into tracks per shot
 t=time.perf_counter();c=cv2.VideoCapture(video);fps=c.get(5);W,H=int(c.get(3)),int(c.get(4))
 cache=pathlib.Path('.authoring/reconstruction-cache')/('detections-%s-yolo26s-pose-1920'%S['sha256'][:16]);cache.mkdir(parents=True,exist_ok=True);model=None

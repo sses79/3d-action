@@ -195,6 +195,24 @@ Everything else stays available for fine control, as now.
 - **Health.** The health route shows which worker took each job and how long it took.
 - **Done when:** a 12 s build runs on mini4 when it is up and here when it is not, with the same output.
 
+**Built 2026-10-25.**
+- **The dispatcher.** `authoring/render/da3-run.py` runs Depth Anything 3 on mini4 (an M4; this Mac is an M1, both 16 GB) when it answers, here otherwise. The build (`depth-build.py`) and the tint (`depth-tint.py`) call it; the lead's single frame stays here.
+- **Exact frames.** The window is cut here with PyAV: exactly the frames `da3-depth.py` would read, numbered from 0 in a clip 960 wide, with their source times kept here.
+  - mini4 runs the same `da3-depth.py` in its ComfyUI (`~/Yun/sam3d-runner`, the same commit as ours).
+  - Each depth frame gets the time of the frame it was made from.
+  - A failure there runs the window here; a mismatch in frame count counts as a failure.
+- **Setup.** `da3-run.py --setup` copies the model (541 MB) and the script; a run checks the script's hash first. `DEPTH_WORKER=local|mini4` forces one machine.
+- **Log.** Each run adds a line to `.authoring/logs/workers.jsonl`. `/api/health` shows the last five, seconds per frame for each machine over the last 50, and how many fell back.
+- **Measured** on the same 4 s window (120 frames):
+  - this Mac 63–65 s; mini4 41–42 s, including the cut and both transfers;
+  - the same frames and times, inverse-depth correlation 0.993, mean grey difference 5.3 (from re-encoding the clip).
+- **A full build through the service** (`got-standoff-024`, 10 s, 299 frames) ran its depth on mini4 in 86 s (0.29 s a frame against about 0.53 here); the build took 230 s in all.
+  - With mini4 unreachable, a run came back here with the note "no answer".
+  - Two bugs found on the way: a seek that was one frame off, and timestamps the clip kept from the source; both are fixed by the exact-frame cut.
+- **Open.** The people step is now the largest part of a build (120 s of the 230): the pose detector runs on this Mac's CPU on every frame.
+  - SAM 3D Body keeps its own runner on mini4 (`docs/SAM3D_PLAN.md`).
+  - SAM 3 tracks are not part of depth builds.
+
 ### Step 5: learning from results (ongoing)
 
 - **Ranking.** `find_depth_clips` ranks by what worked: a person's stars, `used` and `good` verdicts, and the beats and labels of packages whose takes were used.
