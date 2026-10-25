@@ -48,7 +48,7 @@ json.dump(dict(times=T['times'],size=[W,H],exact=True,tracks=hand,note='boxes dr
 json.dump(T,open(root/f'{clip}.tracks-fixed.json','w'))
 per={k:sorted(({per_fix.get(k,{}).get(n,n) for n in v}-{'-'})|{e['name'] for e in fx.get('boxes',[]) if str(e['shot'])==k}) for k,v in C['built']['perShot'].items()}
 spec=json.load(open(root/f'{clip}.spec.json'));everyone=sorted(set(names)|{e['name'] for e in fx.get('boxes',[])});spec['people']=[dict(name=n,color=colours[n],represents=next((p['represents'] for p in spec['people'] if p['name']==n),f'person {n} (not described)')) for n in everyone]
-for k in spec['keyframes']:k['people']=[dict(name=n,doing=next((q['doing'] for q in k['people'] if q['name']==n),'not described')) for n in per.get(str(k['shot']),[])]
+for k in spec['keyframes']:k['people']=[dict(name=n,doing=next((q['doing'] for q in k['people'] if q['name']==n),'not described')) for n in per.get(str(k['shot']),[]) if n in everyone]  # a ninth person and beyond has no colour: not in the package's people
 for x in spec['audio']:x['who']=x['who'] if x['who'] in tracks else (names[0] if names else x['who'])
 spec['library']=dict(spec.get('library',{}),perShot=C['built']['perShot'],fixed=per,fixes=fx);json.dump(spec,open(root/f'{clip}.spec.json','w'),indent=1)
 r=subprocess.run([sys.executable,'authoring/render/depth-tint.py',T['video'],f"{T['start']:.3f}",f"{T['end']:.3f}",str(root/f'{clip}-tinted.mp4'),'--shots',str(root/f'{clip}.shots.json'),'--tracks',str(root/f'{clip}.tracks-fixed.json')+(','+str(root/f'{clip}.hand.json') if hand else ''),'--colors',','.join([f'{n}={colours[n]}' for n in names]+[f'{h}={colours[h[:-5]]}' for h in hand]),'--depth',str(root/f'{clip}.depth.npz')],capture_output=True,text=True)
