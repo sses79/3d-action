@@ -6,7 +6,7 @@ import {mkdtemp,rm,mkdir,writeFile,readFile} from 'node:fs/promises';
 import {readFileSync,existsSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {spawn} from 'node:child_process';
+import {spawn,spawnSync} from 'node:child_process';
 import {createServer} from 'node:net';
 import {JobStore,withLock} from '../authoring/jobs.mjs';
 import {DepthLibrary} from '../authoring/depth-library.mjs';
@@ -98,3 +98,12 @@ test('search ranks by fit, then by what worked: a person\'s stars and a used tak
  assert.ok(!r.some(x=>x.package==='other'),'5 stars do not make an unfitting package a match');
  const q=lib.find({beat:'two men talk by the fire'});assert.equal(q[0].package,'other');
 }));
+
+test('the clip proposer grows a short fast shot into the quick cuts around it, and stops at a long or calm shot',()=>{
+ const sh=(i,s,e,on,move)=>({index:i,start:s,end:e,seconds:+(e-s).toFixed(2),control:on?'on':'off',move,travel:0,camera:on?.4:0,why:on?['camera moves']:['people in place, camera holds']});
+ const rows=[sh(1,0,3,false,.01),sh(2,3,4.5,false,.15),sh(3,4.5,5.4,true,.7),sh(4,5.4,6.6,false,.1),sh(5,6.6,12,false,.2),sh(6,12,17,true,.6)];  // shots 4-5 last 6.6 s: too long to bridge 3 and 6
+ const r=spawnSync('.authoring/vision-venv/bin/python',['-c',`import sys,json;sys.path.insert(0,'authoring/render');from depth_propose import propose,entries;print(json.dumps(entries(propose(json.load(sys.stdin)),'t')))`],{input:JSON.stringify(rows),encoding:'utf8'});
+ assert.equal(r.status,0,r.stderr);const c=JSON.parse(r.stdout).filter(x=>x.kind==='control');
+ assert.deepEqual(c.map(x=>x.shots),[[2,3,4],[6]]);  // shot 1 is calm, shot 5 too long: both stop the growth; shot 6 is long enough on its own
+ assert.match(c[0].why.join(' '),/grown: the action around a short shot/);assert.equal(c[0].start,3);assert.equal(c[0].end,6.6);
+});

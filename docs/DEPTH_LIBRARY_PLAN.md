@@ -142,3 +142,19 @@ The user pointed out that Ramsay 002 (a lord writing, a slow push-in), 035 (Rams
 - Recut the same day at the user's direction: it starts at V.8's 0:05 (4.97 s, the struggle past the Mountain's shoulder) and runs straight through to the throat-lift: source 4.97-9.57 and 10.71-12.11 s (only the arms-locked shot from below shortened, 2.2 to 1.1 s), 1.2×, 5.0 s, six camera angles with a keyframe each (0.12, 0.54, 1.42, 2.51, 3.04, 4.4 s). The arms-locked shot is untinted, as in V.8 (two arms from below).
 - Shot 5 of the test cut (V.8 shot 34, arms locked, from below) tinted by boxes by hand in V.8 (`.authoring/shots/got/v8/shot34-hand.json`: the Mountain's body and gauntlet arm left, orange; the blue figure's body and arm right, blue), V.8 tinted again from its saved depth and the test cut again. The keyframe at 3.04 s now passes the check; the sky under the arch stays grey (far).
 
+## Clip proposals: growing a short shot into its action (2026-10-25)
+
+`authoring/render/depth_propose.py` now proposes clips for `depth-ingest.py`. Before that, ingest grouped them itself. The rules:
+- control-on shots in a row join, up to 15 s;
+- a slow stretch of at most 5 s between two on-shots is bridged into them;
+- **new:** a group shorter than 2 s takes in its neighbours while they are short (2.5 s at most) and still move (someone moves ≥ 0.08, travels ≥ 0.1, or the camera moves ≥ 0.1), the side with more movement first, up to 10 s;
+- a group still under 3 s is marked short.
+
+**Why.** got_video_a (uploaded by Tim) proposed clip 007, 0.9 s, the one shot of the scene where the camera jolts. The action is Cersei's guards seizing Littlefinger with a blade at his throat, 8.6–16.2 s across six quick cuts. The neighbouring shots move (0.10–0.37 movement) but each stays under the control thresholds, and with only one on-shot there was nothing to bridge.
+
+**What it did:**
+- **got_video_a.** Re-split (`depth_propose.py got-video-a --write`): clip 007 and the stills 004–006 and 008–009 became clip `got-video-a-004`, shots 4–9, 7.8–16.2 s. Shot 10, Cersei talking (3.1 s), stops it. A fresh ingest of the same file gives the same clip.
+- **The other three sources.** No change: the growth needs a control group under 2 s, and there is none. All their clips are described, so a re-split keeps them anyway; a re-split only replaces proposed clips with no work on them.
+- **What-if (`--what-if`).** Protecting only built, fixed and person-set clips shows what today's control rule would propose:
+  - Ramsay 002 and 044 would become stills, as Tim decided.
+  - Fight clip 023 would shrink to shots 30–33. The seize (25–29) measures slow, and the lift from below (34) reads as no movement, because the detector finds no one in armour from below. Growth cannot reach a shot the detector cannot see. That needs another signal (a shot where the detector loses the people it had, or the camera's slow push). It is open.
