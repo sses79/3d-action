@@ -128,7 +128,7 @@ export class DepthRequests{
   if(want.length)return {ask:[{id:'contact',question:`${want.length} keyframe(s) need the hands marked: the detector sees no hand on the contact the beat names.`,keyframes:want,page:page(this.src(R).id,pk),answer:`mark them with set_contact_marks {package: "${pk}", keyframe, marks: [{owner, hand, target, part, from: [x, y], to: [x, y]}]} (fractions of the picture) or "Mark a hand" on the page, then carry on; or answers {"contact-N": "skip"} / {"contact": "skip"}`}]};
   return {marked:rep.filter(c=>c.hands.length).map(c=>c.keyframe)};}
  // 13. delivery to the caller's folder (depth-deliver.mjs), when deliverTo is given
- async deliver(R){if(!R.args.deliverTo)return {none:true};const d=await deliver({lib:this.lib,castFn:this.castTool,pkg:R.steps.cut.package,to:R.args.deliverTo,cast:R.steps.cast.cast,style:R.args.style,scene:R.args.scene,sheets:R.args.sheets??{},sound:R.args.sound??undefined,rights:R.args.rights??undefined});
+ async deliver(R){if(!R.args.deliverTo)return {none:true};const d=await deliver({lib:this.lib,castFn:this.castTool,pkg:R.steps.cut.package,to:R.args.deliverTo,cast:R.steps.cast.cast,style:R.args.style,scene:R.args.scene,sheets:R.args.sheets??{},sound:R.args.sound??undefined,rights:R.args.rights??this.src(R)?.rights??undefined});
   return {folder:d.folder,version:d.version,written:d.written,keyframesToMake:d.keyframesToMake,changes:d.changes};}
  // 12. the hand-over: prompts, keyframe references and the video settings (cast_depth_clip), with the caller's cast and style
  async handover(R){const pk=R.steps.cut.package,h=await this.castTool({clip:pk,cast:R.steps.cast.cast,style:R.args.style,scene:R.args.scene});

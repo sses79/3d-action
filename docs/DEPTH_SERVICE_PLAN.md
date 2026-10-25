@@ -243,6 +243,16 @@ Everything else stays available for fine control, as now.
   - Before the rarity weighting, generic words had let the 5-star lift top "two people talk across a table".
   - A ranking test was added.
 
+**Adding a video from the page (2026-10-25).** The Depth library page has "+ Add a video" in its sidebar:
+- you choose a file (mp4, mov, m4v, mkv or webm, up to 4 GB), a name and a rights line (own shoot, licensed, private reference only, or your own words);
+- `POST /api/depth-upload` streams it to `.authoring/depth-library/uploads/`, checking the length and the SHA-256;
+- the same video already in the library opens its source instead of being ingested again;
+- otherwise the ingest runs as a job, which the page follows, then opens the new source.
+
+`ingest_source_video` takes `rights` (kept on the source and used by deliveries when a request gives none) and refuses an id already used.
+
+Tried with a synthetic 6 s video (ingested in 6 s; its cut found; sent again, recognised) and a 4 s file through the page's own controls. Both test sources were removed afterwards.
+
 ## What stays out
 
 - **No shared third-party library.** The Game of Thrones sources stay as Tim's private reference. A caller's footage stays on this Mac, in the caller's own source entry.

@@ -1,7 +1,8 @@
 import {createServer} from 'node:http';
 import {readFile,readdir,stat,writeFile} from 'node:fs/promises';
 import {execFile} from 'node:child_process';
-import {createReadStream} from 'node:fs';
+import {createReadStream,createWriteStream,mkdirSync,renameSync,unlinkSync,existsSync as exists} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {resolve,dirname} from 'node:path';
 import {JobStore} from './jobs.mjs';
@@ -88,6 +89,22 @@ const server=createServer(async(req,res)=>{
    const {source,clip,shots={},boxes=[],expectedRevision}=JSON.parse(body),ok=x=>typeof x==='string'&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(x);if(!ok(source)||!ok(clip))return json(400,{error:'source and clip'});
    try{checkFixes(shots,boxes);}catch(e){return json(400,{error:e.message});}
    try{return json(200,await new DepthLibrary(root).fix({clip,shots,boxes,expectedRevision}));}catch(e){return json(/^stale:/.test(e.message)?409:400,{error:e.message});}  // the library's fix: the package's lock and revision
+  }
+  if(req.method==='POST'&&path==='/api/depth-upload'){
+   // A video added from the Depth library page: streamed to .authoring/depth-library/uploads/, then ingested as a job (shots, control,
+   // proposed clips). The same video already in the library (by SHA-256) is not ingested again: its source is returned instead.
+   const name=String(url.searchParams.get('name')||'').slice(0,120),file=String(url.searchParams.get('file')||'video.mp4'),rights=url.searchParams.get('rights')||undefined;
+   const ext=(file.match(/\.(mp4|mov|m4v|mkv|webm)$/i)||[])[1];if(!ext)return json(400,{error:'A video file: .mp4, .mov, .m4v, .mkv or .webm'});
+   const size=Number(req.headers['content-length']||0);if(!size)return json(411,{error:'Content-Length needed'});if(size>4e9)return json(413,{error:'Up to 4 GB'});
+   const lib=new DepthLibrary(root),dir=resolve(root,'.authoring/depth-library/uploads');mkdirSync(dir,{recursive:true});
+   const slug=(name||file.replace(/\.[^.]+$/,'')).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,36)||'video';
+   const tmp=resolve(dir,`.upload-${Date.now()}.${ext.toLowerCase()}`),h=createHash('sha256');let got=0;
+   try{await new Promise((ok,fail)=>{const w=createWriteStream(tmp);req.on('data',c=>{got+=c.length;h.update(c);});req.on('error',fail);w.on('error',fail);w.on('finish',ok);req.pipe(w);});}catch(e){try{unlinkSync(tmp);}catch{}return json(400,{error:'Upload broke off: '+e.message});}
+   if(got!==size){try{unlinkSync(tmp);}catch{}return json(400,{error:`Upload incomplete (${got} of ${size} bytes)`});}
+   const sha=h.digest('hex'),same=lib.sameAs(sha);if(same){unlinkSync(tmp);return json(200,{existing:true,source:same.id,name:same.name});}
+   let id=slug;for(let n=2;lib.sources().some(S=>S.id===id)||exists(resolve(root,'.authoring/depth-library',id));n++)id=`${slug}-${n}`;
+   const dest=resolve(dir,`${id}.${ext.toLowerCase()}`);renameSync(tmp,dest);
+   try{const r=lib.ingest({video:dest,id,name:name||file.replace(/\.[^.]+$/,''),rights});return json(200,{existing:false,source:id,job:r.job,file:dest,bytes:got});}catch(e){return json(400,{error:e.message});}
   }
   if(req.method==='GET'&&path==='/api/depth-packages'){
    // Every package with what worked (docs/DEPTH_SERVICE_PLAN.md, step 5): status, stars, takes and the last one, deliveries.

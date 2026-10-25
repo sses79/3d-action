@@ -40,6 +40,7 @@ function Library(){
   <div className="dl-layout"><aside className="dl-side">
    <button className={'dl-src'+(srcId==='*all'?' now':'')} onClick={()=>{setSrcId('*all');setOpen('');}}><strong>All packages</strong><small>status, stars, takes and deliveries, what worked first</small></button>
    <h2>SOURCES</h2>
+   <AddVideo onReady={id=>{reload();setSrcId(id);setOpen('');}}/>
    {lib?.sources.map(s=><button key={s.id} className={'dl-src'+(s.id===srcId?' now':'')} onClick={()=>{setSrcId(s.id);setOpen('');}}><strong>{s.name}</strong><small>{clock(s.duration)} · {s.shots.length} shots · {s.clips.filter(c=>c.kind==='control').length} depth clips · {s.packages.length} built</small></button>)}
    <hr/><h2>SHOW</h2>
    {([['control','Depth clips (control on)'],['still','Still shots (no control)'],['built','Built packages']] as const).map(([k,l])=><label key={k} className="dl-check"><input type="checkbox" checked={show[k]} onChange={e=>setShow({...show,[k]:e.target.checked})}/>{l}</label>)}
@@ -217,6 +218,29 @@ function AllPackages({onOpen}:{onOpen:(id:string)=>void}){const [list,setList]=u
    <td>{p.results.takes?`${p.results.takes}${p.results.used?` · ${p.results.used} used`:''}${p.results.good?` · ${p.results.good} good`:''}${p.results.rejected?` · ${p.results.rejected} rejected`:''}`:'—'}</td>
    <td>{p.results.last?<>{p.results.last.verdict&&<span className={'dl-verdict '+p.results.last.verdict}>{p.results.last.verdict}</span>} {p.results.last.video?<a className="link" href={bridgeUrl+p.results.last.video} target="_blank" rel="noreferrer">{p.results.last.label}</a>:p.results.last.label}</>:'—'}</td>
    <td>{p.deliveries.length?p.deliveries.slice(-2).map((d:any,i:number)=><small key={i} title={d.at}>{d.to} (v{d.version})</small>):'—'}</td></tr>)}</tbody></table></>;}
+// A video added from the page (docs/DEPTH_SERVICE_PLAN.md): uploaded to the service, then ingested as a job; the page follows the job
+// and opens the new source. The same video already in the library opens its source instead.
+function AddVideo({onReady}:{onReady:(id:string)=>void}){
+ const [open,setOpen]=useState(false),[file,setFile]=useState<File|null>(null),[name,setName]=useState(''),[rights,setRights]=useState('private reference only'),[state,setState]=useState<{phase:string;pct?:number;note?:string;error?:string}|null>(null);
+ const poll=(job:string,id:string)=>{const tick=()=>fetch(bridgeUrl+'/api/tool',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'get_depth_job',arguments:{job}})}).then(r=>r.json()).then(d=>{const j=d.result;
+  if(!j){setState({phase:'failed',error:d.error??'no answer'});return;}if(j.status==='done'){setState({phase:'done',note:`Ingested as ${id}.`});setFile(null);setName('');onReady(id);return;}
+  if(j.status==='failed'){setState({phase:'failed',error:String(j.error??'').slice(-300)});return;}
+  const last=String(j.log??'').trim().split('\n').filter(Boolean).pop()??'';setState({phase:j.status==='queued'?`queued${j.position?` (${j.position} ahead)`:''}`:'ingesting',note:last.slice(0,120)});setTimeout(tick,3000);}).catch(e=>setState({phase:'failed',error:e.message}));tick();};
+ const go=()=>{if(!file)return;const x=new XMLHttpRequest(),q=new URLSearchParams({file:file.name,name:name||file.name.replace(/\.[^.]+$/,''),rights});
+  x.open('POST',bridgeUrl+'/api/depth-upload?'+q.toString());x.setRequestHeader('Content-Type',file.type||'video/mp4');
+  x.upload.onprogress=e=>{if(e.lengthComputable)setState({phase:'uploading',pct:Math.round(e.loaded/e.total*100)});};
+  x.onload=()=>{let d:any={};try{d=JSON.parse(x.responseText);}catch{}if(x.status!==200){setState({phase:'failed',error:d.error??`HTTP ${x.status}`});return;}
+   if(d.existing){setState({phase:'done',note:`Already in the library as ${d.source}.`});onReady(d.source);return;}setState({phase:'ingesting',note:'started'});poll(d.job,d.source);};
+  x.onerror=()=>setState({phase:'failed',error:'the upload broke off'});setState({phase:'uploading',pct:0});x.send(file);};
+ const busy=state&&['uploading','ingesting'].includes(state.phase)||state?.phase.startsWith('queued');
+ return <div className="dl-add">{!open?<button className="link" onClick={()=>setOpen(true)}>+ Add a video</button>:<>
+  <label className="dl-add-file"><input type="file" accept="video/mp4,video/quicktime,video/x-m4v,video/x-matroska,video/webm,.mp4,.mov,.m4v,.mkv,.webm" disabled={!!busy} onChange={e=>{const f=e.target.files?.[0]??null;setFile(f);if(f&&!name)setName(f.name.replace(/\.[^.]+$/,''));setState(null);}}/>{file?`${file.name} · ${(file.size/1e6).toFixed(0)} MB`:'Choose a video (mp4, mov, m4v, mkv, webm)'}</label>
+  <input className="dl-search" placeholder="Name in the library" value={name} disabled={!!busy} onChange={e=>setName(e.target.value)}/>
+  <select value={['own shoot','licensed','private reference only'].includes(rights)?rights:'other'} disabled={!!busy} onChange={e=>setRights(e.target.value==='other'?'':e.target.value)}><option value="own shoot">Rights: own shoot</option><option value="licensed">Rights: licensed</option><option value="private reference only">Rights: private reference only</option><option value="other">Rights: other…</option></select>
+  {!['own shoot','licensed','private reference only'].includes(rights)&&<input className="dl-search" placeholder="Rights, in one line" value={rights} disabled={!!busy} onChange={e=>setRights(e.target.value.slice(0,200))}/>}
+  <div className="dl-add-row"><button disabled={!file||!!busy} onClick={go}>Upload and ingest</button><button className="link" disabled={!!busy} onClick={()=>{setOpen(false);setState(null);}}>Close</button></div>
+  {state&&<div className={'dl-add-state'+(state.phase==='failed'?' bad':'')}>{state.phase==='uploading'?<><progress max={100} value={state.pct??0}/> uploading {state.pct??0}%</>:state.phase==='failed'?`⚠ ${state.error}`:<>{state.phase}{state.note?`: ${state.note}`:''}</>}</div>}
+  <small className="vc-help">The video stays on this Mac (.authoring/depth-library/uploads). Ingest finds the shots, which need a control video, and proposes clips: about a minute per minute of video. Build a clip from its card, or call make_depth_reference with the file.</small></>}</div>;}
 function RateBox({id}:{id:string}){
  const [cur,setCur]=useState<Stars|null>(null),[std,setStd]=useState<Record<string,string>>({}),[pick,setPick]=useState(0),[why,setWhy]=useState(''),[note,setNote]=useState('');
  const load=()=>fetch(bridgeUrl+'/api/depth-library').then(r=>r.json()).then(d=>{setStd(d.starStandard??{});const all=[...d.sources.flatMap((s:any)=>s.packages),...d.unlinked];setCur(all.find((p:any)=>p.id===id)?.stars??null);});
