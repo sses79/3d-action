@@ -87,3 +87,14 @@ test('delivery writes the task, upload steps and prompt, and a second delivery w
  await writeFile(join(pk,'key-2-depth.jpg'),'changed');rev=4;const r2=await deliver({lib,castFn,pkg:'pk',to,cast});
  assert.equal(r2.version,2);assert.ok(r2.changes.includes('revision 3 → 4'));assert.ok(r2.changes.includes('key-2-depth.jpg changed'));assert.ok(existsSync(join(to,'TASK-v2.md'))&&existsSync(join(to,'TASK-v1.md')));
 }));
+
+test('search ranks by fit, then by what worked: a person\'s stars and a used take lift a fitting package, not an unfitting one',()=>temp(async dir=>{
+ const pk=(id,summary,camera)=>({name:id,summary,duration:4,people:[{name:'A',color:'blue',represents:'a man'},{name:'B',color:'orange',represents:'a knight'}],shots:[{index:1,start:0,end:4,camera}],beats:[{actor:'B',verb:'lifts',target:'A',start:0,end:4}],keyframes:[]});
+ for(const [id,P] of Object.entries({proven:pk('proven','The knight lifts the man by the throat','from below'),plain:pk('plain','The knight lifts the man by the throat','from below'),other:pk('other','Two men talk by a fire','still, wide')})){await mkdir(join(dir,'.authoring/video-clay',id),{recursive:true});await writeFile(join(dir,'.authoring/video-clay',id,'package.json'),JSON.stringify(P));}
+ await mkdir(join(dir,'.authoring/depth-library'),{recursive:true});await writeFile(join(dir,'.authoring/depth-library/ratings.json'),JSON.stringify({proven:{stars:5,why:'used',by:'Tim'},other:{stars:5,why:'x',by:'Tim'}}));
+ await mkdir(join(dir,'.authoring/video-clay/proven/reviews/take-1'),{recursive:true});await writeFile(join(dir,'.authoring/video-clay/proven/reviews/take-1/review.json'),JSON.stringify({label:'take-1',verdict:'used',reviewed:'2026-10-25T10:00:00'}));
+ process.env.STUDIO_JOBS_DIR=join(dir,'jobs');const lib=new DepthLibrary(dir);
+ const r=lib.find({beat:'lifted by the throat, camera low'});assert.deepEqual(r.map(x=>x.package),['proven','plain']);assert.ok(r[0].score>r[1].score);assert.equal(r[0].results.used,1);assert.match(r[0].why.join(' '),/1 take used/);
+ assert.ok(!r.some(x=>x.package==='other'),'5 stars do not make an unfitting package a match');
+ const q=lib.find({beat:'two men talk by the fire'});assert.equal(q[0].package,'other');
+}));

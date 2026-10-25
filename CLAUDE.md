@@ -13,7 +13,7 @@ Three browser demos; active work is **Animation Studio** (LLM-driven movement li
 - `docs/SHOT_TO_CLAY_PLAN.md` — a scene told in cuts (dialogue, mostly waist-up) to a clay video: shots grouped by setup, upper bodies from video on tapered columns, one room across cuts; plan agreed 2026-10-15, says which steps are built.
 - `docs/DEPTH_LIBRARY_PLAN.md` — 2026-10-18, steps 1-4 built (ingest, page, build and fix, service operations and the `scene-to-depth` skill): a library of tinted depth clips cut from source videos (shots analysis, control-on shots built, summary and labels), its own page `/editor/depth.html`, and service operations and a skill so other agents can find a clip for a scene and get the depth video, keyframes and prompts.
 - `docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md` — 2026-10-20, proposed: lessons from the first depth→keyframes→video test (V.8 fight, Jimeng take 2069) and the rules and service changes that follow: beats first, guide duration = output duration, 1.5 s shots, one keyframe per beat, contact cards, a keyframe gate, a result-review helper.
-- `docs/DEPTH_SERVICE_PLAN.md` — 2026-10-24, proposed: the depth references as a service for Tim's own agents (footage they bring, this Mac + mini4): a service that stays up (launchd, jobs on disk, package revisions), one call from footage to package with `needs_input` gates, delivery to a project folder in the V.8 format, mini4 as a worker, ranking by results.
+- `docs/DEPTH_SERVICE_PLAN.md` — 2026-10-24, steps 1-5 built by 2026-10-25: the depth references as a service for Tim's own agents (footage they bring, this Mac + mini4): a service that stays up (launchd, jobs on disk, package revisions), one call from footage to package with `needs_input` gates, delivery to a project folder in the V.8 format, mini4 as a worker, ranking by results.
 - `docs/HANDOFF.md` — append-only session log (long, dense). Read the last few sections, not the whole file. Add a dated section after substantial work.
 - `docs/RULE_LOG.md` — every reconstruction rule, why it exists and what it did to the other clips. After changing a rule, run `authoring/reconstruction/batch.py` and add an entry.
 - Other `docs/` plans and studies are historical unless `CURRENT_STATE.md` points at them.
@@ -37,7 +37,7 @@ npm run deploy:authoring # build core.js and the editor, run the tests, restart 
 npm run service:status   # launchd's view and GET /api/health (version, jobs, a restart still needed, Python/ComfyUI/OpenRouter/mini4)
 npm run start:authoring  # the service by hand on 127.0.0.1:5174, only when the agent is not installed (npm run service:install)
 python3 serve_demo.py --host 127.0.0.1 --port 5173   # public demo server
-node --test tests/*.test.mjs   # 95 tests, ~17 s, uses temp state dirs
+node --test tests/*.test.mjs   # 96 tests, ~17 s, uses temp state dirs
 npm run test:vision && python3 tests/server.py && node tests/physics.mjs && node tests/fallback.mjs
 npx tsc --noEmit -p editor/tsconfig.json
 node authoring/cli.mjs tools   # operation schemas (service must be running)

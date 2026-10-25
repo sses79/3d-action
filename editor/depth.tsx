@@ -28,7 +28,7 @@ function Library(){
  const [show,setShow]=useState({control:true,still:false,built:true}),[tags,setTags]=useState<string[]>([]),[text,setText]=useState('');
  // a package opened directly (an old Clay page link) selects its own source
  const [loads,setLoads]=useState(0),reload=()=>setLoads(n=>n+1);
- useEffect(()=>{fetch(bridgeUrl+'/api/depth-library').then(r=>r.json()).then(d=>{setLib(d);if(!d.sources.length)setError('Nothing ingested yet: run authoring/render/depth-ingest.py VIDEO --id NAME.');const owner=d.sources.find((s:Source)=>s.packages.some(p=>p.id===q.get('package')))?.id;setSrcId(v=>owner??(d.sources.some((s:Source)=>s.id===v)?v:d.sources[0]?.id||''));}).catch(e=>setError('The authoring service is not answering ('+e.message+'). Start it with npm run start:authoring and open this page from it.'));},[loads]);
+ useEffect(()=>{fetch(bridgeUrl+'/api/depth-library').then(r=>r.json()).then(d=>{setLib(d);if(!d.sources.length)setError('Nothing ingested yet: run authoring/render/depth-ingest.py VIDEO --id NAME.');const owner=d.sources.find((s:Source)=>s.packages.some(p=>p.id===q.get('package')))?.id;setSrcId(v=>owner??(v==='*all'||d.sources.some((s:Source)=>s.id===v)?v:d.sources[0]?.id||''));}).catch(e=>setError('The authoring service is not answering ('+e.message+'). Start it with npm run start:authoring and open this page from it.'));},[loads]);
  useEffect(()=>{const u=new URLSearchParams();if(srcId)u.set('source',srcId);if(pkg)u.set('package',pkg);if(open)u.set('clip',open);history.replaceState(null,'','?'+u.toString());},[srcId,pkg,open]);
  const src=lib?.sources.find(s=>s.id===srcId),shotOf=(n:number)=>src!.shots.find(s=>s.index===n)!;
  const colourOf=useMemo(()=>{const m=new Map<number,string>();src?.clips.filter(c=>c.kind==='control').forEach((c,i)=>c.shots.forEach(n=>m.set(n,CLIP[i%CLIP.length])));return m;},[src]);
@@ -38,6 +38,7 @@ function Library(){
  return <><Head/>
   {error&&<div className="clay-error"><span>{error}</span></div>}
   <div className="dl-layout"><aside className="dl-side">
+   <button className={'dl-src'+(srcId==='*all'?' now':'')} onClick={()=>{setSrcId('*all');setOpen('');}}><strong>All packages</strong><small>status, stars, takes and deliveries, what worked first</small></button>
    <h2>SOURCES</h2>
    {lib?.sources.map(s=><button key={s.id} className={'dl-src'+(s.id===srcId?' now':'')} onClick={()=>{setSrcId(s.id);setOpen('');}}><strong>{s.name}</strong><small>{clock(s.duration)} · {s.shots.length} shots · {s.clips.filter(c=>c.kind==='control').length} depth clips · {s.packages.length} built</small></button>)}
    <hr/><h2>SHOW</h2>
@@ -47,7 +48,7 @@ function Library(){
    <input className="dl-search" placeholder="Search id or reason" value={text} onChange={e=>setText(e.target.value)}/>
    <p className="vc-help">Labels and summaries come when a clip is described (by Claude in a session). Until then a clip shows what was measured: camera and people movement, people in a wide shot, speech.</p>
   </aside>
-  <main className="dl-main">{src&&<>
+  <main className="dl-main">{srcId==='*all'&&<AllPackages onOpen={setPkg}/>}{src&&<>
    <div className="dl-srchead"><div><h1>{src.name}</h1><small>{src.fileName} · {clock(src.duration)} · {src.size[0]}×{src.size[1]} · {src.fps} fps · ingested {src.ingested.replace('T',' ')} in {Math.round(src.seconds.total)} s{src.speechFound?'':' · no speech found'}</small></div>
     <div className="dl-counts"><b>{src.shots.length}</b> shots <b>{src.shots.filter(s=>s.control==='on').length}</b> need control <b>{src.clips.filter(c=>c.kind==='control'&&c.needsControlNow!==false).length}</b> depth clips <b>{src.packages.length}</b> built</div></div>
    <div className="dl-strip">{src.shots.map(s=><button key={s.index} title={`shot ${s.index}, ${sec(s.start)}-${sec(s.end)}: ${s.why.join(', ')}`} style={{borderColor:colourOf.get(s.index)??'#2a3240'}} className={colourOf.has(s.index)?'on':''} onClick={()=>setOpen(src.clips.find(c=>c.shots.includes(s.index))?.id??'')}><img src={thumb(src.id,s.thumb)} alt="" loading="lazy"/><span>{s.index}{s.bridged?' ·b':''}</span></button>)}</div>
@@ -202,6 +203,20 @@ function Result({id,r}:{id:string;r:any}){const f=(x:string)=>bridgeUrl+'/api/vi
   {r.flags.length?<div className="vc-help">{r.flags.map((x:string,i:number)=><div key={i} className="dl-check-k">⚠ {x}</div>)}</div>:<div className="vc-help">No flags.</div>}
   {r.note&&<p className="vc-help">{r.note}</p>}
   <a className="link" href={f('sheet.jpg')} target="_blank" rel="noreferrer">sheet: source, depth and result at each keyframe</a></div>;}
+// Every package with what worked (docs/DEPTH_SERVICE_PLAN.md, step 5): status, stars, takes (the last one playable), deliveries.
+function AllPackages({onOpen}:{onOpen:(id:string)=>void}){const [list,setList]=useState<any[]|null>(null),[hide,setHide]=useState(true);
+ useEffect(()=>{fetch(bridgeUrl+'/api/depth-packages').then(r=>r.json()).then(setList).catch(()=>setList([]));},[]);
+ const rank=(p:any)=>(p.status?.status==='current'?0:p.status?.status==='replaced'||p.status?.status==='stopped'?2:1)*100-(p.stars?.stars??0)*(p.stars?.suggested?1:3)-(p.results?.used??0)*4-(p.results?.takes??0);
+ const rows=(list??[]).filter(p=>!hide||!['replaced','stopped'].includes(p.status?.status)).sort((a,b)=>rank(a)-rank(b));
+ return <><div className="dl-srchead"><div><h1>All packages</h1><small>{list?`${list.length} packages · ${list.filter(p=>p.results.used).length} with a take used · ${list.filter(p=>p.deliveries.length).length} delivered`:'loading…'}</small></div>
+  <label className="dl-check"><input type="checkbox" checked={hide} onChange={e=>setHide(e.target.checked)}/>hide replaced and stopped</label></div>
+  <table className="vc-people dl-all"><thead><tr><th>Package</th><th>Status</th><th>Stars</th><th>Takes</th><th>Last take</th><th>Delivered to</th></tr></thead><tbody>{rows.map(p=><tr key={p.id}>
+   <td><button className="link" onClick={()=>onOpen(p.id)}>{p.name}</button><small>{p.id} · {p.seconds.toFixed(1)} s{p.source?' · '+p.source:''}{p.from?' · cut from '+p.from:''}{p.lead?' · continues a take':''}</small>{p.summary&&<small>{p.summary.slice(0,140)}</small>}</td>
+   <td>{p.status?<span className={'dl-status '+p.status.status} title={p.status.note??''}>{statusText(p.status)}</span>:'—'}</td>
+   <td>{p.stars?.stars?<span className={'dl-stars'+(p.stars.suggested?' sug':'')}>{starText(p.stars.stars,p.stars.suggested)}</span>:'—'}</td>
+   <td>{p.results.takes?`${p.results.takes}${p.results.used?` · ${p.results.used} used`:''}${p.results.good?` · ${p.results.good} good`:''}${p.results.rejected?` · ${p.results.rejected} rejected`:''}`:'—'}</td>
+   <td>{p.results.last?<>{p.results.last.verdict&&<span className={'dl-verdict '+p.results.last.verdict}>{p.results.last.verdict}</span>} {p.results.last.video?<a className="link" href={bridgeUrl+p.results.last.video} target="_blank" rel="noreferrer">{p.results.last.label}</a>:p.results.last.label}</>:'—'}</td>
+   <td>{p.deliveries.length?p.deliveries.slice(-2).map((d:any,i:number)=><small key={i} title={d.at}>{d.to} (v{d.version})</small>):'—'}</td></tr>)}</tbody></table></>;}
 function RateBox({id}:{id:string}){
  const [cur,setCur]=useState<Stars|null>(null),[std,setStd]=useState<Record<string,string>>({}),[pick,setPick]=useState(0),[why,setWhy]=useState(''),[note,setNote]=useState('');
  const load=()=>fetch(bridgeUrl+'/api/depth-library').then(r=>r.json()).then(d=>{setStd(d.starStandard??{});const all=[...d.sources.flatMap((s:any)=>s.packages),...d.unlinked];setCur(all.find((p:any)=>p.id===id)?.stars??null);});

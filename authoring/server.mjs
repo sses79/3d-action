@@ -89,6 +89,14 @@ const server=createServer(async(req,res)=>{
    try{checkFixes(shots,boxes);}catch(e){return json(400,{error:e.message});}
    try{return json(200,await new DepthLibrary(root).fix({clip,shots,boxes,expectedRevision}));}catch(e){return json(/^stale:/.test(e.message)?409:400,{error:e.message});}  // the library's fix: the package's lock and revision
   }
+  if(req.method==='GET'&&path==='/api/depth-packages'){
+   // Every package with what worked (docs/DEPTH_SERVICE_PLAN.md, step 5): status, stars, takes and the last one, deliveries.
+   const lib=new DepthLibrary(root),srcs=lib.sources(),out=[];let names=[];try{names=await readdir(resolve(root,'.authoring/video-clay'));}catch{}
+   for(const id of names.sort()){if(!/^[a-z0-9][a-z0-9-]{0,63}$/.test(id))continue;const P=lib.pack(id);if(!P)continue;const sv=P.derivedFrom?.sourceVideo??P.sourceVideo,S=srcs.find(x=>x.fileName===sv),clip=S?.clips.find(c=>c.package===id);
+    out.push({id,name:P.name??id,source:S?.id??null,clip:clip?.id??null,seconds:P.duration,from:P.derivedFrom?.package??null,lead:!!P.derivedFrom?.lead,beats:P.beats?.length??0,summary:P.summary??clip?.description?.summary??null,
+     status:lib.statusOf(id),stars:lib.stars(id,null),results:lib.results(id),deliveries:lib.deliveries(id),revision:lib.rev(id),thumb:P.keyframes[0]?.depthStill??null});}
+   return json(200,out);
+  }
   if(req.method==='GET'&&path==='/api/depth-package-extras'){
    // A package's status and the results reviewed against it (review_depth_result), for the Depth library page.
    const id=url.searchParams.get('id')||'';if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id))return json(404,{error:'No such package'});const lib=new DepthLibrary(root);if(!lib.pack(id))return json(404,{error:'No such package'});

@@ -92,3 +92,5 @@ To continue a previous take, add `lead: {image: its last frame, boxes?: {charact
 ## Delivering to a project folder
 
 `deliver_depth_package {package, to: an absolute folder, cast: {tinted name: "Name: description"}, style, sheets: {Name: path}, sound?, rights?}` (or `deliverTo` on `make_depth_reference`) writes `references/package-vN/`, `TASK-vN.md` (the keyframe images to make, one at a time), `upload-steps-vN.md` and `generation-prompt-vN.txt`. Hand the folder to the image and video step as it is; a second delivery writes `-v2` files and says what changed. When the take comes back, `review_depth_result {package, video, verdict, join?: {previous, at}}` reviews it and, for a continuation, joins it to the take it continues at its first cut.
+
+`find_depth_clips` also returns packages (`entry: package`) with their takes and deliveries, ranked by fit and then by what worked (a person's stars, used takes, current). Prefer a package with a used take when it fits as well as a clip; the overview of all packages is "All packages" on the Depth library page.

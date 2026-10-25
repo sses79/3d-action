@@ -64,6 +64,6 @@ export async function deliver({lib,castFn:castTool,pkg:id,to,cast,style='',scene
  writeFileSync(resolve(to,`generation-prompt${V}.txt`),prompt+'\n');
  const out={version:v,at:new Date().toISOString(),package:id,revision:lib.rev(id),folder:to,files:Object.fromEntries(files.map(f=>[f,sha(resolve(src,f))])),prompts:Object.fromEntries(K.map(k=>[k.index,sha256s(k.prompt)])),
   written:[`TASK${V}.md`,`upload-steps${V}.md`,`generation-prompt${V}.txt`,`handover${V}.json`,`references/package${V}/`],changes};
- M.versions.push(out);writeFileSync(man,JSON.stringify(M,null,1));
+ M.versions.push(out);writeFileSync(man,JSON.stringify(M,null,1));lib.recordDelivery?.(id,out);  // the library keeps where each package went
  return {...out,keyframesToMake:made.map(k=>({id:keyId(k),time:k.time,save:keyFile(k)})),task:resolve(to,`TASK${V}.md`),upload:resolve(to,`upload-steps${V}.md`),prompt:resolve(to,`generation-prompt${V}.txt`)};}
 const sha256s=s=>createHash('sha256').update(String(s)).digest('hex').slice(0,16);

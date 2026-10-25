@@ -1,4 +1,4 @@
-# Depth references as a service (plan, proposed 2026-10-24)
+# Depth references as a service (plan 2026-10-24; steps 1-5 built by 2026-10-25)
 
 What this is for: Tim's own agents and projects (Codex, s-video sessions, other local sessions) ask for a depth reference for a scene and get a package they can use, without Tim at the Depth library page. Footage is brought by the caller (their own shoot, licensed stock, or a reference they may use privately); there is no shared library of third-party film. It runs on this Mac, with mini4 taking the heavy jobs. No accounts, rented machines or billing.
 
@@ -218,6 +218,30 @@ Everything else stays available for fine control, as now.
 - **Ranking.** `find_depth_clips` ranks by what worked: a person's stars, `used` and `good` verdicts, and the beats and labels of packages whose takes were used.
 - **Overview page.** A small overview page lists all packages with status, stars, results and the last take, and links each to its project folder.
 - **Done when:** a search for "throat grab, lift, low camera" puts the 5-star lift package first, with its take.
+
+**Built 2026-10-25.**
+- **Search covers packages.** `find_depth_clips` now also searches packages built by hand or by requests (summary, beats, shot cameras, people), not only described clips.
+  - Results carry `entry: clip | package`.
+  - A package already behind a listed clip is not listed twice.
+  - Stopped packages are left out unless `includeStopped`.
+  - Package results bring their takes, the last take (playable), and deliveries, which `deliver_depth_package` now records in `.authoring/depth-library/deliveries.json`.
+- **Ranking.**
+  - **Fit:** labels as before, plus the beat's words weighted by how rare they are among the candidates.
+    - Common words ("man", "two", "across") are stop words.
+    - Camera and action words are widened, at half weight: low finds below, grab finds seize, grip or gauntlet.
+    - A long description is not favoured for its length.
+  - **What worked** multiplies the fit (×(1 + 0.12 per point)), so it ranks the candidates that fit and never makes a candidate:
+    - a person's stars count three times a suggestion;
+    - a used take adds 2 (up to 4) and a good one 1;
+    - current adds 1; replaced takes away 3.
+- **Overview.** "All packages" on the Depth library page (`GET /api/depth-packages`) lists every package with its status, stars, takes, the last take (a link to the take) and where it was delivered: current and proven first, replaced and stopped hidden by default.
+- **Checked on the live library.**
+  - "lifted off his feet by the throat, from below" puts `macbeth-v8-part-b-lift` (5 stars, take 1215 used) first.
+  - "throat grab, lift, low camera" puts the whole fight clip (got-standoff-023, via macbeth-v8-fight) first, then the 5 s test, then the lift: the first two carry the grab, which the lift does not.
+  - "an old man embraces a younger man who stabs him" finds duncan-embrace-5s-2, then Ramsay 026.
+  - "the camera follows a woman walking down stairs" finds the courtyard standoff.
+  - Before the rarity weighting, generic words had let the 5-star lift top "two people talk across a table".
+  - A ranking test was added.
 
 ## What stays out
 

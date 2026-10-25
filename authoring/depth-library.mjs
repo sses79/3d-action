@@ -104,18 +104,40 @@ export class DepthLibrary{
  files(id,P){const dir=resolve(this.packs,id),url=f=>`http://127.0.0.1:5174/api/video-clay-file?id=${id}&file=${f}`;return {folder:dir,referenceVideo:P.depth?{path:resolve(dir,P.depth),url:url(P.depth)}:P.clay?{path:resolve(dir,P.clay),url:url(P.clay)}:null,keyframes:P.keyframes.map((k,i)=>({index:i+1,time:k.time,composition:{path:resolve(dir,k.depthStill??k.clayStill),url:url(k.depthStill??k.clayStill)},source:{path:resolve(dir,k.sourceStill),note:'a frame of the original footage: a layout reference for generating this keyframe (room, framing, camera angle, light); replace every person, take no likeness; not for the video model'}}))};}
  // a beat's words against a clip's labels (three points each), its summary and keyframe text (one point a word), the people
  // count and the length; clips not yet described are left out unless asked for (descriptions come from Claude in a session)
- find({beat,labels=[],people,maxSeconds,control='any',includeUndescribed=false,limit=8,minStars}){
-  if(typeof beat!=='string'||!beat.trim())throw Error('beat: the scene beat in words');const stop=new Set('a an the and or of to in on at by with his her their its is are was he she they it as from into for this that then who'.split(' '));
-  const words=[...new Set(beat.toLowerCase().match(/[a-z]+/g)??[])].filter(w=>w.length>2&&!stop.has(w)),stem=w=>w.replace(/(ing|ed|es|s)$/,'');const out=[];
-  for(const S of this.sources())for(const C of S.clips){
-   if(!C.description&&!includeUndescribed)continue;const eff=this.controlOf(C);if(control==='on'&&eff!=='on'||control==='off'&&eff!=='off')continue;if(maxSeconds&&C.seconds>maxSeconds+1e-6)continue;
-   const d=C.description??{},text=[d.summary??'',...(d.keyframes??[]).map(k=>k.summary),...Object.values(d.people??{}),C.why.join(' ')].join(' ').toLowerCase(),tw=new Set((text.match(/[a-z]+/g)??[]).map(stem)),lab=d.labels??[];
-   const why=[];let score=0;for(const l of labels)if(lab.includes(l)){score+=3;why.push('label '+l);}
-   for(const l of lab)if(!labels.includes(l)&&l.split(' ').every(p=>words.map(stem).includes(stem(p)))){score+=2;why.push('beat says '+l);}
-   const hit=words.filter(w=>tw.has(stem(w)));score+=hit.length;if(hit.length)why.push('words: '+hit.join(', '));
-   if(people){const n=d.peopleCount??null;if(n!==null&&Math.abs(n-people)<=0)score+=2;}
-   const sm=this.summary(S,C);if(minStars&&!(sm.stars>=minStars))continue;if(score>0){if(sm.stars){score+=(sm.stars-3)*.5;why.push(`${sm.stars} stars${sm.starsSuggested?' (suggested)':''}${sm.bestPackage&&sm.bestPackage!==C.package?' via '+sm.bestPackage:''}`);}out.push({...sm,score:Math.round(score*10)/10,why});}}
-  return out.sort((a,b)=>b.score-a.score||a.seconds-b.seconds).slice(0,limit);}
+ // what worked with a package (docs/DEPTH_SERVICE_PLAN.md, step 5): its takes and their verdicts, where it was delivered, and
+ // how that ranks it: a person's stars count three times a suggestion, a used take 2 (up to 4), a good one 1, current 1, replaced -3
+ results(id){const R=this.reviews(id),n=v=>R.filter(r=>r.verdict===v).length,last=R[0];return {takes:R.length,used:n('used'),good:n('good'),retake:n('retake'),rejected:n('rejected'),
+  last:last?{label:last.label,verdict:last.verdict??null,reviewed:last.reviewed,note:last.note??null,video:last.video?`/api/video-clay-review-file?id=${id}&label=${last.label}&file=result.mp4`:null,joined:last.join?.out??null}:null};}
+ deliveriesFile(){return resolve(this.base,'deliveries.json');}
+ deliveries(id){try{const all=JSON.parse(readFileSync(this.deliveriesFile(),'utf8'));return id?all[id]??[]:all;}catch{return id?[]:{};}}
+ recordDelivery(id,d){const all=this.deliveries();(all[id]??=[]).push({to:d.folder,version:d.version,revision:d.revision,at:d.at});writeFileSync(this.deliveriesFile(),JSON.stringify(all,null,1));}
+ worked(id,why){const st=this.stars(id,null),r=this.results(id),s=this.statusOf(id);let b=0;const w=[];
+  if(st?.stars){const k=st.suggested?.5:1.5;b+=(st.stars-3)*k;w.push(`${st.stars} stars${st.suggested?' (suggested)':' (a person\'s)'}`);}
+  if(r.used){b+=Math.min(4,2*r.used);w.push(`${r.used} take${r.used>1?'s':''} used`);}if(r.good){b+=Math.min(2,r.good);w.push(`${r.good} good take${r.good>1?'s':''}`);}if(r.rejected&&!r.used)w.push(`${r.rejected} take(s) rejected`);
+  if(s?.status==='current'){b+=1;w.push('current');}if(s?.status==='replaced'){b-=3;w.push('replaced'+(s.replacedBy?' by '+s.replacedBy:''));}why?.push(...w);return b;}
+ find({beat,labels=[],people,maxSeconds,control='any',includeUndescribed=false,limit=8,minStars,includeStopped=false}){
+  if(typeof beat!=='string'||!beat.trim())throw Error('beat: the scene beat in words');const stop=new Set('a an the and or of to in on at by with his her their its is are was he she they it as from into for this that then who him them one two man men woman people person across over'.split(' '));
+  const SYN={low:['below','under'],high:['above'],grab:['seize','grip','gauntlet','grasp'],seize:['grab','grip'],lift:['raise','hoist','held'],throat:['neck'],neck:['throat'],strike:['stab','hit','blow'],stab:['dagger','knife','strike'],embrace:['hug'],walk:['approach'],approach:['walk'],close:['tight'],talk:['speak','speech','says','conversation'],table:['desk']};
+  const stem=w=>w.replace(/(ing|ed|es|s)$/,''),toks=t=>new Set((String(t).toLowerCase().match(/[a-z]+/g)??[]).map(stem));
+  const base=[...new Set(beat.toLowerCase().match(/[a-z]+/g)??[])].filter(w=>w.length>2&&!stop.has(w)),syn=[...new Set(base.flatMap(w=>SYN[stem(w)]??SYN[w]??[]))].filter(w=>!base.includes(w));
+  // the candidates: described clips and packages of their own (built by hand or by requests), each as the words it is told in
+  const docs=[],own=new Set(this.sources().flatMap(S=>S.clips.map(c=>c.package).filter(Boolean)));
+  for(const S of this.sources())for(const C of S.clips){if(!C.description&&!includeUndescribed)continue;const eff=this.controlOf(C);if(control==='on'&&eff!=='on'||control==='off'&&eff!=='off')continue;if(maxSeconds&&C.seconds>maxSeconds+1e-6)continue;
+   const d=C.description??{};docs.push({kind:'clip',S,C,tw:toks([d.summary??'',...(d.keyframes??[]).map(k=>k.summary),...Object.values(d.shots??{}),...Object.values(d.people??{}),C.why.join(' ')].join(' ')),labels:d.labels??[],people:d.peopleCount??null});}
+  if(control!=='off')for(const id of existsSync(this.packs)?readdirSync(this.packs).filter(d=>ID.test(d)&&!own.has(d)):[]){const P=this.pack(id);if(!P)continue;const st=this.statusOf(id);if(st?.status==='stopped'&&!includeStopped)continue;if(maxSeconds&&P.duration>maxSeconds+1e-6)continue;
+   docs.push({kind:'package',id,P,st,tw:toks([P.summary,P.scene,...(P.beats??[]).map(b=>[b.verb,b.contact,b.change].join(' ')),...P.shots.map(x=>x.camera),...P.people.map(p=>p.represents),...(P.keyframes??[]).map(k=>k.summary)].filter(Boolean).join(' ')),labels:[],people:P.people.length});}
+  // a word found in few candidates says more: its weight falls as it is found in more of them (synonyms count half)
+  const N=docs.length||1,wt=w=>{const df=docs.filter(d=>d.tw.has(stem(w))).length;return Math.max(.2,Math.min(2.5,Math.log((N+1)/(df+.5))));};const W=Object.fromEntries([...base,...syn].map(w=>[w,wt(w)*(syn.includes(w)?.5:1)]));
+  const avg=docs.reduce((a,d)=>a+d.tw.size,0)/N||1,out=[];
+  for(const d of docs){const why=[];let fit=0;for(const l of labels)if(d.labels.includes(l)){fit+=3;why.push('label '+l);}
+   for(const l of d.labels)if(!labels.includes(l)&&l.split(' ').every(p=>base.map(stem).includes(stem(p)))){fit+=2;why.push('beat says '+l);}
+   const hit=[...base,...syn].filter(w=>d.tw.has(stem(w)));fit+=hit.reduce((a,w)=>a+W[w],0)/(.6+.4*d.tw.size/avg);/* a long description matches more words by its length alone */if(hit.length)why.push('words: '+hit.join(', '));if(people&&d.people===people){fit+=1;why.push('same number of people');}
+   if(fit<.8)continue;  // what worked ranks the candidates that fit, it does not make a candidate
+   if(d.kind==='clip'){const sm=this.summary(d.S,d.C);if(minStars&&!(sm.stars>=minStars))continue;const wk=sm.bestPackage?this.worked(sm.bestPackage,why):0;if(sm.bestPackage&&sm.bestPackage!==d.C.package)why.push('via '+sm.bestPackage);out.push({entry:'clip',...sm,score:Math.round(fit*(1+.12*wk)*10)/10,fit:Math.round(fit*10)/10,why});}
+   else{const stars=this.stars(d.id,null);if(minStars&&!(stars?.stars>=minStars))continue;const wk=this.worked(d.id,why),S=this.sources().find(x=>x.fileName===(d.P.derivedFrom?.sourceVideo??d.P.sourceVideo));
+    out.push({entry:'package',kind:'package',package:d.id,name:d.P.name??d.id,source:S?.id??null,seconds:d.P.duration,stars:stars?.stars??null,starsSuggested:stars?.suggested??null,status:d.st,results:this.results(d.id),deliveries:this.deliveries(d.id),page:`http://127.0.0.1:5174/editor/depth.html?${S?'source='+S.id+'&':''}package=${d.id}`,score:Math.round(fit*(1+.12*wk)*10)/10,fit:Math.round(fit*10)/10,why});}}
+  const shown=new Set(out.filter(o=>o.entry==='clip'&&o.bestPackage).map(o=>o.bestPackage));  // a package already stands behind a clip in the list: not twice
+  return out.filter(o=>o.entry!=='package'||!shown.has(o.package)).sort((a,b)=>b.score-a.score||a.seconds-b.seconds).slice(0,limit);}
  _describe(args){const {S,C}=this.locate(args.clip);if(typeof args.summary!=='string'||args.summary.length<10||args.summary.length>1200)throw Error('summary: two or three sentences (10-1200 characters)');
   const labels=args.labels??[];if(!Array.isArray(labels)||!labels.length||labels.some(l=>!allLabels.has(l)))throw Error('labels: one or more of '+JSON.stringify(depthLabels));
   const d={summary:args.summary,labels,people:args.people??{},peopleCount:args.peopleCount??null,shots:args.shots??{},keyframes:args.keyframes??[],by:args.by??'Claude in a session',at:new Date().toISOString()};C.description=d;C.described=true;this.save(S);
