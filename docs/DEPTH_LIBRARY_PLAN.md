@@ -158,3 +158,25 @@ The user pointed out that Ramsay 002 (a lord writing, a slow push-in), 035 (Rams
 - **What-if (`--what-if`).** Protecting only built, fixed and person-set clips shows what today's control rule would propose:
   - Ramsay 002 and 044 would become stills, as Tim decided.
   - Fight clip 023 would shrink to shots 30–33. The seize (25–29) measures slow, and the lift from below (34) reads as no movement, because the detector finds no one in armour from below. Growth cannot reach a shot the detector cannot see. That needs another signal (a shot where the detector loses the people it had, or the camera's slow push). It is open.
+
+## The check: overlap is not a fault (2026-10-26)
+
+`depth-check.py` treated two colours inside one detected person's box as a fault ("two colours"). When one person stands in front of another, that is right: Cersei seen behind a guard's arm, a guard behind Littlefinger's shoulder. Those overlaps held got-video-a-004 at 2 suggested stars after its hand boxes.
+
+Now two colours in one box are a note, "overlap: … holds X in front of Y", only when both of these hold:
+- **depth:** their median depths lie 35 grey levels or more apart (the tinted depth keeps depth as brightness);
+- **another person:** one of the two colours lies mostly (40%+) outside the box, so it belongs to someone else.
+
+Otherwise it stays a fault, now saying why: at the same depth, or both mostly inside the one person.
+
+**Measured.** Real overlaps were 45–82 grey levels apart:
+- got-video-a-004 at 2.93 s, the arm across Cersei: 45 and 82;
+- at 6.89 s, the shoulder before the guard: 81.
+
+Bodies split in two were 24–25 apart:
+- got-standoff-req1 at 2 s, Macbeth's near hands as a second person: 25;
+- got-tywin-016 at 2.65 s: 24.
+
+With 15 grey levels the split Macbeth passed as an overlap, because a near hand is nearer than its own head. The second condition alone did not catch it either: the detector had made a second "person" of the hands.
+
+**Rechecked all 19 built packages.** Only got-video-a-004 changed: suggested 2 → 4 stars. Part B's wrong hand colour and the other faults remain.

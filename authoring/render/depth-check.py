@@ -9,7 +9,9 @@ and clearly saturated (the depth's grey has none). The source frame at the same 
   unexpected: a colour appears for a person with no box at that moment;
   untinted person: the detector sees a large person with less than a quarter of the box tinted (a bystander: a note);
   missing subject: the same for the largest person in the frame (a fault: the subject is not tinted);
-  two colours: two colours each cover more than a quarter of one detected person;
+  two colours: two colours each cover more than a quarter of one detected person: one body painted in two colours. It is a note instead,
+    overlap: one person in front of another (an arm across, a shoulder), when the two lie 35 grey levels or more apart in depth AND one of
+    them lies mostly (40%+) outside this person's box (it belongs to someone else); a near hand of the same person stays a fault;
   box-shaped: a region fills more than 90% of its bounding box (a hand box, or a tint that ran along a box edge);
   head: a detected person's nose is seen but the colour covering their body does not reach it.
 With beats (the keyframe gate): a beat person with no colour at the keyframe is missing (a fault) when someone uncoloured is in
@@ -36,6 +38,7 @@ def tracked_at(t):
         T=np.array(tr['times']);j=int(np.argmin(abs(T-t)))
         if abs(T[j]-t)<.05:names|={n.removesuffix('-hand') for n,v in tr['tracks'].items() if v[j]}
     return names
+OVERLAP=35  # grey levels between the two colours' median depths: real overlaps measured 45-82 (got-video-a-004: an arm across Cersei, a shoulder before a guard), one person split in two 24-25 (a near hand, got-standoff-req1)
 def iou(p,q):
     w_=max(0,min(p[2],q[2])-max(p[0],q[0]));h_=max(0,min(p[3],q[3])-max(p[1],q[1]));i=w_*h_;return i/((p[2]-p[0])*(p[3]-p[1])+(q[2]-q[0])*(q[3]-q[1])-i+1e-9)
 def src_t(t):  # a package's time in the source video; a test cut (derivedFrom) maps through its segments and speed
@@ -81,7 +84,12 @@ for k in P['keyframes']:
         where=f'the person at {round((x0+x1)/2/w*100)}% across'
         main=(x1-x0)*(y1-y0)>=max((o[2]-o[0])*(o[3]-o[1]) for o,_ in dets)*.999  # the largest person in the frame: the subject, not a bystander
         if tot<.25:issues.append(f"{'missing subject' if main else 'untinted person'}: {where} (box {round((y1-y0)/h*100)}% tall) is {tot:.0%} tinted{' (the largest person in the frame)' if main else ''}")
-        elif len(top)>1 and cov[top[1]]>.25 and cov[top[0]]>.25:issues.append(f'two colours: {where} is {top[0]} {cov[top[0]]:.0%} and {top[1]} {cov[top[1]]:.0%}')
+        elif len(top)>1 and cov[top[1]]>.25 and cov[top[0]]>.25:  # two colours in one person: two people, one in front of the other, unless both lie at the same depth
+            v=hsv[y0:y1,x0:x1,2];m0,m1=masks[top[0]][y0:y1,x0:x1],masks[top[1]][y0:y1,x0:x1];d0,d1=float(np.median(v[m0])),float(np.median(v[m1]))
+            outside=lambda c,m:1-float(m.sum())/max(1.,float(masks[c].sum()))  # how much of that colour lies outside this person's box
+            other=max(outside(top[0],m0),outside(top[1],m1))
+            if abs(d0-d1)>=OVERLAP and other>=.4:near,far=(top[0],top[1]) if d0>d1 else (top[1],top[0]);issues.append(f'overlap: {where} holds {near} in front of {far} ({abs(d0-d1):.0f} grey levels apart): two people, one in front of the other')
+            else:issues.append(f'two colours: {where} is {top[0]} {cov[top[0]]:.0%} and {top[1]} {cov[top[1]]:.0%}'+(f' at the same depth ({abs(d0-d1):.0f} grey levels apart)' if abs(d0-d1)<OVERLAP else ', both mostly inside this one person: one body in two colours'))
         if kp and tot>=.25 and kp[0][2]>.5:
             nx,ny=int(kp[0][0]),int(kp[0][1]);c=top[0];r=max(3,int(.03*(y1-y0)))
             if 0<=nx<w and 0<=ny<h and not masks[c][max(0,ny-r):ny+r,max(0,nx-r):nx+r].any():issues.append(f'head: {where} has a face seen but {c} does not reach it')
