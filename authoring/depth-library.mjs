@@ -34,6 +34,19 @@ export function suggestStars(check,why){const notes=[];if(!check)return {stars:3
  if(faults.length)notes.push(`${faults.length} fault(s): `+faults.slice(0,3).join('; '));if(all.length>faults.length)notes.push(`${all.length-faults.length} note(s) (untinted extras, short heads, hand boxes) do not count`);
  const moving=(why??[]).some(w=>/camera moves|someone moves|bridged/.test(w));if(why&&!moving&&stars>3){stars=3;notes.push('little motion: a still camera with people placed');}
  return {stars,suggested:true,why:notes.length?notes:['no faults at the keyframes']};}
+// a fix renames people shot by shot; the description's letters follow (2026-10-27: got-video-a-013's Littlefinger E -> A left the text on the wrong
+// letters). fixes.json holds the whole set of renames from the build's names, so the change is the old set against the new: per shot, the name a
+// build letter had becomes the name it has now ("-" drops it). Keyframes take their shot's renames; the clip-wide people only when every shot
+// agrees, otherwise they are left and a note says so.
+export function renameDescription(desc,was,now,shots){const per={};
+ for(const s of shots){const o=was[s.index]??{},w=now[s.index]??{},m={};for(const n of new Set([...Object.keys(o),...Object.keys(w)])){const a=o[n]??n,b=w[n]??n;if(a!=='-'&&a!==b)m[a]=b;}per[s.index]=m;}
+ const apply=(p,m)=>{const out={};for(const [k,v] of Object.entries(p??{}))if(!(k in m))out[k]=v;for(const [k,v] of Object.entries(p??{}))if(k in m&&m[k]!=="-"&&!(m[k] in out))out[m[k]]=v;return out;};
+ const at=t=>shots.find(s=>s.start-1e-3<=t&&t<s.end+1e-3)??shots[shots.length-1];let note=null;
+ const keyframes=(desc.keyframes??[]).map(k=>{const s=at(k.time);return s&&Object.keys(per[s.index]).length?{...k,people:apply(k.people,per[s.index])}:k;});
+ const letters=new Set(Object.values(per).flatMap(m=>Object.keys(m)));const whole={};
+ for(const l of letters){const to=new Set(Object.values(per).map(m=>m[l]??l));if(to.size===1)whole[l]=[...to][0];else note='who '+[...letters].join(', ')+' are now differs by shot: the clip-wide people were left as they were; describe the clip again';}
+ const people=note?desc.people:apply(desc.people,whole);const changed=JSON.stringify(people)!==JSON.stringify(desc.people)||JSON.stringify(keyframes)!==JSON.stringify(desc.keyframes);
+ const {at:_a,...rest}=desc;return {changed,note,description:{...rest,people,keyframes}};}
 export class DepthLibrary{
  constructor(root){this.root=root;this.base=resolve(root,'.authoring/depth-library');this.packs=resolve(root,'.authoring/video-clay');this.store=JobStore.at(process.env.STUDIO_JOBS_DIR||resolve(root,'.authoring/jobs'));this.py=resolve(root,'.authoring/vision-venv/bin/python');}
  // the package's beats and one-line summary (docs/DEPTH_REFERENCE_IMPROVEMENT_PLAN.md, "Beats first"): stored in the package and
@@ -158,8 +171,11 @@ export class DepthLibrary{
  // a source with the same content (SHA-256 of the file), if one was ingested already
  sameAs(sha){return this.sources().find(S=>S.sha256===sha)??null;}
  build({clip,video}){const {S,C}=this.locate(clip);if(C.kind!=='control')throw Error('A still shot has no depth to build');const pid=C.package??C.id;if(arguments[0].expectedRevision!==undefined)this.checkRev(pid,arguments[0].expectedRevision);const job=this.job('build',['authoring/render/depth-build.py',S.id,C.id,...(video?['--video',video]:[])],{package:pid},r=>({...r,revision:this.bump(pid)}));return {...job,revision:this.rev(pid)};}
- _fix({clip,shots={},boxes=[]}){const {S,C}=this.locate(clip);if(!C.package)throw Error('Build the clip first');checkFixes(shots,boxes);
-  writeFileSync(resolve(this.base,S.id,C.id+'.fixes.json'),JSON.stringify({shots,boxes}));return new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-fix.py',S.id,C.id],{cwd:this.root,timeout:300000},(e,so,se)=>e?fail(Error((se||e.message).slice(-1500))):done(JSON.parse(so.trim().split('\n').pop()))));}
+ async _fix({clip,shots={},boxes=[]}){const {S,C}=this.locate(clip);if(!C.package)throw Error('Build the clip first');checkFixes(shots,boxes);
+  const ff=resolve(this.base,S.id,C.id+'.fixes.json');let was={};try{was=JSON.parse(readFileSync(ff,'utf8')).shots??{};}catch{}
+  writeFileSync(ff,JSON.stringify({shots,boxes}));const r=await new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-fix.py',S.id,C.id],{cwd:this.root,timeout:300000},(e,so,se)=>e?fail(Error((se||e.message).slice(-1500))):done(JSON.parse(so.trim().split('\n').pop()))));
+  if(!C.description)return r;const d=renameDescription(C.description,was,shots,S.shots.filter(x=>C.shots.includes(x.index)).map(x=>({index:x.index,start:x.start-C.start,end:x.end-C.start})));
+  if(!d.changed)return r;await this._describe({clip:C.id,...d.description});return {...r,description:{renamed:true,...(d.note?{note:d.note}:{})}};}
  jobStatus(id){return this.store.status(id);}
  // revisions of packages (docs/DEPTH_SERVICE_PLAN.md, step 1): every write through the service adds one; a write given
  // expectedRevision refuses a package that has moved on, so two agents cannot overwrite each other's work; writes to one package

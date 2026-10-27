@@ -9,7 +9,7 @@ import {join} from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 import {createServer} from 'node:net';
 import {JobStore,withLock} from '../authoring/jobs.mjs';
-import {DepthLibrary} from '../authoring/depth-library.mjs';
+import {DepthLibrary,renameDescription} from '../authoring/depth-library.mjs';
 const temp=async fn=>{const dir=await mkdtemp(join(tmpdir(),'service-test-'));try{return await fn(dir);}finally{await rm(dir,{recursive:true,force:true});}};
 const until=async(f,ms=10000)=>{const t0=Date.now();for(;;){const v=await f();if(v)return v;if(Date.now()-t0>ms)throw Error('timed out');await new Promise(r=>setTimeout(r,50));}};
 
@@ -106,4 +106,15 @@ test('the clip proposer grows a short fast shot into the quick cuts around it, a
  assert.equal(r.status,0,r.stderr);const c=JSON.parse(r.stdout).filter(x=>x.kind==='control');
  assert.deepEqual(c.map(x=>x.shots),[[2,3,4],[6]]);  // shot 1 is calm, shot 5 too long: both stop the growth; shot 6 is long enough on its own
  assert.match(c[0].why.join(' '),/grown: the action around a short shot/);assert.equal(c[0].start,3);assert.equal(c[0].end,6.6);
+});
+
+test('a fix renames the description\'s letters: a swap, a drop, a later undo, and shots that disagree', () => {
+ const shots=[{index:5,start:0,end:2},{index:6,start:2,end:4}];
+ const desc={summary:'s',labels:['still'],people:{A:'a guard',E:'Littlefinger',B:'Cersei'},keyframes:[{time:.15,people:{A:'walks',E:'stands'}},{time:3,people:{A:'walks',B:'watches'}}]};
+ const both={5:{A:'E',E:'A'},6:{A:'E',E:'A'}};let r=renameDescription(desc,{},both,shots);
+ assert.equal(r.changed,true);assert.equal(r.note,null);assert.deepEqual(r.description.people,{B:'Cersei',E:'a guard',A:'Littlefinger'});assert.deepEqual(r.description.keyframes[0].people,{E:'walks',A:'stands'});
+ assert.deepEqual(renameDescription(r.description,both,{},shots).description.people,desc.people);  // undoing the fix puts the letters back
+ assert.equal(renameDescription(desc,both,both,shots).changed,false);  // the same set again changes nothing
+ r=renameDescription(desc,{},{6:{A:'-'}},shots);assert.deepEqual(r.description.keyframes[1].people,{B:'watches'});assert.deepEqual(r.description.keyframes[0].people,desc.keyframes[0].people);
+ assert.match(r.note,/differs by shot/);assert.deepEqual(r.description.people,desc.people);  // A is gone in shot 6 only: the clip-wide text is left
 });
