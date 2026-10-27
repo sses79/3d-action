@@ -896,3 +896,7 @@ Plan and every measured result: `docs/DEPTH_SERVICE_PLAN.md`. For Tim's own agen
 - Step 4: Depth Anything 3 runs on mini4 when it answers (`da3-run.py`, exact frames, falls back here): 0.29 s a frame there against 0.53 here.
 - Step 5: `find_depth_clips` also searches packages and ranks by fit, then by what worked (a person's stars, used takes, status); "All packages" overview on the Depth library page.
 - Open: the people step (pose detector on this Mac's CPU) is now the slowest part of a build; a delivery has not yet been used end to end by an s-video session; `expectedRevision` is optional; clip `got-standoff-024` was built during the step 4 test and is not described.
+
+## 2026-10-27 · Wide shots in the depth library
+
+got-video-a-013 (high wide, six small people) built with 2–3 people tinted while the check passed. Fixed in `depth-check.py` (the size cutoff follows the shot) and `depth-build.py` (pieces of one person joined within a shot, up to 6 people, tracks held to the shot's edges). 013 now has all six and passes. Details in `docs/DEPTH_LIBRARY_PLAN.md`, "Wide shots: small people". Fixed clips were replayed, not rebuilt. 013 is not described yet.

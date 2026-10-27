@@ -180,3 +180,23 @@ Bodies split in two were 24–25 apart:
 With 15 grey levels the split Macbeth passed as an overlap, because a near hand is nearer than its own head. The second condition alone did not catch it either: the detector had made a second "person" of the hands.
 
 **Rechecked all 19 built packages.** Only got-video-a-004 changed: suggested 2 → 4 stars. Part B's wrong hand colour and the other faults remain.
+
+## Wide shots: small people (2026-10-27)
+
+got-video-a-013 is a high wide shot looking down on the courtyard: Cersei, Littlefinger and four guards, each 23–31% of the frame tall. The first build tinted 2–3 of the 6, and the check still passed.
+
+**Check.** It skipped anyone under 30% of the frame tall, so in a wide shot it never saw the untinted people. Now the cutoff follows the shot: half the largest detected person's height, between 12% and 30% of the frame. On 013's first build it then reported 3 and 1 untinted people at its two keyframes. Clips 004 and 024: no change.
+
+**Build.** The 15% size floor wasn't what dropped them. Two other things did:
+- **Pieces.** The detector loses a small person for a few frames, and each loss started a new track. Cersei came out as three pieces, none seen in a third of the shot. Now, within a shot, a piece that starts within 1 s of another's end, at the same place (within 0.45 of a box height) and about the same size (0.6–1.65×), continues it. Real joins in 013 measured up to 0.41; a wrong one in a close, crowded shot of 004 measured 0.55.
+- **Cap.** `--people` now defaults to 6 (was 4).
+- **Edges.** A track that starts or ends within 1 s of its shot's edge, away from the frame's edge (so not someone walking out), is held to the shot's edge. Without this the left guard had no colour in the first 0.27 s.
+
+**Result.** 013 has all six people (A–F) through the shot, and the check passes. A rebuild took 8 s from the saved depth. Seen from above, the floor is almost as near as the people, so the colours have flat lower edges. One guard's colour runs a little into a pillar at 4 s.
+
+**Replayed on fixed clips** (the detector cache, without rebuilding them):
+- got-video-a-004: shot 5 finds a fifth person; shot 6's wrong join is gone at 0.45.
+- got-ramsay-026: shot 27 finds 3 people (was 1).
+- got-ramsay-030: one track runs longer.
+
+Fixed and rated clips were not rebuilt. A rebuild would replace their hand fixes.

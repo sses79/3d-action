@@ -4,7 +4,7 @@ with a person's shape? Run after a build or a fix (depth-build.py and depth-fix.
   .authoring/vision-venv/bin/python authoring/render/depth-check.py SOURCE-ID package:PACKAGE-ID   (a package built by hand)
 At each keyframe the tinted depth frame is read back: each colour's region is the pixels whose hue is nearest that colour's hue
 and clearly saturated (the depth's grey has none). The source frame at the same time gives the people the pose detector sees
-(the cache from the build; at least 30% of the picture tall, confidence 0.5) and their nose and shoulders. Issues:
+(the cache from the build; at least 30% of the picture tall, or in a wide shot half the largest person's height down to 12%; confidence 0.5) and their nose and shoulders. Issues:
   missing: a person with a box at that moment (the build's tracks, the fixes, boxes by hand) has no colour (or under 0.3% of the picture);
   unexpected: a colour appears for a person with no box at that moment;
   untinted person: the detector sees a large person with less than a quarter of the box tinted (a bystander: a note);
@@ -65,9 +65,10 @@ for k in P['keyframes']:
     issues=[];kf=round(at*vfps) if at is not None else None;q=cache/f'{kf}.json' if kf is not None else pathlib.Path('/nonexistent');dets=[]
     if q.exists():
         dd=json.loads(q.read_text());sx=w/S['size'][0]
+        big=max([(b[3]-b[1])*sx for b in dd['boxes']] or [0]);lo=max(.12*h,min(.3*h,.5*big))  # a wide shot (everyone small): people half the largest one's height count, down to 12% of the picture (got-video-a-013: a high wide, people 23-31% tall, all were skipped)
         for b,kp in zip(dd['boxes'],dd.get('keypoints') or [[]]*len(dd['boxes'])):
             b=[v*sx for v in b];
-            if b[3]-b[1]<.3*h:continue
+            if b[3]-b[1]<lo:continue
             if any(iou(b,o)>.5 for o,_ in dets):continue  # the detector sometimes finds one person twice
             dets.append((b,[(x*sx,y*sx,c) for x,y,c in kp] if kp else []))
     for c,n in want.items():

@@ -3,17 +3,17 @@
 Reads .authoring/depth-library/<source>/source.json (depth-ingest.py) and, for the clip's time span:
 1. depth: Depth Anything 3 through ComfyUI (da3-depth.py), stored 960 wide, kept as <clip>.depth.npz in the source's folder;
 2. people: the pose detector on every frame (cached per video as follow.py does), boxes joined frame to frame by overlap into
-   tracks within each shot; a track counts when it is seen in at least a third of its shot and is at least 15% of the picture
-   tall; the biggest --people of them per shot are kept. Across cuts a track takes the name of the earlier person whose
+   tracks within each shot (a piece that starts within a second of another's end, at the same place and size, continues it); a track counts when it is seen in at least a third of its shot and is at least 15% of the picture
+   tall; the biggest --people (6) of them per shot are kept. Across cuts a track takes the name of the earlier person whose
    clothes match closely (a colour histogram of the box's upper part, correlation 0.85 or more), or a new letter: A, B, C...
-   by first appearance. Gaps inside a track are filled by blending. Names are roles, to be fixed on the page when wrong;
+   by first appearance. Gaps inside a track are filled by blending; a track that starts or ends within a second of its shot's edge, away from the frame's edge, is held to it. Names are roles, to be fixed on the page when wrong;
 3. tint: depth-tint.py with those tracks (A blue, B orange, C green, D pink, E purple, F yellow, G red, H navy);
 4. keyframes: the start of every shot (0.15 s in) and the middle of shots longer than 4 s, at most 8;
 5. package: video-clay-pack.py into .authoring/video-clay/<clip-id>/ (tinted depth only), with keyframe text left to the
    describe step ("not described"); the clip in source.json becomes "built" with its package id and the build record.
 Timing is printed and stored. The source video must be at the path recorded at ingest unless --video gives it."""
 import re,sys,os,json,argparse,hashlib,pathlib,subprocess,time,numpy as np,cv2
-p=argparse.ArgumentParser();p.add_argument('source');p.add_argument('clip');p.add_argument('--video');p.add_argument('--people',type=int,default=4);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('source');p.add_argument('clip');p.add_argument('--video');p.add_argument('--people',type=int,default=6);a=p.parse_args()
 root=pathlib.Path('.authoring/depth-library')/a.source;S=json.load(open(root/'source.json'));C=next(c for c in S['clips'] if c['id']==a.clip)
 assert C['kind']=='control','a still shot has no depth to build'
 video=a.video or S['file'];assert os.path.exists(video),f'source video not at {video}; pass --video'
@@ -57,6 +57,14 @@ for s in shots:
             if best[0]>=.3:tr['boxes'][k]=dets[k][best[1]];tr['hist'].append(hists[k][best[1]]);tr['last']=k;used.add(best[1])
         for j,b in enumerate(dets[k]):
             if j not in used:tracks.append({'boxes':{k:b},'hist':[hists[k][j]],'last':k})
+    for tr in sorted(tracks,key=lambda t:min(t['boxes'])):  # stitch: a person the detector loses for more than 3 frames (small, seen from above) comes back as a new track; a piece that starts within a second of another's end, where it ended (within 0.45 of a box height: real joins in got-video-a-013 measured up to 0.41, a wrong one in a close shot of got-video-a-004 0.55) and about the same size, continues it (got-video-a-013: Cersei in three pieces, none a third of the shot)
+        k0=min(tr['boxes']);b=tr['boxes'][k0];cand=[]
+        for o in tracks:
+            if o is tr or o.get('into') or o['last']>=k0 or k0-o['last']>fps:continue
+            e=o['boxes'][o['last']];h=(e[3]-e[1]+b[3]-b[1])/2;dist=np.hypot((e[0]+e[2]-b[0]-b[2])/2,(e[1]+e[3]-b[1]-b[3])/2)
+            if dist<=.45*h and .6<=(b[3]-b[1])/max(1,e[3]-e[1])<=1.65:cand.append((dist,o))
+        if cand:o=min(cand,key=lambda c:c[0])[1];o['boxes'].update(tr['boxes']);o['hist']+=tr['hist'];o['last']=tr['last'];tr['into']=o
+    tracks=[tr for tr in tracks if not tr.get('into')]
     keep=[tr for tr in tracks if len(tr['boxes'])>=max(3,len(ks)/3) and np.median([b[3]-b[1] for b in tr['boxes'].values()])>=.15*H]
     keep=sorted(keep,key=lambda tr:-np.median([(b[2]-b[0])*(b[3]-b[1]) for b in tr['boxes'].values()])*len(tr['boxes']))[:a.people]
     taken=set();per_shot[s['index']]=[]
@@ -68,6 +76,10 @@ for s in shots:
         kk=sorted(tr['boxes'])  # gaps inside the track: blended
         for x,y in zip(kk,kk[1:]):
             for z in range(x+1,y):u=(z-x)/(y-x);people[n]['boxes'][z]=[p_+(q_-p_)*u for p_,q_ in zip(tr['boxes'][x],tr['boxes'][y])]
+        for k_,side in ((kk[0],[z for z in ks if z<kk[0]]),(kk[-1],[z for z in ks if z>kk[-1]])):  # the detector finds someone late or loses them early (small, from above): held to the shot's edge when that is within a second and they are not at the frame's edge (walking out)
+            b_=tr['boxes'][k_]
+            if side and len(side)<=fps and b_[0]>.03*W and b_[2]<.97*W and b_[1]>.03*H and b_[3]<.97*H:
+                for z in side:people[n]['boxes'][z]=b_
 took['people']=round(time.perf_counter()-t,1)
 names=names[:len(colours)]
 trk=root/f'{a.clip}.tracks.json';json.dump(dict(video=video,start=t0,end=t1,times=[k/fps for k in frames],size=[W,H],tracks={n:[({'box':people[n]['boxes'][k]} if k in people[n]['boxes'] else None) for k in frames] for n in names},
