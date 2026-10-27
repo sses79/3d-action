@@ -200,3 +200,32 @@ got-video-a-013 is a high wide shot looking down on the courtyard: Cersei, Littl
 - got-ramsay-030: one track runs longer.
 
 Fixed and rated clips were not rebuilt. A rebuild would replace their hand fixes.
+
+## ARROW for people the detector misses: a test (2026-10-27)
+
+[ARROW](https://github.com/ifradlin/arrow) (RWTH Aachen, released 2026-10-12) reads a set of frames together and tracks any picked point in 3D, along with depth, point clouds and camera poses. Its encoder is Depth Anything 3 Giant. Code: MIT. **Weights: CC BY-NC 4.0, plus Waymo's non-commercial terms.** Tim confirmed this project's use is non-commercial.
+
+**Set-up.** Installed on mini4 in `~/Yun/arrow-runner` (`uv sync`, MPS). Weights are `weights/model.safetensors`, 5.29 GB. The test script is `authoring/render/arrow-track.py`: it takes seed points in the first frame as fractions of the picture, and gives each point's position in every frame and a visibility score (0–1).
+
+**Speed.** 23 frames at 504 px in 28 s on mini4, about 1.2 s a frame. The first run took 52 s, which looks like warm-up. Loading the model takes 5–6 s. By comparison, the pose detector on this Mac takes about 0.55 s a frame.
+
+**Results.** Two seed points per person, 23 frames each:
+- **got-video-a-013**, six small people from above (5.5 s): scored against the build's tracks.
+  - Cersei, Littlefinger, the top guard and the bottom guard: on their own person in every frame of the shot, including the bottom guard walking out of the frame.
+  - The left guard: lost when he crouches by the well (about 3 s); his points jump to Cersei and the top guard.
+  - The right guard: one of his two points slides onto the top guard's feet as his cloak swirls.
+  - Visibility separates them: points that hold stay at 0.93–0.98; points that drift fall to 0.5–0.65.
+- **got-standoff shot 34**, the lift from below, where the detector finds no one:
+  - The figure lifting: both points hold all the way through (0.76–0.95).
+  - The lifted figure: his body point holds (0.72–0.79); his face point is marked hidden while the sword crosses it.
+- **got-ramsay shot 27**, the embrace:
+  - Ramsay's face holds right through it (0.97–0.98); his chest is marked hidden once Roose's arm covers it.
+  - Roose's points stay on his back and head, but at 0.55–0.62, and one sits on the edge between the two heads.
+
+**What it means.** ARROW can follow people where the detector cannot: armour from below, two bodies in an embrace. It is several times slower than the detector, and it loses small people who change shape fast. So it fits as a fallback on the shots where the check reports someone missing, not as the people step for every build.
+
+**Not built yet:**
+- Seeds from a person's box (detector or hand box): about 10 points on the person's own depth.
+- Per frame, a box from that person's visible points (visibility 0.7 or more), passed to the tint as a track. It would not be a hand box, so it keeps the depth shape.
+- Running it on every frame of a clip in 24-frame chunks that overlap.
+- Measuring it on 023 and 026 against their hand fixes.
