@@ -280,4 +280,12 @@ Changes to the marker split that came with it:
 
 A mistake made twice in this work: a comment put in the middle of a dense line commented out the statements after it (the background markers, then the seed transform in `arrow-track.py`). Put comments only at the end of a line.
 
+**Shot 26, Ramsay from behind (0–3 s).** It was untinted for its first 1.3 s. Ramsay fills the frame with his back to the camera, dark and with his head cut off, and the pose detector finds nobody until Roose steps out from behind him at 1.6 s. Then only Roose was coloured, and his box spilled onto Ramsay's shoulder. Now Ramsay is followed from keys at 0.3 s and 2.0 s, and Roose from a key at 2.7 s. Ramsay is orange from the first frame, Roose blue from when he appears, and the check is unchanged (revision 21). Two more tint rules came out of it:
+- **Stray points:** a seed on Ramsay's back stayed where Roose stepped into view and turned Roose's head orange. A point is now dropped when its own nearest point is over 5% of the frame away and someone else's point is nearer. A first rule based on depth dropped Roose's own head points, because his head is nearer in the depth than his body.
+- **Grow area:** it runs down to the bottom of the frame, because bodies go on below the detector's boxes.
+
+Keys need boxes that stay clear of the other person: a first box for Ramsay at 2.0 s took in Roose's face, and some of Ramsay's seeds landed there.
+
+Still open in 026: Ramsay's head, cut off at the top in shot 26, stays grey (all his seeds are on his back). The guard at the back left of shot 26 is not tinted.
+
 Next: fight clip 023.

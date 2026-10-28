@@ -86,18 +86,25 @@ def widen(n,b):
     x0,y0,x1,y1=b;bw,bh=x1-x0,y1-y0;x0,y0,x1,y1=[int(round(v)) for v in (x0-.25*bw,y0-.35*bh,x1+.25*bw,y1)];x0,y0=max(0,x0),max(0,y0);x1,y1=min(W,x1),min(H,y1)
     return (0 if x0<.04*W else x0),y0,(H if H-y1<.08*H else y1),(W if W-x1<.04*W else x1)  # near an edge of the frame: carried to it
 def grow(k,g,who,owner,near,seen):
-    """Followed people in frame k, from their ARROW points: markers on the points (those far nearer than the background); as background what lies
+    """Followed people in frame k, from their ARROW points: markers on the points (those far nearer than the background, and not a stray among
+    another followed person's points); as background what lies
     well behind every person whose box, margin or the area below it holds the pixel (under 0.9 of their furthest points' depth, the 5th percentile: a face is
     much nearer than its own shoulders); a watershed over the depth and the picture's brightness (evened out, CLAHE); each keeps what grew from their points from the top of their
     (widened) box down. In an embrace the nearer-part split kept only arms and shoulders: the points also sit on heads and backs."""
-    wb={n:widen(n,boxes[k][n]) for _,n in who};mx,my=int(.04*W),int(.04*H);X0=max(0,min(b[0] for b in wb.values())-mx);Y0=max(0,min(b[1] for b in wb.values())-my);Y1=min(H,max(b[2] for b in wb.values())+my);X1=min(W,max(b[3] for b in wb.values())+mx)  # a margin round the boxes: the background outside them is a marker too
+    wb={n:widen(n,boxes[k][n]) for _,n in who};mx,my=int(.04*W),int(.04*H);X0=max(0,min(b[0] for b in wb.values())-mx);Y0=max(0,min(b[1] for b in wb.values())-my);Y1=H;X1=min(W,max(b[3] for b in wb.values())+mx)  # a margin round the boxes (the background outside them is a marker too), down to the bottom of the frame (bodies go on below the boxes)
     roi=g[Y0:Y1,X0:X1];inside=np.zeros(roi.shape,bool)
     for x0,y0,y1,x1 in wb.values():inside[y0-Y0:y1-Y0,x0-X0:x1-X0]=True
     taken=owner[Y0:Y1,X0:X1]>=0;mk=np.zeros(roi.shape,np.int32);r=max(3,int(.01*W));lo={};mine=np.zeros(roi.shape,bool)
+    PP={}
     for i,n in who:
         x0,y0,y1,x1=wb[n];P=[(int(x)-X0,int(y)-Y0) for x,y in pts[k][n] if x0<=x<x1 and y0<=y<y1];d=np.array([roi[y,x] for x,y in P],float)
+        if len(P)>=3:PP[n]=[p for p,v in zip(P,d) if v>=.6*np.median(d)]  # a point drifted onto the wall behind is dropped
+    near_=lambda q,Q:min((np.hypot(q[0]-u,q[1]-v) for u,v in Q if (u,v)!=q),default=1e9)
+    PP={n:[q for q in P if not (near_(q,P)>.05*W and any(near_(q,PP[m])<near_(q,P) for m in PP if m!=n))] for n,P in PP.items()}  # a point stuck where someone else stepped into view (026: a seed on Ramsay's back left on Roose's head as he came out from behind): dropped when it stands apart from its own points and nearer someone else's
+    for i,n in who:
+        x0,y0,y1,x1=wb[n];P=PP.get(n,[])
         if len(P)<3:continue
-        P=[p for p,v in zip(P,d) if v>=.6*np.median(d)];lo[n]=np.percentile([roi[y,x] for x,y in P],5);a0,a1=max(0,x0-mx-X0),x1+mx-X0;mine[y0-Y0:,a0:a1]|=roi[y0-Y0:,a0:a1]>=.9*lo[n]  # a point drifted onto the wall behind is dropped; in their box, beside it (the margin) and below it, what is not behind all of their points may be them (a box on the head only: the shoulders)
+        lo[n]=np.percentile([roi[y,x] for x,y in P],5);a0,a1=max(0,x0-mx-X0),x1+mx-X0;mine[y0-Y0:,a0:a1]|=roi[y0-Y0:,a0:a1]>=.9*lo[n]  # in their box, beside it (the margin) and below it, what is not behind all of their points may be them (a box on the head only: the shoulders)
         for x,y in P:cv2.circle(mk,(x,y),r,i+2,-1)
     if not lo:return set()
     bg=~mine&(mk==0);mk[bg]=1;mk[taken]=1
