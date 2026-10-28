@@ -249,3 +249,20 @@ The first version moved the seed box with the points alone. In the dark embrace 
   - At 5.3 s, with both bodies at almost the same depth, the colours fill their boxes.
 
 026 was put back to its hand boxes (revision 3, the same check as before). Next, for shape: split the frame between the followed people with their own visible points as markers (a watershed on the depth), not a nearer-part cut per box. The points sit on heads and backs as well as arms, so the split would follow the depth edge between the two bodies.
+
+### Built: the marker split for followed people (2026-10-28)
+
+`arrow-follow.py` now keeps each point's place per frame, and `depth-fix.py` carries the visible points (at least 3) into the tracks between ARROW frames. `depth-tint.py` grows all followed people in a frame at once with a watershed instead of cutting each box by depth:
+- **Markers:** small discs on each person's points. A point far behind the person's other points (under 0.6 of their median) is dropped as drifted onto the wall.
+- **Background:** inside a box, what lies well behind that person (under 0.8 of their points' 25th-percentile depth, for every box that holds the pixel); in a margin of 4% round the boxes, what is further than the people. Anything nearer outside the boxes (their own shoulders and arms in a close shot) is left to be flooded from the points.
+- **Edges:** the depth and the picture's own brightness (evened out with CLAHE). The depth alone runs smoothly from Ramsay's dark coat into the lit wall, and his colour flooded the wall as a rectangle.
+- **Where it may go:** each person keeps what grew from their points, from the top of their box down and sideways as far as it grew. A box within 4% of a frame edge runs to it.
+- A followed person with fewer than 3 points in a frame falls back to the old nearer-part cut.
+
+**got-ramsay-026 again** (revision 9, kept; 14 s per refix after the first, which re-ran ARROW once for the points):
+- 3.2–4 s: Ramsay clean against a grey wall; Roose's back in the foreground blue to its edge, where the hand boxes left it grey.
+- 6.4–9 s: both heads and both bodies split along a real edge, and Ramsay's hand on Roose's back is orange (his).
+- 5.3 s: Roose has no visible points (ARROW's visibility drops there), so he is still a rectangle; Ramsay has 5 points and only slivers.
+- Check: 6.32 s passes the head test the box version failed. It flags two colours in Roose at 6.32 s (blue 67%, orange 26%, 15 grey levels apart): that is Ramsay's arm across his back, which the check cannot tell from a fault. 9.81 s (shot 28, hand boxes) is flagged as before.
+
+Next: the frames where a followed person has too few points (seed again at a second time in the shot, or hold the last points for a few frames), then fight clip 023.

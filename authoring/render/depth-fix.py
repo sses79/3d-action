@@ -38,7 +38,7 @@ for e in fx.get('follow',[]):  # ARROW: the person in a box followed through the
     sh=next((x for x in shots if str(x['index'])==str(e['shot'])),None)
     if sh is None:continue
     key=hashlib.sha256(json.dumps([T['video'],round(sh['start'],3),round(sh['end'],3),round(e['time'],3),[round(v,4) for v in e['box']]]).encode()).hexdigest()[:12];fo=root/f'{clip}.follow-{key}.json'
-    if not fo.exists():
+    if not fo.exists() or 'points' not in json.load(open(fo)):  # a follow from before points were kept: run again
         r=subprocess.run([sys.executable,'authoring/render/arrow-follow.py',T['video'],f"{sh['start']:.3f}",f"{sh['end']:.3f}",f"{T['start']+e['time']:.3f}",','.join(f'{v:.4f}' for v in e['box']),str(root/f'{clip}.depth.npz'),str(fo),'--detections',str(pathlib.Path('.authoring/reconstruction-cache')/('detections-%s-yolo26s-pose-1920'%S['sha256'][:16]))],capture_output=True,text=True)
         if r.returncode:sys.exit(f"follow {e['name']} in shot {e['shot']} failed:\n"+(r.stderr or r.stdout)[-1500:])
     R=json.load(open(fo));rt=R['times'];W_,H_=T['size'];tr=tracks.setdefault(e['name'],[None]*len(T['times']))
@@ -49,6 +49,12 @@ for e in fx.get('follow',[]):  # ARROW: the person in a box followed through the
         if b0 is None or b1 is None:b=b0 if abs(t-rt[j])<=abs(t-rt[j1]) else b1  # next to a frame with no box: the nearer one (none when that is the empty one)
         else:u=0 if rt[j1]<=rt[j] else min(1,max(0,(t-rt[j])/(rt[j1]-rt[j])));b=[p_+(q_-p_)*u for p_,q_ in zip(b0,b1)]
         tr[k]={'box':[b[0]*W_,b[1]*H_,b[2]*W_,b[3]*H_]} if b else None
+        if b:  # the points between the two ARROW frames (a seed seen in both moves between them; seen in one only, held when that frame is within 0.1 s)
+            P0,P1=R['points'][j],R['points'][j1];pp=[]
+            for p0,p1 in zip(P0,P1):
+                q=[p0[0]+(p1[0]-p0[0])*u,p0[1]+(p1[1]-p0[1])*u] if p0 and p1 and b0 and b1 else p0 if p0 and abs(t-rt[j])<=.1 else p1 if p1 and abs(t-rt[j1])<=.1 else None
+                if q:pp.append([round(q[0]*W_,1),round(q[1]*H_,1)])
+            if len(pp)>=3:tr[k]['points']=pp
     if e['name'] not in colours:colours[e['name']]=next(c for c in PAL if c not in colours.values()) if len(colours)<len(PAL) else 'gray'
     followed.append(dict(name=e['name'],shot=str(e['shot']),frames=len(rt),fromDetector=R['source'].count('detector'),blended=R['source'].count('blended'),fromPoints=R['source'].count('points'),none=R['boxes'].count(None)))
 tracks={n:v for n,v in tracks.items() if any(v)}

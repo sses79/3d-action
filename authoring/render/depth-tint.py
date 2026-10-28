@@ -14,6 +14,8 @@ ending near the bottom of the frame is carried to it; where two people's boxes o
 --colors is tinted: the grey becomes the brightness, the colour its hue (saturation --strength), so the depth still reads.
 People not in --colors stay grey. OUT.json beside the video lists the colours and who they are; OUT.jpg is a sheet to check by eye.
 Boxes are widened by a quarter each side and a third upward first (a detector's box cuts the top of the head and loose hair).
+A followed person (boxes with ARROW points, depth-fix.py follow) is grown from their own points instead: a watershed over the depth
+with all followed people in the frame as markers and the far background as the boundary (an embrace: heads and backs, not just arms).
 Limits: a person's outline is the box's near part, so something in front of them inside their box is tinted too, and an arm
 reaching out of the box is not; a person with no box in a frame is not tinted in that frame."""
 import sys,os,types,glob,json,subprocess,time,argparse
@@ -57,7 +59,7 @@ else:
     
 took=time.perf_counter()-began
 # who is where: boxes per frame by name, from the track files
-colors={kv.split('=')[0]:kv.split('=')[1] for kv in a.colors.split(',') if '=' in kv};exact=set();boxes=[{} for _ in range(N)]
+colors={kv.split('=')[0]:kv.split('=')[1] for kv in a.colors.split(',') if '=' in kv};exact=set();boxes=[{} for _ in range(N)];pts=[{} for _ in range(N)]
 for f in [x for x in a.tracks.split(',') if x]:
     f,*ren=f.split(':');ren=dict(r.split('=') for r in ren)  # file.json:old=new renames a track (a person named wrongly in the follow step)
     tr=json.load(open(f));T=np.array(tr['times'])
@@ -67,7 +69,9 @@ for f in [x for x in a.tracks.split(',') if x]:
         if name not in colors:continue
         for k in range(N):
             j=int(np.argmin(np.abs(T-times[k])))
-            if abs(T[j]-times[k])<.6/fps and v[j]:boxes[k][name]=v[j]['box']
+            if abs(T[j]-times[k])<.6/fps and v[j]:
+                boxes[k][name]=v[j]['box']
+                if v[j].get('points'):pts[k][name]=v[j]['points']  # ARROW points on a followed person (depth-fix.py follow)
 for n in colors:  # a track that drops out for up to half a second (a turn, a blur) is carried across by blending its boxes
     have=[k for k in range(N) if n in boxes[k]]
     for k0,k1 in zip(have,have[1:]):
@@ -76,12 +80,42 @@ for n in colors:  # a track that drops out for up to half a second (a turn, a bl
 EDGE=a.edge;H,W=grey.shape[1:];sx=W/cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 for b in boxes:
     for n in b:b[n]=[v*sx for v in b[n]]
+for b in pts:
+    for n in b:b[n]=[[x*sx,y*sx] for x,y in b[n]]
+def widen(n,b):
+    x0,y0,x1,y1=b;bw,bh=x1-x0,y1-y0;x0,y0,x1,y1=[int(round(v)) for v in (x0-.25*bw,y0-.35*bh,x1+.25*bw,y1)];x0,y0=max(0,x0),max(0,y0);x1,y1=min(W,x1),min(H,y1)
+    return (0 if x0<.04*W else x0),y0,(H if H-y1<.08*H else y1),(W if W-x1<.04*W else x1)  # near an edge of the frame: carried to it
+def grow(k,g,who,owner,near,seen):
+    """Followed people in frame k, from their ARROW points: markers on the points (those far nearer than the background); as background what in
+    their boxes lies well behind them (under 0.8 of their points' depth) and what lies further than them in a margin round the boxes; a watershed over the depth and the picture's brightness (evened out, CLAHE); each keeps what grew from their points from the top of their
+    (widened) box down. In an embrace the nearer-part split kept only arms and shoulders: the points also sit on heads and backs."""
+    wb={n:widen(n,boxes[k][n]) for _,n in who};mx,my=int(.04*W),int(.04*H);X0=max(0,min(b[0] for b in wb.values())-mx);Y0=max(0,min(b[1] for b in wb.values())-my);Y1=min(H,max(b[2] for b in wb.values())+my);X1=min(W,max(b[3] for b in wb.values())+mx)  # a margin round the boxes: the background outside them is a marker too
+    roi=g[Y0:Y1,X0:X1];inside=np.zeros(roi.shape,bool)
+    for x0,y0,y1,x1 in wb.values():inside[y0-Y0:y1-Y0,x0-X0:x1-X0]=True
+    taken=owner[Y0:Y1,X0:X1]>=0;mk=np.zeros(roi.shape,np.int32);r=max(3,int(.01*W));lo={};mine=np.zeros(roi.shape,bool)
+    for i,n in who:
+        x0,y0,y1,x1=wb[n];P=[(int(x)-X0,int(y)-Y0) for x,y in pts[k][n] if x0<=x<x1 and y0<=y<y1];d=np.array([roi[y,x] for x,y in P],float)
+        if len(P)<3:continue
+        P=[p for p,v in zip(P,d) if v>=.6*np.median(d)];lo[n]=np.percentile([roi[y,x] for x,y in P],25);mine[y0-Y0:y1-Y0,x0-X0:x1-X0]|=roi[y0-Y0:y1-Y0,x0-X0:x1-X0]>=.8*lo[n]  # a point drifted onto the wall behind is dropped; in a box, what is not well behind its person may be them
+        for x,y in P:cv2.circle(mk,(x,y),r,i+2,-1)
+    if not lo:return set()
+    bg=((~inside&(roi<max(lo.values())))|(inside&~mine))&(mk==0);mk[bg]=1;mk[taken]=1  # outside the boxes only what is further than the people: something nearer there (their own shoulders and arms in a close shot) is flooded from their points
+    lum=cv2.createCLAHE(2.,(8,8)).apply(cv2.cvtColor(frames[k],cv2.COLOR_RGB2GRAY))[Y0:Y1,X0:X1];dz=cv2.GaussianBlur(roi,(5,5),0);lab=cv2.watershed(np.dstack([dz,dz,cv2.GaussianBlur(lum,(5,5),0)]),mk.copy());done=set()  # the depth's edges and the picture's own (a dark coat against a lit wall where the depth runs smoothly from shoulder to wall)
+    for i,n in who:
+        x0,y0,y1,x1=wb[n];m=np.zeros(roi.shape,np.uint8);m[y0-Y0:]=(lab[y0-Y0:]==i+2)  # from their box's top down (a close shot: the detector boxes the head and shoulders, the body goes on down), sideways as far as it grew
+        m=cv2.morphologyEx(m,cv2.MORPH_CLOSE,np.ones((5,5),np.uint8));m[taken]=0
+        if not m.any():continue
+        owner[Y0:Y1,X0:X1][m>0]=i;near[i]=float(np.median(roi[m>0]));seen[n]+=1;done.add(n)
+    return done
 out=np.zeros((N,H,W,3),np.uint8);owner=np.full((H,W),-1,np.int8);seen={n:0 for n in colors}
 names=list(colors);hues={n:cv2.cvtColor(np.uint8([[[int(NAMED.get(c,c)[i:i+2],16) for i in (5,3,1)]]]),cv2.COLOR_BGR2HSV)[0,0,0] for n,c in colors.items()}
 for k in range(N):
-    g=grey[k];owner[:]=-1;near={}
+    g=grey[k];owner[:]=-1;near={};grown=set()
     for i,n in sorted(enumerate(names),key=lambda x:x[1] not in exact):  # boxes by hand first: they claim their pixels before the detector's people are worked out
-        if n not in boxes[k]:continue
+        if n not in boxes[k] or n in grown:continue
+        if n not in exact and n in pts[k] and not grown:  # followed people (ARROW points): all of them at once, each grown from their own points over the depth (a watershed), far background as the boundary marker
+            grown=grow(k,g,[(i_,n_) for i_,n_ in enumerate(names) if n_ in pts[k] and n_ in boxes[k] and n_ not in exact],owner,near,seen)
+            if n in grown:continue
         x0,y0,x1,y1=boxes[k][n];bw,bh=x1-x0,y1-y0;x0,y0,x1,y1=[int(round(v)) for v in ((x0,y0,x1,y1) if n in exact else (x0-.25*bw,y0-.35*bh,x1+.25*bw,y1))];x0,y0=max(0,x0),max(0,y0);x1,y1=min(W,x1),min(H,y1)  # the detector's boxes cut the top of the head and loose hair: widened, the depth edges keep the tint to the person
         if H-y1<.08*H and n not in exact:y1=H  # a person cut by the bottom of the frame: carried to it
         if x1-x0<8 or y1-y0<8:continue

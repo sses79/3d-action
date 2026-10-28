@@ -901,3 +901,9 @@ Plan and every measured result: `docs/DEPTH_SERVICE_PLAN.md`. For Tim's own agen
 
 got-video-a-013 (high wide, six small people) built with 2–3 people tinted while the check passed. Fixed in `depth-check.py` (the size cutoff follows the shot) and `depth-build.py` (pieces of one person joined within a shot, up to 6 people, tracks held to the shot's edges). 013 now has all six and passes. Details in `docs/DEPTH_LIBRARY_PLAN.md`, "Wide shots: small people". Fixed clips were replayed, not rebuilt. 013 is not described yet.
 - Renames now carry into the description: `fix_depth_clip` on a described clip compares the old renames with the new ones and moves the description's letters with them (`renameDescription` in `authoring/depth-library.mjs`). Keyframes follow their shot's renames. The clip-wide people move only when every shot agrees; otherwise they stay as they are and the result carries a note. Tried on 013 by undoing the Littlefinger swap and redoing it: the description followed both times, ending with Littlefinger as A (revision 11).
+
+## 2026-10-28 · ARROW follow and the marker split
+
+- `fix_depth_clip` takes `follow` entries (pushed in 30f8751): ARROW on mini4 follows a person through a shot; each frame takes the detector box that holds most of their points.
+- Marker split (uncommitted at the time of writing): `arrow-follow.py` keeps the points, `depth-fix.py` carries them into the tracks, and `depth-tint.py` grows all followed people in a frame from their points with one watershed over depth plus picture brightness. Details and limits are in `docs/DEPTH_LIBRARY_PLAN.md`, "Built: the marker split".
+- got-ramsay-026 now uses follow for Roose and Ramsay in shot 27 (revision 9). Heads, Roose's back and Ramsay's hand are right. Still open: 5.3 s, where Roose has no visible points. The check flags Ramsay's arm across Roose's back as two colours.

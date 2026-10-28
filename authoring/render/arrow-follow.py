@@ -11,7 +11,7 @@ START END: the shot in source seconds; SEED-TIME: a source time inside it where 
    embrace the detector finds both bodies but cannot keep them apart); else the seed box moved by the points' median shift and scaled
    by their spread (0.75-1.33: in the dark the points bunch up and the box collapsed). Fewer than 3: no box (out of view or lost).
    A frame without a detector box between two that have one, less than 1.5 s apart, is blended between them.
-OUT.json: {times (source seconds), boxes [[x0,y0,x1,y1] fractions | null], seen (points used per frame), seeds, seconds}.
+OUT.json: {times (source seconds), boxes [[x0,y0,x1,y1] fractions | null], points [per frame, per seed [fx,fy] | null], seen (points used per frame), seeds, seconds}.
 ARROW runs on mini4 only (its weights are 5.3 GB and CC BY-NC: non-commercial use)."""
 import sys,os,json,time,hashlib,subprocess,tempfile
 import numpy as np,cv2
@@ -72,5 +72,6 @@ for i,x in enumerate(src):  # a frame between two detector boxes less than 1.5 s
     if x=='detector':continue
     a_=max([d_ for d_ in det if d_<i],default=None);b_=min([d_ for d_ in det if d_>i],default=None)
     if a_ is not None and b_ is not None and tt[b_]-tt[a_]<=1.5:u=(tt[i]-tt[a_])/(tt[b_]-tt[a_]);boxes[i]=[round(p_+(q_-p_)*u,4) for p_,q_ in zip(boxes[a_],boxes[b_])];src[i]='blended'
-json.dump(dict(times=tt,boxes=boxes,seen=seen,source=src,seeds=seeds,seed_time=seed_t,box=box,seconds=dict(arrow=R['seconds'],total=round(time.perf_counter()-began,1))),open(out,'w'))
+pts=[[[round(float(P[i,k,0]),4),round(float(P[i,k,1]),4)] if P[i,k,2]>=SEEN and seen[k]>=3 else None for i in range(P.shape[0])] for k in range(P.shape[1])]  # each seed's place per frame when seen: the tint grows each person from their own points
+json.dump(dict(times=tt,boxes=boxes,points=pts,seen=seen,source=src,seeds=seeds,seed_time=seed_t,box=box,seconds=dict(arrow=R['seconds'],total=round(time.perf_counter()-began,1))),open(out,'w'))
 print(json.dumps(dict(frames=len(pick),seeds=len(seeds),with_box=sum(b is not None for b in boxes),from_detector=src.count('detector'),seconds=round(time.perf_counter()-began,1))))
