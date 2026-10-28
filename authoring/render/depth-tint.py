@@ -124,7 +124,7 @@ def grow(k,g,who,owner,near,seen):
     for i,n in who:
         x0,y0,y1,x1=wb[n];P=PP.get(n,[])
         if len(P)<3:continue
-        lo[n]=np.percentile([roi[y,x] for x,y in P],5);a0,a1=max(0,x0-mx-X0),x1+mx-X0;mine[y0-Y0:,a0:a1]|=roi[y0-Y0:,a0:a1]>=.9*lo[n]  # in their box, beside it (the margin) and below it, what is not behind all of their points may be them (a box on the head only: the shoulders)
+        lo[n]=np.percentile([roi[y,x] for x,y in P],5);a0,a1=max(0,x0-mx-X0),x1+mx-X0;yb=H if H-y1<.15*H else min(H,y1+my);mine[y0-Y0:yb-Y0,a0:a1]|=roi[y0-Y0:yb-Y0,a0:a1]>=.9*lo[n]  # in their box, beside it (the margin) and below it, what is not behind all of their points may be them (a box on the head only: the shoulders); below it to the frame's bottom only for a box ending in its lowest 15% (a body going on out of view), else 4% below the box (Olenna 033: two small seated women in a wide shot took the table and floor down to the bottom)
         for x,y in P:cv2.circle(mk,(x,y),r,i+2,-1)
     if not lo:return set()
     md={n:float(np.median([roi[y,x] for x,y in P])) for n,P in PP.items() if len(P)>=3}

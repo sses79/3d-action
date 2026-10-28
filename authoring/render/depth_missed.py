@@ -14,7 +14,8 @@ person in the frame as "missing subject (SAM 3)", a fault; anyone else as "untin
 writes <clip>.missed.json and prints {clip, missed, follow, seconds}. SAM 3 runs on mini4 when it answers (frames cut here and
 sent, ~/Yun/sam3d-runner's ComfyUI), else here; `depth_missed.py --setup` copies the weights and sam3-people.py there (again after
 sam3-people.py changes). The check only reads the cache (find(..., run=False)).
-Crowd step (2026-10-28): a described clip (summary and peopleCount N) with more than N people in a frame does not use "near" and
+Crowd step (2026-10-28): a described clip (summary and peopleCount N) with more than N people in a frame, or more than N letters from
+the build (a cut sequence: Olenna 033 had 8 letters for two women across 4 setups), does not use "near" and
 "largest" (in 023 the blurred giant in front reads as far, and a monk from behind is the nearest): who() shows a vision model every
 sampled frame with the outlines numbered and the summary; it names the N people and says which outline is which. Each person
 takes the letter of the build track matching them most often (else a letter no remaining track wears); renames (the build's
@@ -181,7 +182,7 @@ def find(src,clip,run=True,used=(),following=()):
     for x in missed:
         k_=int(np.argmin(np.abs(TT-(x['time']+T['start']))));x['dropped']=any(v[k_] and iou(x['box'],[v[k_]['box'][0]/W0,v[k_]['box'][1]/H0,v[k_]['box'][2]/W0,v[k_]['box'][3]/H0])>=.4 for v in gh.values())
     D=C.get('description') or {};N=D.get('peopleCount');N=int(N) if str(N or '').isdigit() else 0;renames={};crowd=None
-    if N and D.get('summary') and any(len(v)>N for v in talls.values()):  # the crowd step: more people in a frame than the description names; a vision model says which outlines are the people it is about
+    if N and D.get('summary') and (any(len(v)>N for v in talls.values()) or len(T['tracks'])>N):  # the crowd step: more people in a frame, or more letters from the build (a cut sequence names one person anew in each setup), than the description names; a vision model says which outlines are the people it is about
         crowd=who(root,clip,T['video'],pts,have,M,keeps,D,N);pick=crowd['picks'];W1,H1=T.get('size',[W0,H0]);R_=T['tracks'];RT=np.array(T['times']);rb=lambda v,k:[v[k]['box'][0]/W1,v[k]['box'][1]/H1,v[k]['box'][2]/W1,v[k]['box'][3]/H1]
         votes={}
         for i,P in pick.items():
