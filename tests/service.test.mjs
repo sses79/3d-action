@@ -9,7 +9,7 @@ import {join} from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 import {createServer} from 'node:net';
 import {JobStore,withLock} from '../authoring/jobs.mjs';
-import {DepthLibrary,renameDescription} from '../authoring/depth-library.mjs';
+import {DepthLibrary,renameDescription,checkFixes} from '../authoring/depth-library.mjs';
 const temp=async fn=>{const dir=await mkdtemp(join(tmpdir(),'service-test-'));try{return await fn(dir);}finally{await rm(dir,{recursive:true,force:true});}};
 const until=async(f,ms=10000)=>{const t0=Date.now();for(;;){const v=await f();if(v)return v;if(Date.now()-t0>ms)throw Error('timed out');await new Promise(r=>setTimeout(r,50));}};
 
@@ -117,4 +117,11 @@ test('a fix renames the description\'s letters: a swap, a drop, a later undo, an
  assert.equal(renameDescription(desc,both,both,shots).changed,false);  // the same set again changes nothing
  r=renameDescription(desc,{},{6:{A:'-'}},shots);assert.deepEqual(r.description.keyframes[1].people,{B:'watches'});assert.deepEqual(r.description.keyframes[0].people,desc.keyframes[0].people);
  assert.match(r.note,/differs by shot/);assert.deepEqual(r.description.people,desc.people);  // A is gone in shot 6 only: the clip-wide text is left
+});
+
+test('a fix may follow a person through a shot from a box (ARROW); bad entries are refused', () => {
+ assert.doesNotThrow(()=>checkFixes({},[],[{name:'A',shot:'27',time:3.05,box:[0,.16,.41,.94]}]));
+ assert.doesNotThrow(()=>checkFixes({},[]));  // follow is optional
+ for(const bad of [[{name:'a',shot:'27',time:1,box:[0,0,.5,1]}],[{name:'A',shot:'x',time:1,box:[0,0,.5,1]}],[{name:'A',shot:'27',box:[0,0,.5,1]}],[{name:'A',shot:'27',time:1,box:[.5,0,.4,1]}],{}])
+  assert.throws(()=>checkFixes({},[],bad),/follow:/);
 });

@@ -229,3 +229,23 @@ Fixed and rated clips were not rebuilt. A rebuild would replace their hand fixes
 - Per frame, a box from that person's visible points (visibility 0.7 or more), passed to the tint as a track. It would not be a hand box, so it keeps the depth shape.
 - Running it on every frame of a clip in 24-frame chunks that overlap.
 - Measuring it on 023 and 026 against their hand fixes.
+
+### Built: `follow` in a fix (2026-10-27)
+
+`fix_depth_clip` takes `follow: [{name, shot, time, box}]`: the person in that box at that clip time is followed through the shot. `authoring/render/arrow-follow.py` does the work:
+1. **Seeds:** up to 16 points on the person's own (nearer) depth inside the box.
+2. **Tracking:** up to 24 frames of the shot go to mini4, about 45 s a person.
+3. **Boxes:** in each frame the person takes the detector box that holds most of their visible points. A frame without one is blended between neighbours up to 1.5 s apart, or else the box moves with the points.
+
+The result replaces their detector track in the shot as an ordinary track, not a hand box. It is kept in `<clip>.follow-<key>.json` so a later fix doesn't run ARROW again.
+
+The first version moved the seed box with the points alone. In the dark embrace Roose's points bunched up and his box shrank to a square between the two heads. Picking the detector's box with the points fixed that: the detector finds both bodies but can't keep them apart, and the points can.
+
+**got-ramsay-026, shot 27 (the embrace).** Follows for Roose (A) and Ramsay (B) from the detector's boxes at 3.05 s. Roose: 14 frames from the detector, 10 blended. Ramsay: 22 and 2. The fix took 104 s.
+- **Identity:** right throughout. Each man keeps his own colour through the embrace, with no swaps.
+- **Shape:** worse than the hand boxes.
+  - The tint keeps the nearer part of each box (Otsu). In an embrace that is the arms and shoulders, so both heads went grey from 6.4 s; the check flags a head at 6.32 s that the hand boxes passed.
+  - Roose's back in the foreground at 3.1–4.3 s gets only a thin strip, the same as before.
+  - At 5.3 s, with both bodies at almost the same depth, the colours fill their boxes.
+
+026 was put back to its hand boxes (revision 3, the same check as before). Next, for shape: split the frame between the followed people with their own visible points as markers (a watershed on the depth), not a nearer-part cut per box. The points sit on heads and backs as well as arms, so the split would follow the depth edge between the two bodies.

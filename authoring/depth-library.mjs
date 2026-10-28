@@ -20,9 +20,10 @@ const allLabels=new Set(Object.values(depthLabels).flat());
 const ID=/^[a-z0-9][a-z0-9-]{0,63}$/;
 // fixes to a built clip: per shot renames ({"2": {"E": "A", "G": "-"}}) and boxes drawn by hand
 // ([{name: "B", shot: "28", keys: [{time, box: [x0, y0, x1, y1] as fractions, or null for out of view}]}])
-export function checkFixes(shots,boxes){const name=x=>typeof x==='string'&&/^[A-Z]$/.test(x),frac=v=>Number.isFinite(v)&&v>=-.05&&v<=1.05;
+export function checkFixes(shots,boxes,follow=[]){const name=x=>typeof x==='string'&&/^[A-Z]$/.test(x),frac=v=>Number.isFinite(v)&&v>=-.05&&v<=1.05;
  if(!shots||typeof shots!=='object'||Array.isArray(shots)||!Object.entries(shots).every(([k,m])=>/^\d{1,4}$/.test(k)&&m&&typeof m==='object'&&Object.entries(m).every(([a,b])=>name(a)&&(name(b)||b==='-'))))throw Error('shots: {"2": {"E": "A", "G": "-"}}');
- if(!Array.isArray(boxes)||boxes.length>40||!boxes.every(e=>e&&name(e.name)&&/^\d{1,4}$/.test(String(e.shot))&&Array.isArray(e.keys)&&e.keys.length>=1&&e.keys.length<=60&&e.keys.every(q=>Number.isFinite(q.time)&&q.time>=0&&(q.box===null||Array.isArray(q.box)&&q.box.length===4&&q.box.every(frac)&&q.box[2]>q.box[0]&&q.box[3]>q.box[1]))))throw Error('boxes: [{name: "B", shot: "28", keys: [{time: 1.2, box: [x0, y0, x1, y1]}]}], box as fractions of the picture');}
+ if(!Array.isArray(boxes)||boxes.length>40||!boxes.every(e=>e&&name(e.name)&&/^\d{1,4}$/.test(String(e.shot))&&Array.isArray(e.keys)&&e.keys.length>=1&&e.keys.length<=60&&e.keys.every(q=>Number.isFinite(q.time)&&q.time>=0&&(q.box===null||Array.isArray(q.box)&&q.box.length===4&&q.box.every(frac)&&q.box[2]>q.box[0]&&q.box[3]>q.box[1]))))throw Error('boxes: [{name: "B", shot: "28", keys: [{time: 1.2, box: [x0, y0, x1, y1]}]}], box as fractions of the picture');
+ if(!Array.isArray(follow)||follow.length>12||!follow.every(e=>e&&name(e.name)&&/^\d{1,4}$/.test(String(e.shot))&&Number.isFinite(e.time)&&e.time>=0&&Array.isArray(e.box)&&e.box.length===4&&e.box.every(frac)&&e.box[2]>e.box[0]&&e.box[3]>e.box[1]))throw Error('follow: [{name: "A", shot: "27", time: 3.05, box: [x0, y0, x1, y1]}]: the person in that box at that clip time, followed through the shot');}
 // The star standard for a built package as a control signal (docs/DEPTH_LIBRARY_PLAN.md, "Star standard"). A person's rating
 // wins; otherwise the machine suggests 1-4 from the keyframe check and the motion: faults (a main person missing, two colours on
 // one person, a colour with nobody behind it) cost stars; notes (an untinted extra, a head a little short, a box drawn by hand)
@@ -171,9 +172,9 @@ export class DepthLibrary{
  // a source with the same content (SHA-256 of the file), if one was ingested already
  sameAs(sha){return this.sources().find(S=>S.sha256===sha)??null;}
  build({clip,video}){const {S,C}=this.locate(clip);if(C.kind!=='control')throw Error('A still shot has no depth to build');const pid=C.package??C.id;if(arguments[0].expectedRevision!==undefined)this.checkRev(pid,arguments[0].expectedRevision);const job=this.job('build',['authoring/render/depth-build.py',S.id,C.id,...(video?['--video',video]:[])],{package:pid},r=>({...r,revision:this.bump(pid)}));return {...job,revision:this.rev(pid)};}
- async _fix({clip,shots={},boxes=[]}){const {S,C}=this.locate(clip);if(!C.package)throw Error('Build the clip first');checkFixes(shots,boxes);
+ async _fix({clip,shots={},boxes=[],follow=[]}){const {S,C}=this.locate(clip);if(!C.package)throw Error('Build the clip first');checkFixes(shots,boxes,follow);
   const ff=resolve(this.base,S.id,C.id+'.fixes.json');let was={};try{was=JSON.parse(readFileSync(ff,'utf8')).shots??{};}catch{}
-  writeFileSync(ff,JSON.stringify({shots,boxes}));const r=await new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-fix.py',S.id,C.id],{cwd:this.root,timeout:300000},(e,so,se)=>e?fail(Error((se||e.message).slice(-1500))):done(JSON.parse(so.trim().split('\n').pop()))));
+  writeFileSync(ff,JSON.stringify(follow.length?{shots,boxes,follow}:{shots,boxes}));const r=await new Promise((done,fail)=>execFile(this.py,['authoring/render/depth-fix.py',S.id,C.id],{cwd:this.root,timeout:300000+follow.length*240000},(e,so,se)=>e?fail(Error((se||e.message).slice(-1500))):done(JSON.parse(so.trim().split('\n').pop()))));
   if(!C.description)return r;const d=renameDescription(C.description,was,shots,S.shots.filter(x=>C.shots.includes(x.index)).map(x=>({index:x.index,start:x.start-C.start,end:x.end-C.start})));
   if(!d.changed)return r;await this._describe({clip:C.id,...d.description});return {...r,description:{renamed:true,...(d.note?{note:d.note}:{})}};}
  jobStatus(id){return this.store.status(id);}
