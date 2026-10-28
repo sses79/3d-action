@@ -8,6 +8,7 @@ and clearly saturated (the depth's grey has none). The source frame at the same 
   missing: a person with a box at that moment (the build's tracks, the fixes, boxes by hand) has no colour (or under 0.3% of the picture);
   unexpected: a colour appears for a person with no box at that moment;
   untinted person: the detector sees a large person with less than a quarter of the box tinted (a bystander: a note);
+  dropped person: the same for someone whose box matches a track the fix dropped ("-": left grey on purpose; a note);
   missing subject: the same for the largest person in the frame (a fault: the subject is not tinted);
   two colours: two colours each cover more than a quarter of one detected person: one body painted in two colours. It is a note instead,
     overlap: one person in front of another (an arm across, a shoulder), when the two lie 35 grey levels or more apart in depth AND one of
@@ -55,6 +56,18 @@ def src_t(t):  # a package's time in the source video; a test cut (derivedFrom) 
         x-=abs(b_-a_)/v
     return base+D['segments'][-1][1]
 out=[];rows=[]
+GH=None  # people dropped in the fix (tracks-fixed.json "ghosts", depth-fix.py): left grey on purpose
+if (root/f'{clip}.tracks-fixed.json').exists():
+    TF=json.load(open(root/f'{clip}.tracks-fixed.json'));GH=(np.array(TF['times']),TF['size'],TF.get('ghosts',{}),TF['start'])  # source seconds
+def dropped(t,b):
+    if GH is None or t is None or not GH[2]:return False
+    k=int(np.argmin(np.abs(GH[0]-t)));W0,H0=GH[1]
+    for v in GH[2].values():
+        g=v[k]['box'] if v[k] else None
+        if g:
+            g=[g[0]/W0,g[1]/H0,g[2]/W0,g[3]/H0];i=max(0,min(b[2],g[2])-max(b[0],g[0]))*max(0,min(b[3],g[3])-max(b[1],g[1]))
+            if i/max(1e-9,(b[2]-b[0])*(b[3]-b[1])+(g[2]-g[0])*(g[3]-g[1])-i)>=.4:return True
+    return False
 for k in P['keyframes']:
     dv.set(cv2.CAP_PROP_POS_FRAMES,round(k['time']*dv.get(5)));ok,d=dv.read();st=src_t(k['time'])
     if st is None:f=cv2.imread(P['derivedFrom']['lead']['image']);ok2=f is not None
@@ -87,7 +100,8 @@ for k in P['keyframes']:
         cov={c:float(masks[c][y0:y1,x0:x1].mean()) for c in used};tot=sum(cov.values());top=sorted(cov,key=lambda c:-cov[c])
         where=f'the person at {round((x0+x1)/2/w*100)}% across'
         main=(x1-x0)*(y1-y0)>=max((o[2]-o[0])*(o[3]-o[1]) for o,_ in dets)*.999  # the largest person in the frame: the subject, not a bystander
-        if tot<.25:issues.append(f"{'missing subject' if main else 'untinted person'}: {where} (box {round((y1-y0)/h*100)}% tall) is {tot:.0%} tinted{' (the largest person in the frame)' if main else ''}")
+        if tot<.25 and dropped(at,[x0/w,y0/h,x1/w,y1/h]):issues.append(f'dropped person: {where} (box {round((y1-y0)/h*100)}% tall) was dropped in the fix')  # a bystander the fix left grey on purpose
+        elif tot<.25:issues.append(f"{'missing subject' if main else 'untinted person'}: {where} (box {round((y1-y0)/h*100)}% tall) is {tot:.0%} tinted{' (the largest person in the frame)' if main else ''}")
         elif len(top)>1 and cov[top[1]]>.25 and cov[top[0]]>.25:  # two colours in one person: two people, one in front of the other, unless both lie at the same depth
             v=hsv[y0:y1,x0:x1,2];m0,m1=masks[top[0]][y0:y1,x0:x1],masks[top[1]][y0:y1,x0:x1];d0,d1=float(np.median(v[m0])),float(np.median(v[m1]))
             outside=lambda c,m:1-float(m.sum())/max(1.,float(masks[c].sum()))  # how much of that colour lies outside this person's box
@@ -123,7 +137,7 @@ if (root/f'{clip}-tinted.mp4').exists():  # people SAM 3 outlines that are not c
     sys.path.insert(0,str(pathlib.Path(__file__).parent));import depth_missed
     R=depth_missed.find(src,clip,run=False)
     for x in (R or {}).get('missed',[]):
-        b=x['box'];out.append(dict(time=x['time'],ok=False,missed=True,issues=[f"{'missing subject' if x['largest'] else 'untinted person'} (SAM 3): a person at {round((b[0]+b[2])/2*100)}% across in shot {x['shot']} (box {round(x['tall']*100)}% tall) is {x['coloured']:.0%} coloured{' but in a colour that lies mostly on someone else' if x.get('worn') else ''}{' (the largest person in the frame)' if x['largest'] else ''}"]))
+        b=x['box'];out.append(dict(time=x['time'],ok=False,missed=True,issues=[f"dropped person (SAM 3): a person at {round((b[0]+b[2])/2*100)}% across in shot {x['shot']} was dropped in the fix"] if GH and dropped(x['time']+GH[3],b) else [f"{'missing subject' if x['largest'] else 'untinted person'} (SAM 3): a person at {round((b[0]+b[2])/2*100)}% across in shot {x['shot']} (box {round(x['tall']*100)}% tall) is {x['coloured']:.0%} coloured{' but in a colour that lies mostly on someone else' if x.get('worn') else ''}{' (the largest person in the frame)' if x['largest'] else ''}"]))
     out.sort(key=lambda x:x['time'])
 json.dump(dict(clip=clip,package=C['package'],keyframes=out,ok=all(x['ok'] for x in out)),open(pk/'check.json','w'),indent=1)
 if rows:

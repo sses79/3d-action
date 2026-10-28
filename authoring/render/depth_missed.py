@@ -4,7 +4,8 @@ read against the tinted video: an outline under a quarter coloured, or coloured 
 at that time) matches another outline better (a box spilling over), is a missed person (a dark back filling the frame, a head cut off,
 someone the detector never boxed). Near-duplicate outlines (mask overlap over 0.7) are merged into the largest, and slivers under 3% wide at a frame edge are
 left out. Small people are left out as in the check (under half the largest person's height, between 12 and
-30% of the picture). Missed people in one shot are joined across its frames (centres within 20% of the picture, heights within
+30% of the picture). Missed people in one shot are joined across its frames (only people near the camera: an outline's depth at least 0.8 of the nearest outline's in
+that frame; the largest and tallest first, at most 3 a shot and 8 a clip; centres within 20% of the picture, heights within
 0.6-1.65 and widths within 0.5-2 of each other, boxes overlapping by 0.3 or more) and each becomes a suggested follow entry (the name of a track whose box there
 matches the outline, IoU 0.5 or more: tracked but left uncoloured; else a new letter; keys at the frames where they were seen, with up to 16 seed points inside the outline): the build
 applies them (depth-build.py), fix_depth_clip with findMissed adds them, the check lists what is still missed (the largest
@@ -94,6 +95,7 @@ def find(src,clip,run=True,used=(),following=()):
             keep.append(j)
         if not keep:continue
         big=max(F['people'][j]['box'][3]-F['people'][j]['box'][1] for j in keep);lo=max(.12,min(.3,.5*big))
+        grey=cv2.resize(cv2.cvtColor(g,cv2.COLOR_BGR2HSV)[...,2],(240,M[f'm{i}_0'].shape[0]),interpolation=cv2.INTER_AREA);gm={j:float(np.median(grey[M[f'm{i}_{j}']])) for j in keep};gn=max(gm.values())  # the tint keeps the depth as brightness: each outline's depth, and the nearest
         hsv=cv2.resize(cv2.cvtColor(g,cv2.COLOR_BGR2HSV),(240,M[f'm{i}_0'].shape[0]),interpolation=cv2.INTER_NEAREST);sat=hsv[...,1]>60;hb=hsv[...,0]//12  # the tint's colour (the depth's grey has none), its hue in bins
         held={j:np.bincount(hb[M[f'm{i}_{j}']&sat],minlength=16) for j in keep}
         k_=int(np.argmin(np.abs(TT-t)));own={}  # whose each colour is: the outline that best matches that person's box at this time
@@ -114,19 +116,25 @@ def find(src,clip,run=True,used=(),following=()):
                         y=int(ys.min()+fy*(ys.max()-ys.min()));row=xs[ys==y]
                         if len(row):x=int(row.min()+fx*(row.max()-row.min()));q.append([round((x+.5)/m.shape[1],4),round((y+.5)/m.shape[0],4)]) if e[y,x] else None
                 q=[q[k] for k in np.linspace(0,len(q)-1,min(16,len(q))).round().astype(int)] if q else []
-                missed.append(dict(shot=shot,time=round(t-T['start'],2),box=p['box'],points=q,coloured=round(cov,2),**({'worn':True} if worn else {}),tall=round(p['box'][3]-p['box'][1],2),largest=p['box'][3]-p['box'][1]>=big-1e-6))
+                missed.append(dict(shot=shot,time=round(t-T['start'],2),box=p['box'],points=q,coloured=round(cov,2),**({'worn':True} if worn else {}),near=gm[j]>=.8*gn,tall=round(p['box'][3]-p['box'][1],2),largest=p['box'][3]-p['box'][1]>=big-1e-6))
     followed_now={tuple(x.split(':')) for x in following};used=set(used)|set((C.get('fixed') or {}).get('people') or [])|set((C.get('built') or {}).get('people') or {})  # names given in the fix being made come in as used
     follow=[];groups=[]
     for x in missed:  # join one person across the frames of a shot
         cx=(x['box'][0]+x['box'][2])/2;g=next((g for g in groups if g[-1]['shot']==x['shot'] and g[-1]['time']<x['time'] and abs((g[-1]['box'][0]+g[-1]['box'][2])/2-cx)<.2 and .6<=x['tall']/g[-1]['tall']<=1.65 and .5<=(x['box'][2]-x['box'][0])/max(1e-6,g[-1]['box'][2]-g[-1]['box'][0])<=2 and iou(x['box'],g[-1]['box'])>=.3),None)  # same place, height and width, overlapping (026: Roose coming out from behind Ramsay has his centre, not his width)
         if g:g.append(x)
         else:groups.append([x])
+    gh=TF.get('ghosts',{})  # people the fix dropped are not suggested again
+    for x in missed:
+        k_=int(np.argmin(np.abs(TT-(x['time']+T['start']))));x['dropped']=any(v[k_] and iou(x['box'],[v[k_]['box'][0]/W0,v[k_]['box'][1]/H0,v[k_]['box'][2]/W0,v[k_]['box'][3]/H0])>=.4 for v in gh.values())
+    groups=[g for g in groups if any(x['near'] and not x['dropped'] for x in g)]  # only people near the camera are followed (a crowd behind the action stays grey; the check notes it)
+    groups.sort(key=lambda g:(not any(x['largest'] for x in g),-max(x['tall'] for x in g)));per={}
     for g in groups:
-        if not any(len(x['points'])>=3 for x in g):continue
+        if not any(len(x['points'])>=3 for x in g) or per.get(g[0]['shot'],0)>=3 or len(follow)>=8:continue  # at most 3 a shot and 8 a clip, the largest and tallest first
+        per[g[0]['shot']]=per.get(g[0]['shot'],0)+1
         k_=int(np.argmin(np.abs(TT-(g[0]['time']+T['start']))));fs={n for n,sh in followed_now if sh==g[0]['shot']}|{e['name'] for e in follow if e['shot']==g[0]['shot']}
         match=sorted(((iou(g[0]['box'],[v[k_]['box'][0]/W0,v[k_]['box'][1]/H0,v[k_]['box'][2]/W0,v[k_]['box'][3]/H0]),n) for n,v in TF['tracks'].items() if v[k_] and n not in fs),reverse=True)
-        n=match[0][1] if match and match[0][0]>=.5 else next((c for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' if c not in used),None)  # a person the tracks have a box for but the tint leaves uncoloured keeps their name (the follow replaces their track in the shot); else a new letter
-        if n is None:break
+        n=match[0][1] if match and match[0][0]>=.5 else next((c for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' if c not in used),None) if len(colour)+sum(e['name'] not in colour for e in follow)<8 else None  # a new letter only while colours remain (8)  # a person the tracks have a box for but the tint leaves uncoloured keeps their name (the follow replaces their track in the shot); else a new letter
+        if n is None:continue
         used.add(n);follow.append(dict(name=n,shot=g[0]['shot'],keys=[dict(time=x['time'],box=x['box'],points=x['points']) for x in g[:6] if len(x['points'])>=3]))
     out=dict(clip=clip,missed=missed,follow=follow,frames=len(pts),sam3=have.get('seconds'),seconds=round(time.perf_counter()-began,1))
     json.dump(out,open(root/f'{clip}.missed.json','w'),indent=1);return out

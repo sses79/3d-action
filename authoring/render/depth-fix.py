@@ -20,12 +20,12 @@ assert C.get('package'),'build the clip first (depth-build.py)'
 fx=json.load(open(root/f'{clip}.fixes.json')) if (root/f'{clip}.fixes.json').exists() else {};per_fix=fx.get('shots',{})
 T=json.load(open(root/f'{clip}.tracks.json'));colours=dict(C['built']['people']);began=time.perf_counter()
 shots=json.load(open(root/f'{clip}.shots.json'))['shots'];shot_of=lambda t:str(min(shots,key=lambda x:0 if x['start']<=t<x['end'] else min(abs(t-x['start']),abs(t-x['end'])))['index'])  # exactly one shot per frame
-PAL=['blue','orange','green','pink','purple','yellow','red','navy'];tracks={};order=[]
+PAL=['blue','orange','green','pink','purple','yellow','red','navy'];tracks={};order=[];ghosts={}
 for n,v in T['tracks'].items():
     for k,b in enumerate(v):
         if b is None:continue
         m=per_fix.get(shot_of(T['times'][k]),{}).get(n,n)
-        if m=='-':continue
+        if m=='-':ghosts.setdefault(n,[None]*len(v))[k]=b;continue  # dropped: kept as a ghost (background for the tint's grow step)
         if m not in tracks:tracks[m]=[None]*len(v);order.append(m)
         if tracks[m][k] is None:tracks[m][k]=b
 for m in order:
@@ -61,7 +61,7 @@ for e in fx.get('follow',[]):  # ARROW: the person in a box followed through the
     if e['name'] not in colours:colours[e['name']]=next(c for c in PAL if c not in colours.values()) if len(colours)<len(PAL) else 'gray'
     followed.append(dict(name=e['name'],shot=str(e['shot']),frames=len(rt),fromDetector=R['source'].count('detector'),blended=R['source'].count('blended'),fromPoints=R['source'].count('points'),none=R['boxes'].count(None),thin=[[round(a_-T['start'],2),round(b_-T['start'],2)] for a_,b_ in R.get('thin',[])]))
 tracks={n:v for n,v in tracks.items() if any(v)}
-names=sorted(tracks);T['tracks']={n:tracks[n] for n in names};T['fixes']=fx
+names=sorted(tracks);T['tracks']={n:tracks[n] for n in names};T['fixes']=fx;T['ghosts']=ghosts
 hand={};W,H=T['size']
 for e in fx.get('boxes',[]):
     sh=next((x for x in shots if str(x['index'])==str(e['shot'])),None);ks=sorted(e.get('keys',[]),key=lambda q:q['time'])
@@ -82,7 +82,7 @@ spec=json.load(open(root/f'{clip}.spec.json'));everyone=sorted(set(names)|{e['na
 for k in spec['keyframes']:k['people']=[dict(name=n,doing=next((q['doing'] for q in k['people'] if q['name']==n),'not described')) for n in per.get(str(k['shot']),[]) if n in everyone]  # a ninth person and beyond has no colour: not in the package's people
 for x in spec['audio']:x['who']=x['who'] if x['who'] in tracks else (names[0] if names else x['who'])
 spec['library']=dict(spec.get('library',{}),perShot=C['built']['perShot'],fixed=per,fixes=fx);json.dump(spec,open(root/f'{clip}.spec.json','w'),indent=1)
-r=subprocess.run([sys.executable,'authoring/render/depth-tint.py',T['video'],f"{T['start']:.3f}",f"{T['end']:.3f}",str(root/f'{clip}-tinted.mp4'),'--shots',str(root/f'{clip}.shots.json'),'--tracks',str(root/f'{clip}.tracks-fixed.json')+(','+str(root/f'{clip}.hand.json') if hand else ''),'--colors',','.join([f'{n}={colours[n]}' for n in names]+[f'{h}={colours[h[:-5]]}' for h in hand]),'--depth',str(root/f'{clip}.depth.npz')],capture_output=True,text=True)
+r=subprocess.run([sys.executable,'authoring/render/depth-tint.py',T['video'],f"{T['start']:.3f}",f"{T['end']:.3f}",str(root/f'{clip}-tinted.mp4'),'--shots',str(root/f'{clip}.shots.json'),'--tracks',str(root/f'{clip}.tracks-fixed.json')+(','+str(root/f'{clip}.hand.json') if hand else ''),'--colors',','.join([f'{n}={colours[n]}' for n in names if colours[n]!='gray']+[f'{h}={colours[h[:-5]]}' for h in hand if colours[h[:-5]]!='gray']),'--depth',str(root/f'{clip}.depth.npz')],capture_output=True,text=True)
 if r.returncode:sys.exit('tint failed:\n'+r.stderr[-2000:])
 r=subprocess.run([sys.executable,'authoring/render/video-clay-pack.py',str(root/f'{clip}.spec.json')],capture_output=True,text=True)
 if r.returncode:sys.exit('package failed:\n'+r.stderr[-2000:])

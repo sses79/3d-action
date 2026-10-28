@@ -308,4 +308,20 @@ Two tint changes came with it: followed people are grown before the detector's p
 
 Limits: SAM 3 gives one outline for two people in a close embrace (it is coloured, so it is not missed). A new letter is a new person: someone known from another shot is renamed in the follow entry. Three frames a shot can miss someone seen only briefly.
 
-Next: fight clip 023.
+
+### Fight clip 023 (2026-10-28)
+
+`got-standoff-023` (13.2 s, 11 fast handheld cuts: the soldier reaches for the queen, the Mountain seizes him and lifts him by the throat) built for the first time.
+- **The build:** the detector gave 14 letters for two people, mostly monks in the crowd. The soldier got two or three colours, and the Mountain (armour, often blurred in the foreground) none. Shots 30–35 had no colour at all. The missed-people step found 107 uncoloured outlines and tried to follow 25 people. That failed at the tint (a ninth person got the colour "gray") and was rolled back.
+- **Limits added to the automatic follow:** only people near the camera (an outline's depth at least 0.8 of the nearest); the largest and tallest first; at most 3 a shot and 8 a clip; new letters only while colours remain; never someone the fix dropped. A person without a colour is now left out of the tint instead of breaking it. **The automatic pick still fails on 023.** Depth Anything renders the blurred foreground Mountain as far, and in shots 26 and 28 the nearest person is a monk seen from behind. In a crowd, judgement is needed: the description says two people.
+- **The fix, by hand from the pass's list:**
+  - Renames: the soldier's letters in shots 25–29 become A; every monk is dropped.
+  - 15 follows picked from SAM 3's outlines, with their seed points: the Mountain (B) in shots 25–30, 32, 33 and 34, the soldier (A) in shots 30–35. They took 8.8 min on mini4, with points in every frame but a shot's last.
+- **Tint, followed frames:** everyone the detector boxes in a frame with someone followed now grows together with them. Their markers come from the nearer part of their box, leaving out a widened hull around the followed people's points; without that, the nearer part of Roose's box in 026 was Ramsay's back. Dropped people (kept as "ghosts" in tracks-fixed.json) mark background, except where they are a second box on someone kept, at that person's depth. Before this, the Mountain's growth took the soldier's face in shot 25 and the monk's back in 26 and 28.
+- **Check:** a person whose box matches a track the fix dropped is "dropped person", a note, not a missing subject.
+- **Result (revision 9):** no faults. Own stars 4 (suggested); the clip keeps V.8's 5 as its best package. The soldier is blue and the Mountain orange throughout, including the lift from below (34). The monks stay grey.
+- **What is weak:** in shot 33 the Mountain is only his blurred shoulder at the left edge (his arm across the bottom stays grey). In shot 27 the soldier's dark robe is partly grey. In shot 31 the Mountain's gauntlet on the soldier's shoulder is grey.
+
+026 and 013 were re-fixed with the new tint: 013 still passes (revision 16). 026 (revision 31) lost its head flag at 9.81 s; at 2.0–2.7 s Roose's head has a few grey patches where my hand version had all blue.
+
+Next, when a clip has a crowd: name its people from the description first (who matters), then let the pass seed only them.

@@ -14,8 +14,8 @@ ending near the bottom of the frame is carried to it; where two people's boxes o
 --colors is tinted: the grey becomes the brightness, the colour its hue (saturation --strength), so the depth still reads.
 People not in --colors stay grey. OUT.json beside the video lists the colours and who they are; OUT.jpg is a sheet to check by eye.
 Boxes are widened by a quarter each side and a third upward first (a detector's box cuts the top of the head and loose hair).
-A followed person (boxes with ARROW points, depth-fix.py follow) is grown from their own points instead, before the detector's people,
-whose boxes do not take their pixels: a watershed over the depth
+A followed person (boxes with ARROW points, depth-fix.py follow) is grown from their own points instead, together with everyone else
+the detector boxes in that frame (markers on the nearer part of their box) and with dropped people (tracks' "ghosts") as background: a watershed over the depth
 with all followed people in the frame as markers and the far background as the boundary (an embrace: heads and backs, not just arms).
 Limits: a person's outline is the box's near part, so something in front of them inside their box is tinted too, and an arm
 reaching out of the box is not; a person with no box in a frame is not tinted in that frame."""
@@ -60,10 +60,14 @@ else:
     
 took=time.perf_counter()-began
 # who is where: boxes per frame by name, from the track files
-colors={kv.split('=')[0]:kv.split('=')[1] for kv in a.colors.split(',') if '=' in kv};exact=set();boxes=[{} for _ in range(N)];pts=[{} for _ in range(N)]
+colors={kv.split('=')[0]:kv.split('=')[1] for kv in a.colors.split(',') if '=' in kv};exact=set();boxes=[{} for _ in range(N)];pts=[{} for _ in range(N)];ghosts=[[] for _ in range(N)]
 for f in [x for x in a.tracks.split(',') if x]:
     f,*ren=f.split(':');ren=dict(r.split('=') for r in ren)  # file.json:old=new renames a track (a person named wrongly in the follow step)
     tr=json.load(open(f));T=np.array(tr['times'])
+    for name,v in tr.get('ghosts',{}).items():  # dropped people (depth-fix.py): background markers when people are grown
+        for k in range(N):
+            j=int(np.argmin(np.abs(T-times[k])))
+            if abs(T[j]-times[k])<.6/fps and v[j]:ghosts[k].append(list(v[j]['box']))
     if tr.get('exact'):exact.update(ren.get(n,n) for n in tr['tracks'])  # boxes drawn by hand (a body lying down): used as they are, and in front where they overlap
     for name,v in tr['tracks'].items():
         name=ren.get(name,name)
@@ -83,9 +87,20 @@ for b in boxes:
     for n in b:b[n]=[v*sx for v in b[n]]
 for b in pts:
     for n in b:b[n]=[[x*sx,y*sx] for x,y in b[n]]
+ghosts=[[[q*sx for q in b] for b in gl] for gl in ghosts]
 def widen(n,b):
     x0,y0,x1,y1=b;bw,bh=x1-x0,y1-y0;x0,y0,x1,y1=[int(round(v)) for v in (x0-.25*bw,y0-.35*bh,x1+.25*bw,y1)];x0,y0=max(0,x0),max(0,y0);x1,y1=min(W,x1),min(H,y1)
     return (0 if x0<.04*W else x0),y0,(H if H-y1<.08*H else y1),(W if W-x1<.04*W else x1)  # near an edge of the frame: carried to it
+def core(g,b,excl=None):
+    """Points on the nearer part of a box (Otsu on its depth, eroded), up to 16 on a grid: markers for someone without ARROW points.
+    excl: pixels around followed people's points, left out (026: the nearer part of Roose's box was Ramsay's back)."""
+    x0,y0,x1,y1=[int(round(v)) for v in b];x0,y0=max(0,x0),max(0,y0);x1,y1=min(W,x1),min(H,y1)
+    if x1-x0<8 or y1-y0<8:return []
+    sub=g[y0:y1,x0:x1];ok=~excl[y0:y1,x0:x1] if excl is not None else np.ones(sub.shape,bool)
+    if ok.sum()<64:return []
+    t,_=cv2.threshold(sub[ok].reshape(-1,1),0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU);m=cv2.erode(((sub>=t)&ok).astype(np.uint8),np.ones((9,9),np.uint8))>0
+    q=[(x0+int(fx*(x1-x0)),y0+int(fy*(y1-y0))) for fy in np.linspace(.12,.88,6) for fx in np.linspace(.15,.85,5) if m[int(fy*(y1-y0)),int(fx*(x1-x0))]]
+    return [q[i] for i in np.linspace(0,len(q)-1,min(16,len(q))).round().astype(int)] if q else []
 def grow(k,g,who,owner,near,seen):
     """Followed people in frame k, from their ARROW points: markers on the points (those far nearer than the background, and not a stray among
     another followed person's points); as background what lies
@@ -96,9 +111,13 @@ def grow(k,g,who,owner,near,seen):
     roi=g[Y0:Y1,X0:X1];inside=np.zeros(roi.shape,bool)
     for x0,y0,y1,x1 in wb.values():inside[y0-Y0:y1-Y0,x0-X0:x1-X0]=True
     taken=owner[Y0:Y1,X0:X1]>=0;mk=np.zeros(roi.shape,np.int32);r=max(3,int(.01*W));lo={};mine=np.zeros(roi.shape,bool)
+    excl=np.zeros((H,W),np.uint8)  # around each followed person's points: their hull, widened by 3% of the picture
+    for _,n in who:
+        if len(pts[k].get(n) or [])>=3:cv2.fillConvexPoly(excl,cv2.convexHull(np.array(pts[k][n],np.int32)),1)
+    excl=cv2.dilate(excl,np.ones((int(.03*W)|1,int(.03*W)|1),np.uint8))>0
     PP={}
     for i,n in who:
-        x0,y0,y1,x1=wb[n];P=[(int(x)-X0,int(y)-Y0) for x,y in pts[k][n] if x0<=x<x1 and y0<=y<y1];d=np.array([roi[y,x] for x,y in P],float)
+        x0,y0,y1,x1=wb[n];P=[(int(x)-X0,int(y)-Y0) for x,y in (pts[k].get(n) or core(g,boxes[k][n],excl)) if x0<=x<x1 and y0<=y<y1];d=np.array([roi[y,x] for x,y in P],float)  # a person the detector boxes (no points) grows from the nearer part of their box
         if len(P)>=3:PP[n]=[p for p,v in zip(P,d) if v>=.6*np.median(d)]  # a point drifted onto the wall behind is dropped
     near_=lambda q,Q:min((np.hypot(q[0]-u,q[1]-v) for u,v in Q if (u,v)!=q),default=1e9)
     PP={n:[q for q in P if not (near_(q,P)>.05*W and any(near_(q,PP[m])<near_(q,P) for m in PP if m!=n))] for n,P in PP.items()}  # a point stuck where someone else stepped into view (026: a seed on Ramsay's back left on Roose's head as he came out from behind): dropped when it stands apart from its own points and nearer someone else's
@@ -108,6 +127,12 @@ def grow(k,g,who,owner,near,seen):
         lo[n]=np.percentile([roi[y,x] for x,y in P],5);a0,a1=max(0,x0-mx-X0),x1+mx-X0;mine[y0-Y0:,a0:a1]|=roi[y0-Y0:,a0:a1]>=.9*lo[n]  # in their box, beside it (the margin) and below it, what is not behind all of their points may be them (a box on the head only: the shoulders)
         for x,y in P:cv2.circle(mk,(x,y),r,i+2,-1)
     if not lo:return set()
+    md={n:float(np.median([roi[y,x] for x,y in P])) for n,P in PP.items() if len(P)>=3}
+    for b in ghosts[k]:  # people dropped in the fix: the core of their box is background (a monk in front of the action stays grey)
+        for x,y in core(g,b,excl):
+            if not (X0<=x<X1 and Y0<=y<Y1) or mk[int(y)-Y0,int(x)-X0]:continue
+            if any(m in md and boxes[k][m][0]<=x<boxes[k][m][2] and boxes[k][m][1]<=y<boxes[k][m][3] and abs(float(g[int(y),int(x)])-md[m])<30 for _,m in who):continue  # inside someone kept, at their depth: a second box on them, not someone else
+            cv2.circle(mk,(int(x)-X0,int(y)-Y0),r,1,-1)
     bg=~mine&(mk==0);mk[bg]=1;mk[taken]=1
     lum=cv2.createCLAHE(2.,(8,8)).apply(cv2.cvtColor(frames[k],cv2.COLOR_RGB2GRAY))[Y0:Y1,X0:X1];dz=cv2.GaussianBlur(roi,(5,5),0);lab=cv2.watershed(np.dstack([dz,dz,cv2.GaussianBlur(lum,(5,5),0)]),mk.copy());done=set()  # the depth's edges and the picture's own (a dark coat against a lit wall where the depth runs smoothly from shoulder to wall)
     for i,n in who:
@@ -123,7 +148,7 @@ for k in range(N):
     for i,n in sorted(enumerate(names),key=lambda x:(x[1] not in exact,x[1] not in pts[k])):  # boxes by hand first, then followed people: they claim their pixels before the detector's people are worked out
         if n not in boxes[k] or n in grown:continue
         if n not in exact and n in pts[k] and not grown:  # followed people (ARROW points): all of them at once, each grown from their own points over the depth (a watershed), far background as the boundary marker
-            grown=grow(k,g,[(i_,n_) for i_,n_ in enumerate(names) if n_ in pts[k] and n_ in boxes[k] and n_ not in exact],owner,near,seen)
+            grown=grow(k,g,[(i_,n_) for i_,n_ in enumerate(names) if n_ in boxes[k] and n_ not in exact],owner,near,seen)  # with someone followed in the frame, everyone the detector boxes grows with them (else the followed person's growth takes them)
             if n in grown:continue
         x0,y0,x1,y1=boxes[k][n];bw,bh=x1-x0,y1-y0;x0,y0,x1,y1=[int(round(v)) for v in ((x0,y0,x1,y1) if n in exact else (x0-.25*bw,y0-.35*bh,x1+.25*bw,y1))];x0,y0=max(0,x0),max(0,y0);x1,y1=min(W,x1),min(H,y1)  # the detector's boxes cut the top of the head and loose hair: widened, the depth edges keep the tint to the person
         if H-y1<.08*H and n not in exact:y1=H  # a person cut by the bottom of the frame: carried to it

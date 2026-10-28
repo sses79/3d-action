@@ -117,7 +117,7 @@ if not a.no_missed:  # 6. people the detector missed: SAM 3 outlines people in t
     sys.path.insert(0,str(pathlib.Path(__file__).parent));import depth_missed
     R=depth_missed.find(a.source,a.clip);ff=root/f'{a.clip}.fixes.json';missed=dict(found=len(R['missed']),followed=[e['name'] for e in R['follow']] if not ff.exists() else [],seconds=R['seconds'])
     if R['follow'] and not ff.exists():
-        json.dump(dict(shots={},boxes=[],follow=R['follow'][:12]),open(ff,'w'));r_=subprocess.run([sys.executable,'authoring/render/depth-fix.py',a.source,a.clip],capture_output=True,text=True)
+        json.dump(dict(shots={},boxes=[],follow=R['follow'][:24]),open(ff,'w'));r_=subprocess.run([sys.executable,'authoring/render/depth-fix.py',a.source,a.clip],capture_output=True,text=True)
         if r_.returncode:missed['error']=(r_.stderr or r_.stdout)[-800:];ff.unlink()
         else:fr=json.loads(r_.stdout.strip().split('\n')[-1]);names=sorted(fr['people']);colours=[fr['people'][n] for n in names];per_shot=fr['perShot']
 print(json.dumps(dict(clip=a.clip,people={n:colours[i] for i,n in enumerate(names)},perShot=per_shot,keyframes=keys,**({'missed':missed} if missed else {}),seconds=C['built']['seconds'])))
