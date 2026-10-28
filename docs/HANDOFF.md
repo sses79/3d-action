@@ -913,3 +913,4 @@ got-video-a-013 (high wide, six small people) built with 2–3 people tinted whi
 ## 2026-10-28 · Missed people (SAM 3)
 
 - `depth_missed.py` + `sam3-people.py`: SAM 3 finds people the pose detector misses; the build follows them (step 6), `fix_depth_clip findMissed` adds them, the check lists them (SAM 3 entries). The tint grows followed people first and protects their pixels. 026 shot 26 fixed automatically (Ramsay renamed to B by hand, revision 29); 013 Littlefinger was uncoloured at 1.09 s, now followed as A (revision 14); 044 built with it. Details in `docs/DEPTH_LIBRARY_PLAN.md`, "Built: missed people found by SAM 3".
+- SAM 3 for missed people runs on mini4 when it answers (3.3 s a frame against 7 here), here otherwise; `depth_missed.py --setup` after changing `sam3-people.py`. Near-duplicate outlines are merged and edge slivers dropped, since borderline outlines vary between machines.

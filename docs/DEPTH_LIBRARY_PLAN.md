@@ -304,6 +304,8 @@ Two tint changes came with it: followed people are grown before the detector's p
 - **013:** SAM 3 found Littlefinger uncoloured at 1.09 s, between the two keyframes the old check looked at. His shot-13 track had partly been on the guard at the top, which had lost its pink at 0.15 s. The pass gave the follow his own name A (his track box matched the outline), so he is blue throughout, the guard is pink again, and the description still holds (revision 14, check passes).
 - **044**, built fresh: the pass ran in the build (34 s), found nobody missed, and both men are coloured.
 
+**On mini4 (2026-10-28):** SAM 3 runs there when it answers, the way Depth Anything 3 does: the frames are cut here and sent, `sam3-people.py` runs in `~/Yun/sam3d-runner`'s ComfyUI (the same commit as ours), and the outlines come back. If mini4 fails or doesn't answer, it runs here. `DEPTH_WORKER=local|mini4` forces one, and each run adds a line to `.authoring/logs/workers.jsonl`. `depth_missed.py --setup` copied the weights (1.75 GB, 47 s) and the script; run it again after `sam3-people.py` changes. Speed: 3.3 s a frame there against 7 here (026: 9 frames in 39 s with the copying; 013: 3 frames in 20 s). The people found are the same as here. Borderline outlines vary between the machines (frame decoding, M4 against M1 maths): near-duplicate outlines and a sliver at a frame edge. So the pass merges outlines that overlap by more than 0.7 and leaves out slivers under 3% wide at an edge.
+
 Limits: SAM 3 gives one outline for two people in a close embrace (it is coloured, so it is not missed). A new letter is a new person: someone known from another shot is renamed in the follow entry. Three frames a shot can miss someone seen only briefly.
 
 Next: fight clip 023.
