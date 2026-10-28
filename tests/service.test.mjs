@@ -122,6 +122,7 @@ test('a fix renames the description\'s letters: a swap, a drop, a later undo, an
 test('a fix may follow a person through a shot from a box (ARROW); bad entries are refused', () => {
  assert.doesNotThrow(()=>checkFixes({},[],[{name:'A',shot:'27',time:3.05,box:[0,.16,.41,.94]}]));
  assert.doesNotThrow(()=>checkFixes({},[]));  // follow is optional
- for(const bad of [[{name:'a',shot:'27',time:1,box:[0,0,.5,1]}],[{name:'A',shot:'x',time:1,box:[0,0,.5,1]}],[{name:'A',shot:'27',box:[0,0,.5,1]}],[{name:'A',shot:'27',time:1,box:[.5,0,.4,1]}],{}])
+ assert.doesNotThrow(()=>checkFixes({},[],[{name:'A',shot:'27',keys:[{time:3.05,box:[0,.16,.41,.94]},{time:5,box:[.1,.2,.5,1]}]}]));  // seeded again later in the shot
+ for(const bad of [[{name:'a',shot:'27',time:1,box:[0,0,.5,1]}],[{name:'A',shot:'x',time:1,box:[0,0,.5,1]}],[{name:'A',shot:'27',box:[0,0,.5,1]}],[{name:'A',shot:'27',time:1,box:[.5,0,.4,1]}],[{name:'A',shot:'27',keys:[]}],[{name:'A',shot:'27',keys:[{time:1,box:[0,0,.5]}]}],{}])
   assert.throws(()=>checkFixes({},[],bad),/follow:/);
 });

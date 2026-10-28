@@ -265,4 +265,19 @@ The first version moved the seed box with the points alone. In the dark embrace 
 - 5.3 s: Roose has no visible points (ARROW's visibility drops there), so he is still a rectangle; Ramsay has 5 points and only slivers.
 - Check: 6.32 s passes the head test the box version failed. It flags two colours in Roose at 6.32 s (blue 67%, orange 26%, 15 grey levels apart): that is Ramsay's arm across his back, which the check cannot tell from a fault. 9.81 s (shot 28, hand boxes) is flagged as before.
 
-Next: the frames where a followed person has too few points (seed again at a second time in the shot, or hold the last points for a few frames), then fight clip 023.
+### Built: follow keys for frames with too few points (2026-10-28)
+
+On 026, points were lost where the two men turn into the embrace (4.4–4.7 s): after it Roose kept 3 of 15 and Ramsay 5 of 16, and the tint fell back to rectangles. A follow entry now takes `keys: [{time, box}, ...]` (up to 6) instead of one time and box. Each key seeds the person again on their own depth in that box, and all seeds go in one ARROW run, each placed in its own frame, so the cost stays about the same (109 s for both men). The fix result lists `thin` stretches per follow (under 3 points seen), which says where a key is needed.
+
+Changes to the marker split that came with it:
+- The background test uses each person's furthest points (the 5th percentile, times 0.9), not the 25th percentile times 0.8. Ramsay's face is much nearer in the depth than his own shoulder (218 against about 150 grey levels), so his shoulder had counted as background.
+- It applies in their box, the 4% margin beside it, and everything below it. Detector boxes in the embrace often cover only the head.
+
+**026, shot 27, keys at 3.05 s and 5.3 s** (boxes at 5.3 s on the heads and upper backs, kept off Ramsay's hand; revision 16):
+- Points seen: Roose 19–32 throughout, Ramsay 11–20. No thin stretch.
+- Every frame of the shot is grown from points. At 5.3 s both heads and bodies are split, where before Roose was a rectangle, and at 4.0 s Ramsay's shoulder is orange.
+- The check is unchanged: two colours in Roose at 6.32 s (Ramsay's arm across his back) and 9.81 s in shot 28.
+
+A mistake made twice in this work: a comment put in the middle of a dense line commented out the statements after it (the background markers, then the seed transform in `arrow-track.py`). Put comments only at the end of a line.
+
+Next: fight clip 023.

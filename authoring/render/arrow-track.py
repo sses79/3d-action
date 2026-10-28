@@ -1,7 +1,7 @@
 """ARROW point tracks for seeds given as fractions of the frame (a test for the depth library's people step).
   (on mini4, in ~/Yun/arrow-runner, ARROW installed with uv sync and its weights in weights/)
   uv run python arrow-track.py VIDEO SEEDS.json OUT.json [--stride 3] [--max-frames 24] [--max-side 504] [--device mps]
-SEEDS.json: {"name": [[fx, fy], ...]} in the selected frame --seed-frame (0, the first). OUT.json: frames (source frame indices), per name per seed
+SEEDS.json: {"name": [[fx, fy], ...]} in the selected frame --seed-frame (0, the first), or [fx, fy, frame] in a frame of its own. OUT.json: frames (source frame indices), per name per seed
 per frame [fx, fy, visible probability], and seconds (load, encode+decode)."""
 import sys,json,time,argparse,torch
 from arrow import ARROW
@@ -15,7 +15,7 @@ seeds=json.load(open(a.seeds));names=[];pts=[]
 for n,v in seeds.items():
     for q in v:names.append(n);pts.append(q)
 import subprocess;W,H=map(float,subprocess.run(['ffprobe','-v','error','-select_streams','v','-show_entries','stream=width,height','-of','csv=p=0',a.video],capture_output=True,text=True).stdout.strip().split(','))
-xy=torch.tensor([[x*W,y*H] for x,y in pts]);src=torch.full((len(pts),),a.seed_frame,dtype=torch.long);xy=obs.transform_points(xy,src)
+xy=torch.tensor([[q[0]*W,q[1]*H] for q in pts]);src=torch.tensor([int(q[2]) if len(q)>2 else a.seed_frame for q in pts],dtype=torch.long);xy=obs.transform_points(xy,src)  # a seed [fx, fy, frame] is placed in its own frame
 t2=time.time();res,_=infer(model,obs,tasks=['track'],xy=xy,source_frame=src);t3=time.time()
 tr=tracking_predictions(res);uv=tr.uv[0];vis=torch.sigmoid(tr.visibility_logits[0])  # [seed, target, 2]
 # uv: target-frame fractions of the model image; back to original pixels through each frame's original_to_input (A x + b)
