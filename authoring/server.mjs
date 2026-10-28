@@ -86,9 +86,9 @@ const server=createServer(async(req,res)=>{
    // Fixes by hand to a built clip, shot by shot: who each person found is (joins and splits), or drop; tint and package again (depth-fix.py, seconds).
    if(!req.headers['content-type']?.startsWith('application/json'))throw Error('Expected application/json');
    let body='';for await(const c of req){body+=c;if(body.length>100000)throw Error('Request too large');}
-   const {source,clip,shots={},boxes=[],follow=[],expectedRevision}=JSON.parse(body),ok=x=>typeof x==='string'&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(x);if(!ok(source)||!ok(clip))return json(400,{error:'source and clip'});
+   const {source,clip,shots={},boxes=[],follow=[],findMissed=false,expectedRevision}=JSON.parse(body),ok=x=>typeof x==='string'&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(x);if(!ok(source)||!ok(clip))return json(400,{error:'source and clip'});
    try{checkFixes(shots,boxes,follow);}catch(e){return json(400,{error:e.message});}
-   try{return json(200,await new DepthLibrary(root).fix({clip,shots,boxes,follow,expectedRevision}));}catch(e){return json(/^stale:/.test(e.message)?409:400,{error:e.message});}  // the library's fix: the package's lock and revision
+   try{return json(200,await new DepthLibrary(root).fix({clip,shots,boxes,follow,findMissed,expectedRevision}));}catch(e){return json(/^stale:/.test(e.message)?409:400,{error:e.message});}  // the library's fix: the package's lock and revision
   }
   if(req.method==='POST'&&path==='/api/depth-upload'){
    // A video added from the Depth library page: streamed to .authoring/depth-library/uploads/, then ingested as a job (shots, control,

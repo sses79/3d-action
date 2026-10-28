@@ -909,3 +909,7 @@ got-video-a-013 (high wide, six small people) built with 2–3 people tinted whi
 - got-ramsay-026 now uses follow for Roose and Ramsay in shot 27 (revision 9). Heads, Roose's back and Ramsay's hand are right. Still open: 5.3 s, where Roose has no visible points. The check flags Ramsay's arm across Roose's back as two colours.
 - Follow keys (`keys: [{time, box}]`, seeding a person again later in the shot) and `thin` stretches in the fix result. 026 has keys at 3.05 s and 5.3 s (revision 16): every frame of the embrace is grown from points.
 - 026 shot 26: Ramsay from behind (no detection for 1.3 s) is followed from two keys and Roose from one; stray points are dropped and the grow area runs to the frame bottom (revision 21).
+
+## 2026-10-28 · Missed people (SAM 3)
+
+- `depth_missed.py` + `sam3-people.py`: SAM 3 finds people the pose detector misses; the build follows them (step 6), `fix_depth_clip findMissed` adds them, the check lists them (SAM 3 entries). The tint grows followed people first and protects their pixels. 026 shot 26 fixed automatically (Ramsay renamed to B by hand, revision 29); 013 Littlefinger was uncoloured at 1.09 s, now followed as A (revision 14); 044 built with it. Details in `docs/DEPTH_LIBRARY_PLAN.md`, "Built: missed people found by SAM 3".

@@ -14,7 +14,8 @@ ending near the bottom of the frame is carried to it; where two people's boxes o
 --colors is tinted: the grey becomes the brightness, the colour its hue (saturation --strength), so the depth still reads.
 People not in --colors stay grey. OUT.json beside the video lists the colours and who they are; OUT.jpg is a sheet to check by eye.
 Boxes are widened by a quarter each side and a third upward first (a detector's box cuts the top of the head and loose hair).
-A followed person (boxes with ARROW points, depth-fix.py follow) is grown from their own points instead: a watershed over the depth
+A followed person (boxes with ARROW points, depth-fix.py follow) is grown from their own points instead, before the detector's people,
+whose boxes do not take their pixels: a watershed over the depth
 with all followed people in the frame as markers and the far background as the boundary (an embrace: heads and backs, not just arms).
 Limits: a person's outline is the box's near part, so something in front of them inside their box is tinted too, and an arm
 reaching out of the box is not; a person with no box in a frame is not tinted in that frame."""
@@ -119,7 +120,7 @@ out=np.zeros((N,H,W,3),np.uint8);owner=np.full((H,W),-1,np.int8);seen={n:0 for n
 names=list(colors);hues={n:cv2.cvtColor(np.uint8([[[int(NAMED.get(c,c)[i:i+2],16) for i in (5,3,1)]]]),cv2.COLOR_BGR2HSV)[0,0,0] for n,c in colors.items()}
 for k in range(N):
     g=grey[k];owner[:]=-1;near={};grown=set()
-    for i,n in sorted(enumerate(names),key=lambda x:x[1] not in exact):  # boxes by hand first: they claim their pixels before the detector's people are worked out
+    for i,n in sorted(enumerate(names),key=lambda x:(x[1] not in exact,x[1] not in pts[k])):  # boxes by hand first, then followed people: they claim their pixels before the detector's people are worked out
         if n not in boxes[k] or n in grown:continue
         if n not in exact and n in pts[k] and not grown:  # followed people (ARROW points): all of them at once, each grown from their own points over the depth (a watershed), far background as the boundary marker
             grown=grow(k,g,[(i_,n_) for i_,n_ in enumerate(names) if n_ in pts[k] and n_ in boxes[k] and n_ not in exact],owner,near,seen)
@@ -127,7 +128,7 @@ for k in range(N):
         x0,y0,x1,y1=boxes[k][n];bw,bh=x1-x0,y1-y0;x0,y0,x1,y1=[int(round(v)) for v in ((x0,y0,x1,y1) if n in exact else (x0-.25*bw,y0-.35*bh,x1+.25*bw,y1))];x0,y0=max(0,x0),max(0,y0);x1,y1=min(W,x1),min(H,y1)  # the detector's boxes cut the top of the head and loose hair: widened, the depth edges keep the tint to the person
         if H-y1<.08*H and n not in exact:y1=H  # a person cut by the bottom of the frame: carried to it
         if x1-x0<8 or y1-y0<8:continue
-        taken=np.isin(owner[y0:y1,x0:x1],[names.index(e) for e in exact]) if n not in exact else np.zeros((y1-y0,x1-x0),bool);roi=np.where(taken,0,g[y0:y1,x0:x1]).astype(np.uint8);free=roi[~taken];t,_=cv2.threshold(free.reshape(-1,1) if free.size else roi,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU);m=((roi>=t)&~taken).astype(np.uint8)  # the split from this person's own pixels
+        taken=np.isin(owner[y0:y1,x0:x1],[names.index(e) for e in exact|set(grown)]) if n not in exact else np.zeros((y1-y0,x1-x0),bool);roi=np.where(taken,0,g[y0:y1,x0:x1]).astype(np.uint8);free=roi[~taken];t,_=cv2.threshold(free.reshape(-1,1) if free.size else roi,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU);m=((roi>=t)&~taken).astype(np.uint8)  # the split from this person's own pixels
         if n in exact:  # by hand: the whole box but its far background (someone much nearer inside it would take an Otsu split)
             m=(roi>=.6*np.median(roi)).astype(np.uint8);m=cv2.morphologyEx(m,cv2.MORPH_OPEN,np.ones((5,5),np.uint8));owner[y0:y1,x0:x1][m>0]=i;near[i]=float(np.median(roi[m>0])) if m.any() else 0.;seen[n]+=1;continue
         m=cv2.morphologyEx(m,cv2.MORPH_OPEN,np.ones((5,5),np.uint8));cnt,lab,st,_=cv2.connectedComponentsWithStats(m)

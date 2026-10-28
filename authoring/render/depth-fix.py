@@ -38,10 +38,11 @@ followed=[]
 for e in fx.get('follow',[]):  # ARROW: the person in a box followed through the shot (arrow-follow.py on mini4, kept per shot, time and box); replaces their detector track there
     sh=next((x for x in shots if str(x['index'])==str(e['shot'])),None)
     if sh is None:continue
-    ks=sorted(e.get('keys') or [dict(time=e['time'],box=e['box'])],key=lambda q:q['time']);kk=[[round(q['time'],3),[round(v,4) for v in q['box']]] for q in ks]  # one key or several (seeds again after a turn)
+    ks=sorted(e.get('keys') or [dict(time=e['time'],box=e['box'])],key=lambda q:q['time']);kk=[[round(q['time'],3),[round(v,4) for v in q['box']]]+([q['points']] if q.get('points') else []) for q in ks]  # one key or several (seeds again after a turn)
     key=hashlib.sha256(json.dumps([T['video'],round(sh['start'],3),round(sh['end'],3)]+(kk[0] if len(kk)==1 else [kk])).encode()).hexdigest()[:12];fo=root/f'{clip}.follow-{key}.json'
     if not fo.exists() or 'points' not in json.load(open(fo)):  # a follow from before points were kept: run again
-        r=subprocess.run([sys.executable,'authoring/render/arrow-follow.py',T['video'],f"{sh['start']:.3f}",f"{sh['end']:.3f}",f"{T['start']+ks[0]['time']:.3f}",','.join(f'{v:.4f}' for v in ks[0]['box']),str(root/f'{clip}.depth.npz'),str(fo),'--detections',str(pathlib.Path('.authoring/reconstruction-cache')/('detections-%s-yolo26s-pose-1920'%S['sha256'][:16]))]+[x for q in ks[1:] for x in ('--key',f"{T['start']+q['time']:.3f}:"+','.join(f'{v:.4f}' for v in q['box']))],capture_output=True,text=True)
+        if any(q.get('points') for q in ks):json.dump([q.get('points') for q in ks],open(str(fo)+'.seeds','w'))  # seeds given per key (SAM 3's outline, depth_missed.py) instead of the box's nearer depth
+        r=subprocess.run([sys.executable,'authoring/render/arrow-follow.py',T['video'],f"{sh['start']:.3f}",f"{sh['end']:.3f}",f"{T['start']+ks[0]['time']:.3f}",','.join(f'{v:.4f}' for v in ks[0]['box']),str(root/f'{clip}.depth.npz'),str(fo),'--detections',str(pathlib.Path('.authoring/reconstruction-cache')/('detections-%s-yolo26s-pose-1920'%S['sha256'][:16]))]+[x for q in ks[1:] for x in ('--key',f"{T['start']+q['time']:.3f}:"+','.join(f'{v:.4f}' for v in q['box']))]+(['--seeds',str(fo)+'.seeds'] if any(q.get('points') for q in ks) else []),capture_output=True,text=True)
         if r.returncode:sys.exit(f"follow {e['name']} in shot {e['shot']} failed:\n"+(r.stderr or r.stdout)[-1500:])
     R=json.load(open(fo));rt=R['times'];W_,H_=T['size'];tr=tracks.setdefault(e['name'],[None]*len(T['times']))
     if e['name'] not in order:order.append(e['name'])

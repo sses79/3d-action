@@ -11,9 +11,12 @@ Reads .authoring/depth-library/<source>/source.json (depth-ingest.py) and, for t
 4. keyframes: the start of every shot (0.15 s in) and the middle of shots longer than 4 s, at most 8;
 5. package: video-clay-pack.py into .authoring/video-clay/<clip-id>/ (tinted depth only), with keyframe text left to the
    describe step ("not described"); the clip in source.json becomes "built" with its package id and the build record.
-Timing is printed and stored. The source video must be at the path recorded at ingest unless --video gives it."""
+Timing is printed and stored. The source video must be at the path recorded at ingest unless --video gives it.
+6. missed people (depth_missed.py): SAM 3 looks for "person" in three frames of each shot; anyone it outlines who is under a
+   quarter coloured is followed with ARROW through a fix (depth-fix.py follow, new letters), unless the clip already has fixes
+   (then only counted). --no-missed skips it."""
 import re,sys,os,json,argparse,hashlib,pathlib,subprocess,time,numpy as np,cv2
-p=argparse.ArgumentParser();p.add_argument('source');p.add_argument('clip');p.add_argument('--video');p.add_argument('--people',type=int,default=6);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('source');p.add_argument('clip');p.add_argument('--video');p.add_argument('--people',type=int,default=6);p.add_argument('--no-missed',action='store_true');a=p.parse_args()
 root=pathlib.Path('.authoring/depth-library')/a.source;S=json.load(open(root/'source.json'));C=next(c for c in S['clips'] if c['id']==a.clip)
 assert C['kind']=='control','a still shot has no depth to build'
 video=a.video or S['file'];assert os.path.exists(video),f'source video not at {video}; pass --video'
@@ -109,4 +112,12 @@ r_=subprocess.run([sys.executable,'authoring/render/depth-check.py',a.source,a.c
 chk=json.loads(re.search(r'{"clip".*',r_.stdout).group(0)) if r_.returncode==0 and re.search(r'{"clip".*',r_.stdout) else {'ok':None,'keyframes':[]}
 S2=json.load(open(root/'source.json'));next(c for c in S2['clips'] if c['id']==a.clip)['check']=dict(ok=chk['ok'],issues=sum(len(i) for _,i in chk['keyframes']))  # read again: a description may have been written while this ran
 json.dump(S2,open(root/'source.json','w'),indent=1)
-print(json.dumps(dict(clip=a.clip,people={n:colours[i] for i,n in enumerate(names)},perShot=per_shot,keyframes=keys,seconds=C['built']['seconds'])))
+missed=None
+if not a.no_missed:  # 6. people the detector missed: SAM 3 outlines people in three frames of each shot; anyone left uncoloured is followed with ARROW (depth-fix.py), on a clip with no fixes yet
+    sys.path.insert(0,str(pathlib.Path(__file__).parent));import depth_missed
+    R=depth_missed.find(a.source,a.clip);ff=root/f'{a.clip}.fixes.json';missed=dict(found=len(R['missed']),followed=[e['name'] for e in R['follow']] if not ff.exists() else [],seconds=R['seconds'])
+    if R['follow'] and not ff.exists():
+        json.dump(dict(shots={},boxes=[],follow=R['follow'][:12]),open(ff,'w'));r_=subprocess.run([sys.executable,'authoring/render/depth-fix.py',a.source,a.clip],capture_output=True,text=True)
+        if r_.returncode:missed['error']=(r_.stderr or r_.stdout)[-800:];ff.unlink()
+        else:fr=json.loads(r_.stdout.strip().split('\n')[-1]);names=sorted(fr['people']);colours=[fr['people'][n] for n in names];per_shot=fr['perShot']
+print(json.dumps(dict(clip=a.clip,people={n:colours[i] for i,n in enumerate(names)},perShot=per_shot,keyframes=keys,**({'missed':missed} if missed else {}),seconds=C['built']['seconds'])))

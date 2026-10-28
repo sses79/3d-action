@@ -288,4 +288,22 @@ Keys need boxes that stay clear of the other person: a first box for Ramsay at 2
 
 Still open in 026: Ramsay's head, cut off at the top in shot 26, stays grey (all his seeds are on his back). The guard at the back left of shot 26 is not tinted.
 
+
+### Built: missed people found by SAM 3 (2026-10-28)
+
+Build, check and follow all used to rely on the pose detector to say who is in a frame. A person it never boxes (026's opening: Ramsay from behind, a dark back filling the frame with the head cut off) got no colour, and the check passed, because it uses the same detector. `authoring/render/depth_missed.py` adds a second way to see people:
+- **Find:** SAM 3 (`sam3-people.py`, ComfyUI) looks for "person" in three frames of each shot, at 20, 50 and 80% through it. That's about 7 s a frame on this Mac, kept as `<clip>.people-sam3.json/.npz`. Two things were needed first. ComfyUI's node keeps one detection per prompt unless the conditioning asks for more (now up to 10). A dark frame (mean under 0.2) is brightened with gamma 0.45; without that, Ramsay's back on the dark wall was not found.
+- **Missed:** each outline is read against the tinted video. Missed means under a quarter coloured, or coloured in someone else's colour: the colour of a person whose track box matches another outline better (Roose's box spilling over Ramsay). Followed people are left out of that test, because their colour comes from their points and their box can be a detector box over two people. Small people are left out as in the check.
+- **Follow:** missed outlines in one shot are joined across its frames (same place, height and width, boxes overlapping) into follow entries with seed points inside the outline. Seeding from the box's nearer depth gave a narrow guard only 2 points. The follow takes the name of a track whose box matches the outline (IoU 0.5 or more: tracked but left uncoloured), else a new letter.
+- **Where it runs:** the build runs it as step 6 and follows what it finds when the clip has no fixes yet (`--no-missed` skips it). `fix_depth_clip` with `findMissed: true` adds what it finds to the fix. The check reads the cache and lists what is still missed: "missing subject (SAM 3)", a fault, for the largest person in the frame, else "untinted person (SAM 3)", a note.
+
+Two tint changes came with it: followed people are grown before the detector's people (letter order had let Roose's box paint over Ramsay), and their pixels are protected like hand boxes.
+
+**Tests:**
+- **026, unfixed shot 26:** the check flagged Ramsay ("missing subject (SAM 3)" at 0.6 s), which the old check passed. `findMissed` added Ramsay and the guard, and the result matches my hand fix: Ramsay coloured from the first frame, Roose on Roose, the guard tinted. The automatic name for Ramsay was a new letter, because no track had him in that shot; renamed to B by hand (revision 29).
+- **013:** SAM 3 found Littlefinger uncoloured at 1.09 s, between the two keyframes the old check looked at. His shot-13 track had partly been on the guard at the top, which had lost its pink at 0.15 s. The pass gave the follow his own name A (his track box matched the outline), so he is blue throughout, the guard is pink again, and the description still holds (revision 14, check passes).
+- **044**, built fresh: the pass ran in the build (34 s), found nobody missed, and both men are coloured.
+
+Limits: SAM 3 gives one outline for two people in a close embrace (it is coloured, so it is not missed). A new letter is a new person: someone known from another shot is renamed in the follow entry. Three frames a shot can miss someone seen only briefly.
+
 Next: fight clip 023.

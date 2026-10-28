@@ -18,6 +18,9 @@ With beats (the keyframe gate): a beat person with no colour at the keyframe is 
 the frame, else only not in this shot (a reaction shot: no uncoloured person half the frame tall; a note), and a hand marked as the
 contact (set_contact_marks) that does not carry its owner's colour is a wrong hand colour (a fault): the video model reads the
 contact from the tint.
+SAM 3 (depth_missed.py, from its cache): a person it outlines in a shot's frames who is under a quarter coloured is added as an entry at that time:
+  missing subject (SAM 3) when they are the largest person in the frame (a fault), else untinted person (SAM 3) (a note). This sees what
+  the pose detector misses (a dark back filling the frame), which the detector-based issues above cannot.
 Writes check.json in the package folder ({keyframes: [{time, ok, issues, colours}]}) and check.jpg (source with the detector's
 boxes beside the tinted frame with each colour's outline and the issues). It does not change anything: the fixes are the page's."""
 import sys,json,re,pathlib,cv2,numpy as np
@@ -116,6 +119,12 @@ for k in P['keyframes']:
     lab=np.zeros((26+22*max(1,len(issues)),2*w,3),np.uint8);cv2.putText(lab,f"{k['time']} s  {'OK' if not issues else str(len(issues))+' issue(s)'}",(8,19),0,.6,(120,230,120) if not issues else (80,180,255),2)
     for i,t in enumerate(issues):cv2.putText(lab,t[:150],(8,42+22*i),0,.5,(230,230,230),1)
     rows.append(np.vstack([np.hstack([a_,b_]),lab]))
+if (root/f'{clip}-tinted.mp4').exists():  # people SAM 3 outlines that are not coloured (depth_missed.py; read from its cache only, the build and findMissed run it)
+    sys.path.insert(0,str(pathlib.Path(__file__).parent));import depth_missed
+    R=depth_missed.find(src,clip,run=False)
+    for x in (R or {}).get('missed',[]):
+        b=x['box'];out.append(dict(time=x['time'],ok=False,missed=True,issues=[f"{'missing subject' if x['largest'] else 'untinted person'} (SAM 3): a person at {round((b[0]+b[2])/2*100)}% across in shot {x['shot']} (box {round(x['tall']*100)}% tall) is {x['coloured']:.0%} coloured{' but in a colour that lies mostly on someone else' if x.get('worn') else ''}{' (the largest person in the frame)' if x['largest'] else ''}"]))
+    out.sort(key=lambda x:x['time'])
 json.dump(dict(clip=clip,package=C['package'],keyframes=out,ok=all(x['ok'] for x in out)),open(pk/'check.json','w'),indent=1)
 if rows:
     W=max(r.shape[1] for r in rows);cv2.imwrite(str(pk/'check.jpg'),cv2.resize(np.vstack([np.pad(r,((0,0),(0,W-r.shape[1]),(0,0))) for r in rows]),None,fx=.5,fy=.5),[cv2.IMWRITE_JPEG_QUALITY,85])

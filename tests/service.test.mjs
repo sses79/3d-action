@@ -123,6 +123,7 @@ test('a fix may follow a person through a shot from a box (ARROW); bad entries a
  assert.doesNotThrow(()=>checkFixes({},[],[{name:'A',shot:'27',time:3.05,box:[0,.16,.41,.94]}]));
  assert.doesNotThrow(()=>checkFixes({},[]));  // follow is optional
  assert.doesNotThrow(()=>checkFixes({},[],[{name:'A',shot:'27',keys:[{time:3.05,box:[0,.16,.41,.94]},{time:5,box:[.1,.2,.5,1]}]}]));  // seeded again later in the shot
- for(const bad of [[{name:'a',shot:'27',time:1,box:[0,0,.5,1]}],[{name:'A',shot:'x',time:1,box:[0,0,.5,1]}],[{name:'A',shot:'27',box:[0,0,.5,1]}],[{name:'A',shot:'27',time:1,box:[.5,0,.4,1]}],[{name:'A',shot:'27',keys:[]}],[{name:'A',shot:'27',keys:[{time:1,box:[0,0,.5]}]}],{}])
+ assert.doesNotThrow(()=>checkFixes({},[],[{name:'D',shot:'26',keys:[{time:.6,box:[0,.31,.19,1],points:[[.05,.5],[.1,.6],[.08,.8]]}]}]));  // seeds from SAM 3's outline
+ for(const bad of [[{name:'a',shot:'27',time:1,box:[0,0,.5,1]}],[{name:'A',shot:'x',time:1,box:[0,0,.5,1]}],[{name:'A',shot:'27',box:[0,0,.5,1]}],[{name:'A',shot:'27',time:1,box:[.5,0,.4,1]}],[{name:'A',shot:'27',keys:[]}],[{name:'A',shot:'27',keys:[{time:1,box:[0,0,.5]}]}],[{name:'A',shot:'27',keys:[{time:1,box:[0,0,.5,1],points:[[2,0]]}]}],{}])
   assert.throws(()=>checkFixes({},[],bad),/follow:/);
 });

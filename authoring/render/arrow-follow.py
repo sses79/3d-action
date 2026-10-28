@@ -1,7 +1,8 @@
 """Follow one person through one shot with ARROW point tracks (docs/DEPTH_LIBRARY_PLAN.md, "ARROW for people the detector misses"),
 for the shots where the pose detector loses them (armour from below, two bodies in an embrace). depth-fix.py runs it for a fix's
 "follow" entries; by hand:
-  .authoring/vision-venv/bin/python authoring/render/arrow-follow.py VIDEO START END SEED-TIME X0,Y0,X1,Y1 DEPTH.npz OUT.json [--detections DIR] [--key TIME:X0,Y0,X1,Y1 ...]
+  .authoring/vision-venv/bin/python authoring/render/arrow-follow.py VIDEO START END SEED-TIME X0,Y0,X1,Y1 DEPTH.npz OUT.json [--detections DIR] [--key TIME:X0,Y0,X1,Y1 ...] [--seeds SEEDS.json]
+SEEDS.json: per key, seed points [[fx, fy], ...] to use instead of the box's nearer depth (null for a key that has none).
 START END: the shot in source seconds; SEED-TIME: a source time inside it where BOX (fractions of the picture) holds the person; each --key
 seeds them again at another time (after a turn or an embrace the first seeds are lost: 026's Roose kept 3 of 15 points after 4.7 s).
 All seeds go in one ARROW run, each placed in its own frame.
@@ -37,8 +38,15 @@ def seed_in(t,box):
     if len(ss)>16:ss=[ss[i] for i in np.linspace(0,len(ss)-1,16).round().astype(int)]
     assert len(ss)>=3,f'only {len(ss)} seed points on the person in the box at {t:.2f} s: draw the box tighter round them'
     return ss
-seeds=[];own=[]
-for ki,(t,b) in enumerate(keys):ss=seed_in(t,b);seeds+=ss;own+=[ki]*len(ss)
+SEEDS=next((json.load(open(sys.argv[i+1])) for i,a in enumerate(sys.argv) if a=='--seeds'),None)  # per key: seed points [[fx, fy], ...] or null (then the box's nearer depth)
+seeds=[];own=[];skipped=[]
+for ki,(t,b) in enumerate(keys):
+    try:ss=SEEDS[ki] if SEEDS and ki<len(SEEDS) and SEEDS[ki] else seed_in(t,b)
+    except AssertionError as e:
+        if len(keys)==1:raise
+        skipped.append(f'{t:.2f}');continue  # one key with too few seeds is left out when there are others
+    seeds+=ss[:16];own+=[ki]*len(ss[:16])
+assert seeds,'no seeds in any key'
 own=np.array(own)
 # 2. frames spread over the shot, one at the seed time; ARROW on mini4
 cap=cv2.VideoCapture(video);fps=cap.get(5);ks=list(range(int(np.ceil(start*fps-1e-6)),int(np.ceil(end*fps-1e-6))));kf=[min(max(int(round(t*fps)),ks[0]),ks[-1]) for t,_ in keys]
