@@ -271,3 +271,15 @@ Each step is checked on three clips, not the whole library:
 - Ramsay 026 (an approach and embrace).
 
 After each step, `docs/HANDOFF.md` gets a section and the `scene-to-depth` skill is brought up to date.
+
+## Intake from smovie (built 2026-10-28)
+
+smovie (`/Users/tim/Yun/s-movie`, a yt-dlp download queue with REST and MCP, port 8787, on this Mac for now and meant for mini4) takes `purpose` (`keep` by default, or `depth` or `action`) and `studio` (`{id, name, rights, window?, scene?, ...}`) on a job. Depth and action downloads are video, capped at 1080.
+The service takes them in by itself (`authoring/intake.mjs`, on when `STUDIO_INTAKE` is set; the launchd agent sets `http://127.0.0.1:8787`, and installing with `STUDIO_INTAKE=` empty turns it off):
+- once a minute it asks smovie for finished jobs with a depth or action purpose;
+- the file is hardlinked to `.authoring/downloads/<smovie job>.mp4` (the same disk: no second copy, and it survives `delete_job`), or fetched over HTTP when smovie's folder is not here (`SMOVIE_DATA_DIR`);
+- with `studio.window` and `studio.scene` it runs `make_depth_reference`, which stops with `needs_input` as usual; otherwise it runs `ingest_source_video` (shots and proposed clips; choosing and describing clips stays with a person or an agent). `action` is ingested the same way for now; listing shots fit for `reconstruct_motion` is not built;
+- the source keeps `origin` (url, platform, title, uploader, smovie job). `rights` is `studio.rights`, else "<platform> download (<uploader>) through smovie; rights not stated";
+- a video whose content (SHA-256) is already a source is not ingested again; an id made from the title is numbered when taken; under 10 GB free on the disk it waits;
+- the ledger `.authoring/intake.json` maps each smovie job to what was done; a failed one is tried again only after its entry is removed. `/api/health` shows `intake` (counts, waiting).
+Test: the Olenna clip (`got-olenna`, 138 s, 30 shots, 2 control clips) submitted with purpose depth was taken in within a minute of finishing, hardlinked and ingested, with origin and rights on the source.

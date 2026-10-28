@@ -9,7 +9,9 @@ import {JobStore} from './jobs.mjs';
 import {inspectBundle} from './reconstruction/bundle.mjs';
 import {checkFixes,DepthLibrary,starStandard} from './depth-library.mjs';
 import {Studio,toolDefinitions} from './core.js';
+import {Intake} from './intake.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),studio=new Studio(root,process.env.STUDIO_STATE_PATH||undefined);
+const intake=process.env.STUDIO_INTAKE?new Intake(root,(name,args)=>studio.call(name,args,'cli')).start():null;  // downloads from smovie taken in by themselves (authoring/intake.mjs)
 const port=Number(process.env.STUDIO_PORT||5174);
 // Health (docs/DEPTH_SERVICE_PLAN.md, step 1): the version running, the job queue, and whether what the jobs need is there. A bundle
 // (authoring/core.js) or a library file newer than this process means a rebuild that has not been restarted into.
@@ -21,7 +23,7 @@ async function health(){const exists=async f=>{try{await stat(resolve(root,f));r
  const stale=[];for(const f of ['authoring/core.js','authoring/depth-library.mjs','authoring/jobs.mjs','authoring/server.mjs'])if(await newer(f))stale.push(f);
  return {ok:!stale.length,version,pid:process.pid,node:process.version,startedAt:new Date(started).toISOString(),uptimeSeconds:Math.round((Date.now()-started)/1000),
   restartNeeded:stale.length?{changed:stale,note:'These files changed after the service started: restart it (npm run deploy:authoring).'}:null,
-  jobs:jobs().summary(),
+  jobs:jobs().summary(),intake:intake?.status()??null,
   workers:await (async()=>{try{const L=(await readFile(resolve(root,'.authoring/logs/workers.jsonl'),'utf8')).trim().split('\n').slice(-50).map(l=>JSON.parse(l)),by={};for(const e of L){const b=by[e.where]??={runs:0,seconds:0,frames:0};b.runs++;b.seconds+=e.seconds;b.frames+=e.frames;}
    return {recent:L.slice(-5).reverse(),last50:Object.fromEntries(Object.entries(by).map(([w,b])=>[w,{runs:b.runs,secondsPerFrame:+(b.seconds/Math.max(1,b.frames)).toFixed(3)}])),fallbacks:L.filter(e=>/failed/.test(e.note??'')).length};}catch{return null;}})(),
   checks:{visionPython:await exists('.authoring/vision-venv/bin/python'),comfyui:await exists('.authoring/comfyui/.venv/bin/python'),openRouterKey:!!(process.env.OPENROUTER_API_KEY||process.env.OPENROUTER_ENV_FILE&&await exists(process.env.OPENROUTER_ENV_FILE)),mini4:mini.up}};}

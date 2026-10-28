@@ -20,7 +20,7 @@ const sh=(cmd,args,opts={})=>spawnSync(cmd,args,{cwd:root,stdio:'inherit',...opt
 const loaded=()=>spawnSync('launchctl',['print',`${domain}/${label}`],{stdio:'ignore'}).status===0;
 async function health(waitMs=20000){const t0=Date.now();for(;;){try{const r=await fetch(base+'/api/health');if(r.ok)return await r.json();}catch{}if(Date.now()-t0>waitMs)return null;await new Promise(r=>setTimeout(r,500));}}
 function writePlist(){mkdirSync(logs,{recursive:true});mkdirSync(dirname(plist),{recursive:true});
- const env={PATH:`${dirname(node)}:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin`,OPENROUTER_ENV_FILE:envFile,HOME:homedir()};
+ const env={PATH:`${dirname(node)}:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin`,OPENROUTER_ENV_FILE:envFile,HOME:homedir(),STUDIO_INTAKE:process.env.STUDIO_INTAKE??'http://127.0.0.1:8787',SMOVIE_DATA_DIR:process.env.SMOVIE_DATA_DIR??resolve(homedir(),'Yun/s-movie/data')};  // STUDIO_INTAKE= (empty) at install turns the smovie intake off
  writeFileSync(plist,`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
@@ -38,7 +38,7 @@ function writePlist(){mkdirSync(logs,{recursive:true});mkdirSync(dirname(plist),
 const cmd=process.argv[2];
 if(cmd==='install'){if(!existsSync(node))throw Error('Node 26 not found at '+node+' (set STUDIO_NODE)');
  spawnSync('pkill',['-f','node authoring/server.mjs'],{stdio:'ignore'});spawnSync('pkill',['-f',resolve(root,'authoring/server.mjs')],{stdio:'ignore'});
- if(loaded())sh('launchctl',['bootout',`${domain}/${label}`]);writePlist();sh('launchctl',['bootstrap',domain,plist]);
+ if(loaded())sh('launchctl',['bootout',`${domain}/${label}`]);writePlist();for(let i=0;i<6&&sh('launchctl',['bootstrap',domain,plist]).status;i++)spawnSync('sleep',['1']);  // straight after a bootout launchd can refuse (5: Input/output error) for a moment
  const h=await health();console.log(h?`Running: version ${h.version}, pid ${h.pid}. Logs: ${resolve(logs,'service.log')}`:'Started, but /api/health does not answer yet: see '+resolve(logs,'service.log'));}
 else if(cmd==='deploy'){
  for(const [what,args] of [['build:authoring',['run','-s','build:authoring']],['build:editor',['run','-s','build:editor']]]){console.log('·',what);if(sh('npm',args).status)throw Error(what+' failed');}

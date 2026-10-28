@@ -6,7 +6,7 @@ Runs shots.py (cuts), control-need.py (on/off with the reasons) and whisper.cpp 
 are not kept) and writes .authoring/depth-library/<id>/source.json and a thumbnail per shot (shot-NNN.jpg, its middle frame).
 Clips (depth_propose.py): control-on shots in a row are joined while together they stay within --max seconds (a sequence like a fight stays one clip);
 a control-off stretch of at most --bridge (5) seconds between two on-shots joins them (a slow grab between fast fight
-cuts); a run that is longer than --max is split at shot boundaries, and a single on-shot longer than --max is cut into pieces of --max. Each
+cuts); a run that is longer than --max is split at shot boundaries, and a single on-shot longer than --max is cut into equal pieces of at most --max (2026-10-28: a 16.4 s shot gave 15 s and a 1.4 s tail). Each
 control-off shot is an entry of its own with no depth: keyframes and text only. Every clip starts as "proposed"; building
 (step 2) and describing (by Claude in a session) come later."""
 import sys,os,json,argparse,hashlib,subprocess,pathlib,re,time,cv2

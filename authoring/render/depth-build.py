@@ -92,8 +92,9 @@ tint=root/f'{a.clip}-tinted.mp4';step('tint',[py,'authoring/render/depth-tint.py
 # keyframes: each shot's start, and the middle of a long shot
 keys=[]
 for s in shots:
-    keys.append(round(max(s['start'],t0)+min(.15,(s['end']-s['start'])/3)-t0,2))
-    if s['end']-s['start']>4:keys.append(round((s['start']+s['end'])/2-t0,2))
+    keys.append(round(max(s['start'],t0)+min(.15,(min(s['end'],t1)-max(s['start'],t0))/3)-t0,2))
+    a_,b_=max(s['start'],t0),min(s['end'],t1)  # the part of the shot inside the clip (a cut sequence starts and ends inside shots)
+    if b_-a_>4:keys.append(round((a_+b_)/2-t0,2))
 keys=sorted(set(keys))[:8] if len(keys)<=8 else [keys[round(i*(len(keys)-1)/7)] for i in range(8)]
 shot_at=lambda x:next((s['index'] for s in shots if s['start']<=x+t0<s['end']),shots[-1]['index'])
 spec=dict(id=a.clip,name=f"{S['name']} · {a.clip.replace(a.source+'-','clip ')} ({C['seconds']:.1f} s)",video=video,start=round(t0,3),depth=str(tint),
@@ -116,8 +117,8 @@ missed=None
 if not a.no_missed:  # 6. people the detector missed: SAM 3 outlines people in three frames of each shot; anyone left uncoloured is followed with ARROW (depth-fix.py), on a clip with no fixes yet
     sys.path.insert(0,str(pathlib.Path(__file__).parent));import depth_missed
     R=depth_missed.find(a.source,a.clip);ff=root/f'{a.clip}.fixes.json';missed=dict(found=len(R['missed']),followed=[e['name'] for e in R['follow']] if not ff.exists() else [],seconds=R['seconds'])
-    if R['follow'] and not ff.exists():
-        json.dump(dict(shots={},boxes=[],follow=R['follow'][:24]),open(ff,'w'));r_=subprocess.run([sys.executable,'authoring/render/depth-fix.py',a.source,a.clip],capture_output=True,text=True)
+    if (R['follow'] or R.get('renames')) and not ff.exists():
+        json.dump(dict(shots=R.get('renames') or {},boxes=[],follow=R['follow'][:24]),open(ff,'w'));r_=subprocess.run([sys.executable,'authoring/render/depth-fix.py',a.source,a.clip],capture_output=True,text=True)
         if r_.returncode:missed['error']=(r_.stderr or r_.stdout)[-800:];ff.unlink()
         else:fr=json.loads(r_.stdout.strip().split('\n')[-1]);names=sorted(fr['people']);colours=[fr['people'][n] for n in names];per_shot=fr['perShot']
 print(json.dumps(dict(clip=a.clip,people={n:colours[i] for i,n in enumerate(names)},perShot=per_shot,keyframes=keys,**({'missed':missed} if missed else {}),seconds=C['built']['seconds'])))
