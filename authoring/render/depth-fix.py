@@ -12,7 +12,7 @@ person's colour, as the track "<name>-hand", and replaces that person's detector
 the result lists "thin" stretches with under 3 points, where a key helps) follows the person in that box (fractions, at that clip time) through the
 shot with ARROW point tracks (arrow-follow.py, on mini4, about 45 s; kept as <clip>.follow-<key>.json for later fixes): each frame takes
 the detector box holding most of their points; it replaces their detector track in the shot and is an ordinary track (the tint
-cuts it to the body's depth), not a hand box.
+cuts it to the body's depth), not a hand box. "from" (clip seconds): no track before it (someone hidden behind another person until then).
 The automatic tracks (<clip>.tracks.json) are never changed; the fixed ones go to <clip>.tracks-fixed.json, hand boxes to <clip>.hand.json."""
 import re,sys,os,json,pathlib,subprocess,time,hashlib
 src,clip=sys.argv[1],sys.argv[2];root=pathlib.Path('.authoring/depth-library')/src;S=json.load(open(root/'source.json'));C=next(c for c in S['clips'] if c['id']==clip)
@@ -48,6 +48,7 @@ for e in fx.get('follow',[]):  # ARROW: the person in a box followed through the
     if e['name'] not in order:order.append(e['name'])
     for k,t in enumerate(T['times']):
         if shot_of(t)!=str(e['shot']):continue
+        if t-T['start']<e.get('from',-1):tr[k]=None;continue  # not there yet (032: the granddaughter behind the old woman; before she steps out the points run back onto the old woman)
         j=max([i for i,x in enumerate(rt) if x<=t+1e-6],default=0);j1=min(j+1,len(rt)-1);b0,b1=R['boxes'][j],R['boxes'][j1]
         if b0 is None or b1 is None:b=b0 if abs(t-rt[j])<=abs(t-rt[j1]) else b1  # next to a frame with no box: the nearer one (none when that is the empty one)
         else:u=0 if rt[j1]<=rt[j] else min(1,max(0,(t-rt[j])/(rt[j1]-rt[j])));b=[p_+(q_-p_)*u for p_,q_ in zip(b0,b1)]
@@ -57,7 +58,7 @@ for e in fx.get('follow',[]):  # ARROW: the person in a box followed through the
             for p0,p1 in zip(P0,P1):
                 q=[p0[0]+(p1[0]-p0[0])*u,p0[1]+(p1[1]-p0[1])*u] if p0 and p1 and b0 and b1 else p0 if p0 and abs(t-rt[j])<=.1 else p1 if p1 and abs(t-rt[j1])<=.1 else None
                 if q:pp.append([round(q[0]*W_,1),round(q[1]*H_,1)])
-            if len(pp)>=3:tr[k]['points']=pp
+            if len(pp)>=3:tr[k]['points']=pp;bx=tr[k]['box'];tr[k]['box']=[min(bx[0],min(q[0] for q in pp)),min(bx[1],min(q[1] for q in pp)),max(bx[2],max(q[0] for q in pp)),max(bx[3],max(q[1] for q in pp))]  # the box takes in their own points (032: the detector held only the granddaughter's head and shoulders behind the old woman, and the tint drops points outside the box)
     if e['name'] not in colours:colours[e['name']]=next(c for c in PAL if c not in colours.values()) if len(colours)<len(PAL) else 'gray'
     followed.append(dict(name=e['name'],shot=str(e['shot']),frames=len(rt),fromDetector=R['source'].count('detector'),blended=R['source'].count('blended'),fromPoints=R['source'].count('points'),none=R['boxes'].count(None),thin=[[round(a_-T['start'],2),round(b_-T['start'],2)] for a_,b_ in R.get('thin',[])]))
 tracks={n:v for n,v in tracks.items() if any(v)}
