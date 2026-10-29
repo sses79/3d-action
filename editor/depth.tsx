@@ -80,6 +80,30 @@ function BuildButton({clip,onDone}:{clip:string;onDone:()=>void}){
  const go=async()=>{setBusy(true);setState('Starting…');try{const {job}=await tool('build_depth_clip',{clip}),t0=Date.now();for(;;){await new Promise(r=>setTimeout(r,3000));const j=await tool('get_depth_job',{job});if(j.status==='running'){setState(`Building… ${Math.round((Date.now()-t0)/1000)} s`);continue;}if(j.status==='done'){setState(`Built in ${Math.round(j.result?.seconds?.total??0)} s`);onDone();}else setState('Failed: '+(j.error||'').slice(-300));break;}}catch(e:any){setState(e.message);}setBusy(false);};
  return <div className="dl-build"><button className="primary" disabled={busy} onClick={go}>{busy?'Building…':'Build this clip'}</button>{state&&<span>{state}</span>}</div>;
 }
+// The clip as a plain-shape 3D scene matched at its keyframes (build_depth_scene, docs/DEPTH_LIBRARY_PLAN.md "A 3D scene from a clip"):
+// the latest job followed while it runs, the latest result's fit, builds, check sheet and scene video. Building again keeps the builds
+// already made (a minute or two); rebuilding all reads the bodies again and builds every shot (5-15 minutes).
+function SceneBox({id}:{id:string}){
+ const [st,setSt]=useState<{job:any;result:any}|null>(null),[err,setErr]=useState(''),[stamp,setStamp]=useState(0);
+ const load=()=>fetch(bridgeUrl+'/api/depth-scene?clip='+encodeURIComponent(id)).then(r=>r.json()).then(d=>{if(d.error)setErr(d.error);else setSt(d);return d;});
+ useEffect(()=>{setSt(null);setErr('');load().catch(e=>setErr(e.message));},[id]);
+ const live=!!st?.job&&['queued','running'].includes(st.job.status);
+ useEffect(()=>{if(!live)return;const t=setTimeout(()=>load().then(d=>{if(d.job&&!['queued','running'].includes(d.job.status))setStamp(Date.now());}).catch(()=>{}),4000);return ()=>clearTimeout(t);},[st,live]);
+ const go=async(again:boolean)=>{if(again&&!confirm('Read every keyframe again and rebuild every shot? 5-15 minutes.'))return;setErr('');try{await tool('build_depth_scene',again?{clip:id,again:true}:{clip:id});await load();}catch(e:any){setErr(e.message);}};
+ const f=(x:string)=>bridgeUrl+'/api/depth-scene-file?clip='+encodeURIComponent(id)+'&file='+x+'&v='+(st?.result?.finishedAt??'')+stamp,r=st?.result,j=st?.job;
+ return <div className="dl-scene">
+  {!r&&!live&&<p className="vc-help">No 3D scene yet: plain-shape figures and a camera per shot, placed so each person lands on their keyframe points, moving as a build of each shot.</p>}
+  {live&&<p className="vc-help">{j.status==='queued'?'Queued':'Building'}{j.step?` · ${j.step}`:''}… {j.log?<small>{String(j.log).slice(0,100)}</small>:null}</p>}
+  {j?.status==='failed'&&<div className="dl-check-k">⚠ Last build failed: {String(j.error??'').slice(-240)}</div>}
+  {r&&<>
+   <p className="vc-help">Fit at {r.fit.readings} keyframe readings: median {r.fit.medianPixels} px, worst {Math.round(r.fit.worstPixels)} px. {r.builds.filter((b:any)=>!b.failed).length} builds ({r.builds.map((b:any)=>`shot ${b.shot} ${b.name}${b.failed?' failed':''}`).join(', ')}); {r.cameras} cameras.{r.leftOut?.length?` Left out: ${r.leftOut.join('; ')}.`:''} Built in {Math.round(r.seconds.total/60)||'<1'} min{r.finishedAt?`, ${new Date(r.finishedAt).toLocaleString()}`:''}.</p>
+   <video className="dl-scene-video" src={f('scene.mp4')} controls playsInline/>
+   <a href={f('check.jpg')} target="_blank" rel="noreferrer" title="The check sheet: keyframes (source, tinted depth, scene), then five moments a shot, source over scene"><img className="dl-scene-sheet" src={f('check.jpg')} alt="check sheet"/></a>
+   <p className="vc-help">Matched at keyframes only; the strips show actions between them. Pair {r.pairId} (open it in Studio or export_pair_reference).</p></>}
+  {err&&<div className="dl-check-k">⚠ {err}</div>}
+  <div className="dl-build"><button className="primary" disabled={live} onClick={()=>go(false)}>{r?'Build again':'Build 3D scene'}</button>{r&&<button disabled={live} onClick={()=>go(true)}>Rebuild all</button>}</div>
+ </div>;
+}
 // Whether this clip needs a control video: the measured verdict, which a person can override (set_depth_clip_control).
 function ControlSwitch({clip,onDone}:{clip:Clip;onDone:()=>void}){
  const [why,setWhy]=useState(''),[note,setNote]=useState('');const on=clip.needsControlNow!==false;
@@ -156,6 +180,7 @@ function PackageView({id,onBack}:{id:string;onBack:()=>void}){
    <hr/><h2>RESULTS</h2>{extras?.reviews.length?extras.reviews.map(r=><Result key={r.label} id={pkg.id} r={r}/>):<p className="vc-help">No result reviewed yet. When a take comes back, review it against this package (review_depth_result, with a verdict: used, good, retake or rejected); it shows here with its sheet.</p>}
    <hr/><h2>STARS</h2><RateBox id={pkg.id}/>
    {pkg.library?.perShot&&<><hr/><h2>PEOPLE</h2><PeopleFix pkg={pkg} hand={hand} setHand={setHand} draw={draw} setDraw={setDraw} time={time} onDone={()=>setStamp(Date.now())}/></>}
+   {pkg.library&&<><hr/><h2>3D SCENE</h2><SceneBox id={pkg.id}/></>}
    <hr/><h2>PACKAGE</h2>
    <p className="vc-help">.authoring/video-clay/{pkg.id}/ · {[pkg.depth,pkg.clay].filter(Boolean).join(', ')} ({pkg.size[0]}×{pkg.size[1]}, {pkg.duration.toFixed(2)} s, {pkg.fps} fps) and a source{pkg.clay?', clay':''} and depth still per keyframe. From {pkg.sourceVideo}, {pkg.start}–{(pkg.start+pkg.duration).toFixed(2)} s.</p>
    {pkg.notes?.map((n,i)=><p key={i} className="vc-help">{n}</p>)}

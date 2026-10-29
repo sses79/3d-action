@@ -84,6 +84,19 @@ const server=createServer(async(req,res)=>{
    let bytes;try{bytes=await readFile(resolve(root,'.authoring/depth-library',id,file));}catch{return json(404,{error:'No such file'});}
    res.writeHead(200,{'Content-Type':'image/jpeg','Content-Length':bytes.length});return res.end(bytes);
   }
+  if(req.method==='GET'&&(path==='/api/depth-scene'||path==='/api/depth-scene-file')){
+   // A clip's 3D scene (build_depth_scene): its latest job (running or not) and its latest finished result; the file route streams that
+   // result's check sheet or scene video only.
+   const clip=url.searchParams.get('clip')||'';if(!/^[a-z0-9][a-z0-9-]{1,40}$/.test(clip))return json(404,{error:'Not a clip'});
+   const dir=new DepthLibrary(root).store.dir,jobs=[];for(const f of await readdir(dir).catch(()=>[]))if(f.startsWith('depth-scene-')&&f.endsWith('.json')){try{const j=JSON.parse(await readFile(resolve(dir,f),'utf8'));if(j.clip===clip)jobs.push(j);}catch{}}
+   jobs.sort((a,b)=>String(a.queuedAt).localeCompare(String(b.queuedAt)));const last=jobs.at(-1),done=jobs.filter(j=>j.status==='done'&&j.result).at(-1);
+   if(path==='/api/depth-scene')return json(200,{job:last?{id:last.id,status:last.status,step:last.step??null,error:last.error,queuedAt:last.queuedAt,finishedAt:last.finishedAt??null,log:last.status==='running'?String(last.log??'').trim().split('\n').pop():undefined}:null,result:done?{...done.result,people:undefined,finishedAt:done.finishedAt}:null});
+   const file=url.searchParams.get('file')||'',full=file==='check.jpg'?resolve(root,'.authoring/depth-scene',clip,'check.jpg'):file==='scene.mp4'&&done?.result?.video?resolve(done.result.video):null;
+   if(!full||!full.startsWith(resolve(root,'.authoring')+'/'))return json(404,{error:'Not a scene file'});let info;try{info=await stat(full);}catch{return json(404,{error:'Not made yet'});}
+   const type=file.endsWith('.mp4')?'video/mp4':'image/jpeg',match=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||''),first=match?Number(match[1]):0,last2=Math.min(info.size-1,match&&match[2]?Number(match[2]):info.size-1);if(first>last2||first>=info.size){res.writeHead(416,{'Content-Range':`bytes */${info.size}`});return res.end();}
+   res.writeHead(match?206:200,{'Content-Type':type,'Accept-Ranges':'bytes','Content-Length':last2-first+1,'Cache-Control':'no-store',...(match?{'Content-Range':`bytes ${first}-${last2}/${info.size}`}:{})});
+   return createReadStream(full,{start:first,end:last2}).on('error',()=>res.destroy()).pipe(res);
+  }
   if(req.method==='POST'&&path==='/api/depth-library/fix'){
    // Fixes by hand to a built clip, shot by shot: who each person found is (joins and splits), or drop; tint and package again (depth-fix.py, seconds).
    if(!req.headers['content-type']?.startsWith('application/json'))throw Error('Expected application/json');
