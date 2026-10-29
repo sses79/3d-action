@@ -1,12 +1,15 @@
 """Render a scene GLB from scene-gltf.mjs in Blender: a plain clay video, a depth video and a tinted depth video (each person
 one colour, exact from the renderer, no detection; props yellow; the room and floor grey depth). Run:
-  blender -b -P authoring/render/blender-scene.py -- SCENE.glb OUTDIR [--passes clay,depth,tint] [--samples 16] [--frames A-B]
+  blender -b -P authoring/render/blender-scene.py -- SCENE.glb OUTDIR [--passes clay,depth,tint] [--samples 16] [--frames A-B] [--grey]
 SCENE.json beside the GLB gives the lens per frame and the picture size. Depth is inverse distance like the clay view's: white at
 a little nearer than the performers come, black from 40 m. Writes OUTDIR/<pass>.mp4 (ffmpeg) and OUTDIR/<pass>-first.png."""
 import bpy,sys,os,json,math,subprocess,shutil
 argv=sys.argv[sys.argv.index('--')+1:];glb,outdir=os.path.abspath(argv[0]),os.path.abspath(argv[1]);opt=lambda k,d:argv[argv.index(k)+1] if k in argv else d
 passes=opt('--passes','clay,depth,tint').split(',');samples=int(opt('--samples','16'));meta=json.load(open(os.path.splitext(glb)[0]+'.json'));os.makedirs(outdir,exist_ok=True)
 COLORS=[(0.12,0.35,1.0),(1.0,0.45,0.08),(0.15,0.8,0.25),(0.9,0.15,0.6),(0.95,0.85,0.1),(0.1,0.85,0.9)]  # blue, orange, green, pink, yellow, cyan: the depth library's order
+lin=lambda h:tuple(((int(h[k:k+2],16)/255+.055)/1.055)**2.4 if int(h[k:k+2],16)/255>.04045 else int(h[k:k+2],16)/255/12.92 for k in (1,3,5))
+FIG=[lin(c) if c else None for c in meta.get('colors',[])]  # the pair's own figure colours (sRGB hex from the clay view), else COLORS
+col=lambda i:FIG[i] if i<len(FIG) and FIG[i] else COLORS[i%len(COLORS)];plain='--grey' in argv  # --grey: grey figures in the clay pass
 bpy.ops.wm.read_factory_settings(use_empty=True);sc=bpy.context.scene;sc.render.fps=meta['fps']  # before the import: glTF keys (seconds) are placed at the scene's rate
 bpy.ops.import_scene.gltf(filepath=glb)
 cam=next(o for o in sc.objects if o.type=='CAMERA');sc.camera=cam;cam.data.sensor_fit='VERTICAL';cam.data.clip_start=.1;cam.data.clip_end=200
@@ -39,6 +42,9 @@ for k in range(1,n+1,max(1,n//40)):
     for a in arms:
         b=next((b for b in a.pose.bones if b.name.endswith('pelvis')),None)
         if b:near=min(near,(a.matrix_world@b.head-cp).length)
+    if not arms:  # plain-shape figures have no skeleton: the nearest of their parts (each a capsule or sphere) instead
+        for objs in people.values():
+            for o in objs:near=min(near,(o.matrix_world@(sum((Vector(c) for c in o.bound_box),Vector())/8)-cp).length)
 near=max(.5,round(near*.6,1));far=40.0
 def mat(name,build):
     m=bpy.data.materials.new(name);m.use_nodes=True;nt=m.node_tree;[nt.nodes.remove(x) for x in list(nt.nodes)];out=nt.nodes.new('ShaderNodeOutputMaterial');nt.links.new(build(nt),out.inputs['Surface']);return m
@@ -77,10 +83,10 @@ def render(name,mats,engine,bgcol,standard):
 import time;t0=time.time();took={}
 if 'clay' in passes:
     sun=bpy.data.objects.new('sun',bpy.data.lights.new('sun','SUN'));sun.data.energy=4.5;sun.data.angle=math.radians(20);sun.rotation_euler=(math.radians(35),0,math.radians(-25));sc.collection.objects.link(sun)  # soft and from the camera's side: a low one from the side threw a wall's hard shadow across the daggers scene
-    render('clay',{**{i:mat(f'clay{i}',lambda nt:clay(nt,(.6,.6,.6))) for i in people},'room':mat('roomclay',lambda nt:clay(nt,(.35,.35,.35))),'prop':mat('propclay',lambda nt:clay(nt,(.15,.15,.15)))},'BLENDER_EEVEE',(.3,.3,.3),False);took['clay']=round(time.time()-t0,1)
+    render('clay',{**{i:mat(f'clay{i}',lambda nt,i=i:clay(nt,(.6,.6,.6) if plain else col(i))) for i in people},'room':mat('roomclay',lambda nt:clay(nt,(.35,.35,.35))),'prop':mat('propclay',lambda nt:clay(nt,COLORS[4]))},'BLENDER_EEVEE',(.3,.3,.3),False);took['clay']=round(time.time()-t0,1)
     sun.hide_render=True
 if 'depth' in passes:
     t=time.time();g=mat('depth',grey_depth);render('depth',{**{i:g for i in people},'room':g,'prop':g},'BLENDER_EEVEE',(0,0,0),True);took['depth']=round(time.time()-t,1)
 if 'tint' in passes:
-    t=time.time();render('tint',{**{i:mat(f'tint{i}',tinted(COLORS[i%len(COLORS)])) for i in people},'room':mat('depthf',grey_depth),'prop':mat('tintprop',tinted(COLORS[4]))},'BLENDER_EEVEE',(0,0,0),True);took['tint']=round(time.time()-t,1)
+    t=time.time();render('tint',{**{i:mat(f'tint{i}',tinted(col(i))) for i in people},'room':mat('depthf',grey_depth),'prop':mat('tintprop',tinted(COLORS[4]))},'BLENDER_EEVEE',(0,0,0),True);took['tint']=round(time.time()-t,1)
 print('BLENDER-SCENE',json.dumps(dict(outdir=outdir,frames=n,fps=fps,people=len(people),props=len(props),room=len(room),depth=dict(nearMeters=near,farMeters=far),seconds=took)))
