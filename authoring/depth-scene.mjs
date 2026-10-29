@@ -4,11 +4,12 @@
 //  layout  one room: a place and heading per person, a camera and lens per shot, fitted so each person lands on their keyframe
 //          points (authoring/render/depth-scene.py); its check gives the error in pixels per reading
 //  builds  a coarse reconstruct_motion per shot for each person seen whole and facing the camera at a keyframe of that shot (a
-//          back over a shoulder or someone cut by a side of the picture holds their nearest build, turned as in its shot)
+//          back, the body or in a close shot the head turned away, over a shoulder or someone cut by a side of the picture holds their nearest build, turned as in its shot)
 //  scene   set_shots_scene, pair dscene-<clip>: each build moves between its person's keyframe places with its hips at the
 //          fitted height; legs drawn for people sitting (hips under 0.7 m), else the tapered column
 //  render  render_pair_video; check: the sheet (keyframes, then five moments a shot, source over scene)
-// A person with no build anywhere is left out and named in the result. Builds are one at a time (the service runs one
+// A build already made for that shot and person is kept unless again: true (which also reads the bodies again). A person with no
+// build anywhere is left out and named in the result. Builds are one at a time (the service runs one
 // reconstruction at a time), 1.5-3 minutes each.
 import {readFileSync,writeFileSync,existsSync,mkdirSync,readdirSync} from 'node:fs';
 import {resolve,basename} from 'node:path';
@@ -29,7 +30,7 @@ export class DepthScene{
   writeFileSync(D('boxes.json'),JSON.stringify({video:TR.video,start:TR.start,end:TR.end,times:TR.times,size:TR.size,tracks:TR.tracks}));
   step('builds');t=Date.now();const want=new Map();for(const c of L.check)if(c.weight>=1&&c.boxHeight>=150)want.set(`${c.shot}:${c.name}`,{shot:c.shot,name:c.name});
   const builds=[];for(const {shot,name} of want.values()){const sh=S.shots.find(s=>s.index===shot),actionId=`dscene-${a.clip}-s${shot}-${name.toLowerCase()}`.slice(0,48);log(`· build shot ${shot} ${name}\n`);
-   try{const have=await this.call('get_action',{actionId}).then(r=>r.revision,()=>0);await this.call('reconstruct_motion',{...(have?{expectedRevision:have}:{}),video:S.video,start:+(S.start+sh.start).toFixed(3),end:+(S.start+sh.end).toFixed(3),boxes:{file:D('boxes.json'),name},coarse:true,commit:true,force:true,actionId,name:`${a.clip} shot ${shot} ${name} (depth scene)`});
+   try{const have=await this.call('get_action',{actionId}).then(r=>r.revision,()=>0);if(have&&!a.again)log(`  kept (revision ${have}; again: true rebuilds)\n`);else await this.call('reconstruct_motion',{...(have?{expectedRevision:have}:{}),video:S.video,start:+(S.start+sh.start).toFixed(3),end:+(S.start+sh.end).toFixed(3),boxes:{file:D('boxes.json'),name},coarse:true,commit:true,force:true,actionId,name:`${a.clip} shot ${shot} ${name} (depth scene)`});
     builds.push({shot,name,actionId,from:sh.start,to:sh.end,revision:(await this.call('get_action',{actionId})).revision});}catch(e){builds.push({shot,name,actionId,failed:String(e?.message??e).slice(-300)});}}
   time('builds',t);
   step('scene');const people=S.people.filter(p=>builds.some(b=>b.name===p.name&&!b.failed)),left=S.people.filter(p=>!people.includes(p)).map(p=>p.name+(L.unplaced?.includes(p.name)?' (seen only cut by a side of the picture)':''));if(people.length<2)throw Error(`Fewer than two people have a build (${people.map(p=>p.name).join(', ')||'none'}); see the builds: ${JSON.stringify(builds)}`);

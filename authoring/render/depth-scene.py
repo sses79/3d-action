@@ -8,8 +8,8 @@ the pictures need; per shot a camera (yaw, pitch, position, lens; no roll), the 
 reading, carried into the room by its shot's camera, should put that person's hips at their place and height and their facing
 (hips across x up, so seated people too) along their heading; a reading whose feet are in the picture puts the lowest foot on the
 floor; each torso leans little (weak). The first keyframe's camera fixes the room: at x=z=0 looking toward -z (room axes as
-set_shots_scene: x right, y up, z toward that viewer). A person seen only cut by a side of the picture is left out (unplaced). A reading of someone facing away from the camera (a back over a shoulder)
-weighs 0.4. The lens is the model's (a guess from the picture, the same for every frame); it is given on a 1920 wide picture.
+set_shots_scene: x right, y up, z toward that viewer). A person seen only cut by a side of the picture is left out (unplaced). A reading of someone facing away from the camera weighs 0.4: the body turned away, or
+in a close shot (no feet seen) the head turned away, as over a shoulder, where the model reads the body side-on. The lens is the model's (a guess from the picture, the same for every frame); it is given on a 1920 wide picture.
 OUT.json: places, headings, hip heights, cameras ready for set_shots_scene, and the check: each reading re-drawn from its
 person's room place and heading through its shot's camera, the error in pixels of head, shoulders, hips and knees."""
 import sys,json,argparse,numpy as np
@@ -22,13 +22,14 @@ def Rx(t):c,s=np.cos(t),np.sin(t);return np.array([[1,0,0],[0,c,-s],[0,s,c]])
 def body(P):  # hips centre, facing (unit, horizontal part taken by the caller), torso up
  hip=(P[9]+P[10])/2;up=(P[5]+P[6])/2-hip;f=np.cross(P[9]-P[10],up);return hip,f/np.linalg.norm(f),up/np.linalg.norm(up)
 head=lambda f:np.arctan2(f[0],f[2]);wrap=lambda x:(x+np.pi)%(2*np.pi)-np.pi
-w=[];feet=[];cut=[]
+w=[];feet=[];cut=[];back=[]
 for i,r in enumerate(R):
- x0,y0,x1,y1=r['box'];_,f,_=body(G[i]);cut.append(bool(x0<4 or x1>W-4));w.append((.4 if f[2]<-.3 else 1.0)*(0 if cut[-1] else 1))  # GL camera frame: facing the camera is +z; a person cut by a side of the picture only has to be seen inside their box (the model guesses where the rest of them is)
- F=k2[i][15:21];feet.append(bool(y1<H*.97 and (F[:,1]<H*.97).all() and (F[:,1]>y0).all()))
+ x0,y0,x1,y1=r['box'];_,f,_=body(G[i]);cut.append(bool(x0<4 or x1>W-4));F=k2[i][15:21];feet.append(bool(y1<H*.97 and (F[:,1]<H*.97).all() and (F[:,1]>y0).all()))
+ hd=G[i][0]-(G[i][3]+G[i][4])/2;hd=hd[2]/np.linalg.norm(hd)  # head: nose from between the ears, toward the camera +z
+ back.append(bool(f[2]<-.3 or (hd<0 and not feet[-1])));w.append((.4 if back[-1] else 1.0)*(0 if cut[-1] else 1))  # GL camera frame: facing the camera is +z; a back: the body turned away, or in a close shot the head turned away (over a shoulder the model reads the body side-on); a person cut by a side of the picture only has to be seen inside their box (the model guesses where the rest of them is)
 whole={r['name'] for i,r in enumerate(R) if not cut[i]};unplaced=sorted({r['name'] for r in R}-whole)  # seen only cut by a side: nothing to place them from
 if unplaced:
- k=[i for i,r in enumerate(R) if r['name'] in whole];R=[R[i] for i in k];KP,CT,G,k2=KP[k],CT[k],G[k],k2[k];w=[w[i] for i in k];feet=[feet[i] for i in k];cut=[cut[i] for i in k]
+ k=[i for i,r in enumerate(R) if r['name'] in whole];R=[R[i] for i in k];KP,CT,G,k2=KP[k],CT[k],G[k],k2[k];w=[w[i] for i in k];feet=[feet[i] for i in k];cut=[cut[i] for i in k];back=[back[i] for i in k]
  names=sorted(whole);shots=[];[shots.append(r['shot']) for r in sorted(R,key=lambda r:r['keyframe']) if r['shot'] not in shots]
 nS,nP=len(shots),len(names)
 best={n:max((i for i,r in enumerate(R) if r['name']==n and not cut[i]),key=lambda i:w[i]*(R[i]['box'][3]-R[i]['box'][1])) for n in names}  # each person's best whole reading
@@ -93,7 +94,7 @@ cams,hys,sl=unpack(x)
 check=[]
 for i,r in enumerate(R):
  c=cams[shots.index(r['shot'])];X,Zp,th=sl[(r['name'],r['keyframe'])];Q,_,_=placed(c,i,X,Zp,hys[r['name']],th);e=np.hypot(*(seen(c,Q)[J]-k2[i][J]).T)
- check.append(dict(keyframe=r['keyframe'],shot=r['shot'],name=r['name'],weight=w[i],feetOnFloor=feet[i],pixels=round(float(np.median(e)),1),boxHeight=round(r['box'][3]-r['box'][1])))
+ check.append(dict(keyframe=r['keyframe'],shot=r['shot'],name=r['name'],weight=w[i],back=back[i],feetOnFloor=feet[i],pixels=round(float(np.median(e)),1),boxHeight=round(r['box'][3]-r['box'][1])))
 starts={k['index']:k['start'] for k in S['shots']}
 res=dict(spec=B['spec'],focal1920=round(focal*1920/W),people=[dict(name=n,place=[round(float(sl[k][0]),3),round(float(sl[k][1]),3)],hipHeight=round(float(hys[n]),3),heading=round(float(np.degrees(sl[k][2])),1),**({'hipHeightGuessed':True} if n in footless else {}),keyframes=[dict(keyframe=k_,time=S['keyframes'][k_]['time'],shot=S['keyframes'][k_]['shot'],place=[round(float(sl[(n,k_)][0]),3),round(float(sl[(n,k_)][1]),3)],heading=round(float(np.degrees(sl[(n,k_)][2])),1)) for (m,k_) in slots if m==n]) for n in names for k in [next(k for k in slots if k[0]==n)]],
  cameras=[dict(name=f'shot {s}',start=starts.get(s,0),position=[round(float(v),3) for v in cams[k][2:5]],yaw=round(float(np.degrees(cams[k][0])),2),pitch=round(float(np.degrees(cams[k][1])),2),focal=round(focal*np.exp(cams[k][5])*1920/W)) for k,s in enumerate(shots)],check=check,unplaced=unplaced,iterations=it+1,residual=round(float(np.sqrt(np.mean(resid(x)**2))),4))
