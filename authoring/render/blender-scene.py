@@ -1,8 +1,9 @@
 """Render a scene GLB from scene-gltf.mjs in Blender: a plain clay video, a depth video and a tinted depth video (each person
 one colour, exact from the renderer, no detection; props yellow; the room and floor grey depth). Run:
-  blender -b -P authoring/render/blender-scene.py -- SCENE.glb OUTDIR [--passes clay,depth,tint] [--samples 16] [--frames A-B] [--grey]
+  blender -b -P authoring/render/blender-scene.py -- SCENE.glb OUTDIR [--passes clay,depth,tint] [--samples 16] [--frames A-B] [--grey] [--blend FILE.blend]
 SCENE.json beside the GLB gives the lens per frame and the picture size. Depth is inverse distance like the clay view's: white at
-a little nearer than the performers come, black from 40 m. Writes OUTDIR/<pass>.mp4 (ffmpeg) and OUTDIR/<pass>-first.png."""
+a little nearer than the performers come, black from 40 m. Writes OUTDIR/<pass>.mp4 (ffmpeg) and OUTDIR/<pass>-first.png.
+With --blend: no render, the scene is saved as a .blend with the clay look (lit, the pair's colours) to open and adjust by hand."""
 import bpy,sys,os,json,math,subprocess,shutil
 argv=sys.argv[sys.argv.index('--')+1:];glb,outdir=os.path.abspath(argv[0]),os.path.abspath(argv[1]);opt=lambda k,d:argv[argv.index(k)+1] if k in argv else d
 passes=opt('--passes','clay,depth,tint').split(',');samples=int(opt('--samples','16'));meta=json.load(open(os.path.splitext(glb)[0]+'.json'));os.makedirs(outdir,exist_ok=True)
@@ -80,6 +81,14 @@ def render(name,mats,engine,bgcol,standard):
     bpy.ops.render.render(animation=True)
     first=sorted(os.listdir(frames))[0];shutil.copy(os.path.join(frames,first),os.path.join(outdir,name+'-first.png'))
     subprocess.run(['ffmpeg','-v','error','-y','-framerate',str(fps),'-start_number',str(sc.frame_start),'-i',os.path.join(frames,'f%04d.png'),'-c:v','libx264','-pix_fmt','yuv420p','-crf','16',os.path.join(outdir,name+'.mp4')],check=True);shutil.rmtree(frames)
+if '--blend' in argv:  # set up for opening in Blender: clay materials, the sun, the camera looking through; saved, not rendered
+    sun=bpy.data.objects.new('sun',bpy.data.lights.new('sun','SUN'));sun.data.energy=4.5;sun.data.angle=math.radians(20);sun.rotation_euler=(math.radians(35),0,math.radians(-25));sc.collection.objects.link(sun)
+    for i,objs in people.items():
+        m=mat(f'clay{i}',lambda nt,i=i:clay(nt,col(i)))
+        for o in objs:assign(o,m)
+    m=mat('roomclay',lambda nt:clay(nt,(.35,.35,.35)));[assign(o,m) for o in room];m=mat('propclay',lambda nt:clay(nt,COLORS[4]));[assign(o,m) for o in props]
+    sc.render.engine='BLENDER_EEVEE';bg.inputs['Color'].default_value=(.3,.3,.3,1);sc.frame_set(sc.frame_start);f=os.path.abspath(opt('--blend',''));bpy.ops.wm.save_as_mainfile(filepath=f)
+    print('BLENDER-SCENE',json.dumps(dict(blend=f,frames=n,fps=fps,people=len(people),props=len(props),room=len(room))));sys.exit(0)
 import time;t0=time.time();took={}
 if 'clay' in passes:
     sun=bpy.data.objects.new('sun',bpy.data.lights.new('sun','SUN'));sun.data.energy=4.5;sun.data.angle=math.radians(20);sun.rotation_euler=(math.radians(35),0,math.radians(-25));sc.collection.objects.link(sun)  # soft and from the camera's side: a low one from the side threw a wall's hard shadow across the daggers scene
