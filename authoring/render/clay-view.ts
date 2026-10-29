@@ -1,6 +1,6 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';
+import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
 import {MarchingCubes} from 'three/addons/objects/MarchingCubes.js';
 import {CharacterPlayer} from '../../runtime/player';
 import {figureColors,primitiveFigure,characterFiles,ownShapeClips,ownShapeAction,ballHeight,floorLift,follow,characterCreatorMap,prepareFollower,FollowerSpec} from '../../runtime/characters';
@@ -123,6 +123,14 @@ export async function init(cfg?:ClayViewConfig){
  // where each figure of a shots scene stands at a time (hips in room metres), for checks
  W.shotFigures=(time:number)=>{place(time);return [...players.map((p,i)=>({name:(payload as any).shots?.figures?.[i]?.name??i,root:p.root})),...extras.map((e,i)=>({name:'extra '+i,root:e.root}))].map(f=>{const b=new T.Box3();f.root.traverse((o:any)=>{if(o.isMesh&&o.visible)b.expandByObject(o);});return {name:f.name,hips:f.root.getObjectByName('pelvis')!.getWorldPosition(new T.Vector3()).toArray().map(v=>Math.round(v*100)/100),box:[...b.min.toArray(),...b.max.toArray()].map(v=>Math.round(v*100)/100)};});};
  (globalThis as any).shotFigures=W.shotFigures;
+ // the scene for another renderer (Blender, authoring/render/scene-gltf.mjs): every performer and the camera sampled at fps as one
+ // animated GLB (nodes named P<i>_<name>, props prop_<name>, the room's objects room_<name>, the floor "floor", the camera "camera"); the lens per frame comes back beside it, as glTF cannot animate it
+ W.exportScene=async(fps:number)=>{const n=Math.round(payload.duration*fps)+1,times=new Float32Array(n),objs:T.Object3D[]=[],lens:number[]=[];camera.name='camera';objs.push(camera);players.forEach(p=>p.holder.traverse(o=>{if(!(o as T.Mesh).isMesh)objs.push(o);}));for(const {mesh} of props as any[])objs.push(mesh);const rec=objs.map(()=>({p:new Float32Array(n*3),q:new Float32Array(n*4),s:new Float32Array(n*3)}));
+  for(let k=0;k<n;k++){const t=Math.min(payload.duration,k/fps);times[k]=k/fps;W.renderFrame(t);lens.push(camera.fov);objs.forEach((o,j)=>{o.position.toArray(rec[j].p,k*3);o.quaternion.toArray(rec[j].q,k*4);o.scale.toArray(rec[j].s,k*3);});}
+  players.forEach((p,i)=>p.holder.traverse(o=>{o.name=`P${i}_${o.name||o.type}`;}));for(const {mesh} of props as any[])mesh.name='prop_'+mesh.name;objectGroup?.traverse(o=>{if(o!==objectGroup)o.name='room_'+(o.name||o.type);});floor.name='floor';objs.forEach(o=>{if(!o.name)o.name='node'+o.id;});
+  const tracks=objs.flatMap((o,j)=>[new T.VectorKeyframeTrack(o.name+'.position',times,rec[j].p),new T.QuaternionKeyframeTrack(o.name+'.quaternion',times,rec[j].q),new T.VectorKeyframeTrack(o.name+'.scale',times,rec[j].s)]),clip=new T.AnimationClip('scene',payload.duration,tracks);
+  const all=new T.Group();all.name='scene';all.add(camera,...players.map(p=>p.holder),...props.map((p:any)=>p.mesh),...(objectGroup?[objectGroup]:[]),...(floor.visible?[floor]:[]));const glb=await new GLTFExporter().parseAsync(all,{binary:true,animations:[clip]}) as ArrayBuffer;let b='';const u=new Uint8Array(glb);for(let k=0;k<u.length;k+=32768)b+=String.fromCharCode(...u.subarray(k,k+32768));
+  return {glb:btoa(b),fps,frames:n,width,height,fovVertical:lens,performers:players.length};};
  W.describe=(time:number)=>{W.renderFrame(time);const r=(x:number,d=3)=>Math.round(x*10**d)/10**d,eye=camera.position,forward=camera.getWorldDirection(new T.Vector3()),v=new T.Vector3();
   const boxOf=(points:T.Vector3[])=>{let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity,front=0;for(const p of points){if(v.copy(p).sub(eye).dot(forward)<.05)continue;front++;v.copy(p).project(camera);x0=Math.min(x0,(v.x+1)/2);x1=Math.max(x1,(v.x+1)/2);y0=Math.min(y0,(1-v.y)/2);y1=Math.max(y1,(1-v.y)/2);}if(!front)return null;const full=[x0,y0,x1,y1],clip=[Math.max(0,x0),Math.max(0,y0),Math.min(1,x1),Math.min(1,y1)];if(clip[2]<=clip[0]||clip[3]<=clip[1])return null;return {box:clip.map(x=>r(x)),whole:front===points.length&&full.every((x,i)=>Math.abs(x-clip[i])<1e-9)};};
   // Performers: bounds of the posed mesh itself (every other vertex, skinned), not of joints. projectedBox is where the figure

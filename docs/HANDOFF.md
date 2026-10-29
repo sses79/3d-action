@@ -925,3 +925,9 @@ got-video-a-013 (high wide, six small people) built with 2–3 people tinted whi
 - `got-olenna-033` described and fixed (revision 8, no faults or notes): the crowd step also starts on more build letters than people; two follows in the wide shot; tint: a followed person grows to the frame bottom only when their box ends in its lowest 15%. 026, 013, 023 re-coloured, unchanged.
 - `got-olenna-032` fixed like 033 (revision 5): described, findMissed, follows from SAM 3 outlines in shots 2–4; one note left (an uncoloured dark figure behind the old woman in the garden).
 - 032 end of shot 2 (both green, Tim): granddaughter followed from 1.1 s (`follow.from`, new), whole-outline seeds and SAM 3 keys, follow boxes take in their points (depth-fix.py), tint runs to the frame bottom only within 5% of it. Revision 12, check passes; 026/013/023 unchanged.
+
+## 2026-10-29 · Blender renderer (first proof)
+
+- Blender 5.2.3 installed (Homebrew cask). `authoring/render/scene-gltf.mjs` writes a pair's scene as one animated GLB from the clay view (`window.exportScene` in `clay-view.ts`: performers `P<i>_*`, props `prop_*`, room `room_*`, floor, camera; lens per frame in the JSON beside it). `authoring/render/blender-scene.py` renders it headless: clay, depth and tinted depth (each person their own colour from the renderer, props yellow).
+- Checked on `pair-kc-clinch` and `scene-macbeth-daggers` (three shots, cuts, lens change, the daggers handed over): poses, timing and framing match the clay view frame for frame. 10 s at 720p: about 5.5 min for the three passes.
+- Pitfalls: GLTFExporter drops animations for an array of inputs (export one group); set the scene fps before the glTF import; walls cast no shadow in the clay pass.
