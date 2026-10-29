@@ -354,3 +354,24 @@ Fixed `got-olenna-033` (revision 8). After the description (`peopleCount` 2), `f
 - `depth-tint.py`: the run to the frame bottom only for a box ending in the lowest 5% (was 15%). The old woman's box ended at 89% and her green covered the planter in front.
 
 026, 013 and 023 were re-coloured with no new flags. Left: a little pink on the plants at 1.6 s, while she is mostly hidden. Note on checking: a side-by-side tile seeked by time in the mp4 was half a second off from the tint; overlay the tint on the source frame by frame index (tracks.json start) instead.
+
+## A 3D scene from a clip (2026-10-29)
+
+Tim's request: after the library's steps, one more: a plain-shape 3D scene with the people's and the camera's positions, matched at first only at the keyframes. Its use: an editable version of a clip (move a camera, recast, restage, render again, or open it in Blender with `renderer: blender`), made from our own 3D rather than the footage.
+
+`build_depth_scene {clip, again?}` (service, a job; `authoring/depth-scene.mjs`), files in `.authoring/depth-scene/<clip>/`:
+1. **body**: SAM 3D Body once per named person at each keyframe, from the clip's own boxes (`authoring/render/depth-scene-body.py`, ComfyUI's Python; about 4 s a reading).
+2. **layout**: one room (`authoring/render/depth-scene.py`, numpy only): per person a floor place, hip height and heading; per shot a camera (yaw, pitch, position, lens). Fitted together so that each person, placed once, lands on their own points in every keyframe picture, measured in pixels over their box height (in metres a close-up's error weighs as little as a wide shot's: 10 cm is 20 px wide and 150 px close). Feet in the picture rest on the floor; cameras stay near level. A person cut by a side of the picture is not fitted to the model's guess of where the rest of them is: in their best whole reading's pose they stay on their side of the box's inner edge, partly seen, at least 0.4 m from the camera.
+3. **builds**: a coarse `reconstruct_motion` per shot for each person seen whole and facing the camera at one of its keyframes (box at least 150 px high); others hold their nearest build, turned as in its shot.
+4. **scene**: `set_shots_scene`, pair `dscene-<clip>`; figures have `legs: true` (new: legs drawn instead of the tapered column, for seated people).
+5. **render** and **check**: `render_pair_video`, then `authoring/render/depth-scene-check.py`: each keyframe as source | tinted depth | scene, then five moments of each shot, source over scene. The strips are there because an action between keyframes shows on none: in 033 the granddaughter sits down in the first second; a build that showed it was taken for a bad one (most of its frames low confidence) and replaced, and only the source's frames showed the mistake.
+
+First clip, got-olenna-033 (two women seated, four shots): every whole person within 8-18 px at all five keyframes; both seated, the right way round, the over-the-shoulder backs and edge shoulders in place, the sit-down kept. Off: the granddaughter faces the camera more than in the source in shot 6; no chairs, table or room.
+
+Second clip, got-ramsay-026 (father and son, dark close shots, the son walks up and they embrace; three shots): it needed four changes, all kept for every clip.
+- People move: a place and heading per person per keyframe (not one per clip), moving between keyframes only as far as the pictures need; the scene gives each build a list of places over its shot (`set_shots_scene` segment `places`), so a person walks between their keyframe places. 033's women stay put by themselves (within 4 cm).
+- No feet in any shot: the floor was free and hips came out at 4.3 m; a person whose feet are never seen gets a standing hip height (0.95 m), weakly.
+- The fit fell into wrong minima (dark backs read as fronts): Levenberg-Marquardt, each later camera also started half a turn round, and two stages (people all but held still, then free to move).
+- Builds from close shots guess the legs and put the hips low (only head tops showed): a segment `hip` pins the hips at the fitted height; legs drawn only for people sitting (hips under 0.7 m), else the column.
+- A person seen only cut by a side of the picture (026's guard) is left out and named.
+Result (`.authoring/depth-scene/got-ramsay-026/check.jpg`, 4.5 minutes, 3.7 of them two builds): the son within 0-11 px at his three keyframes, the father 0 px in his shot and 54 px in the embrace (his back only); on the sheet each shot has the right two, the right way round, the embrace with the father's arm round the son, and shot 28 over the son's shoulder onto the father. Off: in shots 26 and 27 the figures sit lower and closer than the people; the scene holds the embrace in shot 28 where they part; the guard is missing.
