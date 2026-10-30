@@ -32,6 +32,7 @@ EDITOR_FILES = {
     "assets/characters/peasant-male.glb": "model/gltf-binary",
     "assets/characters/ranger-female.glb": "model/gltf-binary",
     "assets/characters/ranger-male.glb": "model/gltf-binary",
+    "assets/characters/mannequin-female.glb": "model/gltf-binary",
 }
 
 

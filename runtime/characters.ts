@@ -5,7 +5,7 @@ import {Action} from './action';
 // figure is then raised or lowered so its feet meet the floor.
 // peasant-* and ranger-*: Quaternius' Modular Character Outfits - Fantasy (CC0), each outfit with a base body's head
 // (authoring/render/character-build.py; editor/assets/characters/provenance.json).
-export const characterFiles:Record<string,string|null>={mannequin:null,'superhero-female':'superhero-female.glb','superhero-male':'superhero-male.glb','peasant-female':'peasant-female.glb','peasant-male':'peasant-male.glb','ranger-female':'ranger-female.glb','ranger-male':'ranger-male.glb'};
+export const characterFiles:Record<string,string|null>={mannequin:null,'superhero-female':'superhero-female.glb','superhero-male':'superhero-male.glb','peasant-female':'peasant-female.glb','peasant-male':'peasant-male.glb','ranger-female':'ranger-female.glb','ranger-male':'ranger-male.glb','mannequin-female':'mannequin-female.glb'};
 const keeps=(track:string)=>track.endsWith('.quaternion')||track.startsWith('pelvis.')||!track.includes('.');
 export function ownShapeClips(T:any,clips:any[]){return clips.map(c=>new T.AnimationClip(c.name,c.duration,c.tracks.filter((t:any)=>keeps(t.name))));}
 const cache=new WeakMap<Action,Action>();

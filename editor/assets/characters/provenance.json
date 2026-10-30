@@ -98,6 +98,20 @@
     }
    ],
    "built": "authoring/render/character-build.py, hair tinted #3a2618, textures 1024 JPEG"
+  },
+  "mannequin-female.glb": {
+   "bytes": 1442824,
+   "sha256": "2ee6cc3fe888d9b144afa8cc4b2ab7bfc5d13a0d5b7548df777f61f64ad65fa6",
+   "joints": 65,
+   "from": "Female Mannequin/Unreal-Godot/Mannequin_F.glb",
+   "sources": [
+    {
+     "pack": "https://quaternius.com/packs/universalanimationlibrary2.html",
+     "edition": "Standard (free), downloaded by Tim 2026-10-30",
+     "license": "CC0-1.0",
+     "used": "the female mannequin, as shipped"
+    }
+   ]
   }
  }
 }
