@@ -60,7 +60,7 @@ for n,role in P['roles'].items():  # a seat under a seated role: half a step (25
     sets.append(dict(prop=role['seat'],place=[round(f['place'][0]-math.sin(h)*.25,3),round(f['place'][1]-math.cos(h)*.25,3)],turn=round(heading[n],1),scale=sc))
 pairs=call('list_pairs',{});rev=next((p.get('revision',0) for p in (pairs if isinstance(pairs,list) else pairs.get('pairs',[])) if p.get('pairId',p.get('id'))==P['id']),0)
 sc=call('set_shots_scene',dict(pairId=P['id'],name=P['name'],expectedRevision=rev,duration=round(t,3),figures=figures,cameras=cameras,set=sets))
-v=call('render_pair_video',dict(pairId=P['id'],width=1280,height=720,fps=30));shutil.copy(v['file'],os.path.join(out,'scene.mp4'))
+v=call('render_pair_video',dict(pairId=P['id'],width=1280,height=720,fps=30,feet=True));shutil.copy(v['file'],os.path.join(out,'scene.mp4'))
 names={k:r['name'] for k,r in P['roles'].items()};from PIL import Image,ImageDraw,ImageFont  # this ffmpeg has no drawtext: each line drawn as a picture and laid over in its time
 font=ImageFont.truetype('/System/Library/Fonts/HelveticaNeue.ttc',30);ins,chain,prev=[],[],'0:v'
 for i,l in enumerate(P['lines']):
@@ -73,5 +73,21 @@ for i,l in enumerate(P['lines']):  # a keyframe per line, at its middle: our bea
     s=os.path.join(out,f'key-{i+1}.jpg');subprocess.run(['ffmpeg','-v','error','-y','-ss',f"{(l['from']+l['to'])/2:.2f}",'-i',os.path.join(out,'captioned.mp4'),'-frames:v','1','-vf','scale=640:-2',s],check=True);stills.append(s)
 cols=3;rows=[stills[k:k+cols] for k in range(0,len(stills),cols)];rows[-1]+=[stills[-1]]*(cols-len(rows[-1])) if len(rows[-1])<cols else []
 subprocess.run(['ffmpeg','-v','error','-y',*sum((['-i',s] for r in rows for s in r),[]),'-filter_complex',''.join(f'[{k}]' for k in range(cols*len(rows)))+f'xstack=inputs={cols*len(rows)}:layout='+'|'.join(f'{c*640}_{r*360}' for r in range(len(rows)) for c in range(cols)),os.path.join(out,'keyframes.jpg')],check=True)
-json.dump(dict(spec=os.path.relpath(sys.argv[1],root),roles={k:{'name':r['name'],'character':r.get('character')} for k,r in P['roles'].items()},pair=P['id'],revision=sc.get('revision'),seconds=round(t,2),cameras=len(cameras),lines=len(P['lines']),files=sorted(os.listdir(out))),open(os.path.join(out,'perform.json'),'w'),indent=1)
-print(json.dumps(dict(out=out,pair=P['id'],seconds=round(t,2),revision=sc.get('revision'))))
+def feet_check(path):  # per role, from the rendered feet (heels and balls, every frame): how far a planted foot slides and where the feet are to the floor
+    F=json.load(open(path));fps=F['fps'];res={}
+    for i,(k,role) in enumerate(P['roles'].items()):
+        sole=F['soles'][i] if F.get('soles') else [min(fr[i][j][1] for fr in F['frames']) for j in range(4)];pts=[[(p[0],p[1]-sole[j],p[2]) for j,p in enumerate(fr[i])] for fr in F['frames']];segs=figures[i]['segments'];n=len(pts)
+        walk=[f for f in range(n) if any(s.get('inPlace') and s['from']<=f/fps<=s['to'] for s in segs)];low=[min(p[1] for p in pts[f]) for f in range(n)]
+        slides=[]
+        for j in (1,3):  # balls: held still from where they come down
+            run=[]
+            for f in walk+[None]:
+                if f is not None and pts[f][j][1]<.02 and (not run or run[-1]==f-1):run.append(f);continue
+                if len(run)>=4:slides.append(max(math.hypot(pts[g][j][0]-pts[run[0]][j][0],pts[g][j][2]-pts[run[0]][j][2]) for g in run))
+                run=[f] if f is not None and pts[f][j][1]<.02 else []
+        res[k]=dict(walkSeconds=round(len(walk)/fps,2),plants=len(slides),slideCm=dict(median=round(100*sorted(slides)[len(slides)//2],1),max=round(100*max(slides),1)) if slides else None,
+            walkFloorCm=dict(low=round(100*min(low[f] for f in walk),1),high=round(100*max(low[f] for f in walk),1)) if walk else None,belowFloorCm=round(100*min(0,min(low)),1),belowFloorFrames=sum(1 for x in low if x<-.02))
+    return res
+feet=feet_check(v['file'].replace('.mp4','.feet.json'))
+json.dump(dict(spec=os.path.relpath(sys.argv[1],root),roles={k:{'name':r['name'],'character':r.get('character')} for k,r in P['roles'].items()},pair=P['id'],revision=sc.get('revision'),seconds=round(t,2),cameras=len(cameras),lines=len(P['lines']),feet=feet,files=sorted(os.listdir(out))),open(os.path.join(out,'perform.json'),'w'),indent=1)
+print(json.dumps(dict(out=out,pair=P['id'],seconds=round(t,2),revision=sc.get('revision'),feet=feet)))

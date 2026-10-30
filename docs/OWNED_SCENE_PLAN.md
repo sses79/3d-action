@@ -114,9 +114,21 @@ entry may be a list of steps with seconds, and a step may be {movement, walk: {f
 pace over the movement's own, 0.5-2, so the feet roughly keep up) or {movement, turn: [from, to] headings, at}. Macbeth 1.7 now opens
 with Macbeth walking in from the front left, a step-turn to his chair and his own sit-down, and closes with a new line ("Away, and
 mock the time with fairest show...") as he stands up (his sit-down played backwards from where his hips settle), turns and walks
-out past the candle stand; 32.2 s. The seated-leg solve runs only on build segments (it bent a walk's legs). Not done: a door (the
-prop kit has none); foot contact is not measured (a walk slower than half its own pace slides); the UAL2 root-motion file is left
-out, since the walks' own hip travel gives their pace.
+out past the candle stand; 32.2 s. The seated-leg solve runs only on build segments (it bent a walk's legs). A door is left for
+the building (a set with walls and doors), not a prop. The UAL2 root-motion file is left out, since the walks' own hip travel gives
+their pace.
+
+Foot contact and floor (2026-10-30, `clay-view.ts`, library movements in a scene, i.e. `inPlace` segments): the lowest point of the
+feet (heels and balls, each against its height when the body stands, from the bind pose) is put on the floor every moment; a walk
+goes along its path as fast as its planted foot pushes back (the lower foot followed in the figure's own space every 1/60 s, the
+total stretched to the path), so the steps and the travel agree within each step, not just on average; a foot that stays down (2 cm,
+4 samples) is held where its ball came down by turning thigh and calf, let go over 0.15 s after it lifts (this is what keeps a
+step-turn on the spot from sliding). A sit-down that is still up hangs its feet when the build's hips are higher than the legs reach,
+so there the hips come down until a foot is on the floor. perform.py now renders with the feet and writes a check per role in
+`perform.json` (`feet`: plants, slide of a planted ball, the lowest foot's height during walks, depth below the floor). Macbeth 1.7,
+Macbeth's walks and turns (7.9 s), before -> after: planted-foot slide median 6.2 -> 0.1 cm, largest 31.3 -> 0.5 cm; lowest foot
+during walks up to 18.1 -> 2.4 cm over the floor (the 18 cm was the join into the sit-down); nothing deeper than 1 cm below it.
+Builds from footage (standing, not seated) are not put on the floor this way yet.
 
 ## 2. Camera controls people can use
 
