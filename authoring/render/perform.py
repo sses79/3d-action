@@ -40,10 +40,10 @@ for n,role in P['roles'].items():
     figures.append(dict(name=role['name'],color=f['color'],height=role.get('height',f['height']),place=f['place'],**({'legs':True} if f.get('legs') else {}),**({'character':role['character']} if role.get('character') else {}),
         segments=[{k:v for k,v in s.items() if k not in ('start','end')}|{'from':s['start'],'to':s['end']} for s in segs[n]]))
 sets=list(P.get('set',[]))
-for n,role in P['roles'].items():  # a seat under a seated role: at their hips, a little behind, turned their way, scaled to their hip height
+for n,role in P['roles'].items():  # a seat under a seated role: half a step (25 cm) behind their hips, so someone who sits down stands clear of it first, turned their way, scaled to their hip height
     if not role.get('seat'):continue
     f=next(f for f in src['figures'] if f['name']==n);h=math.radians(heading[n]);k=kit[role['seat']];sc=round(min(1.3,max(.6,(hips[n]-.1)/k['seat'])),3) if k.get('seat') else 1
-    sets.append(dict(prop=role['seat'],place=[round(f['place'][0]-math.sin(h)*.06,3),round(f['place'][1]-math.cos(h)*.06,3)],turn=round(heading[n],1),scale=sc))
+    sets.append(dict(prop=role['seat'],place=[round(f['place'][0]-math.sin(h)*.25,3),round(f['place'][1]-math.cos(h)*.25,3)],turn=round(heading[n],1),scale=sc))
 pairs=call('list_pairs',{});rev=next((p.get('revision',0) for p in (pairs if isinstance(pairs,list) else pairs.get('pairs',[])) if p.get('pairId',p.get('id'))==P['id']),0)
 sc=call('set_shots_scene',dict(pairId=P['id'],name=P['name'],expectedRevision=rev,duration=round(t,3),figures=figures,cameras=cameras,set=sets))
 v=call('render_pair_video',dict(pairId=P['id'],width=1280,height=720,fps=30));shutil.copy(v['file'],os.path.join(out,'scene.mp4'))
