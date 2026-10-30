@@ -942,3 +942,19 @@ Tim's request: after the depth library's steps, build a plain-shape 3D scene wit
 - The scene: `set_shots_scene` pair `dscene-olenna033` (r4) with coarse `reconstruct_motion` builds per shot (`dscene-olenna033-s<shot>-<d|e>`, boxes from the tracks; 90-175 s each, one at a time). New `legs: true` on a shots figure (`core.ts`, `clay-view.ts`): legs drawn instead of the tapered column, for seated people. E's wide-shot build stands at first: that is right, she sits down in the first second (r4 replaced it by her seated shot-6 pose and lost the sit-down; r5 has it back). Low confidence on most frames of a build is not by itself a bad build.
 - Result (`.authoring/depth-scene/got-olenna-033/compare-r4.jpg`; the sit-down in `sitdown-r5.png`): at all five keyframes both people are where the source has them, seated, the right way round, with the over-the-shoulder backs and edge shoulders in place. Off: E faces the camera more than in the source in shot 6; D's back in shot 6 is wider than hers; no chairs, table or room; poses come from the shot builds, not the keyframe readings, and motion between keyframes is the builds'.
 - Scratch (not yet a service operation): the scene and comparison scripts in the session scratchpad. Next: an operation (`build_depth_scene`) and a row on the depth page; more clips.
+
+## 2026-10-30: characters and the first performance (Macbeth 1.7 on 033)
+
+- Character library, first step (06147aa): four CC0 Quaternius outfit characters (`peasant-*`, `ranger-*`) with a base head, built by
+  `authoring/render/character-build.py`; a character per figure in set_shots_scene / build_depth_scene; body picker on the depth
+  page; Blender look pass kept for later (Tim chose the quick clay render as default). docs/OWNED_SCENE_PLAN.md part 4.
+- Performance: `authoring/plays/macbeth-1-7-on-got-olenna-033.json` + `authoring/render/perform.py` → pair `macbeth-1-7-033`,
+  `.authoring/plays/macbeth-1-7-033/` (scene.mp4, captioned.mp4, key-N.jpg, keyframes.jpg). Segment speed/offset/loop/frame added.
+  OWNED_SCENE_PLAN part 1b.
+- Lesson: `clay-view.ts` lines are single long statements; a `//` comment appended mid-line silently commented out the rest of
+  shotPose and every shots scene rendered empty (tests do not render). Never append line comments to these lines.
+- Leftover: a test pair `test-mb` (the Macbeth scene without characters) is in live state; pairs have no archive.
+- Later 2026-10-30: blocking (segment `turn`, spec `turn`/`move`), set (32 CC0 props, set_shots_scene `set`, spec `seat`/`set`),
+  characters rebuilt with textured heads and hair, the Scenes page `/editor/scenes.html` with cast changes as perform jobs
+  (`POST /api/plays/perform`, `GET /api/plays`, `/api/play-file`). Viewer text in a spec: name, play, card, shot note; producer
+  notes in `why`. No sign-in: the Scenes page is separate but not protected.

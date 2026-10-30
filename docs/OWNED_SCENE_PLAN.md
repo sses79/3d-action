@@ -69,6 +69,35 @@ woman); its proportions change what the cameras see and where hands land, so the
 The demo version is what the depth page and the reuse card show first. About three days; it reuses stage_scene's beat planning
 and the library's joins.
 
+Built 2026-10-30, the first performance by hand: `authoring/plays/macbeth-1-7-on-got-olenna-033.json` performs Macbeth 1.7 on 033
+(Lady Macbeth = D in peasant-female, Macbeth = E in ranger-male; six lines from "We will proceed no further" to "I am settled",
+23.2 s against the source's 15). A performance spec names the fitted pair it comes from, roles (name, character, height), shots in
+our order and lengths (shot 6 comes back for the last line), which build each person plays in each shot, and the lines with times.
+`authoring/render/perform.py SPEC` (vision venv) writes it as its own pair (set_shots_scene, pair = the spec's id), renders it
+(about 50 s), burns the lines in (captioned.mp4; this ffmpeg has no drawtext, so each line is a picture laid over in its time) and
+writes one keyframe per line at its middle and keyframes.jpg, in `.authoring/plays/<id>/`. Builds are stretched to the shot
+(speed = build length / shot length, kept within 0.7-1.4; past that the build plays back and forth, `loop`). set_shots_scene
+segments gained `speed`, `offset`, `loop` and `frame` (the camera a build was made in: without it a build played under another
+shot's camera was turned by that camera, so Lady Macbeth faced us in the repeated shot 6). Not yet: the LLM writing the spec from
+a play and the reuse card, places and turns changed by the text (this one only retimes, cuts and repeats), sound, the page.
+
+Built 2026-10-30, later the same day: blocking from the text, a set, better characters and a page for viewers.
+- Blocking: segments take `turn` (degrees about the hips, or [from, to] across the segment); the spec's play entries take `turn` and
+  `move` ([dx, dz] across the shot, kept afterwards). Macbeth 1.7 uses turns only (both are seated): Macbeth turns away on "Prithee,
+  peace" and back on "If we should fail?" (shot 6 split in two at the same camera), Lady Macbeth turns in on him for "screw your
+  courage". Standing up, sitting down or walking that the source lacks (from the movement library) is still to do.
+- Set: 32 CC0 props from Quaternius' Fantasy Props MegaKit (Standard, Tim's download) as GLB in `editor/assets/props/` with
+  `index.json` (size, seat height for seats; `authoring/render/prop-build.py`). set_shots_scene takes `set` [{prop, place, turn,
+  scale, lift}], drawn in clay grey. A role's `seat` in the spec puts a chair under them, turned their way, scaled to their hips.
+  Macbeth 1.7 has two chairs, a candle stand kept out of the close shots, a stool with the chalice, two banners.
+- Characters rebuilt with the Universal Base Characters kit (Standard, CC0): textured heads and eyes, hair skinned to the same
+  skeleton (buns, long, parted, buzzed, beard), tinted (`--hair-color`).
+- The Scenes page, `/editor/scenes.html` (editor/scenes.tsx), for viewers: each performance's captioned video, card, cast with a
+  body per role and Perform again (a job running perform.py with `--cast`, about a minute), lines that jump the video, keyframes,
+  shots and set. It shows only our renders and the spec's viewer-facing text (`name`, `play`, `card`, shot `note`; producer notes go
+  in `why`). The depth library stays on depth.html. There is no sign-in yet: anyone who can reach the service can open either page,
+  so keeping producers' pages from viewers needs accounts or a separate public server serving only the Scenes routes.
+
 ## 2. Camera controls people can use
 
 The Clay page already lets a person drag cameras on the floor plan and type yaw, pitch, height and lens. Typing numbers is slow and

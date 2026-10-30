@@ -1,0 +1,204 @@
+{
+ "id": "macbeth-1-7-033",
+ "name": "Macbeth 1.7: \"We will proceed no further\"",
+ "play": "Macbeth, Act 1 Scene 7 (Shakespeare, public domain): Macbeth wavers, Lady Macbeth shames him, he gives in.",
+ "from": {
+  "pair": "dscene-got-olenna-033",
+  "shape": "two people seated facing each other; a wide shot, a single on one, over her shoulder onto the other, closer on the first"
+ },
+ "roles": {
+  "D": {
+   "name": "Lady Macbeth",
+   "character": "peasant-female",
+   "height": 1.7,
+   "seat": "chair-1"
+  },
+  "E": {
+   "name": "Macbeth",
+   "character": "ranger-male",
+   "height": 1.8,
+   "seat": "chair-1"
+  }
+ },
+ "shots": [
+  {
+   "camera": "shot 4",
+   "seconds": 3.4,
+   "note": "Wide: Macbeth sits down as he says it.",
+   "play": {
+    "D": {
+     "build": "shot 4"
+    },
+    "E": {
+     "build": "shot 4"
+    }
+   },
+   "why": "wide: Macbeth sits down as he says it"
+  },
+  {
+   "camera": "shot 5",
+   "seconds": 3.6,
+   "note": "On Lady Macbeth.",
+   "play": {
+    "D": {
+     "build": "shot 5"
+    }
+   },
+   "why": "on Lady Macbeth"
+  },
+  {
+   "camera": "shot 6",
+   "seconds": 6.6,
+   "note": "Over her shoulder onto Macbeth: he turns away from her as he refuses.",
+   "play": {
+    "E": {
+     "build": "shot 6",
+     "speed": 0.74,
+     "turn": [
+      0,
+      -25
+     ]
+    }
+   },
+   "why": "over her shoulder onto Macbeth: he turns away from her as he refuses ('Prithee, peace')"
+  },
+  {
+   "camera": "shot 6",
+   "seconds": 2.4,
+   "note": "The same shot: he turns back to her to ask.",
+   "play": {
+    "E": {
+     "build": "shot 6",
+     "offset": 4.88,
+     "speed": 0.74,
+     "turn": [
+      -25,
+      0
+     ]
+    }
+   },
+   "why": "the same shot: he turns back to her to ask 'If we should fail?'"
+  },
+  {
+   "camera": "shot 7",
+   "seconds": 5.4,
+   "note": "Closer on Lady Macbeth: she turns in on him.",
+   "play": {
+    "D": {
+     "build": "shot 7",
+     "speed": 0.7,
+     "loop": true,
+     "turn": [
+      0,
+      15
+     ]
+    }
+   },
+   "why": "closer on Lady Macbeth: she turns in on him for 'screw your courage'; her build slower and back and forth"
+  },
+  {
+   "camera": "shot 6",
+   "seconds": 1.8,
+   "note": "Back on Macbeth for his answer.",
+   "play": {
+    "E": {
+     "build": "shot 6",
+     "offset": 4.6,
+     "speed": 1
+    },
+    "D": {
+     "build": "shot 5",
+     "offset": 2.94,
+     "speed": 1,
+     "turn": 15
+    }
+   },
+   "why": "back on Macbeth for his answer; Lady Macbeth holds the last pose of her shot 5 build, her back to us, still turned in"
+  }
+ ],
+ "lines": [
+  {
+   "who": "E",
+   "from": 0.4,
+   "to": 3.2,
+   "text": "We will proceed no further in this business."
+  },
+  {
+   "who": "D",
+   "from": 3.6,
+   "to": 6.8,
+   "text": "Was the hope drunk wherein you dressed yourself?"
+  },
+  {
+   "who": "E",
+   "from": 7.2,
+   "to": 13.4,
+   "text": "Prithee, peace. I dare do all that may become a man; who dares do more is none."
+  },
+  {
+   "who": "E",
+   "from": 13.8,
+   "to": 15.6,
+   "text": "If we should fail?"
+  },
+  {
+   "who": "D",
+   "from": 16.2,
+   "to": 21.0,
+   "text": "We fail? But screw your courage to the sticking-place, and we'll not fail."
+  },
+  {
+   "who": "E",
+   "from": 21.6,
+   "to": 23.0,
+   "text": "I am settled."
+  }
+ ],
+ "set": [
+  {
+   "prop": "candlestick-stand",
+   "place": [
+    -1.6,
+    -6.2
+   ],
+   "turn": 0,
+   "note": "on Macbeth's side, toward the wide camera: in the wide shot only, out of the close shots"
+  },
+  {
+   "prop": "stool",
+   "place": [
+    1.4,
+    -6.25
+   ],
+   "turn": -30,
+   "note": "at Lady Macbeth's side"
+  },
+  {
+   "prop": "chalice",
+   "place": [
+    1.4,
+    -6.25
+   ],
+   "turn": 0,
+   "lift": 0.582,
+   "note": "the wine she drugged the grooms with, on the stool"
+  },
+  {
+   "prop": "banner-1",
+   "place": [
+    -0.9,
+    -9.6
+   ],
+   "turn": 0
+  },
+  {
+   "prop": "banner-2",
+   "place": [
+    1.7,
+    -9.6
+   ],
+   "turn": 0
+  }
+ ],
+ "card": "Hand-written for now. A seated two-person scene of pressure and giving in: one argues, the other refuses, wavers and is won over. Shape from the source: a wide two-shot, a single on the persuader, over her shoulder onto the doubter, closer on the persuader, back to the doubter. Performed as Macbeth 1.7 in a castle room: chairs, a candle stand, a stool with a chalice, banners. Blocking from the text: Macbeth turns away on 'Prithee, peace' and back on 'If we should fail?'; Lady Macbeth turns in on him for 'screw your courage'. Good for: confession, interrogation, a deal won by pressure, a parent talking a child round. Not for: walking, standing, contact."
+}

@@ -67,7 +67,7 @@ function App(){
  // load the pair: what an export would draw, then the same view code draws it here
  useEffect(()=>{if(!pairId)return;let gone=false;setView(null);setFraming(null);setExported(null);setPlaying(false);clock.current=0;setTime(0);setStatus('Loading the scene');
   tool('export_pair_reference',{pairId,viewOnly:true,figure,...(cam!=='source'?{camera:cam}:{})}).then(async(v:View)=>{if(gone)return;clay.current?.dispose();clay.current=null;
-   const made=await initClayView({payload:v.payload,mount:mount.current!,urls:{character:bridgeUrl+'/editor/assets/character.glb',characters:f=>bridgeUrl+'/editor/assets/characters/'+f,follower:id=>bridgeUrl+'/api/character-file?id='+encodeURIComponent(id)}});
+   const made=await initClayView({payload:v.payload,mount:mount.current!,urls:{character:bridgeUrl+'/editor/assets/character.glb',props:f=>bridgeUrl+'/editor/assets/props/'+f,characters:f=>bridgeUrl+'/editor/assets/characters/'+f,follower:id=>bridgeUrl+'/api/character-file?id='+encodeURIComponent(id)}});
    if(gone){made.dispose();return;}clay.current=made;made.draw(clock.current);setView(v);setDraft(v.spec?structuredClone(v.spec):v.shotsScene?structuredClone(v.shotsScene):null);setStatus('');
   }).catch(e=>{if(!gone)setError(e.message);});
   return()=>{gone=true;};},[pairId,figure,cam,reload]);

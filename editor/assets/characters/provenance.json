@@ -16,44 +16,88 @@
    "from": "Superhero_Male_FullBody.gltf"
   },
   "peasant-female.glb": {
-   "bytes": 1317588,
-   "sha256": "c7b0d20bf5b456e7f62a43332ffe4c32984c8e0ad8f6ab2f363d601e62ade01e",
+   "bytes": 1918508,
+   "sha256": "9be6e4c15d7c5b2cb4ec78739486e38fe72156b53d4039a0ae64a7da1c5ac22b",
    "joints": 65,
    "from": "Female_Peasant.gltf",
-   "source": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
-   "edition": "Standard (free), downloaded by Tim 2026-10-30",
-   "license": "CC0-1.0",
-   "built": "authoring/render/character-build.py: the outfit with the head and neck of the superhero base body of the same sex (this pack), textures 1024 JPEG"
+   "sources": [
+    {
+     "pack": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
+     "edition": "Standard (free), downloaded by Tim 2026-10-30",
+     "license": "CC0-1.0",
+     "used": "the outfit"
+    },
+    {
+     "pack": "https://quaternius.com/packs/universalbasecharacters.html",
+     "edition": "Standard (free), downloaded by Tim 2026-10-30",
+     "license": "CC0-1.0",
+     "used": "the textured head and eyes of Superhero_Female_FullBody; hair Hair_Buns"
+    }
+   ],
+   "built": "authoring/render/character-build.py, hair tinted #6b2a1a, textures 1024 JPEG"
   },
   "peasant-male.glb": {
-   "bytes": 1469600,
-   "sha256": "449669f875fe25fa6a191f56914ed511dfa19d2d49b113a6e174f2fe1885a7ae",
+   "bytes": 1926300,
+   "sha256": "b0a8717c13dda8dcb0f92bd64e3f5390ed411d33c103c8ae506b4acb5b7365e9",
    "joints": 65,
    "from": "Male_Peasant.gltf",
-   "source": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
-   "edition": "Standard (free), downloaded by Tim 2026-10-30",
-   "license": "CC0-1.0",
-   "built": "authoring/render/character-build.py: the outfit with the head and neck of the superhero base body of the same sex (this pack), textures 1024 JPEG"
+   "sources": [
+    {
+     "pack": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
+     "edition": "Standard (free), downloaded by Tim 2026-10-30",
+     "license": "CC0-1.0",
+     "used": "the outfit"
+    },
+    {
+     "pack": "https://quaternius.com/packs/universalbasecharacters.html",
+     "edition": "Standard (free), downloaded by Tim 2026-10-30",
+     "license": "CC0-1.0",
+     "used": "the textured head and eyes of Superhero_Male_FullBody; hair Hair_SimpleParted + Hair_Beard"
+    }
+   ],
+   "built": "authoring/render/character-build.py, hair tinted #5a3d26, textures 1024 JPEG"
   },
   "ranger-female.glb": {
-   "bytes": 3128544,
-   "sha256": "d53c5b89c913f59078022e8652945898e25197bd0b11aca2728abfb72241fb3b",
+   "bytes": 3705268,
+   "sha256": "f0529a61fd66126af043ae747c2ec4e8b59e93a34772b84ad2dcf84b930a5cc0",
    "joints": 65,
    "from": "Female_Ranger.gltf",
-   "source": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
-   "edition": "Standard (free), downloaded by Tim 2026-10-30",
-   "license": "CC0-1.0",
-   "built": "authoring/render/character-build.py: the outfit with the head and neck of the superhero base body of the same sex (this pack), textures 1024 JPEG"
+   "sources": [
+    {
+     "pack": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
+     "edition": "Standard (free), downloaded by Tim 2026-10-30",
+     "license": "CC0-1.0",
+     "used": "the outfit"
+    },
+    {
+     "pack": "https://quaternius.com/packs/universalbasecharacters.html",
+     "edition": "Standard (free), downloaded by Tim 2026-10-30",
+     "license": "CC0-1.0",
+     "used": "the textured head and eyes of Superhero_Female_FullBody; hair Hair_Long"
+    }
+   ],
+   "built": "authoring/render/character-build.py, hair tinted #2a1d17, textures 1024 JPEG"
   },
   "ranger-male.glb": {
-   "bytes": 2745224,
-   "sha256": "ef990bb9b61afd3c3c35bae75f37f5db0326fc0a9cb817411d9802948195087d",
+   "bytes": 3183996,
+   "sha256": "de8937a982cfa4751e606001eb6db5694736f0fea43b7d5d9d631a867fb5284e",
    "joints": 65,
    "from": "Male_Ranger.gltf",
-   "source": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
-   "edition": "Standard (free), downloaded by Tim 2026-10-30",
-   "license": "CC0-1.0",
-   "built": "authoring/render/character-build.py: the outfit with the head and neck of the superhero base body of the same sex (this pack), textures 1024 JPEG"
+   "sources": [
+    {
+     "pack": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
+     "edition": "Standard (free), downloaded by Tim 2026-10-30",
+     "license": "CC0-1.0",
+     "used": "the outfit"
+    },
+    {
+     "pack": "https://quaternius.com/packs/universalbasecharacters.html",
+     "edition": "Standard (free), downloaded by Tim 2026-10-30",
+     "license": "CC0-1.0",
+     "used": "the textured head and eyes of Superhero_Male_FullBody; hair Hair_Buzzed + Hair_Beard"
+    }
+   ],
+   "built": "authoring/render/character-build.py, hair tinted #3a2618, textures 1024 JPEG"
   }
  }
 }

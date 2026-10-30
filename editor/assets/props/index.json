@@ -1,0 +1,391 @@
+{
+ "props": {
+  "chair-1": {
+   "file": "chair-1.glb",
+   "size": [
+    0.581,
+    1.123,
+    0.549
+   ],
+   "seat": 0.498,
+   "bytes": 221848,
+   "from": "Chair_1.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "bench": {
+   "file": "bench.glb",
+   "size": [
+    2.777,
+    0.533,
+    0.534
+   ],
+   "seat": 0.496,
+   "bytes": 214420,
+   "from": "Bench.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "stool": {
+   "file": "stool.glb",
+   "size": [
+    0.475,
+    0.589,
+    0.475
+   ],
+   "seat": 0.582,
+   "bytes": 120444,
+   "from": "Stool.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "table-large": {
+   "file": "table-large.glb",
+   "size": [
+    2.848,
+    0.813,
+    1.097
+   ],
+   "bytes": 255152,
+   "from": "Table_Large.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "candlestick": {
+   "file": "candlestick.glb",
+   "size": [
+    0.261,
+    0.155,
+    0.179
+   ],
+   "bytes": 105400,
+   "from": "CandleStick.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "candlestick-stand": {
+   "file": "candlestick-stand.glb",
+   "size": [
+    0.732,
+    1.313,
+    0.731
+   ],
+   "bytes": 447752,
+   "from": "CandleStick_Stand.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "candlestick-triple": {
+   "file": "candlestick-triple.glb",
+   "size": [
+    0.442,
+    0.463,
+    0.136
+   ],
+   "bytes": 275796,
+   "from": "CandleStick_Triple.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "candle-1": {
+   "file": "candle-1.glb",
+   "size": [
+    0.094,
+    0.132,
+    0.108
+   ],
+   "bytes": 124244,
+   "from": "Candle_1.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "chalice": {
+   "file": "chalice.glb",
+   "size": [
+    0.118,
+    0.257,
+    0.125
+   ],
+   "bytes": 99388,
+   "from": "Chalice.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "mug": {
+   "file": "mug.glb",
+   "size": [
+    0.192,
+    0.184,
+    0.147
+   ],
+   "bytes": 203184,
+   "from": "Mug.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "bottle-1": {
+   "file": "bottle-1.glb",
+   "size": [
+    0.113,
+    0.365,
+    0.113
+   ],
+   "bytes": 133928,
+   "from": "Bottle_1.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "chandelier": {
+   "file": "chandelier.glb",
+   "size": [
+    1.303,
+    1.458,
+    1.303
+   ],
+   "bytes": 598860,
+   "from": "Chandelier.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "torch-metal": {
+   "file": "torch-metal.glb",
+   "size": [
+    0.223,
+    0.648,
+    0.388
+   ],
+   "bytes": 122976,
+   "from": "Torch_Metal.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "lantern-wall": {
+   "file": "lantern-wall.glb",
+   "size": [
+    0.357,
+    1.337,
+    1.302
+   ],
+   "bytes": 204776,
+   "from": "Lantern_Wall.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "banner-1": {
+   "file": "banner-1.glb",
+   "size": [
+    1.613,
+    2.392,
+    0.191
+   ],
+   "bytes": 270716,
+   "from": "Banner_1.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "banner-2": {
+   "file": "banner-2.glb",
+   "size": [
+    1.613,
+    2.077,
+    0.191
+   ],
+   "bytes": 268888,
+   "from": "Banner_2.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "barrel": {
+   "file": "barrel.glb",
+   "size": [
+    0.698,
+    0.898,
+    0.698
+   ],
+   "bytes": 253736,
+   "from": "Barrel.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "crate-wooden": {
+   "file": "crate-wooden.glb",
+   "size": [
+    0.842,
+    0.931,
+    0.908
+   ],
+   "bytes": 263160,
+   "from": "Crate_Wooden.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "chest-wood": {
+   "file": "chest-wood.glb",
+   "size": [
+    1.902,
+    2.06,
+    2.0
+   ],
+   "bytes": 382384,
+   "from": "Chest_Wood.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "bookcase-2": {
+   "file": "bookcase-2.glb",
+   "size": [
+    1.461,
+    2.545,
+    0.429
+   ],
+   "bytes": 292408,
+   "from": "Bookcase_2.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "cabinet": {
+   "file": "cabinet.glb",
+   "size": [
+    1.362,
+    0.997,
+    0.357
+   ],
+   "bytes": 316020,
+   "from": "Cabinet.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "shelf-simple": {
+   "file": "shelf-simple.glb",
+   "size": [
+    1.184,
+    0.309,
+    0.292
+   ],
+   "bytes": 130612,
+   "from": "Shelf_Simple.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "bed-twin1": {
+   "file": "bed-twin1.glb",
+   "size": [
+    1.876,
+    0.805,
+    2.412
+   ],
+   "bytes": 334132,
+   "from": "Bed_Twin1.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "sword-bronze": {
+   "file": "sword-bronze.glb",
+   "size": [
+    0.267,
+    1.132,
+    0.065
+   ],
+   "bytes": 194204,
+   "from": "Sword_Bronze.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "shield-wooden": {
+   "file": "shield-wooden.glb",
+   "size": [
+    0.615,
+    0.621,
+    0.179
+   ],
+   "bytes": 378492,
+   "from": "Shield_Wooden.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "weaponstand": {
+   "file": "weaponstand.glb",
+   "size": [
+    1.386,
+    1.109,
+    0.983
+   ],
+   "bytes": 267828,
+   "from": "WeaponStand.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "vase-2": {
+   "file": "vase-2.glb",
+   "size": [
+    0.695,
+    0.516,
+    0.695
+   ],
+   "bytes": 141140,
+   "from": "Vase_2.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "book-stack-1": {
+   "file": "book-stack-1.glb",
+   "size": [
+    0.285,
+    0.214,
+    0.226
+   ],
+   "bytes": 134976,
+   "from": "Book_Stack_1.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "scroll-1": {
+   "file": "scroll-1.glb",
+   "size": [
+    0.244,
+    0.059,
+    0.063
+   ],
+   "bytes": 158124,
+   "from": "Scroll_1.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "workbench": {
+   "file": "workbench.glb",
+   "size": [
+    2.019,
+    0.895,
+    1.024
+   ],
+   "bytes": 260700,
+   "from": "Workbench.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "cauldron": {
+   "file": "cauldron.glb",
+   "size": [
+    0.989,
+    0.816,
+    0.944
+   ],
+   "bytes": 146552,
+   "from": "Cauldron.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  },
+  "stall-empty": {
+   "file": "stall-empty.glb",
+   "size": [
+    1.845,
+    2.627,
+    0.932
+   ],
+   "bytes": 347580,
+   "from": "Stall_Empty.gltf",
+   "source": "https://quaternius.com/packs/fantasypropsmegakit.html",
+   "license": "CC0-1.0"
+  }
+ }
+}

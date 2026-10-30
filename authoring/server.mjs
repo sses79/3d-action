@@ -1,6 +1,6 @@
 import {createServer} from 'node:http';
 import {readFile,readdir,stat,writeFile} from 'node:fs/promises';
-import {execFile} from 'node:child_process';
+import {execFile,spawn} from 'node:child_process';
 import {createReadStream,createWriteStream,mkdirSync,renameSync,unlinkSync,existsSync as exists} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
@@ -28,7 +28,7 @@ async function health(){const exists=async f=>{try{await stat(resolve(root,f));r
    return {recent:L.slice(-5).reverse(),last50:Object.fromEntries(Object.entries(by).map(([w,b])=>[w,{runs:b.runs,secondsPerFrame:+(b.seconds/Math.max(1,b.frames)).toFixed(3)}])),fallbacks:L.filter(e=>/failed/.test(e.note??'')).length};}catch{return null;}})(),
   checks:{visionPython:await exists('.authoring/vision-venv/bin/python'),comfyui:await exists('.authoring/comfyui/.venv/bin/python'),openRouterKey:!!(process.env.OPENROUTER_API_KEY||process.env.OPENROUTER_ENV_FILE&&await exists(process.env.OPENROUTER_ENV_FILE)),mini4:mini.up}};}
 const origins=new Set([`http://127.0.0.1:${port}`,`http://localhost:${port}`,'http://127.0.0.1:5173','http://localhost:5173']);
-const files={'/editor/':['editor/index.html','text/html'],'/editor/app.js':['editor/app.js','text/javascript'],'/editor/clay.html':['editor/clay.html','text/html'],'/editor/clay.js':['editor/clay.js','text/javascript'],'/editor/depth.html':['editor/depth.html','text/html'],'/editor/depth.js':['editor/depth.js','text/javascript'],'/editor/style.css':['editor/style.css','text/css'],'/editor/assets/character.glb':['editor/assets/character.glb','model/gltf-binary'],'/editor/assets/characters/superhero-female.glb':['editor/assets/characters/superhero-female.glb','model/gltf-binary'],'/editor/assets/characters/superhero-male.glb':['editor/assets/characters/superhero-male.glb','model/gltf-binary'],'/editor/assets/characters/peasant-female.glb':['editor/assets/characters/peasant-female.glb','model/gltf-binary'],'/editor/assets/characters/peasant-male.glb':['editor/assets/characters/peasant-male.glb','model/gltf-binary'],'/editor/assets/characters/ranger-female.glb':['editor/assets/characters/ranger-female.glb','model/gltf-binary'],'/editor/assets/characters/ranger-male.glb':['editor/assets/characters/ranger-male.glb','model/gltf-binary']};
+const files={'/editor/':['editor/index.html','text/html'],'/editor/app.js':['editor/app.js','text/javascript'],'/editor/clay.html':['editor/clay.html','text/html'],'/editor/clay.js':['editor/clay.js','text/javascript'],'/editor/depth.html':['editor/depth.html','text/html'],'/editor/scenes.html':['editor/scenes.html','text/html'],'/editor/scenes.js':['editor/scenes.js','text/javascript'],'/editor/depth.js':['editor/depth.js','text/javascript'],'/editor/style.css':['editor/style.css','text/css'],'/editor/assets/character.glb':['editor/assets/character.glb','model/gltf-binary'],'/editor/assets/characters/superhero-female.glb':['editor/assets/characters/superhero-female.glb','model/gltf-binary'],'/editor/assets/characters/superhero-male.glb':['editor/assets/characters/superhero-male.glb','model/gltf-binary'],'/editor/assets/characters/peasant-female.glb':['editor/assets/characters/peasant-female.glb','model/gltf-binary'],'/editor/assets/characters/peasant-male.glb':['editor/assets/characters/peasant-male.glb','model/gltf-binary'],'/editor/assets/characters/ranger-female.glb':['editor/assets/characters/ranger-female.glb','model/gltf-binary'],'/editor/assets/characters/ranger-male.glb':['editor/assets/characters/ranger-male.glb','model/gltf-binary']};
 const server=createServer(async(req,res)=>{
  const host=req.headers.host;if(![`127.0.0.1:${port}`,`localhost:${port}`].includes(host)){res.writeHead(403);res.end();return;}
  const origin=req.headers.origin;if(origin&&!origins.has(origin)){res.writeHead(403);res.end();return;}
@@ -83,6 +83,30 @@ const server=createServer(async(req,res)=>{
    const id=url.searchParams.get('source')||'',file=url.searchParams.get('file')||'';if(!/^[a-z0-9][a-z0-9-]{0,47}$/.test(id)||!/^(shot-\d{3}|overview)\.jpg$/.test(file))return json(404,{error:'Not a library file'});
    let bytes;try{bytes=await readFile(resolve(root,'.authoring/depth-library',id,file));}catch{return json(404,{error:'No such file'});}
    res.writeHead(200,{'Content-Type':'image/jpeg','Content-Length':bytes.length});return res.end(bytes);
+  }
+  if(req.method==='GET'&&/^\/editor\/assets\/props\/[a-z0-9-]+\.(glb|json)$/.test(path)){
+   // Set pieces (authoring/render/prop-build.py; editor/assets/props/index.json lists them).
+   let bytes;try{bytes=await readFile(resolve(root,path.slice(1)));}catch{return json(404,{error:'No such prop'});}res.writeHead(200,{'Content-Type':path.endsWith('.json')?'application/json':'model/gltf-binary','Content-Length':bytes.length});return res.end(bytes);
+  }
+  if(path==='/api/plays'||path==='/api/play-file'||path==='/api/plays/perform'){
+   // Scenes for viewers (editor/scenes.html; docs/OWNED_SCENE_PLAN.md part 1b): the performance specs in authoring/plays and what
+   // authoring/render/perform.py made of them in .authoring/plays/<id>/. Only our own renders: nothing from the source footage.
+   const characterFiles=Object.fromEntries((await readdir(resolve(root,'editor/assets/characters')).catch(()=>[])).filter(f=>f.endsWith('.glb')).map(f=>[f.slice(0,-4),f]));  // the built-in bodies (runtime/characters.ts names them by their file)
+   const specs=[];for(const f of (await readdir(resolve(root,'authoring/plays')).catch(()=>[])).filter(f=>f.endsWith('.json')).sort()){try{specs.push({file:resolve(root,'authoring/plays',f),...JSON.parse(await readFile(resolve(root,'authoring/plays',f),'utf8'))});}catch{}}
+   const out=id=>resolve(root,'.authoring/plays',id),lib=new DepthLibrary(root),jobOf=async id=>{const jobs=[];for(const f of await readdir(lib.store.dir).catch(()=>[]))if(f.startsWith('perform-')&&f.endsWith('.json')){try{const j=JSON.parse(await readFile(resolve(lib.store.dir,f),'utf8'));if(j.play===id)jobs.push(j);}catch{}}jobs.sort((a,b)=>String(a.queuedAt).localeCompare(String(b.queuedAt)));const j=jobs.at(-1);return j?{id:j.id,status:j.status,step:j.step??null,error:j.error,finishedAt:j.finishedAt??null}:null;};
+   if(req.method==='GET'&&path==='/api/plays'){const list=[];for(const P of specs){let made=null;try{made=JSON.parse(await readFile(resolve(out(P.id),'perform.json'),'utf8'));made.at=(await stat(resolve(out(P.id),'captioned.mp4'))).mtime.toISOString();}catch{}
+     list.push({id:P.id,name:P.name,play:P.play,card:P.card??null,roles:Object.fromEntries(Object.entries(P.roles).map(([k,r])=>[k,{name:r.name,character:made?.roles?.[k]?.character??r.character??'mannequin',seat:r.seat??null}])),lines:P.lines.map(l=>({who:P.roles[l.who]?.name??l.who,from:l.from,to:l.to,text:l.text})),shots:P.shots.map(s=>({seconds:s.seconds,note:s.note??''})),set:(P.set??[]).map(x=>x.prop),seconds:made?.seconds??P.shots.reduce((n,s)=>n+s.seconds,0),made,job:await jobOf(P.id)});}
+    return json(200,{plays:list,characters:Object.entries(characterFiles).filter(([,f])=>f).map(([k])=>k)});}
+   const id=url.searchParams.get('id')||'',P=specs.find(s=>s.id===id);if(!P)return json(404,{error:'No such scene'});
+   if(req.method==='GET'&&path==='/api/play-file'){const file=url.searchParams.get('file')||'';if(!/^(captioned\.mp4|scene\.mp4|keyframes\.jpg|key-\d{1,2}\.jpg)$/.test(file))return json(404,{error:'Not a scene file'});const full=resolve(out(id),file);let info;try{info=await stat(full);}catch{return json(404,{error:'Not made yet'});}
+    const type=file.endsWith('.mp4')?'video/mp4':'image/jpeg',match=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||''),a=match?Number(match[1]):0,z=Math.min(info.size-1,match&&match[2]?Number(match[2]):info.size-1);if(a>z||a>=info.size){res.writeHead(416,{'Content-Range':`bytes */${info.size}`});return res.end();}
+    res.writeHead(match?206:200,{'Content-Type':type,'Accept-Ranges':'bytes','Content-Length':z-a+1,'Cache-Control':'no-store',...(match?{'Content-Range':`bytes ${a}-${z}/${info.size}`}:{})});return createReadStream(full,{start:a,end:z}).on('error',()=>res.destroy()).pipe(res);}
+   if(req.method==='POST'&&path==='/api/plays/perform'){let body='';for await(const c of req){body+=c;if(body.length>10000)throw Error('Request too large');}const {cast={}}=JSON.parse(body||'{}');
+    for(const [k,c] of Object.entries(cast))if(!P.roles[k]||!(c==='mannequin'||characterFiles[c]))return json(400,{error:`cast: a role of ${Object.keys(P.roles).join(', ')} and a character`});
+    mkdirSync(out(id),{recursive:true});const castFile=resolve(out(id),'cast.json');await writeFile(castFile,JSON.stringify(cast));
+    const job=lib.store.enqueue('perform',{play:id},(j,log,step)=>{step('perform');return new Promise((ok,fail)=>{const p=spawn(lib.py,[resolve(root,'authoring/render/perform.py'),P.file,'--cast',castFile],{cwd:root});let o='',e='';p.stdout.on('data',b=>{o+=b;log(b.toString());});p.stderr.on('data',b=>{e+=b;});p.on('close',c=>c===0?ok(JSON.parse(o.trim().split('\n').pop())):fail(Error((e||o).slice(-1200))));});});
+    return json(200,{job:job.id,status:job.status});}
+   return json(405,{error:'Method not allowed'});
   }
   if(req.method==='GET'&&(path==='/api/depth-scene'||path==='/api/depth-scene-file')){
    // A clip's 3D scene (build_depth_scene): its latest job (running or not) and its latest finished result; the file route streams that
