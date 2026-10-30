@@ -107,8 +107,16 @@ height, 0.88) writes a GLB per clip; `authoring/render/mixamo-register.py` turns
 GLBs stay in `.authoring/sources/mixamo-humane-basics/` (untracked): Adobe's terms allow Mixamo animations in commercial work but
 not redistributing the files, so they never go in the public repo. Checked on the Studio player in a test shots scene
 (`mixamo-check`): walking, sneak, running, jump, kicks, push, door, button, punches and death play with feet and body on the floor.
-Not yet: foot contacts and travel are unchecked, the walking cycles are in place (travel comes from places), and the UAL2 root-motion
-file and the female mannequin's own use beyond a body are not used.
+The Mixamo walks carry their travel in the hips (Walking: 1.43 m a cycle, 1.48 m/s). In scenes a library movement plays as a
+segment like a build (set_shots_scene actionId may name a move-...): `loop: 'cycle'` repeats it forward, `inPlace` takes its hip
+travel out so places carry the figure, `reverse` plays a build backwards, and turns go to 180 degrees. In a performance spec a play
+entry may be a list of steps with seconds, and a step may be {movement, walk: {from, to}} (heading from the path, speed = the path's
+pace over the movement's own, 0.5-2, so the feet roughly keep up) or {movement, turn: [from, to] headings, at}. Macbeth 1.7 now opens
+with Macbeth walking in from the front left, a step-turn to his chair and his own sit-down, and closes with a new line ("Away, and
+mock the time with fairest show...") as he stands up (his sit-down played backwards from where his hips settle), turns and walks
+out past the candle stand; 32.2 s. The seated-leg solve runs only on build segments (it bent a walk's legs). Not done: a door (the
+prop kit has none); foot contact is not measured (a walk slower than half its own pace slides); the UAL2 root-motion file is left
+out, since the walks' own hip travel gives their pace.
 
 ## 2. Camera controls people can use
 

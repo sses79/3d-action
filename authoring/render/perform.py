@@ -19,20 +19,34 @@ def call(name,args,timeout=900):
 src=call('export_pair_reference',dict(pairId=P['from']['pair'],viewOnly=True))['shotsScene'];cams={c['name']:c for c in src['cameras']}
 import math
 L=json.load(open(os.path.join(root,'.authoring/depth-scene',P['from']['pair'].removeprefix('dscene-'),'layout.json')));heading={p['name']:p['heading'] for p in L['people']};hips={p['name']:p['hipHeight'] for p in L['people']}
-kit=json.load(open(os.path.join(root,'editor/assets/props/index.json')))['props'];moved={n:[0.0,0.0] for n in P['roles']}  # a person's place as moved so far by the text
+kit=json.load(open(os.path.join(root,'editor/assets/props/index.json')))['props'];
+def movement(mid):  # a library movement with its pace: how far its hips travel per second (a walk's own speed), 0 for one on the spot
+    m=call('get_movement',{'movementId':mid});k=next((t['keys'] for t in m['action']['tracks'] if t['target']=='pelvis' and t['property']=='position'),[]);B=sum(p['duration'] for p in m['action']['phases'])
+    d=math.hypot(k[-1]['value'][0]-k[0]['value'][0],k[-1]['value'][1]-k[0]['value'][1]) if len(k)>1 else 0;return dict(revision=m['revision'],pace=d/B if B else 0)
+moved={n:[0.0,0.0] for n in P['roles']}  # a person's place as moved so far by the text
 def build(name,shot):  # the person's segment whose time is that shot's in the fitted scene
     c=cams[shot];f=next(f for f in src['figures'] if f['name']==name);return f,next(g for g in f['segments'] if abs(g['from']-c['start'])<.05)
 cameras,segs,t=[],{n:[] for n in P['roles']},0.0
 for sh in P['shots']:
     c=cams[sh['camera']];cameras.append({**{k:c[k] for k in ('position','yaw','pitch','focal')},'name':sh['camera'],'start':round(t,3)})
-    for n,pl in sh.get('play',{}).items():
-        f,g=build(n,pl['build']);B=g['to']-g['from'];sp=pl.get('speed',B/sh['seconds']);loop=pl.get('loop',False)
-        if not .7<=sp<=1.4 and 'speed' not in pl:sp=min(1.4,max(.7,sp));loop=True  # within what keeps a build believable; the rest goes back and forth
-        e={k:g[k] for k in ('actionId','revision','places','hip','settle') if k in g}|dict(start=round(t,3),end=round(t+sh['seconds'],3),speed=round(sp,3),offset=pl.get('offset',0),loop=loop,frame=pl['build'])  # frame: the build keeps the camera it was made in, wherever it plays
-        if 'turn' in pl:e['turn']=pl['turn']  # blocking from the text: a turn about the hips, or [from, to] across the shot
-        m0,mv=list(moved[n]),pl.get('move',[0,0]);moved[n]=[moved[n][0]+mv[0],moved[n][1]+mv[1]]  # a move [dx, dz] across the shot, kept afterwards
-        if any(m0)or any(mv):q=e.get('places',[f['place'],f['place']]);e['places']=[[round(x+m0[0]+mv[0]*k/(len(q)-1),3),round(z+m0[1]+mv[1]*k/(len(q)-1),3)] for k,(x,z) in enumerate(q)]
-        segs[n].append(e)
+    for n,plays in sh.get('play',{}).items():
+        u=t;plays=plays if isinstance(plays,list) else [dict(plays,seconds=sh['seconds'])]  # one entry for the shot, or steps in order, each with its seconds
+        for pl in plays:
+            secs=pl['seconds'];f=next(f for f in src['figures'] if f['name']==n)
+            if 'movement' in pl:  # a library movement: walk {from, to} at its own pace, in place, places carrying it; or a turn [from, to] (headings) where it stands
+                mv=movement(pl['movement']);a=pl.get('walk');at=pl.get('at',a['to'] if a else f['place']);cy=c['yaw']
+                if a:dx,dz=a['to'][0]-a['from'][0],a['to'][1]-a['from'][1];h=math.degrees(math.atan2(dx,dz));dist=math.hypot(dx,dz);sp=min(2,max(.5,dist/secs/mv['pace'])) if mv['pace'] else 1;q=[[round(a['from'][0]+dx*k/12,3),round(a['from'][1]+dz*k/12,3)] for k in range(13)];tr=round(((h-cy+180)%360)-180,1)
+                else:sp=pl.get('speed',1);q=[at,at];tr=[round(((x-cy+180)%360)-180,1) for x in pl['turn']] if isinstance(pl.get('turn'),list) else round(((pl.get('turn',heading[n])-cy+180)%360)-180,1)
+                e=dict(actionId=pl['movement'],revision=mv['revision'],places=q,start=round(u,3),end=round(u+secs,3),speed=round(sp,3),offset=pl.get('offset',0),loop='cycle',inPlace=True,frame=sh['camera'],turn=tr)
+            else:
+                f,g=build(n,pl['build']);B=g['to']-g['from'];sp=pl.get('speed',B/secs);loop=pl.get('loop',False)
+                if not .7<=sp<=1.4 and 'speed' not in pl:sp=min(1.4,max(.7,sp));loop=True  # within what keeps a build believable; the rest goes back and forth
+                e={k:g[k] for k in ('actionId','revision','places','hip','settle') if k in g}|dict(start=round(u,3),end=round(u+secs,3),speed=round(sp,3),offset=pl.get('offset',0),loop=loop,frame=pl['build'])  # frame: the build keeps the camera it was made in, wherever it plays
+                if pl.get('reverse'):e['reverse']=True  # played backwards: a sit-down becomes standing up
+                if 'turn' in pl:e['turn']=pl['turn']  # blocking from the text: a turn about the hips, or [from, to] across the shot
+                m0,mv2=list(moved[n]),pl.get('move',[0,0]);moved[n]=[moved[n][0]+mv2[0],moved[n][1]+mv2[1]]  # a move [dx, dz] across the shot, kept afterwards
+                if any(m0)or any(mv2):q=e.get('places',[f['place'],f['place']]);e['places']=[[round(x+m0[0]+mv2[0]*k/(len(q)-1),3),round(z+m0[1]+mv2[1]*k/(len(q)-1),3)] for k,(x,z) in enumerate(q)]
+            segs[n].append(e);u+=secs
     t+=sh['seconds']
 figures=[]
 for n,role in P['roles'].items():

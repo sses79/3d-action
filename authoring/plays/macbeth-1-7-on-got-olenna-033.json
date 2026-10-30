@@ -23,17 +23,46 @@
  "shots": [
   {
    "camera": "shot 4",
-   "seconds": 3.4,
-   "note": "Wide: Macbeth sits down as he says it.",
+   "seconds": 5.8,
+   "note": "Wide: Macbeth walks in, turns to his chair and sits down as he says it.",
+   "why": "walk in from the front left at the walk's own pace, a step-turn to his seated heading, then his own sit-down build",
    "play": {
     "D": {
      "build": "shot 4"
     },
-    "E": {
-     "build": "shot 4"
-    }
-   },
-   "why": "wide: Macbeth sits down as he says it"
+    "E": [
+     {
+      "movement": "move-mixamo-walking",
+      "walk": {
+       "from": [
+        -1.9,
+        -5.4
+       ],
+       "to": [
+        -0.041,
+        -7.231
+       ]
+      },
+      "seconds": 1.8
+     },
+     {
+      "movement": "move-mixamo-walking",
+      "turn": [
+       134.6,
+       63.6
+      ],
+      "at": [
+       -0.041,
+       -7.231
+      ],
+      "seconds": 0.6
+     },
+     {
+      "build": "shot 4",
+      "seconds": 3.4
+     }
+    ]
+   }
   },
   {
    "camera": "shot 5",
@@ -114,44 +143,98 @@
     }
    },
    "why": "back on Macbeth for his answer; Lady Macbeth holds the last pose of her shot 5 build, her back to us, still turned in"
+  },
+  {
+   "camera": "shot 4",
+   "seconds": 6.6,
+   "note": "Wide: Macbeth stands, turns away and walks out.",
+   "why": "his sit-down build played backwards from where his hips settle, a step-turn toward the way out, a walk off to the front left; the way out passes 0.7 m clear of the candle stand",
+   "play": {
+    "D": {
+     "build": "shot 4",
+     "offset": 2.6,
+     "speed": 0.5
+    },
+    "E": [
+     {
+      "build": "shot 4",
+      "reverse": true,
+      "offset": 1.83,
+      "speed": 0.72,
+      "seconds": 1.2
+     },
+     {
+      "movement": "move-mixamo-walking",
+      "turn": [
+       63.6,
+       -41.9
+      ],
+      "at": [
+       -0.041,
+       -7.231
+      ],
+      "seconds": 0.6
+     },
+     {
+      "movement": "move-mixamo-walking",
+      "walk": {
+       "from": [
+        -0.041,
+        -7.231
+       ],
+       "to": [
+        -2.4,
+        -4.6
+       ]
+      },
+      "seconds": 4.8
+     }
+    ]
+   }
   }
  ],
  "lines": [
   {
    "who": "E",
-   "from": 0.4,
-   "to": 3.2,
+   "from": 2.6,
+   "to": 5.4,
    "text": "We will proceed no further in this business."
   },
   {
    "who": "D",
-   "from": 3.6,
-   "to": 6.8,
+   "from": 6.0,
+   "to": 9.2,
    "text": "Was the hope drunk wherein you dressed yourself?"
   },
   {
    "who": "E",
-   "from": 7.2,
-   "to": 13.4,
+   "from": 9.6,
+   "to": 15.8,
    "text": "Prithee, peace. I dare do all that may become a man; who dares do more is none."
   },
   {
    "who": "E",
-   "from": 13.8,
-   "to": 15.6,
+   "from": 16.2,
+   "to": 18.0,
    "text": "If we should fail?"
   },
   {
    "who": "D",
-   "from": 16.2,
-   "to": 21.0,
+   "from": 18.6,
+   "to": 23.4,
    "text": "We fail? But screw your courage to the sticking-place, and we'll not fail."
   },
   {
    "who": "E",
-   "from": 21.6,
-   "to": 23.0,
+   "from": 24.0,
+   "to": 25.4,
    "text": "I am settled."
+  },
+  {
+   "who": "E",
+   "from": 25.8,
+   "to": 31.8,
+   "text": "Away, and mock the time with fairest show: false face must hide what the false heart doth know."
   }
  ],
  "set": [
@@ -200,5 +283,5 @@
    "turn": 0
   }
  ],
- "card": "Hand-written for now. A seated two-person scene of pressure and giving in: one argues, the other refuses, wavers and is won over. Shape from the source: a wide two-shot, a single on the persuader, over her shoulder onto the doubter, closer on the persuader, back to the doubter. Performed as Macbeth 1.7 in a castle room: chairs, a candle stand, a stool with a chalice, banners. Blocking from the text: Macbeth turns away on 'Prithee, peace' and back on 'If we should fail?'; Lady Macbeth turns in on him for 'screw your courage'. Good for: confession, interrogation, a deal won by pressure, a parent talking a child round. Not for: walking, standing, contact."
+ "card": "Hand-written for now. A seated two-person scene of pressure and giving in: one argues, the other refuses, wavers and is won over. Shape from the source: a wide two-shot, a single on the persuader, over her shoulder onto the doubter, closer on the persuader, back to the doubter. Performed as Macbeth 1.7 in a castle room: chairs, a candle stand, a stool with a chalice, banners. Blocking from the text: Macbeth walks in and sits; at the end he stands and walks out; Macbeth turns away on 'Prithee, peace' and back on 'If we should fail?'; Lady Macbeth turns in on him for 'screw your courage'. Good for: confession, interrogation, a deal won by pressure, a parent talking a child round. Not for: walking, standing, contact."
 }
