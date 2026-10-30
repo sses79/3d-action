@@ -7,6 +7,8 @@
 //          back, the body or in a close shot the head turned away, over a shoulder or someone cut by a side of the picture holds their nearest build, turned as in its shot)
 //  scene   set_shots_scene, pair dscene-<clip>: each build moves between its person's keyframe places with its hips at the
 //          fitted height; legs drawn for people sitting (hips under 0.7 m), else the tapered column
+//  look    with look: true and a character worn (characters: {name: id}, kept from the last build when not given): the Blender
+//          render in their own clothes (export_pair_reference renderer blender, look.mp4), about half a minute per second
 //  render  render_pair_video; check: the sheet (keyframes, then five moments a shot, source over scene)
 // A build already made for that shot and person is kept unless again: true (which also reads the bodies again). A person with no
 // build anywhere is left out and named in the result. Builds are one at a time (the service runs one
@@ -38,12 +40,14 @@ export class DepthScene{
   // where each person's hips are over a segment: their keyframe places, straight between keyframes, held before the first and after the last
   const kfs=Object.fromEntries(L.people.map(p=>[p.name,p.keyframes])),along=(n,t)=>{const k=kfs[n];if(t<=k[0].time)return k[0].place;if(t>=k[k.length-1].time)return k[k.length-1].place;const j=k.findIndex(q=>q.time>t),u=(t-k[j-1].time)/(k[j].time-k[j-1].time);return [0,1].map(i=>+(k[j-1].place[i]*(1-u)+k[j].place[i]*u).toFixed(3));};
   const hips=Object.fromEntries(L.people.map(p=>[p.name,p.hipHeight]));
-  const figures=people.map(p=>({name:p.name,color:p.color,height:1.7,...(hips[p.name]<.7?{legs:true}:{}),place:place[p.name],segments:builds.filter(b=>b.name===p.name&&!b.failed).map(b=>({from:b.from,to:b.to,actionId:b.actionId,revision:b.revision,places:Array.from({length:13},(_,i)=>along(p.name,b.from+(b.to-b.from)*i/12)),hip:Math.min(1.4,Math.max(.15,hips[p.name]))}))}));
+  const was=await this.call('export_pair_reference',{pairId,viewOnly:true}).then(v=>Object.fromEntries((v.shotsScene?.figures??[]).filter(f=>f.character).map(f=>[f.name,f.character])),()=>({})),wear={...was,...(a.characters??{})};  // who wears which body: as asked, else as the scene had it
+  const figures=people.map(p=>({name:p.name,color:p.color,height:1.7,...(wear[p.name]&&wear[p.name]!=='mannequin'?{character:wear[p.name]}:{}),...(hips[p.name]<.7?{legs:true}:{}),place:place[p.name],segments:builds.filter(b=>b.name===p.name&&!b.failed).map(b=>({from:b.from,to:b.to,actionId:b.actionId,revision:b.revision,places:Array.from({length:13},(_,i)=>along(p.name,b.from+(b.to-b.from)*i/12)),hip:Math.min(1.4,Math.max(.15,hips[p.name]))}))}));
   const end=S.shots[S.shots.length-1].end,sc=await this.call('set_shots_scene',{pairId,name:`${a.clip} from its keyframes (depth scene)`,expectedRevision:this.pairRevision(pairId),duration:+end.toFixed(3),figures,cameras:L.cameras.map(c=>({name:c.name,start:c.start,position:c.position,yaw:c.yaw,pitch:c.pitch,focal:c.focal}))});
   step('render');t=Date.now();const v=await this.call('render_pair_video',{pairId,width:1280,height:720,fps:30});time('render',t);
+  let look=null;if(a.look&&Object.values(wear).some(c=>c&&c!=='mannequin')){step('look');t=Date.now();const r=await this.call('export_pair_reference',{pairId,renderer:'blender',width:1280,height:720,fps:30});look=resolve(r.folder??r.dir??'', 'look.mp4');time('look',t);}
   step('check');await this.py(vision,['authoring/render/depth-scene-check.py',D('layout.json'),v.file,D('check.jpg')],log);
   const px=L.check.filter(c=>c.weight>0).map(c=>c.pixels);
   return {clip:a.clip,pairId,revision:sc.revision,video:v.file,sheet:D('check.jpg'),layout:D('layout.json'),people:L.people,cameras:L.cameras.length,fit:{readings:px.length,medianPixels:px.sort((x,y)=>x-y)[px.length>>1]??null,worstPixels:Math.max(...px)},
-   builds:builds.map(b=>b.failed?{shot:b.shot,name:b.name,failed:b.failed}:{shot:b.shot,name:b.name,actionId:b.actionId}),...(left.length?{leftOut:left}:{}),seconds:{...took,total:Math.round((Date.now()-t0)/1000)},
+   builds:builds.map(b=>b.failed?{shot:b.shot,name:b.name,failed:b.failed}:{shot:b.shot,name:b.name,actionId:b.actionId}),...(left.length?{leftOut:left}:{}),characters:Object.fromEntries(people.map(p=>[p.name,wear[p.name]??'mannequin'])),...(look?{look}:{}),seconds:{...took,total:Math.round((Date.now()-t0)/1000)},
    note:'Matched at the keyframes only; between them the motion is each shot\'s build. Look at the sheet: the strips show actions no keyframe catches.'};}
 }

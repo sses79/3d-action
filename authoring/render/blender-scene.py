@@ -1,9 +1,13 @@
 """Render a scene GLB from scene-gltf.mjs in Blender: a plain clay video, a depth video and a tinted depth video (each person
 one colour, exact from the renderer, no detection; props yellow; the room and floor grey depth). Run:
-  blender -b -P authoring/render/blender-scene.py -- SCENE.glb OUTDIR [--passes clay,depth,tint] [--samples 16] [--frames A-B] [--grey] [--blend FILE.blend]
+  blender -b -P authoring/render/blender-scene.py -- SCENE.glb OUTDIR [--passes clay,depth,tint,look] [--samples 16] [--frames A-B] [--grey] [--blend FILE.blend]
+    [--characters 0=BODY.glb,1=BODY.glb]
 SCENE.json beside the GLB gives the lens per frame and the picture size. Depth is inverse distance like the clay view's: white at
 a little nearer than the performers come, black from 40 m. Writes OUTDIR/<pass>.mp4 (ffmpeg) and OUTDIR/<pass>-first.png.
-With --blend: no render, the scene is saved as a .blend with the clay look (lit, the pair's colours) to open and adjust by hand."""
+--characters: those performers wear that body (runtime/characters.ts, on the Studio skeleton) in its own clothes: the body is
+imported and each of its bones follows the scene's bone of the same name (the clay view posed that very body, so the proportions
+match); its meshes stand in for the exported clay ones in every pass, and the look pass draws them in their own materials on a light
+floor. With --blend: no render, the scene is saved as a .blend with the clay look (lit, the pair's colours) to open and adjust by hand."""
 import bpy,sys,os,json,math,subprocess,shutil
 argv=sys.argv[sys.argv.index('--')+1:];glb,outdir=os.path.abspath(argv[0]),os.path.abspath(argv[1]);opt=lambda k,d:argv[argv.index(k)+1] if k in argv else d
 passes=opt('--passes','clay,depth,tint').split(',');samples=int(opt('--samples','16'));meta=json.load(open(os.path.splitext(glb)[0]+'.json'));os.makedirs(outdir,exist_ok=True)
@@ -34,6 +38,17 @@ for o in sc.objects:
         elif o.name.startswith('prop_'):props.append(o)
         else:room.append(o)
 if not any(o.name.startswith('floor') for o in room):bpy.ops.mesh.primitive_plane_add(size=200,location=(0,0,0));bpy.context.object.name='floor';room.append(bpy.context.object)
+chars=dict(x.split('=',1) for x in opt('--characters','').split(',') if '=' in x);own={}  # the performers' own bodies, their meshes' own materials
+for k,f in chars.items():
+    i=int(k);tgt=next((o for o in sc.objects if o.type=='ARMATURE' and any(b.name.startswith(f'P{i}_') for b in o.data.bones)),None)
+    if tgt is None:continue
+    before=set(bpy.data.objects);bpy.ops.import_scene.gltf(filepath=os.path.abspath(f));new=[o for o in bpy.data.objects if o not in before]
+    for a in (o for o in new if o.type=='ARMATURE'):
+        for pb in a.pose.bones:
+            if f'P{i}_{pb.name}' in tgt.data.bones:c=pb.constraints.new('COPY_TRANSFORMS');c.target=tgt;c.subtarget=f'P{i}_{pb.name}'
+    for o in people.get(i,[]):o.hide_render=True;o.hide_viewport=True
+    people[i]=[o for o in new if o.type=='MESH']
+    for o in people[i]:own[o]=list(o.data.materials)
 for o in room:o.visible_shadow=False  # walls cast no shadow (a side wall darkened half of a shot); people and props still do
 # where the performers come nearest the camera (pelvis), for the depth range: white at 0.6 of it, as in the clay view
 from mathutils import Vector
@@ -67,7 +82,9 @@ def tinted(color):
         mr=nt.nodes.new('ShaderNodeMapRange');mr.inputs['To Min'].default_value=.35;nt.links.new(d,mr.inputs['Value']);c2=nt.nodes.new('ShaderNodeCombineColor');[nt.links.new(mr.outputs['Result'],c2.inputs[k]) for k in range(3)]
         nt.links.new(c2.outputs['Color'],m.inputs[6]);m.inputs[7].default_value=(*color,1);return emit(nt,m.outputs[2])
     return b
-def assign(o,m):o.data.materials.clear();o.data.materials.append(m)
+def assign(o,m):
+    o.data.materials.clear()
+    for x in (own.get(o,[]) if m is None else [m]):o.data.materials.append(x)  # None: the body's own materials
 world=bpy.data.worlds.new('w');sc.world=world;world.use_nodes=True;bg=world.node_tree.nodes['Background']
 def render(name,mats,engine,bgcol,standard):
     for i,objs in people.items():
@@ -98,4 +115,8 @@ if 'depth' in passes:
     t=time.time();g=mat('depth',grey_depth);render('depth',{**{i:g for i in people},'room':g,'prop':g},'BLENDER_EEVEE',(0,0,0),True);took['depth']=round(time.time()-t,1)
 if 'tint' in passes:
     t=time.time();render('tint',{**{i:mat(f'tint{i}',tinted(col(i))) for i in people},'room':mat('depthf',grey_depth),'prop':mat('tintprop',tinted(COLORS[4]))},'BLENDER_EEVEE',(0,0,0),True);took['tint']=round(time.time()-t,1)
-print('BLENDER-SCENE',json.dumps(dict(outdir=outdir,frames=n,fps=fps,people=len(people),props=len(props),room=len(room),depth=dict(nearMeters=near,farMeters=far),seconds=took)))
+if 'look' in passes:  # the performers in their own bodies and clothes, lit, on a light floor
+    t=time.time();sun=bpy.data.objects.new('sunlook',bpy.data.lights.new('sunlook','SUN'));sun.data.energy=3.5;sun.data.angle=math.radians(15);sun.rotation_euler=(math.radians(50),0,math.radians(-30));sc.collection.objects.link(sun)
+    def floor(nt):b=nt.nodes.new('ShaderNodeBsdfPrincipled');b.inputs['Base Color'].default_value=(.42,.4,.38,1);b.inputs['Roughness'].default_value=.35;return b.outputs['BSDF']
+    render('look',{**{i:(None if any(o in own for o in objs) else mat(f'look{i}',lambda nt,i=i:clay(nt,col(i)))) for i,objs in people.items()},'room':mat('lookroom',floor),'prop':mat('lookprop',lambda nt:clay(nt,(.6,.5,.4)))},'BLENDER_EEVEE',(.55,.6,.68),False);took['look']=round(time.time()-t,1);sun.hide_render=True
+print('BLENDER-SCENE',json.dumps(dict(outdir=outdir,frames=n,fps=fps,people=len(people),props=len(props),room=len(room),characters=chars,depth=dict(nearMeters=near,farMeters=far),seconds=took)))

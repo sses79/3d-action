@@ -85,11 +85,14 @@ function BuildButton({clip,onDone}:{clip:string;onDone:()=>void}){
 // already made (a minute or two); rebuilding all reads the bodies again and builds every shot (5-15 minutes).
 function SceneBox({id}:{id:string}){
  const [st,setSt]=useState<{job:any;result:any}|null>(null),[err,setErr]=useState(''),[stamp,setStamp]=useState(0);
+ const [bodies,setBodies]=useState<string[]>([]),[wear,setWear]=useState<Record<string,string>>({});
+ useEffect(()=>{tool('list_characters',{}).then((l:any[])=>setBodies(l.filter(c=>c.builtIn).map(c=>c.characterId))).catch(()=>{});},[]);
+ useEffect(()=>{setWear(st?.result?.characters??{});},[st?.result?.finishedAt]);
  const load=()=>fetch(bridgeUrl+'/api/depth-scene?clip='+encodeURIComponent(id)).then(r=>r.json()).then(d=>{if(d.error)setErr(d.error);else setSt(d);return d;});
  useEffect(()=>{setSt(null);setErr('');load().catch(e=>setErr(e.message));},[id]);
  const live=!!st?.job&&['queued','running'].includes(st.job.status);
  useEffect(()=>{if(!live)return;const t=setTimeout(()=>load().then(d=>{if(d.job&&!['queued','running'].includes(d.job.status))setStamp(Date.now());}).catch(()=>{}),4000);return ()=>clearTimeout(t);},[st,live]);
- const go=async(again:boolean)=>{if(again&&!confirm('Read every keyframe again and rebuild every shot? 5-15 minutes.'))return;setErr('');try{await tool('build_depth_scene',again?{clip:id,again:true}:{clip:id});await load();}catch(e:any){setErr(e.message);}};
+ const go=async(again:boolean,look=false)=>{if(again&&!confirm('Read every keyframe again and rebuild every shot? 5-15 minutes.'))return;setErr('');try{await tool('build_depth_scene',{clip:id,...(again?{again:true}:{}),characters:wear,...(look?{look:true}:{})});await load();}catch(e:any){setErr(e.message);}};
  const f=(x:string)=>bridgeUrl+'/api/depth-scene-file?clip='+encodeURIComponent(id)+'&file='+x+'&v='+(st?.result?.finishedAt??'')+stamp,r=st?.result,j=st?.job;
  return <div className="dl-scene">
   {!r&&!live&&<p className="vc-help">No 3D scene yet: plain-shape figures and a camera per shot, placed so each person lands on their keyframe points, moving as a build of each shot.</p>}
@@ -98,9 +101,11 @@ function SceneBox({id}:{id:string}){
   {r&&<>
    <p className="vc-help">Fit at {r.fit.readings} keyframe readings: median {r.fit.medianPixels} px, worst {Math.round(r.fit.worstPixels)} px. {r.builds.filter((b:any)=>!b.failed).length} builds ({r.builds.map((b:any)=>`shot ${b.shot} ${b.name}${b.failed?' failed':''}`).join(', ')}); {r.cameras} cameras.{r.leftOut?.length?` Left out: ${r.leftOut.join('; ')}.`:''} Built in {Math.round(r.seconds.total/60)||'<1'} min{r.finishedAt?`, ${new Date(r.finishedAt).toLocaleString()}`:''}.</p>
    <video className="dl-scene-video" src={f('scene.mp4')} controls playsInline/>
+   {r.look&&<><p className="vc-help">In the characters' clothes (Blender):</p><video className="dl-scene-video" src={f('look.mp4')} controls playsInline/></>}
    <a href={f('check.jpg')} target="_blank" rel="noreferrer" title="The check sheet: keyframes (source, tinted depth, scene), then five moments a shot, source over scene"><img className="dl-scene-sheet" src={f('check.jpg')} alt="check sheet"/></a>
    <p className="vc-help">Matched at keyframes only; the strips show actions between them. Pair {r.pairId} (open it in Studio or export_pair_reference).</p></>}
   {err&&<div className="dl-check-k">⚠ {err}</div>}
+  {r?.characters&&bodies.length>0&&<div className="dl-scene-cast" title="The body each person is drawn with; Build again applies it (a minute or two)">{Object.keys(r.characters).map(n=><label key={n}><span>{n}</span><select value={wear[n]??'mannequin'} disabled={live} onChange={e=>setWear({...wear,[n]:e.target.value})}>{bodies.map(b=><option key={b} value={b}>{b}</option>)}</select></label>)}</div>}
   <div className="dl-build"><button className="primary" disabled={live} onClick={()=>go(false)}>{r?'Build again':'Build 3D scene'}</button>{r&&<button disabled={live} onClick={()=>go(true)}>Rebuild all</button>}</div>
  </div>;
 }

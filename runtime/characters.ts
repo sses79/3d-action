@@ -3,7 +3,9 @@ import {Action} from './action';
 // action plays on them. What differs is the body's own proportions: the library's clips and baked tracks carry the mannequin's
 // bone offsets, so on another body only the rotations are applied (plus the pelvis' position, which carries height), and the
 // figure is then raised or lowered so its feet meet the floor.
-export const characterFiles:Record<string,string|null>={mannequin:null,'superhero-female':'superhero-female.glb','superhero-male':'superhero-male.glb'};
+// peasant-* and ranger-*: Quaternius' Modular Character Outfits - Fantasy (CC0), each outfit with a base body's head
+// (authoring/render/character-build.py; editor/assets/characters/provenance.json).
+export const characterFiles:Record<string,string|null>={mannequin:null,'superhero-female':'superhero-female.glb','superhero-male':'superhero-male.glb','peasant-female':'peasant-female.glb','peasant-male':'peasant-male.glb','ranger-female':'ranger-female.glb','ranger-male':'ranger-male.glb'};
 const keeps=(track:string)=>track.endsWith('.quaternion')||track.startsWith('pelvis.')||!track.includes('.');
 export function ownShapeClips(T:any,clips:any[]){return clips.map(c=>new T.AnimationClip(c.name,c.duration,c.tracks.filter((t:any)=>keeps(t.name))));}
 const cache=new WeakMap<Action,Action>();

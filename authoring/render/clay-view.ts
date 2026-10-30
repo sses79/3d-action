@@ -29,8 +29,8 @@ export async function init(cfg?:ClayViewConfig){
  const gltf=await new GLTFLoader().loadAsync(urls.character),clay=new T.MeshStandardMaterial({color:'#f4f3f0',roughness:.82,metalness:0}),/* one flat colour per performer (payload.colors), so a prompt can name each figure */clays=[0,1].map(i=>(payload as any).colors?.[i]?new T.MeshStandardMaterial({color:(payload as any).colors[i],roughness:.82,metalness:0}):clay);
  // one load of the asset per character: a skinned mesh does not survive a plain clone
  // Another body per performer (payload.staged.characters, ids from runtime/characters.ts; files served under /characters/).
- const other=await Promise.all(payload.actions.map((_,i)=>{const file=characterFiles[payload.staged?.characters?.[i]??'mannequin'];return file?new GLTFLoader().loadAsync(urls.characters(file)):null;})),turnsOnly=ownShapeClips(T,gltf.animations);
- other.forEach((o,i)=>{if(o)payload.actions[i]=ownShapeAction(payload.actions[i]);});
+ const other=await Promise.all(payload.actions.map((_,i)=>{const file=characterFiles[payload.staged?.characters?.[i]??(payload as any).shots?.figures?.[i]?.character??'mannequin'];return file?new GLTFLoader().loadAsync(urls.characters(file)):null;})),turnsOnly=ownShapeClips(T,gltf.animations);
+ other.forEach((o,i)=>{if(o){payload.actions[i]=ownShapeAction(payload.actions[i]);for(const g of (payload as any).shots?.figures?.[i]?.segments??[])g.action=ownShapeAction(g.action);}});
  const second=payload.actions.length>1?await new GLTFLoader().loadAsync(urls.character):null,cast=payload.actions.map((_,i)=>({root:other[i]?other[i]!.scene:i?second!.scene:gltf.scene}));
  // A scene told in cuts (payload.shots): below the hips a tapered column standing on the floor, so no leg motion is invented;
  // the leg shapes of the plain figure are hidden. Each figure plays its build for the shot on screen and holds the nearest
