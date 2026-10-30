@@ -28,7 +28,7 @@ for sh in P['shots']:
     for n,pl in sh.get('play',{}).items():
         f,g=build(n,pl['build']);B=g['to']-g['from'];sp=pl.get('speed',B/sh['seconds']);loop=pl.get('loop',False)
         if not .7<=sp<=1.4 and 'speed' not in pl:sp=min(1.4,max(.7,sp));loop=True  # within what keeps a build believable; the rest goes back and forth
-        e={k:g[k] for k in ('actionId','revision','places','hip') if k in g}|dict(start=round(t,3),end=round(t+sh['seconds'],3),speed=round(sp,3),offset=pl.get('offset',0),loop=loop,frame=pl['build'])  # frame: the build keeps the camera it was made in, wherever it plays
+        e={k:g[k] for k in ('actionId','revision','places','hip','settle') if k in g}|dict(start=round(t,3),end=round(t+sh['seconds'],3),speed=round(sp,3),offset=pl.get('offset',0),loop=loop,frame=pl['build'])  # frame: the build keeps the camera it was made in, wherever it plays
         if 'turn' in pl:e['turn']=pl['turn']  # blocking from the text: a turn about the hips, or [from, to] across the shot
         m0,mv=list(moved[n]),pl.get('move',[0,0]);moved[n]=[moved[n][0]+mv[0],moved[n][1]+mv[1]]  # a move [dx, dz] across the shot, kept afterwards
         if any(m0)or any(mv):q=e.get('places',[f['place'],f['place']]);e['places']=[[round(x+m0[0]+mv[0]*k/(len(q)-1),3),round(z+m0[1]+mv[1]*k/(len(q)-1),3)] for k,(x,z) in enumerate(q)]
