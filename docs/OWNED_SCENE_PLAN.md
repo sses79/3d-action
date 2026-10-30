@@ -158,8 +158,12 @@ library movement once where it stands, its own hip travel moving the figure; suc
 so its travel turns with it, and gets the same floor and held-foot rules as walks. Macbeth 1.7 now opens with Macbeth walking in
 3.2 m, stopping, turning his back to his chair and sitting down, saying his first line as he sits (shot 4 is 11 s), and closes
 with him standing up, turning and walking out (9 s); 39.8 s in all. Feet over his 19.3 s of library movement: planted-ball slide
-0.2 cm median, 1.1 cm largest; the lowest foot within 1 cm below to 3.9 cm above the floor. Open: the sit-down's seat height
-(0.51 m hips) is Mixamo's chair, not the prop's; sitting idle stands in for the footage build until the cut to shot 5.
+0.2 cm median, 1.1 cm largest; the lowest foot within 1 cm below to 3.9 cm above the floor. Seat height (2026-10-30): Mixamo's sit-down sits at its own chair (hips 0.51 m on X Bot's
+scale, about 9 cm under ours). A segment's `seat` (set_shots_scene; perform.py gives stand to sit, sitting idle and sit to stand
+the role's seated hip height from the fit, the height the role's chair is scaled to, 10 cm above its seat) raises the hips by the
+fraction they have gone down (from standing to the clip's lowest, measured once with feet on the floor), and each leg is solved back
+to where its ankle was, so the feet stay put and he sits on the chair, not in it. Sitting idle stands in for the footage build until
+the cut to shot 5.
 
 ## 2. Camera controls people can use
 
