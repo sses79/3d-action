@@ -141,6 +141,26 @@ pieces themselves: a walk turned on the spot is not a turn, and a sit-down from 
 transition movements from Mixamo (start and stop walking, turns on the spot of 90 and 180 degrees, stand to sit, sit to stand,
 sitting idle), which need Tim's Mixamo sign-in.
 
+Transitions (2026-10-30): downloaded from Mixamo through Tim's signed-in Chrome (X Bot, FBX without skin, 30 fps; kept untracked in
+`.authoring/sources/mixamo-transitions/`, converted with mixamo-retarget.py and registered with mixamo-register.py): start
+walking, stop walking, walking turn 180, stand to sit, sit to stand, sitting idle, and two pairs of standing turns. Mixamo's
+'Standing Turn Left/Right 90' turn in a crouched ready stance (hips at 0.81 m, arms out) and look wrong in a room; the plain 'Left
+Turn 90' / 'Right Turn 90' (standing, 0.93 s, the right one turns 102.6 degrees) are the ones used (`move-mixamo-left-turn-90`,
+`move-mixamo-right-turn-90`). Measured in their own space: start walking reaches its pace (0.88 m/s, slower than the plain walk's
+1.48) after 1.1 s and 0.24 m; stop walking leaves it 0.87 s in and stops 0.41 m later; stand to sit backs 0.43 m into the seat, hips
+from 0.91 to 0.51 m; sit to stand steps 0.42 m forward.
+
+perform.py chains them. A step `{go: {from, seat: true}}` (or `to` and `heading`) becomes: start walking (to where it reaches its
+pace), the walk at the start's pace, stop walking (from where it leaves it), a turn on the spot (the left or right turn, its measured
+angle, the rest spread as a turn of the whole figure), and stand to sit from the point the sit-down backs from into the person's
+seat. `{rise: {to}}` is sit to stand, a turn toward the way out, start walking and walking on. A step with `once: true` plays a
+library movement once where it stands, its own hip travel moving the figure; such a segment turns about its place (not its hips),
+so its travel turns with it, and gets the same floor and held-foot rules as walks. Macbeth 1.7 now opens with Macbeth walking in
+3.2 m, stopping, turning his back to his chair and sitting down, saying his first line as he sits (shot 4 is 11 s), and closes
+with him standing up, turning and walking out (9 s); 39.8 s in all. Feet over his 19.3 s of library movement: planted-ball slide
+0.2 cm median, 1.1 cm largest; the lowest foot within 1 cm below to 3.9 cm above the floor. Open: the sit-down's seat height
+(0.51 m hips) is Mixamo's chair, not the prop's; sitting idle stands in for the footage build until the cut to shot 5.
+
 ## 2. Camera controls people can use
 
 The Clay page already lets a person drag cameras on the floor plan and type yaw, pitch, height and lens. Typing numbers is slow and

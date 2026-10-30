@@ -23,6 +23,39 @@ kit=json.load(open(os.path.join(root,'editor/assets/props/index.json')))['props'
 def movement(mid):  # a library movement with its pace: how far its hips travel per second (a walk's own speed), 0 for one on the spot
     m=call('get_movement',{'movementId':mid});k=next((t['keys'] for t in m['action']['tracks'] if t['target']=='pelvis' and t['property']=='position'),[]);B=sum(p['duration'] for p in m['action']['phases'])
     d=math.hypot(k[-1]['value'][0]-k[0]['value'][0],k[-1]['value'][1]-k[0]['value'][1]) if len(k)>1 else 0;return dict(revision=m['revision'],pace=d/B if B else 0)
+def track(mid):  # a library movement's hips: times, forward travel (metres, its own forward), duration
+    m=call('get_movement',{'movementId':mid});k=next(t['keys'] for t in m['action']['tracks'] if t['target']=='pelvis' and t['property']=='position');return [x['time'] for x in k],[-(x['value'][1]-k[0]['value'][1]) for x in k],sum(p['duration'] for p in m['action']['phases'])
+def steady(mid,first):  # where a start reaches its own walking pace (first) or a stop leaves it: the pace over its last (first: the start's) second, nine tenths of it held over 0.3 s
+    T,F,B=track(mid);v=[(F[min(len(F)-1,i+9)]-F[i])/(T[min(len(T)-1,i+9)]-T[i]+1e-9) for i in range(len(T))];j=[i for i in range(len(T)) if ((B-1.3<T[i]<B-.3) if first else T[i]<1)];pace=sum(v[i] for i in j)/len(j)
+    ok=[i for i in range(len(T)-9) if v[i]>=.9*pace];i=(ok[0] if first else ok[-1]) if ok else (len(T)-1 if first else 0);return T[i],F[i],F[-1],B,pace
+WALK,START,STOP,SIT,RISE,IDLE='move-mixamo-walking','move-mixamo-start-walking','move-mixamo-stop-walking','move-mixamo-stand-to-sit','move-mixamo-sit-to-stand','move-mixamo-sitting-idle'
+TURN={90:'move-mixamo-left-turn-90',-90:'move-mixamo-right-turn-90'}  # Mixamo's plain standing turns (the 'Standing Turn ... 90' pair turns in a crouched ready stance)
+def spun(mid):  # how far a movement turns the hips about the vertical, degrees (left positive)
+    m=call('get_movement',{'movementId':mid});k=next(t['keys'] for t in m['action']['tracks'] if t['target']=='pelvis' and t['property']=='rotation');a,b=k[0]['value'],k[-1]['value'];w=b[3]*a[3]+b[0]*a[0]+b[1]*a[1]+b[2]*a[2];z=-b[3]*a[2]+b[2]*a[3]-b[0]*a[1]+b[1]*a[0];return math.degrees(2*math.atan2(z,w))
+def ahead(p,h,d):return [round(p[0]+math.sin(math.radians(h))*d,3),round(p[1]+math.cos(math.radians(h))*d,3)]
+def turned(at,h0,h1):  # a turn on the spot from heading h0 to h1: the left or right 90 degree turn, the rest spread over it as a turn of the whole figure
+    d=((h1-h0+180)%360)-180
+    if abs(d)<20:return []
+    k=90 if d>0 else -90;T,F,B=track(TURN[k]);r=spun(TURN[k]);return [dict(movement=TURN[k],once=True,at=at,heading=[h0,h0+d-r],seconds=round(B,3))]
+def go(n,g):  # {go: {from, seat: true | to, heading}}: start walking, walk, stop walking, turn on the spot, sit down (stand-to-sit backs into the seat), all at the walk's own pace
+    seat=g.get('seat');fp=next(f for f in src['figures'] if f['name']==n)['place'];hs=g.get('heading',heading[n])
+    T,Fs,B,_,pace=steady(START,True)
+    t1,Fe1,Fe,Be,_=steady(STOP,False);stopTravel=Fe-Fe1;ST,SF,SB=track(SIT)
+    to=ahead(fp,hs,-SF[-1]) if seat else g['to'];fr=g['from'];dx,dz=to[0]-fr[0],to[1]-fr[1];h=math.degrees(math.atan2(dx,dz));D=math.hypot(dx,dz);mid=D-Fs-stopTravel
+    print(f'go {n}: {D:.2f} m = start {Fs:.2f} + walk {mid:.2f} + stop {stopTravel:.2f}, at {pace:.2f} m/s',file=sys.stderr)
+    if mid<-.05:raise SystemExit(f'go: {D:.2f} m from {fr} to {to} is too short for a start ({Fs:.2f} m) and a stop ({stopTravel:.2f} m); start further back')
+    p1=ahead(fr,h,Fs);p2=ahead(fr,h,Fs+mid);out=[dict(movement=START,once=True,at=fr,heading=h,seconds=round(T,3)),*([dict(movement=WALK,walk={'from':p1,'to':p2},seconds=round(mid/pace,3))] if mid>.2 else []),dict(movement=STOP,once=True,at=ahead(p2,h,-Fe1),heading=h,offset=round(t1,3),seconds=round(Be-t1,3))]
+    out+=turned(to,h,hs)
+    if seat:out.append(dict(movement=SIT,once=True,at=to,heading=hs,seconds=round(SB,3)))
+    return out
+def rise(n,g):  # {rise: {to}}: stand up from the seat (sit-to-stand), turn toward the way out, start walking and walk on
+    fp=next(f for f in src['figures'] if f['name']==n)['place'];hs=g.get('heading',heading[n]);RT,RF,RB=track(RISE);up=ahead(fp,hs,RF[-1]);dx,dz=g['to'][0]-up[0],g['to'][1]-up[1];h=math.degrees(math.atan2(dx,dz))
+    T,Fs,B,_,pace=steady(START,True);out=[dict(movement=RISE,once=True,at=fp,heading=hs,seconds=round(RB,3))]+turned(up,hs,h)+[dict(movement=START,once=True,at=up,heading=h,seconds=round(T,3))]
+    rest=math.hypot(dx,dz)-Fs;out.append(dict(movement=WALK,walk={'from':ahead(up,h,Fs),'to':g['to']},seconds=round(max(.5,rest)/pace,3)));return out
+def expand(n,plays):  # go and rise steps into their movements; a step's seconds may be left out ('rest': what the shot has left)
+    out=[]
+    for pl in plays:out+=go(n,pl['go']) if 'go' in pl else rise(n,pl['rise']) if 'rise' in pl else [pl]
+    return out
 moved={n:[0.0,0.0] for n in P['roles']}  # a person's place as moved so far by the text
 def build(name,shot):  # the person's segment whose time is that shot's in the fitted scene
     c=cams[shot];f=next(f for f in src['figures'] if f['name']==name);return f,next(g for g in f['segments'] if abs(g['from']-c['start'])<.05)
@@ -31,10 +64,15 @@ for sh in P['shots']:
     c=cams[sh['camera']];cameras.append({**{k:c[k] for k in ('position','yaw','pitch','focal')},'name':sh['camera'],'start':round(t,3)})
     for n,plays in sh.get('play',{}).items():
         u=t;plays=plays if isinstance(plays,list) else [dict(plays,seconds=sh['seconds'])]  # one entry for the shot, or steps in order, each with its seconds
+        plays=expand(n,plays);left=sh['seconds']-sum(p.get('seconds',0) for p in plays)
+        if left<-.05:print(f'warning: {n} in {sh["camera"]} at {t:.1f} s: steps run {-left:.2f} s past the shot',file=sys.stderr)
+        plays=[dict(p,seconds=p.get('seconds',max(.1,left))) for p in plays]
         for pl in plays:
             secs=pl['seconds'];f=next(f for f in src['figures'] if f['name']==n)
             if 'movement' in pl:  # a library movement: walk {from, to} at its own pace, in place, places carrying it; or a turn [from, to] (headings) where it stands
                 mv=movement(pl['movement']);a=pl.get('walk');at=pl.get('at',a['to'] if a else f['place']);cy=c['yaw']
+                if pl.get('once'):  # played once where it stands, its own hip travel moving the figure (start or stop walking, a turn on the spot, sitting down, standing up)
+                    hh=pl['heading'];tr=[round(((x-cy+180)%360)-180,1) for x in hh] if isinstance(hh,list) else round(((hh-cy+180)%360)-180,1);segs[n].append(dict(actionId=pl['movement'],revision=mv['revision'],places=[at,at],start=round(u,3),end=round(u+secs,3),speed=pl.get('speed',1),offset=pl.get('offset',0),loop=False,frame=sh['camera'],turn=tr));u+=secs;continue
                 if a:dx,dz=a['to'][0]-a['from'][0],a['to'][1]-a['from'][1];h=math.degrees(math.atan2(dx,dz));dist=math.hypot(dx,dz);sp=min(2,max(.5,dist/secs/mv['pace'])) if mv['pace'] else 1;q=[[round(a['from'][0]+dx*k/12,3),round(a['from'][1]+dz*k/12,3)] for k in range(13)];tr=round(((h-cy+180)%360)-180,1)
                 else:sp=pl.get('speed',1);q=[at,at];tr=[round(((x-cy+180)%360)-180,1) for x in pl['turn']] if isinstance(pl.get('turn'),list) else round(((pl.get('turn',heading[n])-cy+180)%360)-180,1)
                 e=dict(actionId=pl['movement'],revision=mv['revision'],places=q,start=round(u,3),end=round(u+secs,3),speed=round(sp,3),offset=pl.get('offset',0),loop='cycle',inPlace=True,frame=sh['camera'],turn=tr)
@@ -77,7 +115,7 @@ def feet_check(path):  # per role, from the rendered feet (heels and balls, ever
     F=json.load(open(path));fps=F['fps'];res={}
     for i,(k,role) in enumerate(P['roles'].items()):
         sole=F['soles'][i] if F.get('soles') else [min(fr[i][j][1] for fr in F['frames']) for j in range(4)];pts=[[(p[0],p[1]-sole[j],p[2]) for j,p in enumerate(fr[i])] for fr in F['frames']];segs=figures[i]['segments'];n=len(pts)
-        walk=[f for f in range(n) if any(s.get('inPlace') and s['from']<=f/fps<=s['to'] for s in segs)];low=[min(p[1] for p in pts[f]) for f in range(n)]
+        walk=[f for f in range(n) if any((s.get('inPlace') or s['actionId'].startswith('move-')) and s['from']<=f/fps<=s['to'] for s in segs)];low=[min(p[1] for p in pts[f]) for f in range(n)]
         slides=[]
         for j in (1,3):  # balls: held still from where they come down
             run=[]

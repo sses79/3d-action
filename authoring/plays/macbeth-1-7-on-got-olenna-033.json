@@ -23,43 +23,31 @@
  "shots": [
   {
    "camera": "shot 4",
-   "seconds": 5.8,
-   "note": "Wide: Macbeth walks in, turns to his chair and sits down as he says it.",
-   "why": "walk in from the front left at the walk's own pace, a step-turn to his seated heading, then his own sit-down build",
+   "seconds": 11.0,
+   "note": "Wide: Macbeth walks in, stops, turns his back to his chair and sits down, and says it as he sits.",
+   "why": "Mixamo transitions chained by perform.py (go): start walking, walk, stop walking, a right turn on the spot, stand to sit backing into his chair, then sitting still; each at its own pace, joins blended",
    "play": {
     "D": {
      "build": "shot 4"
     },
     "E": [
      {
-      "movement": "move-mixamo-walking",
-      "walk": {
+      "go": {
        "from": [
-        -1.9,
-        -5.4
+        -2.245,
+        -5.159
        ],
-       "to": [
-        -0.041,
-        -7.231
-       ]
-      },
-      "seconds": 1.8
+       "seat": true
+      }
      },
      {
-      "movement": "move-mixamo-walking",
-      "turn": [
-       134.6,
-       63.6
-      ],
+      "movement": "move-mixamo-sitting-idle",
+      "once": true,
       "at": [
        -0.041,
        -7.231
       ],
-      "seconds": 0.6
-     },
-     {
-      "build": "shot 4",
-      "seconds": 3.4
+      "heading": 63.6
      }
     ]
    }
@@ -146,9 +134,9 @@
   },
   {
    "camera": "shot 4",
-   "seconds": 6.6,
+   "seconds": 9.0,
    "note": "Wide: Macbeth stands, turns away and walks out.",
-   "why": "his sit-down build played backwards from where his hips settle, a step-turn toward the way out, a walk off to the front left; the way out passes 0.7 m clear of the candle stand",
+   "why": "Mixamo sit to stand, a right turn on the spot toward the way out, start walking and walk off (perform.py rise); the way out passes 0.7 m clear of the candle stand",
    "play": {
     "D": {
      "build": "shot 4",
@@ -157,37 +145,12 @@
     },
     "E": [
      {
-      "build": "shot 4",
-      "reverse": true,
-      "offset": 1.83,
-      "speed": 0.72,
-      "seconds": 1.2
-     },
-     {
-      "movement": "move-mixamo-walking",
-      "turn": [
-       63.6,
-       -41.9
-      ],
-      "at": [
-       -0.041,
-       -7.231
-      ],
-      "seconds": 0.6
-     },
-     {
-      "movement": "move-mixamo-walking",
-      "walk": {
-       "from": [
-        -0.041,
-        -7.231
-       ],
+      "rise": {
        "to": [
         -2.4,
         -4.6
        ]
-      },
-      "seconds": 4.8
+      }
      }
     ]
    }
@@ -196,44 +159,44 @@
  "lines": [
   {
    "who": "E",
-   "from": 2.6,
-   "to": 5.4,
+   "from": 8.0,
+   "to": 10.8,
    "text": "We will proceed no further in this business."
   },
   {
    "who": "D",
-   "from": 6.0,
-   "to": 9.2,
+   "from": 11.2,
+   "to": 14.4,
    "text": "Was the hope drunk wherein you dressed yourself?"
   },
   {
    "who": "E",
-   "from": 9.6,
-   "to": 15.8,
+   "from": 14.8,
+   "to": 21.0,
    "text": "Prithee, peace. I dare do all that may become a man; who dares do more is none."
   },
   {
    "who": "E",
-   "from": 16.2,
-   "to": 18.0,
+   "from": 21.4,
+   "to": 23.2,
    "text": "If we should fail?"
   },
   {
    "who": "D",
-   "from": 18.6,
-   "to": 23.4,
+   "from": 23.8,
+   "to": 28.6,
    "text": "We fail? But screw your courage to the sticking-place, and we'll not fail."
   },
   {
    "who": "E",
-   "from": 24.0,
-   "to": 25.4,
+   "from": 29.2,
+   "to": 30.6,
    "text": "I am settled."
   },
   {
    "who": "E",
-   "from": 25.8,
-   "to": 31.8,
+   "from": 31.0,
+   "to": 37.0,
    "text": "Away, and mock the time with fairest show: false face must hide what the false heart doth know."
   }
  ],
