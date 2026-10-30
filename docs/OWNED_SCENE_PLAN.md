@@ -165,6 +165,17 @@ fraction they have gone down (from standing to the clip's lowest, measured once 
 to where its ankle was, so the feet stay put and he sits on the chair, not in it. Sitting idle stands in for the footage build until
 the cut to shot 5.
 
+Walk gait (2026-10-30, Tim: "the walk feels strange"). Two causes. The middle of a walk was Mixamo's plain walk (1.48 m/s) slowed
+to 0.59 to meet the start and stop (0.88 m/s): long strides swung in slow motion. And each clip began at its own first frame,
+whichever foot the last one ended on. Now: `authoring/render/movement-cut.py` cuts a window of a movement into a movement of its own
+(with --cycle, the loop whose ends are closest in pose; the hips' travel moved to start where the source's does, else a walk in place
+held the body 1.4 m off its path), and `move-mixamo-walk-steady` is Start Walking's own steady cycle (1.57-2.93 s), played at 1x;
+perform.py starts the cycle at the pose closest to where the start leaves off, and the stop at the frame closest to where the walk
+ends (the walk may run 10% long or short to land there, each percent costed). A held foot the leg cannot reach slides along the floor
+toward where it is instead of lifting (it lifted both feet 5-6 cm at joins). Macbeth 1.7: the lowest foot is on the floor throughout
+his library movement; planted-ball slide 1.2 cm median; the largest are inside the clips (a low pivot step in the turn, 22 cm, and
+the first step of the start, 9 cm) and one at the cut into the last wide shot.
+
 ## 2. Camera controls people can use
 
 The Clay page already lets a person drag cameras on the floor plan and type yaw, pitch, height and lens. Typing numbers is slow and
