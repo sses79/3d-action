@@ -66,35 +66,27 @@
   {
    "camera": "shot 6",
    "seconds": 6.6,
-   "note": "Over her shoulder onto Macbeth: he turns away from her as he refuses.",
+   "note": "Over her shoulder onto Macbeth as he refuses.",
    "play": {
     "E": {
      "build": "shot 6",
-     "speed": 0.74,
-     "turn": [
-      0,
-      -25
-     ]
+     "speed": 0.74
     }
    },
-   "why": "over her shoulder onto Macbeth: he turns away from her as he refuses ('Prithee, peace')"
+   "why": "over her shoulder onto Macbeth as he refuses ('Prithee, peace'); no added turn: his own seated build, which reads as natural"
   },
   {
    "camera": "shot 6",
    "seconds": 2.4,
-   "note": "The same shot: he turns back to her to ask.",
+   "note": "The same shot: he asks.",
    "play": {
     "E": {
      "build": "shot 6",
-     "offset": 4.88,
-     "speed": 0.74,
-     "turn": [
-      -25,
-      0
-     ]
+     "offset": 4.6,
+     "speed": 0.74
     }
    },
-   "why": "the same shot: he turns back to her to ask 'If we should fail?'"
+   "why": "the same shot as he asks 'If we should fail?'; his build from 4.6 s, ending before its last frame (that frame turns the body 30 degrees)"
   },
   {
    "camera": "shot 7",
