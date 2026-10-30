@@ -130,6 +130,17 @@ Macbeth's walks and turns (7.9 s), before -> after: planted-foot slide median 6.
 during walks up to 18.1 -> 2.4 cm over the floor (the 18 cm was the join into the sit-down); nothing deeper than 1 cm below it.
 Builds from footage (standing, not seated) are not put on the floor this way yet.
 
+Inertialization at joins (2026-10-30, `clay-view.ts`): where one segment of a figure hands over to the next within a shot, the
+difference at the join (each bone's turn, the pelvis in the body, the figure's place and turn in the room), with the speed it was
+changing at, fades out over 0.35 s on a fifth-order curve (Bollo, GDC 2018), measured once per join from the old segment as shown
+(feet held, seated legs solved) and the new one's start. A walk's step plan includes the blend, so its held feet stay put; a build's
+legs are solved and then blended. Not at a camera cut (a jump the cut hides would become a slide after it). Macbeth 1.7, largest
+frame-to-frame change of a foot's speed at Macbeth's joins (walk to turn 1.8 s, turn to sit 2.4 s, stand to turn 26.8 s, turn to walk
+27.4 s): 35 / 40 / 30 / 46 -> 13 / 10 / 20 / 15 cm per frame; planted-foot slide unchanged (0.5 cm at most). What is left is in the
+pieces themselves: a walk turned on the spot is not a turn, and a sit-down from footage starts from its own standing pose. Next:
+transition movements from Mixamo (start and stop walking, turns on the spot of 90 and 180 degrees, stand to sit, sit to stand,
+sitting idle), which need Tim's Mixamo sign-in.
+
 ## 2. Camera controls people can use
 
 The Clay page already lets a person drag cameras on the floor plan and type yaw, pitch, height and lens. Typing numbers is slow and
