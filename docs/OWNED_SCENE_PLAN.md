@@ -98,6 +98,18 @@ Built 2026-10-30, later the same day: blocking from the text, a set, better char
   in `why`). The depth library stays on depth.html. There is no sign-in yet: anyone who can reach the service can open either page,
   so keeping producers' pages from viewers needs accounts or a separate public server serving only the Scenes routes.
 
+Built 2026-10-30, moves the footage lacks: 24 Mixamo animations (Tim's Humane-Basics pack; the files name Mixamo as their source)
+retargeted onto the Studio skeleton and registered as library movements `move-mixamo-*`: walking, walking backwards, up stairs,
+sneak walk, running, crouch, bored idle, open and close a door, press a button, push, punches, a punch combo, kicks, a jump kick,
+block, get punched, get kicked, jump, jump and roll, falling, falling impact, death, corpse, swimming. `authoring/render/mixamo-retarget.py`
+(Blender: both skeletons rest in a T-pose, so each bone takes the Mixamo bone's world turn from rest; hips travel scaled by hip
+height, 0.88) writes a GLB per clip; `authoring/render/mixamo-register.py` turns them into Action v2 and registers them. The FBX and
+GLBs stay in `.authoring/sources/mixamo-humane-basics/` (untracked): Adobe's terms allow Mixamo animations in commercial work but
+not redistributing the files, so they never go in the public repo. Checked on the Studio player in a test shots scene
+(`mixamo-check`): walking, sneak, running, jump, kicks, push, door, button, punches and death play with feet and body on the floor.
+Not yet: foot contacts and travel are unchecked, the walking cycles are in place (travel comes from places), and the UAL2 root-motion
+file and the female mannequin's own use beyond a body are not used.
+
 ## 2. Camera controls people can use
 
 The Clay page already lets a person drag cameras on the floor plan and type yaw, pitch, height and lens. Typing numbers is slow and

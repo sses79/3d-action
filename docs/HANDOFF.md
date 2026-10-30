@@ -958,3 +958,6 @@ Tim's request: after the depth library's steps, build a plain-shape 3D scene wit
   characters rebuilt with textured heads and hair, the Scenes page `/editor/scenes.html` with cast changes as perform jobs
   (`POST /api/plays/perform`, `GET /api/plays`, `/api/play-file`). Viewer text in a spec: name, play, card, shot note; producer
   notes in `why`. No sign-in: the Scenes page is separate but not protected.
+- 2026-10-30, Mixamo: 24 clips from Tim's Humane-Basics pack retargeted (`authoring/render/mixamo-retarget.py`, Blender) and registered
+  (`authoring/render/mixamo-register.py`) as `move-mixamo-*`; source files untracked in `.authoring/sources/mixamo-humane-basics/`
+  (not redistributable). Female mannequin character `mannequin-female` (UAL2 Standard, CC0). Test pair `mixamo-check` in live state.
