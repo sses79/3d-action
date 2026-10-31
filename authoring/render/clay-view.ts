@@ -66,7 +66,7 @@ export async function init(cfg?:ClayViewConfig){
  // perform.py makes the path and the steps agree, any difference spread evenly. A foot that stays on the floor (within 2 cm, 4
  // samples or more) is then held where its ball came down, by turning thigh and calf (ankle to the place, knee in its own plane,
  // the foot keeping its turn; a place the leg cannot reach is given up toward where the foot is, along the floor, so the
- // foot slides a little rather than lifting); after it lifts the hold lets go over 0.15 s. Planned once per segment (seg._walk), every 1/60 s.
+ // foot slides a little rather than lifting); after it lifts the hold lets go over 0.15 s. A segment with hold: false (a join ARDY made, whose feet its own clean-up already keeps still) is put on the floor but not held: holding a low shuffle step as a plant dragged it. Planned once per segment (seg._walk), every 1/60 s.
  const soles=new Map<T.Object3D,number[]>(),FEET=['foot_l','ball_l','foot_r','ball_r'];
  const soleOf=(root:T.Object3D,holder:T.Object3D)=>{let r=soles.get(holder);if(!r){root.traverse(o=>{const m=o as T.SkinnedMesh;if(m.isSkinnedMesh)m.skeleton.pose();});root.updateMatrixWorld(true);const low=new T.Box3().setFromObject(root).min.y;r=FEET.map(n=>root.getObjectByName(n)!.getWorldPosition(new T.Vector3()).y-low);soles.set(holder,r);}return r;};
  const toFloor=(root:T.Object3D,holder:T.Object3D)=>{const r=soleOf(root,holder),low=Math.min(...FEET.map((n,k)=>root.getObjectByName(n)!.getWorldPosition(new T.Vector3()).y-r[k]));holder.position.y-=low;holder.updateMatrixWorld(true);};
@@ -83,7 +83,7 @@ export async function init(cfg?:ClayViewConfig){
   for(let k=0;k<=n;k++){basePose(fig,seg,holder,root,scale,player,k*dt,0);const h=FEET.map((nm,j)=>W(bone(nm)).y-r[j]),pt=['l','r'].map(s=>holder.worldToLocal(W(bone('foot_'+s)).add(W(bone('ball_'+s))).multiplyScalar(.5)).multiplyScalar(scale).setY(0)),low=Math.min(h[0],h[1])<=Math.min(h[2],h[3])?0:1;if(prev)S.push(S[k-1]+pt[low].distanceTo(prev[low]));prev=pt;}
   const L=S[n],along=S.map((x,k)=>L>1e-3?D*x/L:k*dt),down:boolean[][]=[[],[]],ball:T.Vector3[][]=[[],[]];seg._walk={dt,n,along,hold:[[],[]]};const j=joinFor(fig,seg,holder,root,scale,player);seatPlan(fig,seg,holder,root,scale,player);
   for(let k=0;k<=n;k++){basePose(fig,seg,holder,root,scale,player,k*dt,along[k]);if(j&&k*dt<j.T)settleJoin(j,root,holder,k*dt,'all');toFloor(root,holder);seatTo(fig,seg,holder,root,scale,player,k*dt);['l','r'].forEach((s,j)=>{down[j].push(Math.min(W(bone('foot_'+s)).y-r[2*j],W(bone('ball_'+s)).y-r[2*j+1])<.02);ball[j].push(W(bone('ball_'+s)));});}
-  const hold=[0,1].map(j=>{const d=down[j].map((x,k)=>{if(!x)return false;let a=k,b=k;while(a>0&&down[j][a-1])a--;while(b<n&&down[j][b+1])b++;return b-a+1>=4;}),o:number[][]=[];let anchor:T.Vector3|null=null,last=[0,0],since=1e9;
+  const hold=[0,1].map(j=>{const d=down[j].map((x,k)=>{if(!x||seg.hold===false)return false;let a=k,b=k;while(a>0&&down[j][a-1])a--;while(b<n&&down[j][b+1])b++;return b-a+1>=4;}),o:number[][]=[];let anchor:T.Vector3|null=null,last=[0,0],since=1e9;
    for(let k=0;k<=n;k++){if(d[k]){if(!anchor)anchor=ball[j][k].clone();last=[anchor.x-ball[j][k].x,anchor.z-ball[j][k].z];since=0;}else{anchor=null;since+=dt;}const f=d[k]?1:Math.max(0,1-since/.15);o.push([last[0]*f,last[1]*f]);}return o;});
   return {dt,n,along,hold,pathMeters:+L.toFixed(3)};};
  // A figure posed by its segment, stood at its place: a walk goes along its path by its planted foot (walkPlan). Returns the plan.

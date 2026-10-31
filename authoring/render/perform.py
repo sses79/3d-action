@@ -47,7 +47,7 @@ def turned(at,h0,h1):  # a turn on the spot from heading h0 to h1: the left or r
     d=((h1-h0+180)%360)-180
     if abs(d)<20:return []
     k=90 if d>0 else -90;T,F,B=track(TURN[k]);r=spun(TURN[k]);return [dict(movement=TURN[k],once=True,at=at,heading=[h0,h0+d-r],seconds=round(B,3))]
-def go(n,g):  # {go: {from, seat: true | to, heading, walk?, pace?}} (walk: another walk cycle to loop between start and stop; pace: its metres a second when its hips carry no travel): start walking, walk, stop walking, turn on the spot, sit down (stand-to-sit backs into the seat), all at the walk's own pace
+def go(n,g):  # {go: {from, seat: true | to, heading, walk?, pace?, join?}} (walk: another walk cycle to loop between start and stop; pace: its metres a second when its hips carry no travel): start walking, walk, stop walking, turn on the spot, sit down (stand-to-sit backs into the seat), all at the walk's own pace
     seat=g.get('seat');fp=next(f for f in src['figures'] if f['name']==n)['place'];hs=g.get('heading',heading[n])
     T,Fs,B,_,_=steady(START,True);WALK=g.get('walk',WALKS);pace=g.get('pace') or PACE.get(WALK) or movement(WALK)['pace'];o0=phase(WALK,pose(START,T));WT,WF,WB=track(WALK)
     t1,Fe1,Fe,Be,_=steady(STOP,False);ST,SF,SB=track(SIT);XT,XF,XB=track(STOP)
@@ -65,13 +65,13 @@ def go(n,g):  # {go: {from, seat: true | to, heading, walk?, pace?}} (walk: anot
     print(f'go {n}: {D:.2f} m = start {Fs:.2f} + walk {mid:.2f} + stop {stopTravel:.2f}, at {pace:.2f} m/s',file=sys.stderr)
     if mid<-.05:raise SystemExit(f'go: {D:.2f} m from {fr} to {to} is too short for a start ({Fs:.2f} m) and a stop ({stopTravel:.2f} m); start further back')
     p1=ahead(fr,h,Fs);p2=ahead(fr,h,Fs+mid);out=[dict(movement=START,once=True,at=fr,heading=h,seconds=round(T,3)),*([dict(movement=WALK,walk={'from':p1,'to':p2},seconds=round(P,3),offset=round(o0,3),speed=1)] if mid>.2 else []),dict(movement=STOP,once=True,at=ahead(p2,h,-Fe1),heading=h,offset=round(t1,3),seconds=round(min(Be,still(STOP)+.3)-t1,3))]
-    if g.get('join'):J=g['join'];_,_,JB=track(J);out.append(dict(movement=J,once=True,at=to,heading=h,offset=round(2/30,3),seconds=round(JB-4/30,3)))  # a generated join (ardy-join.py) in place of the turn: its first three frames are the stop's last, its last three the sit-down's first
+    if g.get('join'):J=g['join'];JB=track(J)[2];out.append(dict(movement=J,once=True,at=to,heading=h,offset=round(2/30,3),seconds=round(JB-4/30,3),hold=False))  # a generated join (ardy-join.py) in place of the turn: its first three frames are the stop's last, its last three the sit-down's first
     else:out+=turned(to,h,hs)
     if seat:out.append(dict(movement=SIT,once=True,at=to,heading=hs,seconds=round(SB,3)))
     return out
-def rise(n,g):  # {rise: {to, walk?, pace?}}: stand up from the seat (sit-to-stand), turn toward the way out, start walking and walk on
+def rise(n,g):  # {rise: {to, walk?, pace?, join?}} (join: a generated turn, ardy-join.py, in place of the turn on the spot): stand up from the seat (sit-to-stand), turn toward the way out, start walking and walk on
     fp=next(f for f in src['figures'] if f['name']==n)['place'];hs=g.get('heading',heading[n]);RT,RF,RB=track(RISE);up=ahead(fp,hs,RF[-1]);dx,dz=g['to'][0]-up[0],g['to'][1]-up[1];h=math.degrees(math.atan2(dx,dz))
-    T,Fs,B,_,_=steady(START,True);WALK=g.get('walk',WALKS);pace=g.get('pace') or PACE.get(WALK) or movement(WALK)['pace'];o0=phase(WALK,pose(START,T));out=[dict(movement=RISE,once=True,at=fp,heading=hs,seconds=round(RB,3))]+turned(up,hs,h)+[dict(movement=START,once=True,at=up,heading=h,seconds=round(T,3))]
+    T,Fs,B,_,_=steady(START,True);WALK=g.get('walk',WALKS);pace=g.get('pace') or PACE.get(WALK) or movement(WALK)['pace'];o0=phase(WALK,pose(START,T));J=g.get('join');JB=track(J)[2] if J else 0;out=[dict(movement=RISE,once=True,at=fp,heading=hs,seconds=round(RB,3))]+([dict(movement=J,once=True,at=up,heading=hs,offset=round(2/30,3),seconds=round(JB-4/30,3),hold=False)] if J else turned(up,hs,h))+[dict(movement=START,once=True,at=up,heading=h,seconds=round(T,3))]
     rest=math.hypot(dx,dz)-Fs;out.append(dict(movement=WALK,walk={'from':ahead(up,h,Fs),'to':g['to']},seconds=round(max(.5,rest)/pace,3),offset=round(o0,3),speed=1));return out
 def expand(n,plays):  # go and rise steps into their movements; a step's seconds may be left out ('rest': what the shot has left)
     out=[]
@@ -93,7 +93,7 @@ for sh in P['shots']:
             if 'movement' in pl:  # a library movement: walk {from, to} at its own pace, in place, places carrying it; or a turn [from, to] (headings) where it stands
                 mv=movement(pl['movement']);a=pl.get('walk');at=pl.get('at',a['to'] if a else f['place']);cy=c['yaw']
                 if pl.get('once'):  # played once where it stands, its own hip travel moving the figure (start or stop walking, a turn on the spot, sitting down, standing up)
-                    hh=pl['heading'];tr=[round(((x-cy+180)%360)-180,1) for x in hh] if isinstance(hh,list) else round(((hh-cy+180)%360)-180,1);segs[n].append(dict(actionId=pl['movement'],revision=mv['revision'],places=[at,at],start=round(u,3),end=round(u+secs,3),speed=pl.get('speed',1),offset=pl.get('offset',0),loop=False,frame=sh['camera'],turn=tr,**({'seat':round(hips[n],3)} if pl['movement'] in (SIT,IDLE,RISE) and P['roles'][n].get('seat') else {})));u+=secs;continue  # a sit meets the role's chair: its hips at the seated hip height the chair is scaled to
+                    hh=pl['heading'];tr=[round(((x-cy+180)%360)-180,1) for x in hh] if isinstance(hh,list) else round(((hh-cy+180)%360)-180,1);segs[n].append(dict(actionId=pl['movement'],revision=mv['revision'],places=[at,at],start=round(u,3),end=round(u+secs,3),speed=pl.get('speed',1),offset=pl.get('offset',0),loop=False,frame=sh['camera'],turn=tr,**({'seat':round(hips[n],3)} if pl['movement'] in (SIT,IDLE,RISE) and P['roles'][n].get('seat') else {}),**({'hold':False} if pl.get('hold') is False else {})));u+=secs;continue  # a sit meets the role's chair: its hips at the seated hip height the chair is scaled to
                 if a:dx,dz=a['to'][0]-a['from'][0],a['to'][1]-a['from'][1];h=math.degrees(math.atan2(dx,dz));dist=math.hypot(dx,dz);sp=pl['speed'] if 'speed' in pl else min(2,max(.5,dist/secs/mv['pace'])) if mv['pace'] else 1;q=[[round(a['from'][0]+dx*k/12,3),round(a['from'][1]+dz*k/12,3)] for k in range(13)];tr=round(((h-cy+180)%360)-180,1)
                 else:sp=pl.get('speed',1);q=[at,at];tr=[round(((x-cy+180)%360)-180,1) for x in pl['turn']] if isinstance(pl.get('turn'),list) else round(((pl.get('turn',heading[n])-cy+180)%360)-180,1)
                 e=dict(actionId=pl['movement'],revision=mv['revision'],places=q,start=round(u,3),end=round(u+secs,3),speed=round(sp,3),offset=pl.get('offset',0),loop='cycle',inPlace=True,frame=sh['camera'],turn=tr)
