@@ -112,6 +112,14 @@
      "used": "the female mannequin, as shipped"
     }
    ]
+  },
+  "studio-mannequin.glb": {
+   "bytes": 7618436,
+   "sha256": "69591853d817488edaa8fd9bf8fc1d821eaeaf789f8627b3cd23b41c4ed67997",
+   "joints": 65,
+   "from": "editor/assets/character.glb (the Studio mannequin, Quaternius Universal Animation Library, CC0)",
+   "license": "CC0-1.0",
+   "built": "a copy of the Studio mannequin, so scenes can cast it like the other bodies"
   }
  }
 }

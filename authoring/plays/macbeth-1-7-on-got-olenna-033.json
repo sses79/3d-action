@@ -15,9 +15,9 @@
   },
   "E": {
    "name": "Macbeth",
-   "character": "ranger-male",
    "height": 1.8,
-   "seat": "chair-1"
+   "seat": "chair-1",
+   "character": "studio-mannequin"
   }
  },
  "shots": [
