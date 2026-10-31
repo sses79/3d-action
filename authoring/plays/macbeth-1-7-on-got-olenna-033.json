@@ -141,7 +141,8 @@
        "to": [
         -2.4,
         -4.6
-       ]
+       ],
+       "join": "move-ardy-kimodo-rise-turn"
       }
      }
     ]

@@ -181,7 +181,22 @@ Studio mannequin (`studio-mannequin`), and the middle of every go/rise is now th
 as joint tracks (the Studio movement only pointed at the clip, so its poses could not be matched at joins). It walks on the spot, so
 its pace comes from its feet: 1.23 m a 1.333 s loop, 0.92 m/s (`PACE` in perform.py), close to Start/Stop Walking's 0.88. The Mixamo
 start, stop, turns and sit stay. A go or rise may still name `walk` and `pace`. Macbeth 1.7: planted-ball slide 0.3 cm median, 30 cm
-max (the turn's pivot step); the lowest foot reaches 2.3 cm below the floor (487 frames), not yet explained.
+max (the turn's pivot step); the lowest foot reaches 2.3 cm below the floor (487 frames): the seated-leg solve put the ankle at a
+fixed 0.08 m, the old body's; it now uses each body's own (fixed 2026-10-31).
+
+Generated joins (2026-10-31): the turn on the spot between two clips, made by a motion model between fixed poses (the last three
+frames of one clip, the first three of the next, turned), mapped onto the Studio skeleton in Blender and registered as a movement;
+`authoring/render/ardy-join.py` does it in one command, perform.py's go/rise take it as `join`, played with `hold: false` (its feet
+are not held by the scene's rule, which dragged a low step). Both models are NVIDIA's (Apache-2.0 code, NVIDIA Open Model weights:
+commercial use, no claim on outputs), on the SOMA skeleton, run on mini4's CPU with no text (an empty prompt; text needs Llama-3-8B).
+- ARDY (`ardy-gen.py`, 3 s a join): calm, but with no text it turns by shuffling (balls 1-3 cm up): entrance 16.9 cm, exit 30 cm of
+  planted-foot slide, no better than the Mixamo turns (16.5, 30). Its SOMA model weighs text and poses apart; one weight left the
+  poses at 0 (fixed). Step plans and contact pins fought the model (hips down 14 cm) and are not used.
+- Kimodo (`kimodo-gen.py`, about 2.5 minutes a join, 1000 steps): real steps (feet up 9-13 cm): exit 3.7 cm, entrance 15.8 cm (the
+  left foot drags as it starts) with a left foot held 6 cm up for 0.3 s; a second seed hopped. Its foot clean-up module is ARDY's
+  copy on mini4 (Kimodo's builds only on Intel).
+Macbeth 1.7 uses Kimodo's exit turn (`move-ardy-kimodo-rise-turn`); the entrance keeps the Mixamo turn. Largest slide 30 -> 16.5 cm.
+Next: text ("A person turns around and sits down on a chair"), which needs Tim's Llama access on mini4.
 
 ## 2. Camera controls people can use
 
