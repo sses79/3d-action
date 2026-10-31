@@ -961,3 +961,13 @@ Tim's request: after the depth library's steps, build a plain-shape 3D scene wit
 - 2026-10-30, Mixamo: 24 clips from Tim's Humane-Basics pack retargeted (`authoring/render/mixamo-retarget.py`, Blender) and registered
   (`authoring/render/mixamo-register.py`) as `move-mixamo-*`; source files untracked in `.authoring/sources/mixamo-humane-basics/`
   (not redistributable). Female mannequin character `mannequin-female` (UAL2 Standard, CC0). Test pair `mixamo-check` in live state.
+
+## 2026-10-31 (later): DeepSeek check, Kimodo hip path and text cache
+
+- DeepSeek through OpenRouter (as voice-helper's coach) tried for the depth drafts: `deepseek-v4.1-flash` takes images; with no
+  reasoning it split the beats wrongly, with reasoning it was right but ~17x Luna's cost (8,000 reasoning tokens). Tim: keep Luna.
+- Kimodo entrance turn with a hip path and step plans (`ardy-join.py --path/--steps`, `kimodo-gen.py` path/stepPlan): no better
+  than the Mixamo turn (16.1-23.5 vs 16.5 cm); see OWNED_SCENE_PLAN "Generated joins". Test movements
+  `move-ardy-kimodo-path-turn-sit-a..e` archived; test pairs `macbeth-1-7-033-path-a..e` stay (pairs have no archive).
+- Text for Kimodo (`--text`, cached encoding) written, untried: Meta's Llama 3 approval was pending; Llama-3-8B does not fit 16 GB
+  beside Kimodo.

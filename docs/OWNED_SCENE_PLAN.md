@@ -196,7 +196,15 @@ commercial use, no claim on outputs), on the SOMA skeleton, run on mini4's CPU w
   left foot drags as it starts) with a left foot held 6 cm up for 0.3 s; a second seed hopped. Its foot clean-up module is ARDY's
   copy on mini4 (Kimodo's builds only on Intel).
 Macbeth 1.7 uses Kimodo's exit turn (`move-ardy-kimodo-rise-turn`); the entrance keeps the Mixamo turn. Largest slide 30 -> 16.5 cm.
-Next: text ("A person turns around and sits down on a chair"), which needs Tim's Llama access on mini4.
+Entrance with no text, held harder (2026-10-31, `--path`, `--steps`): the hips held on the line between the key poses with their
+heading eased (whole gap or its middle 60%) 16.1 cm, the left foot still shuffling (up 4 cm); each foot held before and after its
+step 23.5 cm (the feet reach their places by sliding, 1-3 cm up); with a raised point mid-step the left foot lifts 11 cm but the
+right still slides 16 cm (23.1). Kimodo treats held feet as soft targets. The entrance stays Mixamo: its 16.5 cm is the right toe
+swinging round on a still heel through the 62-degree turn, a pivot the slide measure counts.
+Text: Kimodo's encoder is LLM2Vec on Llama-3-8B (16 GB in bf16), its 4096-number embedding is what the model was trained on, so no
+other model (Luna, DeepSeek) can stand in. Meta's approval for Hugging Face user ajty777 was pending on 2026-10-31. Llama and Kimodo
+do not fit mini4's 16 GB together: `kimodo-gen.py` encodes a prompt once in its own process (`--encode`) into `text-cache/`;
+untried. Ways in: disk offload on mini4 (slow, exact) or a rented GPU running Kimodo's text-encoder server.
 
 ## 2. Camera controls people can use
 
