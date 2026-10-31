@@ -176,6 +176,13 @@ toward where it is instead of lifting (it lifted both feet 5-6 cm at joins). Mac
 his library movement; planted-ball slide 1.2 cm median; the largest are inside the clips (a low pivot step in the turn, 22 cm, and
 the first step of the start, 9 cm) and one at the cut into the last wide shot.
 
+Studio walk (2026-10-31, Tim: the outfit with big boots changed the walk; the Studio "Walk cycle" looked better). Macbeth is the
+Studio mannequin (`studio-mannequin`), and the middle of every go/rise is now the Studio Walk_Loop: `move-walk-tracks` is that loop
+as joint tracks (the Studio movement only pointed at the clip, so its poses could not be matched at joins). It walks on the spot, so
+its pace comes from its feet: 1.23 m a 1.333 s loop, 0.92 m/s (`PACE` in perform.py), close to Start/Stop Walking's 0.88. The Mixamo
+start, stop, turns and sit stay. A go or rise may still name `walk` and `pace`. Macbeth 1.7: planted-ball slide 0.3 cm median, 30 cm
+max (the turn's pivot step); the lowest foot reaches 2.3 cm below the floor (487 frames), not yet explained.
+
 ## 2. Camera controls people can use
 
 The Clay page already lets a person drag cameras on the floor plan and type yaw, pitch, height and lens. Typing numbers is slow and

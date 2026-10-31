@@ -28,7 +28,8 @@ def track(mid):  # a library movement's hips: times, forward travel (metres, its
 def steady(mid,first):  # where a start reaches its own walking pace (first) or a stop leaves it: the pace over its last (first: the start's) second, nine tenths of it held over 0.3 s
     T,F,B=track(mid);v=[(F[min(len(F)-1,i+9)]-F[i])/(T[min(len(T)-1,i+9)]-T[i]+1e-9) for i in range(len(T))];j=[i for i in range(len(T)) if ((B-1.3<T[i]<B-.3) if first else T[i]<1)];pace=sum(v[i] for i in j)/len(j)
     ok=[i for i in range(len(T)-9) if v[i]>=.9*pace];i=(ok[0] if first else ok[-1]) if ok else (len(T)-1 if first else 0);return T[i],F[i],F[-1],B,pace
-WALK,START,STOP,SIT,RISE,IDLE='move-mixamo-walk-steady','move-mixamo-start-walking','move-mixamo-stop-walking','move-mixamo-stand-to-sit','move-mixamo-sit-to-stand','move-mixamo-sitting-idle'
+WALKS,START,STOP,SIT,RISE,IDLE='move-walk-tracks','move-mixamo-start-walking','move-mixamo-stop-walking','move-mixamo-stand-to-sit','move-mixamo-sit-to-stand','move-mixamo-sitting-idle'
+PACE={'move-walk-tracks':0.92}  # walks on the spot: the Studio Walk_Loop's stride (1.23 m a 1.333 s loop, measured from its feet), the default walk since 2026-10-31; 'walk'/'pace' in a go or rise pick another
 TURN={90:'move-mixamo-left-turn-90',-90:'move-mixamo-right-turn-90'}  # Mixamo's plain standing turns (the 'Standing Turn ... 90' pair turns in a crouched ready stance)
 def spun(mid):  # how far a movement turns the hips about the vertical, degrees (left positive)
     m=call('get_movement',{'movementId':mid});k=next(t['keys'] for t in m['action']['tracks'] if t['target']=='pelvis' and t['property']=='rotation');a,b=k[0]['value'],k[-1]['value'];w=b[3]*a[3]+b[0]*a[0]+b[1]*a[1]+b[2]*a[2];z=-b[3]*a[2]+b[2]*a[3]-b[0]*a[1]+b[1]*a[0];return math.degrees(2*math.atan2(z,w))
@@ -46,9 +47,9 @@ def turned(at,h0,h1):  # a turn on the spot from heading h0 to h1: the left or r
     d=((h1-h0+180)%360)-180
     if abs(d)<20:return []
     k=90 if d>0 else -90;T,F,B=track(TURN[k]);r=spun(TURN[k]);return [dict(movement=TURN[k],once=True,at=at,heading=[h0,h0+d-r],seconds=round(B,3))]
-def go(n,g):  # {go: {from, seat: true | to, heading}}: start walking, walk, stop walking, turn on the spot, sit down (stand-to-sit backs into the seat), all at the walk's own pace
+def go(n,g):  # {go: {from, seat: true | to, heading, walk?, pace?}} (walk: another walk cycle to loop between start and stop; pace: its metres a second when its hips carry no travel): start walking, walk, stop walking, turn on the spot, sit down (stand-to-sit backs into the seat), all at the walk's own pace
     seat=g.get('seat');fp=next(f for f in src['figures'] if f['name']==n)['place'];hs=g.get('heading',heading[n])
-    T,Fs,B,_,_=steady(START,True);pace=movement(WALK)['pace'];o0=phase(WALK,pose(START,T));WT,WF,WB=track(WALK)
+    T,Fs,B,_,_=steady(START,True);WALK=g.get('walk',WALKS);pace=g.get('pace') or PACE.get(WALK) or movement(WALK)['pace'];o0=phase(WALK,pose(START,T));WT,WF,WB=track(WALK)
     t1,Fe1,Fe,Be,_=steady(STOP,False);ST,SF,SB=track(SIT);XT,XF,XB=track(STOP)
     to=ahead(fp,hs,-SF[-1]) if seat else g['to'];fr=g['from'];dx,dz=to[0]-fr[0],to[1]-fr[1];h=math.degrees(math.atan2(dx,dz));D=math.hypot(dx,dz)
     # the stop picks up where the walk's pose is closest to its own, among its frames while still walking; the walk may be 10% longer
@@ -67,9 +68,9 @@ def go(n,g):  # {go: {from, seat: true | to, heading}}: start walking, walk, sto
     out+=turned(to,h,hs)
     if seat:out.append(dict(movement=SIT,once=True,at=to,heading=hs,seconds=round(SB,3)))
     return out
-def rise(n,g):  # {rise: {to}}: stand up from the seat (sit-to-stand), turn toward the way out, start walking and walk on
+def rise(n,g):  # {rise: {to, walk?, pace?}}: stand up from the seat (sit-to-stand), turn toward the way out, start walking and walk on
     fp=next(f for f in src['figures'] if f['name']==n)['place'];hs=g.get('heading',heading[n]);RT,RF,RB=track(RISE);up=ahead(fp,hs,RF[-1]);dx,dz=g['to'][0]-up[0],g['to'][1]-up[1];h=math.degrees(math.atan2(dx,dz))
-    T,Fs,B,_,_=steady(START,True);pace=movement(WALK)['pace'];o0=phase(WALK,pose(START,T));out=[dict(movement=RISE,once=True,at=fp,heading=hs,seconds=round(RB,3))]+turned(up,hs,h)+[dict(movement=START,once=True,at=up,heading=h,seconds=round(T,3))]
+    T,Fs,B,_,_=steady(START,True);WALK=g.get('walk',WALKS);pace=g.get('pace') or PACE.get(WALK) or movement(WALK)['pace'];o0=phase(WALK,pose(START,T));out=[dict(movement=RISE,once=True,at=fp,heading=hs,seconds=round(RB,3))]+turned(up,hs,h)+[dict(movement=START,once=True,at=up,heading=h,seconds=round(T,3))]
     rest=math.hypot(dx,dz)-Fs;out.append(dict(movement=WALK,walk={'from':ahead(up,h,Fs),'to':g['to']},seconds=round(max(.5,rest)/pace,3),offset=round(o0,3),speed=1));return out
 def expand(n,plays):  # go and rise steps into their movements; a step's seconds may be left out ('rest': what the shot has left)
     out=[]
