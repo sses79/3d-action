@@ -1,9 +1,10 @@
 """The GLBs mixamo-retarget.py wrote, as base movements in the library (register_movement): every joint's local rotation per frame
 and the pelvis' position, in the Studio's Action v2 (the same tracks as the adapted UAL2 movements), one phase, ids move-mixamo-<clip>.
 A movement that already exists becomes a new revision. Needs the service.
-  python3 authoring/render/mixamo-register.py DIR [--source 'Mixamo via the Humane-Basics pack']"""
+  python3 authoring/render/mixamo-register.py DIR [--source 'Mixamo via the Humane-Basics pack'] [--prefix move-mixamo-] [--notes TEXT]
+(--prefix and --notes for clips from elsewhere on the same skeleton, such as ARDY joins from ardy-join.py)"""
 import sys,os,json,struct,urllib.request
-argv=sys.argv[1:];d=os.path.abspath(argv[0]);src=argv[argv.index('--source')+1] if '--source' in argv else 'Mixamo'
+argv=sys.argv[1:];d=os.path.abspath(argv[0]);src=argv[argv.index('--source')+1] if '--source' in argv else 'Mixamo';pre=argv[argv.index('--prefix')+1] if '--prefix' in argv else 'move-mixamo-';how=argv[argv.index('--notes')+1] if '--notes' in argv else None
 def call(n,a):
     r=json.load(urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:5174/api/tool',json.dumps(dict(name=n,arguments=a)).encode(),{'Content-Type':'application/json'}),timeout=300))
     if r.get('error'):raise RuntimeError(r['error'])
@@ -25,9 +26,9 @@ for f in sorted(x for x in os.listdir(d) if x.endswith('.glb')):
         return [{'time':0,'value':[r(x) for x in rest]}]
     tracks=[{'target':n['name'],'property':'rotation','mode':'absolute','interpolation':'linear','keys':keys(n['name'],'rotation',n.get('rotation',[0,0,0,1]))} for n in joints]
     pel=next(n for n in joints if n['name']=='pelvis');tracks.append({'target':'pelvis','property':'position','mode':'absolute','interpolation':'linear','keys':keys('pelvis','translation',pel.get('translation',[0,0,0]))})
-    dur=max(k['time'] for t in tracks for k in t['keys']);slug=f[:-4];mid='move-mixamo-'+slug;title=slug.replace('-',' ').capitalize()
-    action={'version':2,'rig':'quaternius-ual1','id':mid,'name':'Mixamo · '+title,'phases':[{'id':'motion-0','name':title,'intent':'Retargeted Mixamo motion; contact and travel need review','duration':round(dur,6),'kind':'move','clip':'A_TPose','from':0,'to':0}],'tracks':tracks,'cues':[]}
-    meta={'source':f'{src} · {title}','support':'unknown','travel':'source','notes':'Retargeted from the Mixamo skeleton by world rotation offsets from the shared T-pose (authoring/render/mixamo-retarget.py); hips travel scaled by hip height. Fingers from Mixamo, leaf joints at rest. Foot contacts not checked.'}
+    dur=max(k['time'] for t in tracks for k in t['keys']);slug=f[:-4];mid=pre+slug;title=slug.replace('-',' ').capitalize()
+    action={'version':2,'rig':'quaternius-ual1','id':mid,'name':src.split(' ')[0]+' · '+title,'phases':[{'id':'motion-0','name':title,'intent':'Retargeted Mixamo motion; contact and travel need review','duration':round(dur,6),'kind':'move','clip':'A_TPose','from':0,'to':0}],'tracks':tracks,'cues':[]}
+    meta={'source':f'{src} · {title}','support':'unknown','travel':'source','notes':how or 'Retargeted from the Mixamo skeleton by world rotation offsets from the shared T-pose (authoring/render/mixamo-retarget.py); hips travel scaled by hip height. Fingers from Mixamo, leaf joints at rest. Foot contacts not checked.'}
     try:res=call('register_movement',{'action':action,'metadata':meta,'expectedRevision':have.get(mid,0)});out.append({'movement':mid,'revision':res.get('revision') if isinstance(res,dict) else res,'seconds':round(dur,2)})
     except Exception as e:out.append({'movement':mid,'error':str(e)[:300]})
 print(json.dumps(out,indent=0))

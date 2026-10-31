@@ -65,7 +65,8 @@ def go(n,g):  # {go: {from, seat: true | to, heading, walk?, pace?}} (walk: anot
     print(f'go {n}: {D:.2f} m = start {Fs:.2f} + walk {mid:.2f} + stop {stopTravel:.2f}, at {pace:.2f} m/s',file=sys.stderr)
     if mid<-.05:raise SystemExit(f'go: {D:.2f} m from {fr} to {to} is too short for a start ({Fs:.2f} m) and a stop ({stopTravel:.2f} m); start further back')
     p1=ahead(fr,h,Fs);p2=ahead(fr,h,Fs+mid);out=[dict(movement=START,once=True,at=fr,heading=h,seconds=round(T,3)),*([dict(movement=WALK,walk={'from':p1,'to':p2},seconds=round(P,3),offset=round(o0,3),speed=1)] if mid>.2 else []),dict(movement=STOP,once=True,at=ahead(p2,h,-Fe1),heading=h,offset=round(t1,3),seconds=round(min(Be,still(STOP)+.3)-t1,3))]
-    out+=turned(to,h,hs)
+    if g.get('join'):J=g['join'];_,_,JB=track(J);out.append(dict(movement=J,once=True,at=to,heading=h,offset=round(2/30,3),seconds=round(JB-4/30,3)))  # a generated join (ardy-join.py) in place of the turn: its first three frames are the stop's last, its last three the sit-down's first
+    else:out+=turned(to,h,hs)
     if seat:out.append(dict(movement=SIT,once=True,at=to,heading=hs,seconds=round(SB,3)))
     return out
 def rise(n,g):  # {rise: {to, walk?, pace?}}: stand up from the seat (sit-to-stand), turn toward the way out, start walking and walk on
@@ -116,6 +117,7 @@ for n,role in P['roles'].items():  # a seat under a seated role: half a step (25
     if not role.get('seat'):continue
     f=next(f for f in src['figures'] if f['name']==n);h=math.radians(heading[n]);k=kit[role['seat']];sc=round(min(1.3,max(.6,(hips[n]-.1)/k['seat'])),3) if k.get('seat') else 1
     sets.append(dict(prop=role['seat'],place=[round(f['place'][0]-math.sin(h)*.25,3),round(f['place'][1]-math.cos(h)*.25,3)],turn=round(heading[n],1),scale=sc))
+if '--figures' in sys.argv:json.dump(figures,sys.stdout);raise SystemExit  # the scene's figures as they would be written, nothing written or rendered
 pairs=call('list_pairs',{});rev=next((p.get('revision',0) for p in (pairs if isinstance(pairs,list) else pairs.get('pairs',[])) if p.get('pairId',p.get('id'))==P['id']),0)
 sc=call('set_shots_scene',dict(pairId=P['id'],name=P['name'],expectedRevision=rev,duration=round(t,3),figures=figures,cameras=cameras,set=sets))
 v=call('render_pair_video',dict(pairId=P['id'],width=1280,height=720,fps=30,feet=True));shutil.copy(v['file'],os.path.join(out,'scene.mp4'))
